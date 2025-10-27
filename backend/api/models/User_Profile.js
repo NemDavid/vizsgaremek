@@ -39,13 +39,13 @@ module.exports = (sequelize, DataTypes) =>
 
             schools:
             {
-                type: DataTypes.TEXT,
+                type: DataTypes.STRING(255),
                 allowNull: true
             },
 
             bio:
             {
-                type: DataTypes.TEXT,
+                type: DataTypes.STRING(255),
                 allowNull: true
             },
 

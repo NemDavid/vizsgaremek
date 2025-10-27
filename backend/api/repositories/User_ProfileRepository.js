@@ -1,4 +1,3 @@
-const { raw } = require("mysql2");
 const { DbError } = require("../errors");
 
 class User_ProfileRepository {

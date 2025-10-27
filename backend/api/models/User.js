@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) =>
             email:
             {
                 type: DataTypes.STRING(255),
-                unique: true,
                 allowNull: false
             },
 
@@ -29,7 +28,7 @@ module.exports = (sequelize, DataTypes) =>
                 allowNull: false,
 
                 get() {
-                    return `${this.getDataValue("password_hash").slice(0, 20)}`;
+                    return this.getDataValue("password_hash");
                 },
 
                 set(value) {
@@ -41,7 +40,6 @@ module.exports = (sequelize, DataTypes) =>
             username: 
             {
                 type: DataTypes.STRING(100),
-                unique: true,
                 allowNull: false
             },
 
@@ -88,7 +86,7 @@ module.exports = (sequelize, DataTypes) =>
             updatedAt: "updated_at", 
             scopes: {
                 allUserData:{
-                    attributes: ["ID", "email", "password_hash", "username", "role", "is_active", "created_at", "last_login"],
+                    attributes: ["ID", "email", "password_hash", "username", "role", "is_active", "created_at", "updated_at","last_login"],
                 }
             },
         }

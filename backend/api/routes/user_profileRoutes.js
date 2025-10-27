@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const user_profileController = require("../controller/user_profileController");
-const paramHandler = require("../midldewares/paramHandler")
+const user_profileController = require("../controllers/user_profileController");
+const paramHandler = require("../middlewares/paramHandler")
 
 
 router.param("paramPage", paramHandler.paramPage)

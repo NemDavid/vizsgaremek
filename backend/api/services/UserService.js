@@ -14,6 +14,11 @@ class UserService
         return await this.userRepository.getUsers();
     }
 
+    async getUser(userId)
+    {
+        return await this.userRepository.getUser(userId);
+    }
+
     async getUsersByPage(page)
     {
         if (!page) {
@@ -21,6 +26,12 @@ class UserService
         }
 
         return await this.userRepository.getUsersByPage(page);
+    }
+
+    async updateLastLogin(userId, date) 
+    {
+        const user = await this.userRepository.updateUser(userId, date);
+        return user;
     }
 
     async deleteUser(userId)
