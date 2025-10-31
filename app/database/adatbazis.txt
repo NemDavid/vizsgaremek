@@ -1,0 +1,146 @@
+-- Adatbázis létrehozása
+DROP DATABASE IF EXISTS MiHirunk_DB;
+CREATE DATABASE MiHirunk_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE MiHirunk_DB;
+
+-- ======================
+-- Users
+-- ======================
+CREATE TABLE users (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  role ENUM('user','admin') DEFAULT 'user',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login TIMESTAMP NULL,
+  is_active BOOLEAN DEFAULT TRUE
+) ENGINE=InnoDB;
+
+-- ======================
+-- Profiles
+-- ======================
+CREATE TABLE user_profiles (
+  user_id BIGINT PRIMARY KEY,
+  display_name VARCHAR(255),
+  birthdate DATE,
+  birth_place VARCHAR(255),
+  schools TEXT,
+  bio TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ======================
+-- Friendships
+-- ======================
+CREATE TABLE friendships (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  friend_id BIGINT NOT NULL,
+  status ENUM('pending','accepted','rejected','blocked') DEFAULT 'pending',
+  requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  accepted_at TIMESTAMP NULL,
+  -- generated columns to ensure unordered uniqueness
+  user_low  BIGINT GENERATED ALWAYS AS (LEAST(user_id, friend_id)) STORED,
+  user_high BIGINT GENERATED ALWAYS AS (GREATEST(user_id, friend_id)) STORED,
+  CONSTRAINT chk_not_self CHECK (user_id <> friend_id),
+  CONSTRAINT fk_friend_user  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_friend_friend FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_pair (user_low, user_high)
+) ENGINE=InnoDB;
+
+-- ======================
+-- Posts
+-- ======================
+CREATE TABLE posts (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  content TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+  visibility ENUM('public','friends','private') DEFAULT 'public',
+  deleted_at TIMESTAMP NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ======================
+-- Post Media
+-- ======================
+CREATE TABLE post_media (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  post_id BIGINT NOT NULL,
+  media_url TEXT NOT NULL,
+  media_type ENUM('image','video') NOT NULL,
+  position INT DEFAULT 0,
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ======================
+-- Comments (csak posztokra)
+-- ======================
+CREATE TABLE comments (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  post_id BIGINT NOT NULL,
+  user_id BIGINT,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP NULL,
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ======================
+-- Reactions
+-- ======================
+CREATE TABLE reactions (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  target_type ENUM('post','comment') NOT NULL,
+  target_id BIGINT NOT NULL,
+  reaction_type ENUM('like','dislike') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_reaction (user_id, target_type, target_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ======================
+-- Chats
+-- ======================
+CREATE TABLE chats (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255),
+  is_group BOOLEAN DEFAULT FALSE,
+  created_by BIGINT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+-- ======================
+-- Chat Members
+-- ======================
+CREATE TABLE chat_members (
+  chat_id BIGINT NOT NULL,
+  user_id BIGINT NOT NULL,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  role ENUM('member','admin') DEFAULT 'member',
+  PRIMARY KEY (chat_id, user_id),
+  FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ======================
+-- Messages
+-- ======================
+CREATE TABLE messages (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  chat_id BIGINT NOT NULL,
+  user_id BIGINT,
+  content TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  edited_at TIMESTAMP NULL,
+  deleted_at TIMESTAMP NULL,
+  FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
