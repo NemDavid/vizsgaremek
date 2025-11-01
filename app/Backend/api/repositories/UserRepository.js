@@ -33,6 +33,19 @@ class UserRepository {
         }
     }
 
+    async getUserByUsernameEmail(username, email) {
+        try {
+            return await this.User.scope("allUserData").findOne({
+                where: [ { 
+                    username: username,
+                    email: email
+                } ]  
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch users", { details: error.message });
+        }
+    }
+
     async getUsersByPage(page) {
         const limit = 25;
         const offset = (page - 1) * limit;

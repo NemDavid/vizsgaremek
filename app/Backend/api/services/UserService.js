@@ -19,6 +19,11 @@ class UserService
         return await this.userRepository.getUser(userId);
     }
 
+    async getUserByUsernameEmail(username, email)
+    {
+        return await this.userRepository.getUserByUsernameEmail(username, email);
+    }
+
     async getUsersByPage(page)
     {
         if (!page) {

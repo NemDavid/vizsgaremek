@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 exports.generateUserToken = (user) =>
 {
-    return jwt.sign({ userID: user.ID, username: user.name, isAdmin: user.isAdmin }, process.env.JWT_SECRET);
+    return jwt.sign({ userID: user.ID, username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET);
 }
 
 exports.setCookie = (res, cookieName, value) =>

@@ -9,7 +9,7 @@ const authUtils = require("../utilities/authUtils");
 
 
 exports.login = async (req, res, next) => {
-    const { ID, password } = req.body;
+    const { username, email, password } = req.body;
 
     try {
         if (req.cookies.user_token) {
@@ -18,7 +18,7 @@ exports.login = async (req, res, next) => {
             });
         }
 
-        const user = await userService.getUser(ID);
+        const user = await userService.getUserByUsernameEmail(username, email);
         if (!user) {
             return res.status(404).json({ message: "Nincs ilyen felhasználó" });
         }
@@ -39,7 +39,6 @@ exports.login = async (req, res, next) => {
         next(error);
     }
 };
-
 
 exports.status = (req, res, next) =>
 {
