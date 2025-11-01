@@ -39,7 +39,7 @@ export default function Header() {
   
   return (
     <header className="p-4 bg-red-600 text-white flex items-center justify-between">
-      <h1 className="text-3xl font-bold text-left">Mi Hirünk</h1>
+      <h1 className="text-3xl font-bold text-left">Mi Hírünk</h1>
 
       <div className="flex-1 flex justify-self-center">
         <NavigationMenu viewport={false}>

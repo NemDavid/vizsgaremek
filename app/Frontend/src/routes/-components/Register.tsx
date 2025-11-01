@@ -20,7 +20,7 @@ export function SignUpPage({ onSwitch }: SignUpPageProps) {
             <div className="bg-rose-600 text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <img src="/icon.png" alt="Icon" className="rounded-md"/>
             </div>
-            Mi Hirünk
+            Mi Hírünk
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center bg-slate-100 rounded-4xl">

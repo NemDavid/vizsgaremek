@@ -74,9 +74,9 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
         return
       }
       console.log(values)
-      toast.success("Fiók létrehozása sikeres 🎉", {
-        description: "E-mailt küldtünk a fiók megerősítéséhez. Kérjük, ellenőrizd a postaládád!",
-        duration: 12000,
+      toast.success("Fiók aktiválás", {
+        description: "E-mailt küldtünk a fiók megerősítéséhez. Kérjük, ellenőrizd a postaládád! Amennyiben nem találod, nézd meg a spam mappát is. Ha a fiókodat 30 percen belül nem erősíted meg, a fiók automatikusan törlésre kerül.",
+        duration: 30000,
       })
     }
   
@@ -131,7 +131,7 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
           <FieldLabel htmlFor="password">Jelszó</FieldLabel>
           </div>
           <FormControl>
-            <Input id="password" type="password" {...field} required placeholder="Jelszavam123"/>
+            <Input id="password" type="password" {...field} required placeholder="Jelszavam12+"/>
           </FormControl>
           <FormDescription>
             Legalább 8 karakter hosszúnak kell lennie
