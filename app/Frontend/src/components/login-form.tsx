@@ -18,6 +18,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import ReCAPTCHA from "react-google-recaptcha"
+import { useState } from "react"
+import { toast } from "sonner"
 
 type LoginFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void; // 🔹 új prop
@@ -40,7 +43,7 @@ type LoginSchema = z.infer<typeof loginSchema>
 
 export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) 
 {
-
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null)
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -51,10 +54,15 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps)
     mode:"onBlur",
   })
   function onSubmit(values: LoginSchema) {
-
+    if (!captchaValue) {
+      toast.error("Kérjük, erősítsd meg, hogy nem vagy robot!")
+        return
+    }
     console.log(values)
   }
-
+  function handleCaptchaChange(value: string | null) {
+      setCaptchaValue(value)
+  }
   return (
   <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
@@ -126,6 +134,11 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps)
             </button>
           </FieldDescription>
         </Field>
+      <ReCAPTCHA
+        sitekey="6LfOlv4rAAAAACbIEwO_QToOchP5jP07CO5q0SjH"
+        onChange={handleCaptchaChange}
+        className="mx-auto"
+      />
       <Button type="submit">Belépés</Button>
     </form>
   </Form> 

@@ -30,7 +30,7 @@ const registerSchema = z.object({
   username: z.string().min(2, {
     message: "A felhasználónévnek legalább 2 karakter hosszúnak kell lennie.",
   }),
-  email: z.string().email({
+  email: z.email({
     message: "Érvénytelen e-mail cím.",
   }),
   password: z
@@ -69,7 +69,7 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
       mode:"onChange",
     })
     function onSubmit(values: RegisterSchema) {
-        if (!captchaValue) {
+      if (!captchaValue) {
         toast.error("Kérjük, erősítsd meg, hogy nem vagy robot!")
         return
       }
