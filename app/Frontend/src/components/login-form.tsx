@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import z from "zod"
 import {
   Form,
   FormControl,
@@ -21,12 +21,15 @@ import {
 import ReCAPTCHA from "react-google-recaptcha"
 import { useState } from "react"
 import { toast } from "sonner"
+import { useMutation } from "@tanstack/react-query"
+import { loginRequest } from "./axios/axiosClient"
+
 
 type LoginFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void; // 🔹 új prop
 };
 
-const loginSchema = z.object({
+export const loginSchema = z.object({
   username: z.string().min(2, {
     message: "A felhasználónévnek legalább 2 karakter hosszúnak kell lennie.",
   }),
@@ -38,12 +41,24 @@ const loginSchema = z.object({
     .max(21, { message: "A jelszó legfeljebb 21 karakter hosszú lehet." }),
 })
 
+export type LoginSchema = z.infer<typeof loginSchema>
 
-type LoginSchema = z.infer<typeof loginSchema>
+
 
 export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) 
 {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null)
+  const {mutate: Login, isPending} = useMutation({
+    mutationFn: ({data}:{data: LoginSchema}) => loginRequest(data),
+    onSuccess: () => {
+      toast.success("Sikeres bejelentkezés!")
+    },
+    onError: () => {
+      toast.error("Hiba történt a bejelentkezés során.")
+    },
+  })
+
+
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -58,11 +73,17 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps)
       toast.error("Kérjük, erősítsd meg, hogy nem vagy robot!")
         return
     }
+    Login({data: values})
     console.log(values)
   }
   function handleCaptchaChange(value: string | null) {
       setCaptchaValue(value)
   }
+
+  if(isPending){
+    return <div>Loading...</div>
+  }
+
   return (
   <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>

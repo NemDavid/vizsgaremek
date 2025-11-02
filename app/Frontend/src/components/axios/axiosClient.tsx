@@ -1,25 +1,31 @@
 import axios from "axios"
 import z from "zod"
+import type { LoginSchema } from "../login-form"
 
-export const axiosClient = axios.create({
+export const ac = axios.create({
   baseURL: "http://localhost:6769",
   headers: {
     "Content-Type": "application/json",
-  }
+  },
+  // withCredentials: true,
 })
+
+
+
 export type formSchema = z.infer<typeof formSchema>
+
 export const formSchema = z.object({
   username: z.string().min(2, "Túl rövid").max(50),
-  email: z.string().email("Érvénytelen email"),
+  email: z.email("Érvénytelen email"),
   password: z.string().min(6, "Legalább 6 karakter"),
 })
-export type User = {
-  username: string
-  password: string
-  email: string
+
+
+export function loginRequest(data: LoginSchema ) {
+  return ac.post("/api/login",data);
 }
 
-export async function createUser({ user }: { user: formSchema }) {
-  const Response = axiosClient.post("api/user", user);
-  return Response;
+
+export function authStatusRequest() {
+  return ac.get("/api/status", {withCredentials: true});
 }
