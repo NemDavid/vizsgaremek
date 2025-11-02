@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) =>
             updatedAt: "updated_at", 
             scopes: {
                 allPostData:{
-                    attributes: ["ID", "USER_ID", "like", "dislike", "visibility", "content", "created_at", "updated_at"],
+                    attributes: ["ID", "USER_ID", "like", "dislike", "visibility", "has_media", "content", "created_at", "updated_at"],
                 }
             },
         }

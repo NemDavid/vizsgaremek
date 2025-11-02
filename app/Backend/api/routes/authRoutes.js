@@ -8,6 +8,10 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 router.post("/login", authController.login);
 
+router.post("/registerUser", authController.registerUser);
+
+router.get("/confirm", authController.confirmRegistration);
+
 router.get("/status", [ authMiddleware.userIsLoggedIn ], authController.status);
 
 router.delete("/logout", authController.logout);

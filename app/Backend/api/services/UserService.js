@@ -1,4 +1,5 @@
 const { BadRequestError } = require("../errors");
+const authUtils = require("../utilities/authUtils");
 const bcrypt = require("bcrypt");
 const salt = 14;
 
@@ -64,9 +65,28 @@ class UserService
         if (!userData.username) {
             throw new BadRequestError("hiányzó username");
         }
-
-        userData.password_hash = await bcrypt.hash(userData.password, salt);
+        if (!(userData.password.length >= 8 && userData.password.length <= 21)) {
+            throw new BadRequestError("a jelszónak 8-21 karakter között kell lennie");
+        }
+        userData.password_hash = authUtils.hashPassword(userData.password);
         return await this.userRepository.createUser(userData);
+    }
+
+    async registerUser(userData)
+    {
+        if (!userData.email) {
+            throw new BadRequestError("hiányzó email");
+        }
+        if (!userData.password) {
+            throw new BadRequestError("hiányzó password");
+        }
+        if (!userData.username) {
+            throw new BadRequestError("hiányzó username");
+        }
+        if (!(userData.password.length >= 8 && userData.password.length <= 21)) {
+            throw new BadRequestError("a jelszónak 8-21 karakter között kell lennie");
+        }
+        return userData;
     }
 
     async updateUser(userId, updateData) 

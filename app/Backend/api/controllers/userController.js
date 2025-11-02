@@ -1,5 +1,6 @@
 const db = require("../db");
 const { userService } = require("../services")(db);
+const authUtils = require("../utilities/authUtils");
 
 exports.getUsers = async (req, res, next) => {
     try {
@@ -28,11 +29,18 @@ exports.deleteUser = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
     const { email, password, username } = req.body || {};
     try {
-        res.status(200).json(await userService.createUser({
+        const newUser = await userService.createUser({
             email,
             password,
             username,
-        }));
+        });
+
+        const token = authUtils.generateUserToken(newUser);
+
+        res.status(200).json({
+            user: newUser,
+            token
+        });
     } catch (error) {
         next(error);
     }

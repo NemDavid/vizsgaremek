@@ -1,0 +1,18 @@
+(post) http://localhost:6769/api/user => body: password+username+email
+(get) http://localhost:6769/api/users
+(get) http://localhost:6769/api/users/(oldalszám)
+(delete) http://localhost:6769/api/user/(userId-ja)
+(patch) http://localhost:6769/api/user/(userId-ja) => body: mezonevek+ertekek minden mező kell!
+
+(post) http://localhost:6769/api/user_profile => body: USER_ID+first_name+last_name+birth_date+birth_place+schools+bio+avatar_url
+(get) http://localhost:6769/api/user_profiles
+(get) http://localhost:6769/api/user_profiles/(oldalszám)
+(delete) http://localhost:6769/api/user_profile/(userId-ja)
+(patch) http://localhost:6769/api/user_profile/1 => body: mezonevek+ertekek minden mező kell!
+
+(post) http://localhost:6769/api/user_post => body: USER_ID+like+dislike+visibility+content+has_media
+(get) http://localhost:6769/api/user_posts
+(get) http://localhost:6769/api/user_posts/(oldalszám)
+(delete) http://localhost:6769/api/user_post/(userId-ja)
+(patch) http://localhost:6769/api/user_post/(userId-ja) => body: mezonevek+ertekek minden mező kell!
+

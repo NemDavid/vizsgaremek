@@ -24,8 +24,6 @@ class User_ProfileService
 
     async deleteUser_Profile(userId)
     {
-        console.log(userId);
-        
         if (!userId) {
             throw new BadRequestError("hiányzó user ID");
         }

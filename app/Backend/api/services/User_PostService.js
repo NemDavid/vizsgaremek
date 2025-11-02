@@ -75,6 +75,13 @@ class User_PostService
         if (!updateData.content) {
             throw new BadRequestError("hiányzó content");
         }
+        if (!updateData.has_media) {
+            throw new BadRequestError("hiányzó has_meia");
+        }
+        if (!updateData.visibility) {
+            throw new BadRequestError("hiányzó visibility");
+        }
+        
 
         const validUser = await this.userRepository.getUser(updateData.USER_ID);
         if (!validUser) {
