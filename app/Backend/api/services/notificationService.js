@@ -23,7 +23,7 @@ exports.sendRegistrationConfirm = async (user, confirmUrl) => {
       <p>Szia <strong>${user.username}</strong>!</p>
       <p>Kérjük, erősítsd meg a regisztrációdat az alábbi linkre kattintva:</p>
       <a href="${confirmUrl}">👉 Fiók aktiválása</a>
-      <p>A link 15 percig érvényes.</p>
+      <p>A link 30 percig érvényes.</p>
     `;
     const text = `Szia ${user.username}, erősítsd meg a regisztrációd itt: ${confirmUrl}`;
 

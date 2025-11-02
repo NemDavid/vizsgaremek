@@ -46,9 +46,9 @@ exports.confirmRegistration = async (req, res, next) => {
         const createdUser = await userService.createUser({
             username: decoded.username,
             email: decoded.email,
-            password: decoded.password_hash
+            password_hash: decoded.password_hash
         });
-
+        
         const { user_profileService } = require("../services")(db);
         const newProfile = await user_profileService.createUser_Profile({
             USER_ID: createdUser.ID,

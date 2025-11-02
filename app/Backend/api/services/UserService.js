@@ -56,19 +56,6 @@ class UserService
 
     async createUser(userData)
     {
-        if (!userData.email) {
-            throw new BadRequestError("hiányzó email");
-        }
-        if (!userData.password) {
-            throw new BadRequestError("hiányzó password");
-        }
-        if (!userData.username) {
-            throw new BadRequestError("hiányzó username");
-        }
-        if (!(userData.password.length >= 8 && userData.password.length <= 21)) {
-            throw new BadRequestError("a jelszónak 8-21 karakter között kell lennie");
-        }
-        userData.password_hash = authUtils.hashPassword(userData.password);
         return await this.userRepository.createUser(userData);
     }
 

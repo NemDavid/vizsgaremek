@@ -43,29 +43,11 @@ class User_ProfileService
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
-        if (!userData.USER_ID) {
-            throw new BadRequestError("hiányzó USER_ID");
-        }
         if (!userData.first_name) {
             throw new BadRequestError("hiányzó first_name");
         }
         if (!userData.last_name) {
             throw new BadRequestError("hiányzó last_name");
-        }
-        if (!userData.birth_date) {
-            throw new BadRequestError("hiányzó birth_date");
-        }
-        if (!userData.birth_place) {
-            throw new BadRequestError("hiányzó birth_place");
-        }
-        if (!userData.schools) {
-            throw new BadRequestError("hiányzó schools");
-        }
-        if (!userData.bio) {
-            throw new BadRequestError("hiányzó bio");
-        }
-        if (!userData.avatar_url) {
-            throw new BadRequestError("hiányzó avatar_url");
         }
 
         return await this.user_profileRepository.createUser_Profile(userData);

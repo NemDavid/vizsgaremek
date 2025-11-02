@@ -20,6 +20,7 @@ import {
 import { RegisterConfirmRequest } from "./axios/axiosClient"
 import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
@@ -28,11 +29,11 @@ type SignupFormProps = React.ComponentProps<"form"> & {
 
 
 export const confirmSchema = z.object({
-  firstName: z.string().min(1, { message: "Kérjük add meg a keresztneved!" }),
-  lastName: z.string().min(1, { message: "Kérjük add meg a vezetékneved!" }),
+  first_name: z.string().min(1, { message: "Kérjük add meg a keresztneved!" }),
+  last_name: z.string().min(1, { message: "Kérjük add meg a vezetékneved!" }),
   schools: z.string().optional(),
-  birthdate: z.string().optional(),
-  birthPlace: z.string().optional(),
+  birth_date: z.string().optional(),
+  birth_place: z.string().optional(),
   avatar: z.any().refine(file => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.").optional(),
   bio: z.string().optional(),
 })
@@ -40,6 +41,7 @@ export const confirmSchema = z.object({
 export type ConfirmSchema = z.infer<typeof confirmSchema>
 
 export function ProfilSetupForm({ className, onSwitch, token, ...props }: SignupFormProps) {
+  const nav = useNavigate();
   const {mutate: confirm, isPending} = useMutation({
     mutationFn: ({data}:{data: ConfirmSchema}) => RegisterConfirmRequest(data,token),
     onError: () => {
@@ -49,17 +51,18 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
       toast.success("Fiók létrehozása sikeres 🎉", {
         description: "Kérjük, ellenőrizd a postaládád!",
         duration: 12000,
-    })
+      })
+      nav({to: '/'})
     }
   })
   const form = useForm<ConfirmSchema>({
     resolver: zodResolver(confirmSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       schools: "",
-      birthdate: "",
-      birthPlace: "",
+      birth_date: "",
+      birth_place: "",
       avatar: "",
       bio: "",
     },
@@ -85,7 +88,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
       {/* First Name */}
       <FormField
         control={form.control}
-        name="firstName"
+        name="first_name"
         render={({ field }) => (
           <FormItem>
             <FormLabel htmlFor="firstName">Keresztnév *</FormLabel>
@@ -99,12 +102,12 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
 
       <FormField
         control={form.control}
-        name="lastName"
+        name="last_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel htmlFor="lastName">Vezetéknév *</FormLabel>
+            <FormLabel htmlFor="last_name">Vezetéknév *</FormLabel>
             <FormControl>
-              <Input id="lastName" {...field} required />
+              <Input id="last_name" {...field} required />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -128,7 +131,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
 
       <FormField
         control={form.control}
-        name="birthdate"
+        name="birth_date"
         render={({ field }) => (
           <FormItem>
             <FormLabel htmlFor="birthdate">Születési dátum</FormLabel>
@@ -143,7 +146,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
 
       <FormField
         control={form.control}
-        name="birthPlace"
+        name="birth_place"
         render={({ field }) => (
           <FormItem>
             <FormLabel htmlFor="birthPlace">Születési hely</FormLabel>
