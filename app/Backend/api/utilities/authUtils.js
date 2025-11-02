@@ -27,7 +27,7 @@ exports.setCookie = (res, cookieName, value) =>
         httpOnly: true,
         maxAge: 1000 * 60 * 60, // 1 hr
         secure: process.env.NODE_ENV == "production",
-        sameSite: "none",
+        sameSite: "lax",
     });
 }
 

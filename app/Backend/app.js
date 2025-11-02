@@ -11,7 +11,10 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors()); // ez engedélyezi az összes origin-t, azaz bárhonnan jöhet kérés
+app.use(cors({
+    credentials: true,
+    origin: "http://localhost:3000/",
+}));
 
 app.use(cookieParser());
 

@@ -1,22 +1,12 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const { userService } = require("../services")(db);
+const { userService, user_profileService } = require("../services")(db);
 const notificationService = require("../services/notificationService");
 const authUtils = require("../utilities/authUtils");
 
 // --- 1. lépés: regisztráció form adatok fogadása ---
 exports.registerUser = async (req, res, next) => {
     const { email, password, confirm_password, username } = req.body || {};
-
-    // if (!email || !password || !username) {
-    //     return res.status(400).json({ message: "Kötelező mezők hiányoznak." });
-    // }
-    // if (password !== confirm_password) {
-    //     return res.status(400).json({ message: "A jelszavak nem egyeznek." });
-    // }
-    // if (password.length < 8 || password.length > 21) {
-    //     return res.status(400).json({ message: "A jelszónak legalább 8 és kevesebb mint 21 karakter hosszúnak kell lennie." });
-    // }
 
     try {
         // Csak validált adatok előkészítése
@@ -42,9 +32,10 @@ exports.registerUser = async (req, res, next) => {
     }
 };
 
-// --- 2. lépés: e-mailben kapott token alapján user létrehozása ---
+// --- 2. lépés: e-mailben kapott token alapján user + profil létrehozása ---
 exports.confirmRegistration = async (req, res, next) => {
-    const { token } = req.query;
+    const { token } = req.params;
+    const { first_name, last_name, birth_date, birth_place, schools, bio, avatar_url } = req.body || {};
 
     try {
         const decoded = authUtils.verifyToken(token);
@@ -52,19 +43,28 @@ exports.confirmRegistration = async (req, res, next) => {
             return res.status(400).json({ message: "Érvénytelen vagy lejárt token." });
         }
 
-        // Tokenből kivett adatokkal létrehozás
         const createdUser = await userService.createUser({
             username: decoded.username,
             email: decoded.email,
-            password: decoded.password_hash // hashed password a tokenben
+            password: decoded.password_hash
         });
 
-        const finalToken = authUtils.generateUserToken(createdUser);
-        authUtils.setCookie(res, "user_token", finalToken);
+        const { user_profileService } = require("../services")(db);
+        const newProfile = await user_profileService.createUser_Profile({
+            USER_ID: createdUser.ID,
+            first_name,
+            last_name,
+            birth_date,
+            birth_place,
+            schools,
+            bio,
+            avatar_url
+        });
 
         res.status(201).json({
-            message: "A fiókod sikeresen aktiválva!",
-            token: finalToken
+            message: "A fiókod és a profilod sikeresen létrehozva!",
+            user: createdUser,
+            profile: newProfile
         });
 
     } catch (error) {
