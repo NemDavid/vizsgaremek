@@ -7,7 +7,7 @@ export const ac = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  // withCredentials: true,
+  withCredentials: true,
 })
 
 
@@ -27,5 +27,5 @@ export function loginRequest(data: LoginSchema ) {
 
 
 export function authStatusRequest() {
-  return ac.get("/api/status", {withCredentials: true});
+  return ac.get("/api/status");
 }
