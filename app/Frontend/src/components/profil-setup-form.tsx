@@ -17,14 +17,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-
+import { RegisterConfirmRequest } from "./axios/axiosClient"
 import { toast } from "sonner"
+import { useMutation } from "@tanstack/react-query"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
+  token: string; // <-- hozzáadva ide
 };
 
-const registerSchema = z.object({
+
+export const confirmSchema = z.object({
   firstName: z.string().min(1, { message: "Kérjük add meg a keresztneved!" }),
   lastName: z.string().min(1, { message: "Kérjük add meg a vezetékneved!" }),
   schools: z.string().optional(),
@@ -34,12 +37,23 @@ const registerSchema = z.object({
   bio: z.string().optional(),
 })
 
-type RegisterSchema = z.infer<typeof registerSchema>
+export type ConfirmSchema = z.infer<typeof confirmSchema>
 
-export function ProfilSetupForm({ className, onSwitch, ...props }: SignupFormProps) {
-
-  const form = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+export function ProfilSetupForm({ className, onSwitch, token, ...props }: SignupFormProps) {
+  const {mutate: confirm, isPending} = useMutation({
+    mutationFn: ({data}:{data: ConfirmSchema}) => RegisterConfirmRequest(data,token),
+    onError: () => {
+      toast.error("Hiba történt a Regisztráció során. Probáld újra.")
+    },
+    onSuccess:()=>{
+      toast.success("Fiók létrehozása sikeres 🎉", {
+        description: "Kérjük, ellenőrizd a postaládád!",
+        duration: 12000,
+    })
+    }
+  })
+  const form = useForm<ConfirmSchema>({
+    resolver: zodResolver(confirmSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -51,14 +65,14 @@ export function ProfilSetupForm({ className, onSwitch, ...props }: SignupFormPro
     },
     mode: "onChange",
   })
-  function onSubmit(values: RegisterSchema) {
+  function onSubmit(values: ConfirmSchema) {
+    confirm({data: values})
     console.log(values)
-    toast.success("Fiók létrehozása sikeres 🎉", {
-      description: "E-mailt küldtünk a fiók megerősítéséhez. Kérjük, ellenőrizd a postaládád!",
-      duration: 12000,
-    })
+    
   }
-  
+  if(isPending){
+    return <div>Loading...</div>
+  }
   return (
   <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>

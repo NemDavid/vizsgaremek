@@ -10,7 +10,7 @@ router.post("/login", authController.login);
 
 router.post("/registerUser", authController.registerUser);
 
-router.post("/confirm", authController.confirmRegistration);
+router.post("/confirm/:token", authController.confirmRegistration);
 
 router.get("/status", [ authMiddleware.userIsLoggedIn ], authController.status);
 

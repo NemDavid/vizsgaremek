@@ -23,6 +23,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
 import { loginRequest } from "./axios/axiosClient"
+import { useNavigate } from "@tanstack/react-router"
 
 
 type LoginFormProps = React.ComponentProps<"form"> & {
@@ -47,11 +48,13 @@ export type LoginSchema = z.infer<typeof loginSchema>
 
 export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) 
 {
+  const nav = useNavigate()
   const [captchaValue, setCaptchaValue] = useState<string | null>(null)
   const {mutate: Login, isPending} = useMutation({
     mutationFn: ({data}:{data: LoginSchema}) => loginRequest(data),
     onSuccess: () => {
       toast.success("Sikeres bejelentkezés!")
+      nav({to: "/", reloadDocument: true});
     },
     onError: () => {
       toast.error("Hiba történt a bejelentkezés során.")
@@ -71,10 +74,12 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps)
   function onSubmit(values: LoginSchema) {
     if (!captchaValue) {
       toast.error("Kérjük, erősítsd meg, hogy nem vagy robot!")
-        return
+      return
     }
-    Login({data: values})
-    console.log(values)
+    else{
+      Login({data: values})
+      console.log(values) 
+    }
   }
   function handleCaptchaChange(value: string | null) {
       setCaptchaValue(value)

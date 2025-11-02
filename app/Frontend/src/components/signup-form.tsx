@@ -21,12 +21,14 @@ import {
 import ReCAPTCHA from "react-google-recaptcha"
 import { toast } from "sonner"
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { RegisterRequest } from "./axios/axiosClient"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
 };
 
-const registerSchema = z.object({
+export const registerSchema = z.object({
   username: z.string().min(2, {
     message: "A felhasználónévnek legalább 2 karakter hosszúnak kell lennie.",
   }),
@@ -50,11 +52,22 @@ const registerSchema = z.object({
 });
 
 
-type RegisterSchema = z.infer<typeof registerSchema>
+export type RegisterSchema = z.infer<typeof registerSchema>
 
 export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null)
-
+  const {mutate: register, isPending} = useMutation({
+    mutationFn: ({data}:{data: RegisterSchema}) => RegisterRequest(data),
+    onError: () => {
+      toast.error("Hiba történt a Regisztráció során. Probáld újra.")
+    },
+    onSuccess:()=>{
+      toast.success("Fiók aktiválás", {
+          description: "E-mailt küldtünk a fiók megerősítéséhez. Kérjük, ellenőrizd a postaládád! Amennyiben nem találod, nézd meg a spam mappát is. Ha a fiókodat 30 percen belül nem erősíted meg, a fiók automatikusan törlésre kerül.",
+          duration: 30000,
+      })
+    }
+  })
   function handleCaptchaChange(value: string | null) {
     setCaptchaValue(value)
   }
@@ -73,13 +86,14 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
         toast.error("Kérjük, erősítsd meg, hogy nem vagy robot!")
         return
       }
-      console.log(values)
-      toast.success("Fiók aktiválás", {
-        description: "E-mailt küldtünk a fiók megerősítéséhez. Kérjük, ellenőrizd a postaládád! Amennyiben nem találod, nézd meg a spam mappát is. Ha a fiókodat 30 percen belül nem erősíted meg, a fiók automatikusan törlésre kerül.",
-        duration: 30000,
-      })
+      else{
+        register({data: values})
+        console.log(values)
+      }
     }
-  
+  if(isPending){
+    return <div>Loading...</div>
+  }
   return (
     <Form {...form}>
   <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>

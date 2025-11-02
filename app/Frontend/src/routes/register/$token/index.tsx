@@ -6,6 +6,8 @@ export const Route = createFileRoute('/register/$token/')({
 })
 
 function RouteComponent() {
+  const params = Route.useParams()
+  const token = params.token
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-slate-200">
       <div className="w-full max-w-sm bg-slate-100 p-6 rounded-4xl">
@@ -17,7 +19,7 @@ function RouteComponent() {
                 Mi Hírünk
             </h1>
         </div>
-        <ProfilSetupForm />
+        <ProfilSetupForm token={token} />
       </div>
     </div>
   )
