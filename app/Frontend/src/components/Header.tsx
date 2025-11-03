@@ -8,6 +8,20 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { logoutRequest } from "./axios/axiosClient";
+import { useMutation } from "@tanstack/react-query";
 
 const components: { title: string; to: string; description: string }[] = [
   {
@@ -36,14 +50,21 @@ const components: { title: string; to: string; description: string }[] = [
 ]
 
 export default function Header() {
-  
+  const {mutate: logut} = useMutation({
+    mutationFn: () => logoutRequest(),
+    onSuccess:() => {
+      window.location.reload();
+    }
+  })
+
   return (
     <header className="p-4 bg-red-600 text-white flex items-center justify-between">
-      <h1 className="text-3xl font-bold text-left">Mi Hírünk</h1>
+      <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
 
       <div className="flex-1 flex justify-self-center">
         <NavigationMenu viewport={false}>
         <NavigationMenuList className="flex gap-6 justify-center">
+
           {/* Kezdőlap */}
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-600`}>
@@ -80,6 +101,25 @@ export default function Header() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
+      </div>
+      <div className="bg-red-300 rounded-md p-1">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="bg-slate-200 text-black hover:text-white hover:bg-slate-600">Kijelentkezés</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Biztos kijelentkezel?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Amennyiben kijelentkezel, újra be kell jelentkezned a fiókodba.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Mégse</AlertDialogCancel>
+              <AlertDialogAction onClick={()=> logut()}>Kijelentkezés</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </header>
   )

@@ -37,3 +37,7 @@ export function RegisterConfirmRequest(data: ConfirmSchema,token: string ) {
 export function authStatusRequest() {
   return ac.get("/api/status");
 }
+
+export function logoutRequest() {
+  return ac.delete("/api/logout");
+}
