@@ -1,3 +1,5 @@
+
+import { FriendList } from '@/components/FriendList'
 import Header from '@/components/Header'
 import { PostAccord } from '@/components/post-according'
 import type { Post } from '@/components/post-according'
@@ -17,36 +19,10 @@ export function MainPage() {
   <Header />
   <div className="flex flex-col bg-white text-black">
     {/* Online barátok */}
-    <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-gray-50">
-      {[
-          "Murrár Bálint",
-          "Hartwig-Matos Dávid",
-          "Petró Ádám",
-          "Kássa Gergő",
-          "Zsozéatya",
-          "Farkas Norbert ",
-          "Daniel Peter Szabo",
-          "Hunor Huszár",
-          "Fekete Bogi",
-          "Földi Dominik",
-          "Bakai Erik",
-          
-        ].map((name, i) => (
-            <div
-            key={i}
-            className="flex items-center bg-gray-200 hover:bg-red-600 hover:text-white cursor-pointer transition rounded-l-full rounded-r-md pr-3 min-w-[180px]"
-            >
-          {/* Avatar teljesen kerek */}
-          <img
-              src="/Lakatos_Dszumandzsi.png"
-              alt={name}
-              className="w-10 h-10 rounded-full object-cover"
-              />
-          {/* Név egy sorban */}
-          <span className="text-sm ml-2 truncate">{name.split(" ")[1]} {name.split(" ")[0]}</span>
-        </div>
-      ))}
-    </div>
+
+      <FriendList/>
+
+    
 
       {/* Háromoszlopos layout */}
       <div className="flex flex-1">
