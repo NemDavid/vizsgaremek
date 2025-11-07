@@ -1,63 +1,93 @@
-# Projekt README
-(https://download-directory.github.io/)
+# 💻 Mi Hírünk (vizsga remek)
 
-**Készítők:**  
-Hartwig-Matos Dávid Gábor  
-Murrár Bálint  
+Ez a projekt egy webes alkalmazás fejlesztését mutatja be, amely során a célunk egy **modern, felhasználóbarát és jól strukturált rendszer** létrehozása volt.  
+A fejlesztés során külön figyelmet fordítottunk a **frontend és backend integrációjára**, valamint az **adatbázis kezelésére és API kapcsolatokra**.
+---
+A **Mihírünk** egy új, modern szociális platform, amelynek célja, hogy az emberek **valós időben oszthassák meg gondolataikat, élményeiket és híreiket** egymással.  
+Az oldal képes **real-time posztolásra és posztok olvasására**, így mindig naprakészen láthatod, mit osztanak meg mások.  
+A jövőben tervezzük a **valós idejű chat funkció** bevezetését is, hogy még interaktívabb közösségi élményt nyújtsunk. 💬  
+
+A projekt célja, hogy:
+- Bemutassa a teljes fejlesztési folyamatot az alapoktól a működő prototípusig  
+- Gyakorlatban alkalmazza a **React**, **Node.js**, és **SQL** alapú technológiákat  
+- Tapasztalatot szerezzen a csapatmunka, GitHub verziókezelés és API-fejlesztés terén  
 
 ---
 
-## 09.05
+## 👥 Készítők
 
-**Tervek:**  
-- Alap UI és felület elhelyezés (HMD) ✔️  
-- Alap oldalak amik kellenek (HMD) ✔️  
-- Adatbázis terv (MB) ✔️  
-- API képességek (MB) ✔️  
+- **Hartwig-Matos Dávid Gábor** *(Frontend, UI, React)*  
+- **Murrár Bálint** *(Backend, Adatbázis, API)*  
 
 ---
 
-## 09.12
+## 🗓️ Fejlesztési napló
 
-**Tervek:**  
-- Prototípus – weboldal szerkezetének megvalósítása (HMD)  ✔️
-- GitHub létrehozása, beállítások, feltöltés megkezdése (MB)  ✔️
-
----
-
-## 09.19
-
-**Tervek:**  
--	BackEnd adatbazis comunikáció (MB) ✔️
--	BackEnd alapok (HMD) ✔️
--	Adatbázis alapok (MB) ✔️
+### **2025.09.12**
+**Tervek és megvalósítások:**
+- Alap UI és felület elhelyezés – ✔️ *(HMD)*
+- Alap oldalak elkészítése – ✔️ *(HMD)*
+- Adatbázis terv – ✔️ *(MB)*
+- API képességek megtervezése – ✔️ *(MB)*
 
 ---
 
-## 09.26
-
-**Tervek:**  
-- Táblákat visszaadja adatbázisból (admin felült alapjai) (MB) ✔️
-- Táblákat  deletelni, createlni (MB) ✔️
-- Frontend külsejét kezdjük ell (HMD) ✔️
+### **2025.09.19**
+**Tervek és megvalósítások:**
+- Prototípus: weboldal szerkezetének megvalósítása – ✔️ *(HMD)*
+- GitHub létrehozása, beállítások, feltöltés megkezdése – ✔️ *(MB)*
 
 ---
 
-## 10.03
-
-**Tervek:**  
-- Táblákat lehessen módosítani (MB) ✔
-- React adminpanel alapja (HMD) ✔
-- Regisztració és adatai továbbküldése adatbázisba (HMD) ✔
-
----
-## 10.10
-
-**Tervek:**  
--	Frontend tisztogatása (backendhez) (HMD)
--	Frontent külsöleg simitások (szinezések) (Hmd) 
-- Api fejlesztése frontendhez (MB)
+### **2025.09.26**
+**Tervek és megvalósítások:**
+- BackEnd–adatbázis kommunikáció – ✔️ *(MB)*
+- BackEnd alapok kialakítása – ✔️ *(HMD)*
+- Adatbázis alapok létrehozása – ✔️ *(MB)*
 
 ---
- 
 
+### **2025.10.03**
+**Tervek és megvalósítások:**
+- Táblák visszaadása adatbázisból (admin felület alapjai) – ✔️ *(MB)*
+- Táblák törlése és létrehozása – ✔️ *(MB)*
+- Frontend design elkezdése – ✔️ *(HMD)*
+
+---
+
+### **2025.10.10**
+**Tervek és megvalósítások:**
+- Táblák módosítása – ✔️ *(MB)*
+- React adminpanel alapja – ✔️ *(HMD)*
+- Regisztráció és adatbázis kommunikáció – ✔️ *(HMD)*
+
+---
+
+### **2025.10.17**
+**Tervek:**
+- Frontend tisztogatása backendhez – *(HMD)*
+- Külső megjelenés finomítása (színezés, design) – *(HMD)*
+- API fejlesztése frontendhez – *(MB)*
+
+---
+
+## ⚙️ Használt technológiák
+
+- **Frontend:** React.js, HTML5, CSS3, tailwindcss, shadcn  
+- **Backend:** Node.js, Express, sequlize, nodemailer, dotenv, cookieparser, JWT,  
+- **Adatbázis:** MySQL  
+- **Verziókezelés:** Git, GitHub  
+
+---
+
+## 🚀 Fejlesztési célok összefoglalása
+
+- Teljes körű webes alkalmazás fejlesztése frontendtől a backendig  
+- Strukturált, átlátható kód és adatkezelés  
+- Reszponzív és esztétikus felhasználói felület  
+- Stabil adatbázis-kommunikáció és API-réteg kialakítása  
+
+---
+
+✨ *Készítette: Hartwig-Matos Dávid Gábor & Murrár Bálint*  
+📅 *Fejlesztés kezdete: 2025. szeptember*
