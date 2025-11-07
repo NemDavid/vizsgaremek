@@ -71,6 +71,18 @@ A projekt célja, hogy:
 
 ---
 
+### **2025.11.14**
+**Tervek:**
+- Frontend tisztogatása (backendhez) – *(HMD)*
+- Frontend Login (backendhez) - *(HMD)*
+- BackEnd Login - *(MB)*
+- Frontend Post - *(MB)*
+- BackEnd Post -*(HMD)*
+- Frontend Ui rendezései componensekbe szedése -*(HMD)*
+- Frontend aloldalak linkelése létrehozzása - *(MB)*
+
+---
+
 ## ⚙️ Használt technológiák
 
 - **Frontend:** React.js, HTML5, CSS3, tailwindcss, shadcn  
