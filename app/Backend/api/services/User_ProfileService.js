@@ -13,6 +13,14 @@ class User_ProfileService
         return await this.user_profileRepository.getUser_Profiles();
     }
 
+    async getUser_Profile(userId)
+    {
+        if (!userId) {
+            throw new BadRequestError("hiányzó user ID");
+        }
+        return await this.user_profileRepository.getUser_Profile(userId);
+    }
+
     async getUser_ProfilesByPage(page)
     {
         if (!page) {

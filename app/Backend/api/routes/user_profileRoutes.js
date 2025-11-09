@@ -10,6 +10,8 @@ router.param("userId", paramHandler.paramUserId)
 
 router.get("/user_profiles", user_profileController.getUser_Profiles);
 
+router.get("/user_profile/:userId", user_profileController.getUser_Profile);
+
 router.get("/user_profiles/:paramPage", user_profileController.getUser_ProfilesByPage);
 
 

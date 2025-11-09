@@ -10,6 +10,14 @@ exports.getUser_Profiles = async (req, res, next) => {
     }
 };
 
+exports.getUser_Profile = async (req, res, next) => {
+    try {
+        res.status(200).json(await user_profileService.getUser_Profile(req.userId));
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.getUser_ProfilesByPage = async (req, res, next) => {
     try {
         res.status(200).json(await user_profileService.getUser_ProfilesByPage(req.paramPage));

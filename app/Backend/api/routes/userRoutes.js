@@ -10,6 +10,8 @@ router.param("paramPage", paramHandler.paramPage);
 
 router.get("/users", userController.getUsers);
 
+router.get("/user/:userId", userController.getUser);
+
 router.get("/users/:paramPage", userController.getUsersByPage);
 
 
