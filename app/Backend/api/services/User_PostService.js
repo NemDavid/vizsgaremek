@@ -75,8 +75,8 @@ class User_PostService
         if (!updateData.content) {
             throw new BadRequestError("hiányzó content");
         }
-        if (!updateData.has_media) {
-            throw new BadRequestError("hiányzó has_meia");
+        if (!updateData.media_url) {
+            throw new BadRequestError("hiányzó media_url");
         }
         if (!updateData.visibility) {
             throw new BadRequestError("hiányzó visibility");
@@ -91,7 +91,7 @@ class User_PostService
         const affectedRows = await this.user_postRepository.updateUser_Post(postId, updateData);
 
         if (!affectedRows) {
-            return new BadRequestError("post nem található", {details: `postId: ${postId}`})
+            throw new BadRequestError("post nem található", {details: `postId: ${postId}`})
         }
 
         const updateUser_Post = await this.user_postRepository.getUser_Post_ByID(postId);

@@ -13,7 +13,7 @@ exports.getUsers_posts_reactions = async (req, res, next) => {
 
 exports.deleteUsers_posts_reaction = async (req, res, next) => {
     try {
-        res.status(200).json(await user_post_reactionService.deleteUsers_posts_reaction(req.userId));
+        res.status(200).json(await user_post_reactionService.deleteUsers_posts_reaction(req.itemId));
     } catch (error) {
         next(error);
     }
@@ -36,8 +36,9 @@ exports.createUsers_posts_reaction = async (req, res, next) => {
 
 exports.updateUsers_posts_reaction = async (req, res, next) => {
     try {
-        const updatedUser = await user_post_reactionService.updateUsers_posts_reaction(req.itemId, req.body);
-        res.status(200).json(updatedUser);
+        const updatedUser_Post_Reaction = await user_post_reactionService.updateUsers_posts_reaction(req.itemId, req.body);
+        
+        res.status(200).json(updatedUser_Post_Reaction);
     } catch (error) {
         next(error);
     }

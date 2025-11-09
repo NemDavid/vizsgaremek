@@ -89,7 +89,7 @@ class User_ProfileService
         const affectedRows = await this.user_profileRepository.updateUser_Profile(userId, updateData);
 
         if (!affectedRows) {
-            return BadRequestError("user profile nem található", {details: `userId: ${userId}`})
+            throw new BadRequestError("user profile nem található", {details: `userId: ${userId}`})
         }
 
         const updateUser_Profile = await this.user_profileRepository.getUser_Profile(userId);

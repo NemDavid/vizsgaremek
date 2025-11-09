@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { DbError } = require("../errors");
 
 class User_PostRepository {
@@ -48,6 +47,8 @@ class User_PostRepository {
 
     async createUser_Post(postData) {
         try {
+            console.log(postData);
+            
             return await this.User_Post.create(postData);
         } catch (error) {
             throw new DbError("Failed to create user post object", {

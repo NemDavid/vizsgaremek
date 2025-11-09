@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) =>
             USER_ID: 
             {
                 type: DataTypes.BIGINT,
-                primaryKey: true,
+                unique: true,
                 allowNull: false
             },
 

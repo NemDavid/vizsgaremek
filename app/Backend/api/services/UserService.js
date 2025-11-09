@@ -93,7 +93,7 @@ class UserService
         const affectedRows = await this.userRepository.updateUser(userId, updateData);
 
         if (!affectedRows) {
-            return BadRequestError("user nem található", {details: `userId: ${userId}`})
+            throw new BadRequestError("user nem található", {details: `userId: ${userId}`})
         }
 
         const updateUser = await this.userRepository.getUser(userId);

@@ -9,6 +9,10 @@ class User_Post_ReactionService {
         return await this.user_post_reactionRepository.getUsers_posts_reactions();
     }
 
+    async getUsers_posts_reaction(itemId) {
+        return await this.user_post_reactionRepository.getUsers_posts_reaction(itemId);
+    }
+
     async deleteUsers_posts_reaction(itemId) {
         if (!itemId) {
             throw new BadRequestError("hiányzó item ID");
@@ -24,19 +28,6 @@ class User_Post_ReactionService {
 
     async createUsers_posts_reaction(user_post_reactionData) {
         return await this.user_post_reactionRepository.createUsers_posts_reaction(user_post_reactionData);
-    }
-
-    async registerUser(user_post_reactionData) {
-        if (!user_post_reactionData.USER_ID) {
-            throw new BadRequestError("hiányzó user id");
-        }
-        if (!user_post_reactionData.POST_ID) {
-            throw new BadRequestError("hiányzó post id");
-        }
-        if (!user_post_reactionData.reaction) {
-            throw new BadRequestError("hiányzó reaction");
-        }
-        return user_post_reactionData;
     }
 
     async updateUsers_posts_reaction(itemId, updateData) {
@@ -55,7 +46,7 @@ class User_Post_ReactionService {
         const affectedRows = await this.user_post_reactionRepository.updateUsers_posts_reaction(itemId, updateData);
 
         if (!affectedRows) {
-            return BadRequestError("user post reakcio nem található", { details: `item: ${updateData}` })
+            throw new BadRequestError("user post reakcio nem található", { details: `item: ${updateData}` })
         }
 
         const updateUser_post_reaction = await this.user_post_reactionRepository.getUsers_posts_reaction(itemId);
@@ -63,7 +54,7 @@ class User_Post_ReactionService {
         if (!updateUser_post_reaction) {
             throw new BadRequestError("a frissitett user post reakcio nem található", { details: `item: ${updateData}` });
         }
-        return updateUser;
+        return updateUser_post_reaction;
     }
 
 }

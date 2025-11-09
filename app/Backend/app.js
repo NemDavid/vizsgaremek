@@ -22,6 +22,7 @@ const authRoutes = require("./api/routes/authRoutes");
 const userRoutes = require("./api/routes/userRoutes");
 const user_profileRoutes = require("./api/routes/user_profileRoutes");
 const user_postRouter = require("./api/routes/user_postRoutes");
+const user_post_reactionRoutes = require("./api/routes/user_post_reactionRoutes");
 
 const errorHandler = require("./api/middlewares/errorHandler");
 
@@ -35,6 +36,7 @@ api.use("/", authRoutes);
 api.use("/", userRoutes);
 api.use("/", user_profileRoutes);
 api.use("/", user_postRouter);
+api.use("/", user_post_reactionRoutes);
 
 api.use(errorHandler.notFound);
 

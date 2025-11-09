@@ -34,15 +34,16 @@ exports.deleteUser_Post = async (req, res, next) => {
 };
 
 exports.createUser_Post = async (req, res, next) => {
-    const { USER_ID, like, dislike, visibility, content, has_media } = req.body || {};
+    const { USER_ID, like, title, dislike, visibility, content, media_url } = req.body || {};
     try {
         res.status(200).json(await user_postService.createUser_Post({
             USER_ID, 
             like, 
+            title,
             dislike, 
             visibility, 
             content, 
-            has_media
+            media_url
         }));
     } catch (error) {
         next(error);

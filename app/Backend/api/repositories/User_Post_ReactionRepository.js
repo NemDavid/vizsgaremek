@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const { DbError } = require("../errors");
 
 class User_Post_ReactionRepository {
@@ -6,52 +7,27 @@ class User_Post_ReactionRepository {
         this.sequelize = db.sequelize;
     }
 
-    async getUsers() {
+    async getUsers_posts_reactions() {
         try {
-            return await this.User.scope("allUserData").findAll({
-                include: [
-                    {
-                        model: this.User_Profile,
-                        as: "profile",
-                        scope: "allUser_ProfileData"
-                    }
-                ]
+            return await this.User_Post_Reaction.scope("allUserPostReactionData").findAll();
+        } catch (error) {
+            throw new DbError("Failed to fetch users", { details: error.message });
+        }
+    }
+
+    async getUsers_posts_reaction(itemId) {
+        try {
+            return await this.User_Post_Reaction.scope("allUserPostReactionData").findOne({ 
+                where: { ID: itemId }
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
         }
     }
 
-    async getUserByUsernameEmail(username, email) {
+    async deleteUsers_posts_reaction(itemId) {
         try {
-            return await this.User.scope("allUserData").findOne({
-                where: [ { 
-                    username: username,
-                    email: email
-                } ]  
-            });
-        } catch (error) {
-            throw new DbError("Failed to fetch users", { details: error.message });
-        }
-    }
-
-    async getUsersByPage(page) {
-        const limit = 25;
-        const offset = (page - 1) * limit;
-        try {
-            return await this.User.scope("allUserData").findAll({
-                limit,
-                offset,
-                order: [["ID", "ASC"]],
-            });
-        } catch (error) {
-            throw new DbError("Rossz paraméter", { details: error.message });
-        }
-    }
-
-    async deleteUser(userId) {
-        try {
-            const deletedRow = await this.User.destroy({ where: { ID: userId } });
+            const deletedRow = await this.User_Post_Reaction.destroy({ where: { ID: itemId } });
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
@@ -59,37 +35,28 @@ class User_Post_ReactionRepository {
         }
     }
 
-    async createUser(userData) {
+    async createUsers_posts_reaction(user_post_reactionData) {
+        console.log(user_post_reactionData);
         
         try {
-            return await this.User.create(userData);
+            return await this.User_Post_Reaction.create(user_post_reactionData);
         } catch (error) {
-            throw new DbError("Failed to create user object", {
+            throw new DbError("Failed to create user_post_reactionData object", {
                 details: error.message,
-                data: userData,
+                data: user_post_reactionData,
             });
         }
     }
 
-    async updateUser(userId, updateData) {
+    async updateUsers_posts_reaction(itemId, updateData) {
         try {
-            const [affectedRows] = await this.User.update(updateData, {
-                where: { ID: userId },
+            const [affectedRows] = await this.User_Post_Reaction.update(updateData, {
+                where: { ID: itemId },
             });
-
+            
             return affectedRows;
         } catch (error) {
             throw new DbError("Sikertelen frissítés", { details: error.message });
-        }
-    }
-    
-    async getUser(userId) {
-        try {
-            return await this.User.scope("allUserData").findOne({
-                where: [ { ID: userId } ]  
-            });
-        } catch (error) {
-            throw new DbError("Failed to fetch users", { details: error.message });
         }
     }
 }
