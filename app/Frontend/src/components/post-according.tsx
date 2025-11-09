@@ -18,13 +18,14 @@ import { Button } from "@/components/ui/button"
 
 
 export type Post = {
-    header: string,
-    hasMedia: boolean,
-    content: string,
-    created_at: Date,
-    updated_at: Date,
+    USER_ID: bigint,
     like: number,
     dislike: number,
+    content: string,
+    title: string,
+    media_url: string,
+    created_at: Date,
+    updated_at: Date,
 }
 
 export function PostAccord({post,name}:{post:Post,name:string})
@@ -43,7 +44,7 @@ export function PostAccord({post,name}:{post:Post,name:string})
                         </AccordionTrigger>
                         <AccordionContent>
                             {post.content}
-                            {post.hasMedia ? (
+                            {post.media_url.length > 0 ?  (
                                 <img
                                 src="/Lakatos_Dszumandzsi.png" // helyettesítsd a saját képed elérési útvonalával
                                 alt="Post media"

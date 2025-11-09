@@ -4,14 +4,16 @@ import Header from '@/components/Header'
 import { PostAccord } from '@/components/post-according'
 import type { Post } from '@/components/post-according'
 
+
 const postom: Post = {
-  header: "sajt",
-  content: "isten áld meg a magyart",
-  hasMedia: true,
-  created_at: new Date(),
-  updated_at: new Date(),
+  USER_ID: 1n,
   like: 1231,
   dislike: 1,
+  content: "isten áld meg a magyart",
+  title: "fasz",
+  media_url: "seggem partja",
+  created_at: new Date(),
+  updated_at: new Date(),
 }
 
 export function MainPage() {
