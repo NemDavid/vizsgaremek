@@ -4,6 +4,7 @@ import { MainPage } from './-components'
 import { AuthPage } from './-components/Auth'
 import { authStatusRequest } from '@/components/axios/axiosClient'
 import { useQuery } from '@tanstack/react-query'
+import { Spinner } from '@/components/ui/spinner'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -19,10 +20,10 @@ function HomePage() {
     refetchOnWindowFocus: false,
   })
   if(isLoading){
-    return <div>Loading...</div>
+    return <Spinner/>
   }
   if(User?.status !== 200){
-    // return ( <AuthPage/>)
+    return ( <AuthPage/>)
   }
 
   return ( <MainPage/>)

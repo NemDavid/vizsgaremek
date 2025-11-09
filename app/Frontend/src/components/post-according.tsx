@@ -1,74 +1,74 @@
+import { Card, CardFooter, CardContent } from '@/components/ui/card'
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { ThumbsDown, ThumbsUp } from "lucide-react"
-import { Button } from "@/components/ui/button" 
-
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion'
+import { AvatarFrame } from './AvatarFrame'
+import { Button } from './ui/button'
+import { ThumbsDown, ThumbsUp } from 'lucide-react'
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 export type Post = {
-    USER_ID: bigint,
-    like: number,
-    dislike: number,
-    content: string,
-    title: string,
-    media_url: string,
-    created_at: Date,
-    updated_at: Date,
+    USER_ID: bigint
+    like: number
+    dislike: number
+    content: string
+    title: string
+    media_url: string
+    created_at: Date
+    updated_at: Date
 }
 
-export function PostAccord({post,name}:{post:Post,name:string})
-{
+export function PostAccord({ post }: { post: Post }) {
+    const userid = post.USER_ID
+
     return (
-        <Card className="py-0 gap-2">
-            <CardContent>
+        <Card className="rounded-2xl border shadow-md gap-0 py-0">
+            <CardContent className="p-0">
                 <Accordion type="single" collapsible>
                     <AccordionItem value="item-1">
-                        <AccordionTrigger className="relative flex items-center justify-center">
-                            <div className="absolute left-2 flex items-center cursor-pointer transition rounded-full pr-3">
-                                <img src="/Lakatos_Dszumandzsi.png" className="w-10 h-10 rounded-full object-cover"/>
-                                <span className="text-sm ml-2 overflow-hidden max-w-[110px]" title={name}>{name.split(' ')[1]}</span>
+                        <AccordionTrigger className="flex items-center justify-between gap-2 px-0 py-0 bg-gray-50 ">
+                            <div className="flex items-center gap-3">
+                                <AvatarFrame userid={userid} className="bg-transparent rounded-l-none rounded-tl-lg"/>
+                                <h2 className="text-xl font-semibold tracking-tight">
+                                    {post.title}
+                                </h2>
                             </div>
-                            <span className="underline decoration-double text-lg text-center" >cime more éééééé</span>
                         </AccordionTrigger>
                         <AccordionContent>
-                            {post.content}
-                            {post.media_url.length > 0 ?  (
-                                <img
-                                src="/Lakatos_Dszumandzsi.png" // helyettesítsd a saját képed elérési útvonalával
-                                alt="Post media"
-                                className="rounded-lg mt-2 max-h-60 object-cover"
-                                />
-                            ) : null}
+                            <div className="flex px-4 py-3">
+                                <div className="flex-1 pr-4">
+                                    <p className="text-sm text-gray-700 whitespace-pre-line">
+                                        {post.content}
+                                    </p>
+                                    {post.media_url && (
+                                        <img
+                                            src={post.media_url}
+                                            alt="Post media"
+                                            className="rounded-lg mt-3 max-h-60 object-cover"
+                                        />
+                                    )}
+                                </div>
+                                <div className="flex flex-col items-center gap-2">
+                                    <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-8 w-full max-w-xs">
+                                        <ToggleGroupItem value="like" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500'><ThumbsUp />{post.like} Like </ToggleGroupItem>
+                                        <ToggleGroupItem value="Dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>
+                                    </ToggleGroup>
+                                </div>
+                            </div>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
             </CardContent>
-            <CardFooter className="flex justify-center items-center border-t pt-4 pb-1">
-                <div className="flex gap-4">
-                <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                    <ThumbsUp className="h-4 w-4" />
-                    <span>{post.like}</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                    <ThumbsDown className="h-4 w-4" />
-                    <span>{post.dislike}</span>  
-                </Button>
-                </div>
+            <CardFooter className="border-t bg-gray-50 py-3 px-4">
+                <input
+                    type="text"
+                    placeholder="Írj egy kommentet..."
+                    className="w-full rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
             </CardFooter>
         </Card>
     )
 }
-
-

@@ -1,0 +1,7 @@
+export function DefaultUIFrame(){
+    return (
+        <>
+        
+        </>
+    )
+}
