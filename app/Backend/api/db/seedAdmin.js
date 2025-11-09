@@ -1,48 +1,40 @@
-const bcrypt = require("bcrypt")
-
-const salt = 14
+const UserService = require("../services/UserService");
+const User_ProfileService = require("../services/User_ProfileService");
+const authUtils = require("../utilities/authUtils");
 
 const ADMIN_DATA = {
-  email: "admin@example.com",
+  email: "ad@ad.ad",
   username: "admin",
-  password: "Adminfiok#123",
+  password: "AdminAdmin",
   role: "admin",
   is_active: 1,
-}
+};
 
 async function seedAdminUser(db) {
   try {
-    const existingAdmin = await db.User.findOne({
-      where: { username: ADMIN_DATA.username },
-    })
+    // példányosítod az osztályokat
+    const userService = new UserService(db);
+    const userProfileService = new User_ProfileService(db);
 
-    if (existingAdmin) {
-      console.log("[Seed] Admin felhasználó már létezik")
-      return
-    }
-
-    const hashedPassword = await bcrypt.hash(ADMIN_DATA.password, salt)
-
-    const today = new Date().toISOString().split("T")[0]
-    const adminUser = await db.User.create({
+    // létrehozod az admin usert
+    const newUser = await userService.createUser({
       email: ADMIN_DATA.email,
+      password_hash: authUtils.hashPassword(ADMIN_DATA.password), 
       username: ADMIN_DATA.username,
-      password_hash: hashedPassword,
-      role: ADMIN_DATA.role,
-      is_active: ADMIN_DATA.is_active,
-      created_at: today,
-      updated_at: today,
-    })
+    });
+    
 
-    console.log("[Seed] Admin felhasználó sikeresen létrehozva:", {
-      ID: adminUser.ID,
-      email: adminUser.email,
-      username: adminUser.username,
-      role: adminUser.role,
-    })
+    // létrehozod a profilját
+    await userProfileService.createUser_Profile({
+      USER_ID: newUser.ID ?? 1,
+      first_name: "Admin",
+      last_name: "User",
+    });
+
+    console.log("[Seed] Admin felhasználó sikeresen létrehozva");
   } catch (error) {
-    console.error("[Seed] Admin felhasználó létrehozása sikertelen:", error.message)
+    console.error("[Seed] Admin felhasználó létrehozása sikertelen:", error.message, error.stack, error);
   }
 }
 
-module.exports = seedAdminUser
+module.exports = seedAdminUser;

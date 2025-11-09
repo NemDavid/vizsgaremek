@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const { userService, user_profileService } = require("../services")(db);
+const { userService } = require("../services")(db);
 const notificationService = require("../services/notificationService");
 const authUtils = require("../utilities/authUtils");
 

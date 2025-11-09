@@ -62,8 +62,7 @@ class UserRepository {
     }
 
     async createUser(userData) {
-        
-        try {
+        try {      
             return await this.User.create(userData);
         } catch (error) {
             throw new DbError("Failed to create user object", {
