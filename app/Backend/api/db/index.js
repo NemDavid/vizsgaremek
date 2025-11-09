@@ -1,4 +1,5 @@
 const { Sequelize } = require("sequelize");
+const seedAdminUser = require("./seedAdmin")
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -41,6 +42,8 @@ const db =
     {
         await db.sequelize.sync( {force: true } )
         console.log("database sync OK");
+
+        await seedAdminUser(db)
     } 
     catch (error) {
         console.log("database synk error");

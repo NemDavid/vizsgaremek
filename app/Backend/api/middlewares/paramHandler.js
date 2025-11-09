@@ -14,4 +14,9 @@ function paramPostId(req, res, next, postId) {
     next();
 }
 
-module.exports = { paramPage, paramUserId, paramPostId }
+function paramItemId(req, res, next, itemId) {
+    req.itemId = itemId;
+    next();
+}
+
+module.exports = { paramPage, paramUserId, paramPostId, paramItemId };
