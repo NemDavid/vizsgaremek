@@ -22,7 +22,7 @@ function HomePage() {
     return <div>Loading...</div>
   }
   if(User?.status !== 200){
-    // return ( <AuthPage/>)
+    return ( <AuthPage/>)
   }
 
   return ( <MainPage/>)
