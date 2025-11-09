@@ -37,11 +37,11 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.createUser = async (req, res, next) => {
-    const { email, password, username } = req.body || {};
+    const { email, password_hash, username } = req.body || {};
     try {
         const newUser = await userService.createUser({
             email,
-            password,
+            password_hash,
             username,
         });
 
