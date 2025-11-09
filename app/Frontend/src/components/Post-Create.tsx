@@ -22,6 +22,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "./ui/textarea"
 
 const postcreateSchema = z.object({
     title: z.string().min(3, "A címnek legalább 3 karakternek kell lennie").max(255, "A cím maximum 255 karakter lehet"),
@@ -53,69 +54,81 @@ export function PostCreate() {
             <DialogTrigger asChild>
                 <Button variant="outline">Mire gondolsz most?</Button>
             </DialogTrigger>
+
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Share link</DialogTitle>
+                    <DialogTitle>Új bejegyzés</DialogTitle>
                     <DialogDescription>
-                        Anyone who has this link will be able to view this.
+                        Oszd meg gondolataidat másokkal.
                     </DialogDescription>
                 </DialogHeader>
+
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Title</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Mire gondolsz most?" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        {/* Profil + Title */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center font-bold text-lg">
+                                A
+                            </div>
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field}) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Cím</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Add meg a címet..." {...field} />
+                                        </FormControl>
+                                        <FormDescription>A bejegyzés címe</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Content */}
                         <FormField
                             control={form.control}
                             name="content"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Részletezd</FormLabel>
+                                    <FormLabel>Tartalom</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Textarea placeholder="Írj valamit..." {...field} />
                                     </FormControl>
+                                    <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
+                        {/* Kép feltöltés */}
                         <FormField
                             control={form.control}
                             name="media"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Username</FormLabel>
+                                    <FormLabel>Kép feltöltése (opcionális)</FormLabel>
                                     <FormControl>
-                                        
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => field.onChange(e.target.files?.[0])}
+                                            className="mt-1"
+                                        />
                                     </FormControl>
-                                    <FormDescription>
-                                        This is your public display name.
-                                    </FormDescription>
-                                    <FormMessage />
+                                    <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>
                                 </FormItem>
                             )}
                         />
 
-
-
-
+                        {/* Submit gomb */}
                         <DialogFooter className="sm:justify-start">
                             <DialogClose asChild>
-                                <Button type="button" variant="secondary">
-                                    Close
-                                </Button>
+                                <Button type="button" variant="secondary">Bezárás</Button>
                             </DialogClose>
                             <DialogClose asChild>
-                                <Button type="submit">Submit</Button>
+                                <Button type="submit">Küldés</Button>
                             </DialogClose>
                         </DialogFooter>
                     </form>
