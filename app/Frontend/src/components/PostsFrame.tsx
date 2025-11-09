@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function PostsFrame() {
     const {data: posts, isLoading} = useQuery({
-        queryKey: ['auth-status'],
+        queryKey: ['Posts'],
         queryFn: () => getPosts(),
         refetchOnWindowFocus: false,
     })
