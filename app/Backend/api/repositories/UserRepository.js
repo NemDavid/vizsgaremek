@@ -6,7 +6,7 @@ class UserRepository {
         this.User_Profile = db.User_Profile;
         this.sequelize = db.sequelize;
     }
-
+    ///--------------------CRUD NEM VÉGLEGES-----------------------------
     async getUsers() {
         try {
             return await this.User.scope("allUserData").findAll({
@@ -22,16 +22,7 @@ class UserRepository {
             throw new DbError("Failed to fetch users", { details: error.message });
         }
     }
-
-    async getUser(userId) {
-        try {
-            return await this.User.scope("allUserData").findOne({
-                where: [ { ID: userId } ]  
-            });
-        } catch (error) {
-            throw new DbError("Failed to fetch users", { details: error.message });
-        }
-    }
+    ///--------------------VÉGLEGES-----------------------------
 
     async getUserByUsernameEmail(username, email) {
         try {
@@ -93,7 +84,16 @@ class UserRepository {
             throw new DbError("Sikertelen frissítés", { details: error.message });
         }
     }
-
+    
+    async getUser(userId) {
+        try {
+            return await this.User.scope("allUserData").findOne({
+                where: [ { ID: userId } ]  
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch users", { details: error.message });
+        }
+    }
 }
 
 module.exports = UserRepository;

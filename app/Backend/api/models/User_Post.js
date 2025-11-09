@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) =>
 
             media_url:
             {
-                type: DataTypes.BOOLEAN,
+                type: DataTypes.STRING,
                 allowNull: false,
                 defaultValue: false
             },

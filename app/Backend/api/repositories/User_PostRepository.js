@@ -7,6 +7,7 @@ class User_PostRepository {
         this.sequelize = db.sequelize;
     }
 
+    ///--------------------CRUD NEM VÉGLEGES-----------------------------
     async getUser_Posts() {
         try {
             return await this.User_Post.scope("allPostData").findAll();
@@ -63,6 +64,18 @@ class User_PostRepository {
             });
 
             return affectedRows;
+        } catch (error) {
+            throw new DbError("Sikertelen frissítés", { details: error.message });
+        }
+    }
+
+    ///--------------------VÉGLEGES-----------------------------
+    async updateUser_POST_LikeDislike(postId, like, dislike){
+        try {
+            await this.User_Post.update({like,dislike},{
+                where: {ID: postId}
+            })
+
         } catch (error) {
             throw new DbError("Sikertelen frissítés", { details: error.message });
         }
