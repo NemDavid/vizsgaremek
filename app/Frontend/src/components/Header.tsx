@@ -49,7 +49,7 @@ const components: { title: string; to: string; description: string }[] = [
   },
 ]
 
-export default function Header() {
+export default function Header({className}:{className?:string}) {
   const {mutate: logut} = useMutation({
     mutationFn: () => logoutRequest(),
     onSuccess:() => {
@@ -58,7 +58,7 @@ export default function Header() {
   })
 
   return (
-    <header className="p-4 bg-red-600 text-white flex items-center justify-between z-1">
+    <header className={`p-4 bg-red-600 text-white flex items-center justify-between z-1 ${className}`}>
       <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
 
       <div className="flex-1 flex justify-self-center">

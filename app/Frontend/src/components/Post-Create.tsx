@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "./ui/textarea"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Spinner } from "./ui/spinner"
+import { createPost } from "./axios/axiosClient"
 
 const postcreateSchema = z.object({
     title: z.string().min(3, "A címnek legalább 3 karakternek kell lennie").max(255, "A cím maximum 255 karakter lehet"),
@@ -33,9 +36,16 @@ const postcreateSchema = z.object({
 })
 
 
-type PostcreateSchema = z.infer<typeof postcreateSchema>;
+export type PostcreateSchema = z.infer<typeof postcreateSchema>;
 
 export function PostCreate() {
+    const queryclient = useQueryClient()
+    const {mutate: upload, isPending} = useMutation({
+        mutationFn: (data:PostcreateSchema) => createPost(data),
+        onSuccess(){
+            queryclient.refetchQueries({queryKey: ["Posts"]})
+        }
+    })
     const form = useForm<PostcreateSchema>({
         resolver: zodResolver(postcreateSchema),
         defaultValues: {
@@ -46,8 +56,7 @@ export function PostCreate() {
 
     // 2. Define a submit handler.
     function onSubmit(values: PostcreateSchema) {
-
-        console.log(values)
+        upload(values)
     }
     return (
         <Dialog>
@@ -62,7 +71,9 @@ export function PostCreate() {
                         Oszd meg gondolataidat másokkal.
                     </DialogDescription>
                 </DialogHeader>
-
+                {isPending? (
+                    <Spinner/>    
+                ):(
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         {/* Profil + Title */}
@@ -107,7 +118,7 @@ export function PostCreate() {
                             control={form.control}
                             name="media"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="bg-slate-100 p-3 rounded-xl">
                                     <FormLabel>Kép feltöltése (opcionális)</FormLabel>
                                     <FormControl>
                                         <input
@@ -133,6 +144,7 @@ export function PostCreate() {
                         </DialogFooter>
                     </form>
                 </Form>
+                )}
             </DialogContent>
         </Dialog>
     )

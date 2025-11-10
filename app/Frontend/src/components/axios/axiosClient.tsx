@@ -10,6 +10,7 @@ export const ac = axios.create({
   },
   withCredentials: true,
 })
+import type { PostcreateSchema } from "../Post-Create"
 
 export type User = {
   ID: bigint;
@@ -91,7 +92,7 @@ export async function getPosts() {
   return response.data
 }
 
-export async function createPost(data:UserPost) {
+export async function createPost(data:PostcreateSchema) {
   return await ac.post(`/api/user_post`,data);
 }
 
