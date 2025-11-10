@@ -17,7 +17,6 @@ export function AvatarFrame({userid,className}:{userid:bigint,className?:string}
         retry: 0,
         refetchOnWindowFocus: false,
     })
-    console.log(User);
     
     if(isLoading){
         <Spinner />

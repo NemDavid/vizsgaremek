@@ -44,7 +44,8 @@ export function PostCreate() {
         mutationFn: (data:PostcreateSchema) => createPost(data),
         onSuccess(){
             queryclient.refetchQueries({queryKey: ["Posts"]})
-        }
+        },
+        retry:0
     })
     const form = useForm<PostcreateSchema>({
         resolver: zodResolver(postcreateSchema),
@@ -57,6 +58,10 @@ export function PostCreate() {
     // 2. Define a submit handler.
     function onSubmit(values: PostcreateSchema) {
         upload(values)
+        form.resetField("content");
+        form.resetField("media");
+        form.resetField("title");
+        
     }
     return (
         <Dialog>
@@ -138,9 +143,7 @@ export function PostCreate() {
                             <DialogClose asChild>
                                 <Button type="button" variant="secondary">Bezárás</Button>
                             </DialogClose>
-                            <DialogClose asChild>
-                                <Button type="submit">Küldés</Button>
-                            </DialogClose>
+                            <Button type="submit">Küldés</Button>
                         </DialogFooter>
                     </form>
                 </Form>

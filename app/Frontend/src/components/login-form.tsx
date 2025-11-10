@@ -78,7 +78,6 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps)
     }
     else{
       Login({data: values})
-      console.log(values) 
     }
   }
   function handleCaptchaChange(value: string | null) {

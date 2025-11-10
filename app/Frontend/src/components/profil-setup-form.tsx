@@ -70,7 +70,6 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
   })
   function onSubmit(values: ConfirmSchema) {
     confirm({data: values})
-    console.log(values)
     
   }
   if(isPending){

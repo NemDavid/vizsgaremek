@@ -31,7 +31,7 @@ export function PostAccord({ post }: { post: Post }) {
                     <AccordionItem value="item-1">
                         <AccordionTrigger className="flex items-center justify-between gap-2 px-0 py-0 bg-gray-50 ">
                             <div className="flex items-center gap-3">
-                                <AvatarFrame userid={userid} className="bg-transparent rounded-l-none rounded-tl-lg"/>
+                                <AvatarFrame userid={userid} className="bg-transparent rounded-l-none rounded-tl-lg" />
                                 <h2 className="text-xl font-semibold tracking-tight">
                                     {post.title}
                                 </h2>

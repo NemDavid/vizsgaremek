@@ -5,25 +5,26 @@ import { getPosts } from "./axios/axiosClient";
 import { useQuery } from "@tanstack/react-query";
 
 export function PostsFrame() {
-    const {data: posts, isLoading} = useQuery({
+    const { data: posts, isLoading } = useQuery({
         queryKey: ['Posts'],
         queryFn: () => getPosts(),
         refetchOnWindowFocus: false,
+        retry:0,
     })
-    if(isLoading){
+    if (isLoading) {
         return;
     }
     return (
-    <ScrollArea className="w-full z-1">
-        <main className="flex-1 h-[calc(100vh-200px)] overflow-y-auto flex justify-center">
-            <div className="w-full max-w-xl flex flex-col gap-8 py-6">
-            <PostCreate/>
-            {posts?.map((ps)=> (
-                <PostAccord post={ps}/>
-            ))}
-            </div>
-        </main>
-    </ScrollArea>
+        <ScrollArea className="w-full z-1">
+            <main className="flex-1 h-[calc(100vh-200px)] overflow-y-auto flex justify-center">
+                <div className="w-full max-w-xl flex flex-col gap-8 py-6">
+                    <PostCreate />
+                    {posts?.slice().reverse().map((ps) => (
+                        <PostAccord key={ps.ID.toString()} post={ps} />
+                    ))}
+                </div>
+            </main>
+        </ScrollArea>
     )
 }
 

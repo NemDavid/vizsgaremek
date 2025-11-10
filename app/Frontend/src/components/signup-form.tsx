@@ -88,7 +88,6 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
       }
       else{
         register({data: values})
-        console.log(values)
       }
     }
   if(isPending){
