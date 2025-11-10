@@ -42,8 +42,9 @@ exports.updateUsers_posts_reaction = async (req, res, next) => {
         const updatedUser_Post_Reaction = await user_post_reactionService.updateUsers_posts_reaction({
             POST_ID,
             reaction,
-            token
-        });
+        },
+        token
+    );
         
         res.status(200).json(updatedUser_Post_Reaction);
     } catch (error) {
