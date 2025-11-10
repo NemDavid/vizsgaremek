@@ -26,6 +26,8 @@ import { Textarea } from "./ui/textarea"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Spinner } from "./ui/spinner"
 import { createPost } from "./axios/axiosClient"
+import { useState } from "react"
+
 
 const postcreateSchema = z.object({
     title: z.string().min(3, "A címnek legalább 3 karakternek kell lennie").max(255, "A cím maximum 255 karakter lehet"),
@@ -39,11 +41,17 @@ const postcreateSchema = z.object({
 export type PostcreateSchema = z.infer<typeof postcreateSchema>;
 
 export function PostCreate() {
+    const [open, setOpen] = useState(true);
     const queryclient = useQueryClient()
     const {mutate: upload, isPending} = useMutation({
         mutationFn: (data:PostcreateSchema) => createPost(data),
         onSuccess(){
             queryclient.refetchQueries({queryKey: ["Posts"]})
+            form.resetField("content");
+            form.resetField("media");
+            form.resetField("title");
+            setOpen(false);
+
         },
         retry:0
     })
@@ -58,13 +66,9 @@ export function PostCreate() {
     // 2. Define a submit handler.
     function onSubmit(values: PostcreateSchema) {
         upload(values)
-        form.resetField("content");
-        form.resetField("media");
-        form.resetField("title");
-        
     }
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline">Mire gondolsz most?</Button>
             </DialogTrigger>
