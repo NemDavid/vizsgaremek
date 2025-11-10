@@ -34,15 +34,16 @@ exports.deleteUser_Post = async (req, res, next) => {
 };
 
 exports.createUser_Post = async (req, res, next) => {
-    const { USER_ID, like, title, dislike, visibility, content, media_url } = req.body || {};
+    const { title, content, media_url } = req.body || {};
+    const token = req.cookies['user_token'];
+
+    
+
     try {
         res.status(200).json(await user_postService.createUser_Post({
-            USER_ID, 
-            like, 
-            title,
-            dislike, 
-            visibility, 
-            content, 
+            token, 
+            title, 
+            content,  
             media_url
         }));
     } catch (error) {

@@ -1,4 +1,5 @@
 const { BadRequestError } = require("../errors");
+const authUtils = require("../utilities/authUtils");
 
 class User_PostService
 {
@@ -39,24 +40,30 @@ class User_PostService
 
     async createUser_Post(postData)
     {
+        const encodedToken = authUtils.verifyToken(postData.token);
+        postData.USER_ID = encodedToken.userID;
+
+        
+        
         if (!postData.USER_ID) {
             throw new BadRequestError("hiányzó USER_ID");
         }
-        if (!postData.like) {
-            throw new BadRequestError("hiányzó like");
-        }
-        if (!postData.dislike) {
-            throw new BadRequestError("hiányzó dislike");
+        if (!postData.title) {
+            throw new BadRequestError("hiányzó title");
         }
         if (!postData.content) {
             throw new BadRequestError("hiányzó content");
+        }
+        if (!postData.token) {
+            throw new BadRequestError("hiányzó token");
         }
         
         const validUser = await this.userRepository.getUser(postData.USER_ID);
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
-
+        
+        
         return await this.user_postRepository.createUser_Post(postData);
     }
 

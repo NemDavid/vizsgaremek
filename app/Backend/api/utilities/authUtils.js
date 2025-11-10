@@ -10,7 +10,7 @@ exports.generateUserToken = (user) =>
         expiresIn: '30m'
     });
 }
-// Regisztráció token, ami 15 percig él és tartalmazza a hash-elt jelszót
+// Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót
 exports.generateRegistrationToken = (userData) => {
     const password_hash = bcrypt.hashSync(userData.password, salt);
     return jwt.sign(

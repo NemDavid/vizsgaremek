@@ -27,7 +27,7 @@ export function LoginPage({ onSwitch }: LoginPageProps) {
         <img
           src="/login.png"
           alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale blur-[2px]"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale blur-[0px]"
         />
       </div>
     </div>

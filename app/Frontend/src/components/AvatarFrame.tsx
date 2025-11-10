@@ -12,12 +12,13 @@ import { getuserByid } from "./axios/axiosClient"
 
 export function AvatarFrame({userid,className}:{userid:bigint,className?:string}){
     const {data: User, isLoading} = useQuery({
-        queryKey: ['auth-status'],
+        queryKey: ['avatar'],
         queryFn: () => getuserByid(userid),
         retry: 0,
         refetchOnWindowFocus: false,
     })
-
+    console.log(User);
+    
     if(isLoading){
         <Spinner />
     }
@@ -26,10 +27,10 @@ export function AvatarFrame({userid,className}:{userid:bigint,className?:string}
         <CardContent className="p-0 flex">
             <Avatar className="p-0 border-2 border-red-500 ">
                 <AvatarImage src="https://api.dicebear.com/9.x/adventurer/svg?seed=Bogi" />
-                <AvatarFallback>Lurem Ipsum {/*{User.name}*/}</AvatarFallback> 
+                <AvatarFallback>{User?.profil.first_name} {User?.profil.last_name}</AvatarFallback> 
             </Avatar>
             <h3 className="scroll-m-20 text-xs font-semibold tracking-tight p-2">
-                Lurem Ipsum{/*{User.name}*/}
+                {User?.profil.first_name} {User?.profil.last_name}
             </h3>
         </CardContent>
     </Card> 

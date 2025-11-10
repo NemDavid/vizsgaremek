@@ -58,7 +58,7 @@ export default function Header() {
   })
 
   return (
-    <header className="p-4 bg-red-600 text-white flex items-center justify-between">
+    <header className="p-4 bg-red-600 text-white flex items-center justify-between z-1">
       <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
 
       <div className="flex-1 flex justify-self-center">
@@ -89,7 +89,7 @@ export default function Header() {
           {/* Beállítások */}
           <NavigationMenuItem>
             <NavigationMenuTrigger className="text-white bg-red-600">Beállítások</NavigationMenuTrigger>
-            <NavigationMenuContent className="text-white border-red-800">
+            <NavigationMenuContent className="text-white border-red-800 absolute z-[2]">
               <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
                 {components.map((component) => (
                   <ListItem key={component.title} title={component.title} to={component.to}>

@@ -6,7 +6,7 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import { AvatarFrame } from './AvatarFrame'
-import { Button } from './ui/button'
+
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 

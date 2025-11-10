@@ -78,16 +78,22 @@ export async function logoutRequest() {
 
 export async function getuserByid(id:bigint){
   const user = await ac.get<User>(`/api/user/${id}`)
-  const profil = await ac.get<UserProfile>(`/api/user/${id}`)
-  return {
-    user,
-    profil,
+  const profil = await ac.get<UserProfile>(`/api/user_profile/${id}`)
+  const adat = await {
+    user: user.data,
+    profil: profil.data,
   }
+  return adat;  
 }
 
 export async function getPosts() {
   const response = await ac.get<UserPost[]>("/api/user_posts")
   return response.data
 }
+
+export async function createPost(data:UserPost) {
+  return await ac.post(`/api/user_post`,data);
+}
+
 
 //http://localhost:6769/api/users/1

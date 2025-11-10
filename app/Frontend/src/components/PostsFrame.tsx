@@ -14,13 +14,13 @@ export function PostsFrame() {
         return;
     }
     return (
-    <ScrollArea className="w-full">
+    <ScrollArea className="w-full z-1">
         <main className="flex-1 h-[calc(100vh-200px)] overflow-y-auto flex justify-center">
             <div className="w-full max-w-xl flex flex-col gap-8 py-6">
             <PostCreate/>
-            {/* {posts?.map((ps)=> (
+            {posts?.map((ps)=> (
                 <PostAccord post={ps}/>
-            ))} */}
+            ))}
             </div>
         </main>
     </ScrollArea>

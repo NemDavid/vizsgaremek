@@ -56,6 +56,7 @@ class UserService
 
     async createUser(userData)
     {
+        userData.password_hash = authUtils.hashPassword(userData.password_hash);
         return await this.userRepository.createUser(userData);
     }
 

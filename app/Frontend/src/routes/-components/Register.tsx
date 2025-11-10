@@ -11,7 +11,7 @@ export function SignUpPage({ onSwitch }: SignUpPageProps) {
         <img
           src="/Register.png"
           alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale blur-[2px]"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale blur-[0px]"
         />
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10 bg-slate-200">
@@ -19,7 +19,7 @@ export function SignUpPage({ onSwitch }: SignUpPageProps) {
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-rose-600 text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <img src="/icon.png" alt="Icon" className="rounded-md"/>
-            </div>
+            </div>  
             Mi Hírünk
           </a>
         </div>
