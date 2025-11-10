@@ -36,7 +36,6 @@ exports.deleteUser_Post = async (req, res, next) => {
 exports.createUser_Post = async (req, res, next) => {
     const { title, content, media_url } = req.body || {};
     const token = req.cookies['user_token'];
-
     
 
     try {
