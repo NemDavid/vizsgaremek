@@ -48,10 +48,10 @@ class User_Post_ReactionRepository {
         }
     }
 
-    async updateUsers_posts_reaction(itemId, updateData) {
+    async updateUsers_posts_reaction(updateData) {
         try {
             const [affectedRows] = await this.User_Post_Reaction.update(updateData, {
-                where: { ID: itemId },
+                where: { ID: updateData.POST_ID },
             });
             
             return affectedRows;

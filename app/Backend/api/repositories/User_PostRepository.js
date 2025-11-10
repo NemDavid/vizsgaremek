@@ -9,7 +9,11 @@ class User_PostRepository {
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
     async getUser_Posts() {
         try {
-            return await this.User_Post.scope("allPostData").findAll();
+            return await this.User_Post.scope("allPostData").findAll({
+                    order: [
+                        ["created_at", "ASC"]
+                    ],
+                });
         } catch (error) {
             throw new DbError("Failed to fetch user posts", { details: error.message });
         }

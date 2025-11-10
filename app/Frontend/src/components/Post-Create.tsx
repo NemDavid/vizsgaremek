@@ -41,7 +41,7 @@ const postcreateSchema = z.object({
 export type PostcreateSchema = z.infer<typeof postcreateSchema>;
 
 export function PostCreate() {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const queryclient = useQueryClient()
     const {mutate: upload, isPending} = useMutation({
         mutationFn: (data:PostcreateSchema) => createPost(data),

@@ -1,4 +1,5 @@
 const { BadRequestError } = require("../errors");
+const authUtils = require("../utilities/authUtils");
 
 class User_Post_ReactionService {
     constructor(db) {
@@ -30,8 +31,11 @@ class User_Post_ReactionService {
         return await this.user_post_reactionRepository.createUsers_posts_reaction(user_post_reactionData);
     }
 
-    async updateUsers_posts_reaction(itemId, updateData) {
-        if (!itemId) throw new BadRequestError("Hiányzó item id");
+    async updateUsers_posts_reaction(updateData) {
+        // if (!itemId) throw new BadRequestError("Hiányzó item id");
+        const encodedToken = authUtils.verifyToken(updateData.token);
+        updateData.USER_ID = encodedToken.userID;
+
         if (!updateData.USER_ID) {
             throw new BadRequestError("Hiányzó user id");
         }
@@ -43,13 +47,13 @@ class User_Post_ReactionService {
         }
         
 
-        const affectedRows = await this.user_post_reactionRepository.updateUsers_posts_reaction(itemId, updateData);
+        const affectedRows = await this.user_post_reactionRepository.updateUsers_posts_reaction(updateData);
 
         if (!affectedRows) {
             throw new BadRequestError("user post reakcio nem található", { details: `item: ${updateData}` })
         }
 
-        const updateUser_post_reaction = await this.user_post_reactionRepository.getUsers_posts_reaction(itemId);
+        const updateUser_post_reaction = await this.user_post_reactionRepository.getUsers_posts_reaction(updateData.POST_ID);
 
         if (!updateUser_post_reaction) {
             throw new BadRequestError("a frissitett user post reakcio nem található", { details: `item: ${updateData}` });
