@@ -15,10 +15,13 @@ class User_Post_ReactionRepository {
         }
     }
 
-    async getUsers_posts_reaction(itemId) {
+    async getUsers_posts_reaction(userId, postId) {
         try {
             return await this.User_Post_Reaction.scope("allUserPostReactionData").findOne({ 
-                where: { ID: itemId }
+                where: { 
+                    USER_ID: userId,
+                    POST_ID: postId 
+                }
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
