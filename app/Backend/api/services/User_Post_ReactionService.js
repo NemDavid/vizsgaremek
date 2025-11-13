@@ -50,6 +50,13 @@ class User_Post_ReactionService {
         }
 
 
+        // adot e mar le a user a kivalasztott postra ugyan olyan reakciot
+        const sameReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(reactionData.USER_ID, reactionData.POST_ID) || [];
+        if (sameReaction && sameReaction.reaction == reactionData.reaction) {
+            throw new BadRequestError("erre a postra ezt a reakciot mar ledtad");
+        }
+        
+
         // megtortenik e a reakcio letrehozasa a reakcio tablaban
         const affectedRows = await this.user_post_reactionRepository.createUsers_posts_reaction(reactionData);
         if (!affectedRows) {

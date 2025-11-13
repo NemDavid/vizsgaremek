@@ -39,8 +39,6 @@ class User_Post_ReactionRepository {
     }
 
     async createUsers_posts_reaction(user_post_reactionData) {
-        console.log(user_post_reactionData);
-        
         try {
             return await this.User_Post_Reaction.create(user_post_reactionData);
         } catch (error) {
