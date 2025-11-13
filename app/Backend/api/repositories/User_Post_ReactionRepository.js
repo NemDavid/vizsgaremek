@@ -38,9 +38,9 @@ class User_Post_ReactionRepository {
         }
     }
 
-    async createUsers_posts_reaction(user_post_reactionData) {
+    async createUsers_posts_reaction(reactionData) {
         try {
-            return await this.User_Post_Reaction.create(user_post_reactionData);
+            return await this.User_Post_Reaction.create(reactionData);
         } catch (error) {
             throw new DbError("Failed to create user_post_reactionData object", {
                 details: error.message,
@@ -52,7 +52,10 @@ class User_Post_ReactionRepository {
     async updateUsers_posts_reaction(updateData) {
         try {
             const [affectedRows] = await this.User_Post_Reaction.update(updateData, {
-                where: { ID: updateData.POST_ID },
+                where: {
+                    POST_ID: updateData.POST_ID,
+                    USER_ID: updateData.USER_ID,
+                },
             });
             
             return affectedRows;
