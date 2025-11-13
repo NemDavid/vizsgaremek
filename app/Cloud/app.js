@@ -18,12 +18,12 @@ app.use("/public", express.static("public"));
 
 app.use("/api", api);
 
-api.use("/Cloud/",cloudRouter)
+api.use("/cloud/",cloudRouter)
 
 api.use(errorHandler.notFound);
+api.use(errorHandler.showError);
 
 app.use(errorHandler.showError);
-
 app.use(errorHandler.notFound);
 
 
