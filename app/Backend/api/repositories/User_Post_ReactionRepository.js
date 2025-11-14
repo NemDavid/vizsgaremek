@@ -24,7 +24,7 @@ class User_Post_ReactionRepository {
                 }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch users", { details: error.message });
+            throw new DbError("Failed to fetch users reaction", { details: error.message });
         }
     }
 
