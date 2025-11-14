@@ -58,60 +58,15 @@ class User_Post_ReactionService {
         if (existingReaction)  // ha igen, akkor frissitjuk a reakciot es a postot is
         {
            if (reactionData.reaction == existingReaction.reaction) { // ugyan az a reakcio akkor leszedjuk az elozor
-                
-
-                this.user_post_reactionRepository.deleteUsers_posts_reaction(existingReaction.ID); // reakcio torles
-
-                const updatePost = {
-                    like: reactionData.reaction === 'like' ? targetPost.like - 1 : targetPost.like,
-                    dislike: reactionData.reaction === 'dislike' ? targetPost.dislike - 1 : targetPost.dislike,
-                };
-
-                const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
-
-                if (!updatedPost) {
-                    throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
-                }
-
-                return { removedReaction: true, updatedPost };
-
-                // return await removePreviousReaction(reactionData, existingReaction, targetPost);
+                return await this.removePreviousReaction(reactionData, existingReaction, targetPost);
            }
 
-
-            const updatePost = {
-                like: reactionData.reaction === 'like' ? targetPost.like + 1 : targetPost.like - 1,
-                dislike: reactionData.reaction === 'dislike' ? targetPost.dislike + 1 : targetPost.dislike - 1,
-            };
-            const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction(reactionData);
-            const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
-
-            if (!updatedReaction) {
-                throw new BadRequestError("a frissitett user post reakcio nem található", { details: `item: ${reactionData}` });
-            }
-            if (!updatedPost) {
-                throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
-            }
-
-            return { updatedReaction, updatedPost };
+           // kulonbozo reakcio akkor frissitjuk a reakciot es a postot is
+            return await this.updateReaction(reactionData, targetPost);
         }
         else 
-        {
-            const updatePost = {
-                like: reactionData.reaction === 'like' ? targetPost.like + 1 : targetPost.like,
-                dislike: reactionData.reaction === 'dislike' ? targetPost.dislike + 1 : targetPost.dislike,
-            };
-            const createdReaction = await this.user_post_reactionRepository.createUsers_posts_reaction(reactionData);
-            const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
-
-            if (!createdReaction) {
-                throw new BadRequestError("a létrehozott user post reakcio nem található", { details: `item: ${reactionData}` });
-            }
-            if (!updatedPost) {
-                throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
-            }
-
-            return { createdReaction, updatedPost };
+        {   // ha meg nem adtam reakciot akkor letrehozzuk az ujat
+            return await this.createdReaction(reactionData, targetPost);
         }
     }
 
@@ -130,6 +85,42 @@ class User_Post_ReactionService {
             }
 
             return { removedReaction: true, updatedPost };
+    }
+
+    async updateReaction(reactionData, targetPost) {
+            const updatePost = {
+               like: reactionData.reaction === 'like' ? targetPost.like + 1 : targetPost.like - 1,
+               dislike: reactionData.reaction === 'dislike' ? targetPost.dislike + 1 : targetPost.dislike - 1,
+            };
+            const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction(reactionData);
+            const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
+            
+            if (!updatedReaction) {
+                throw new BadRequestError("a frissitett user post reakcio nem található", { details: `item: ${reactionData}` });
+            }
+            if (!updatedPost) {
+                throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
+            }
+            
+            return { updatedReaction, updatedPost };
+    }
+
+    async createdReaction(reactionData, targetPost) {
+            const updatePost = {
+                like: reactionData.reaction === 'like' ? targetPost.like + 1 : targetPost.like,
+                dislike: reactionData.reaction === 'dislike' ? targetPost.dislike + 1 : targetPost.dislike,
+            };
+            const createdReaction = await this.user_post_reactionRepository.createUsers_posts_reaction(reactionData);
+            const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
+
+            if (!createdReaction) {
+                throw new BadRequestError("a létrehozott user post reakcio nem található", { details: `item: ${reactionData}` });
+            }
+            if (!updatedPost) {
+                throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
+            }
+
+            return { createdReaction, updatedPost };
     }
 
 }
