@@ -41,7 +41,7 @@ class User_Post_ReactionService {
         if (!reactionData.reaction) {
             throw new BadRequestError("Hiányzó reaction");
         }
-        
+
 
 
         // letezik e a post amire reakciot akarok adni
@@ -55,8 +55,22 @@ class User_Post_ReactionService {
         const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(reactionData.USER_ID, reactionData.POST_ID);
         if (existingReaction)  // ha igen, akkor frissitjuk a reakciot es a postot is
         {
-           if (reactionData.reaction == existingReaction.reaction) {
-                throw new BadRequestError("egy postra nem lehet ugyanazt a reakciot tobbszor adni");
+           if (reactionData.reaction == existingReaction.reaction) { // ugyan az a reakcio akkor leszedjuk az elozor
+                this.user_post_reactionRepository.deleteUsers_posts_reaction(existingReaction.ID); // reakcio torles
+
+                const updatePost = {
+                    like: reactionData.reaction === 'like' ? targetPost.like - 1 : targetPost.like,
+                    dislike: reactionData.reaction === 'dislike' ? targetPost.dislike - 1 : targetPost.dislike,
+                };
+
+                const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
+
+                if (!updatedPost) {
+                    throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
+                }
+
+                // throw new BadRequestError("egy postra nem lehet ugyanazt a reakciot tobbszor adni");
+                return { removedReaction: true, updatedPost };
            }
 
 
@@ -78,7 +92,6 @@ class User_Post_ReactionService {
         }
         else 
         {
-            
             const updatePost = {
                 like: reactionData.reaction === 'like' ? targetPost.like + 1 : targetPost.like,
                 dislike: reactionData.reaction === 'dislike' ? targetPost.dislike + 1 : targetPost.dislike,

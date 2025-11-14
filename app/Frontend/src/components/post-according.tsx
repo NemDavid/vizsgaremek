@@ -9,20 +9,39 @@ import { AvatarFrame } from './AvatarFrame'
 
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { makeReaction } from './axios/axiosClient'
 
 export type Post = {
-    USER_ID: bigint
-    like: number
-    dislike: number
-    content: string
-    title: string
-    media_url: string
-    created_at: Date
-    updated_at: Date
+    ID: bigint,
+    USER_ID: bigint,
+    like: number,
+    dislike: number,
+    content: string,
+    title: string,
+    media_url: string,
+    created_at: Date,
+    updated_at: Date,
 }
 
 export function PostAccord({ post }: { post: Post }) {
+    const queryclinet = useQueryClient();
+    const { mutate: doReaction } = useMutation({
+        mutationFn: async (data: { postId: bigint; reaction: 'like' | 'dislike' }) => makeReaction(data),
+        onSuccess(){
+            queryclinet.refetchQueries({queryKey: ["Posts"]});
+        }
+    })
+
     const userid = post.USER_ID
+    const like = {
+        POST_ID: post.ID,
+        reaction: 'like' as 'like',
+    }
+    const dislike = {
+        POST_ID: post.ID,
+        reaction: 'dislike' as 'dislike',
+    }
 
     return (
         <Card className="rounded-2xl border shadow-md gap-0 py-0">
@@ -53,8 +72,8 @@ export function PostAccord({ post }: { post: Post }) {
                                 </div>
                                 <div className="flex flex-col items-center gap-2">
                                     <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-8 w-full max-w-xs">
-                                        <ToggleGroupItem value="like" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500'><ThumbsUp />{post.like} Like </ToggleGroupItem>
-                                        <ToggleGroupItem value="Dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>
+                                        <ToggleGroupItem onClick={() => doReaction(like)} value="like" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500'><ThumbsUp />{post.like} Like </ToggleGroupItem>
+                                        <ToggleGroupItem onClick={() => doReaction(dislike)}value="Dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>
                                     </ToggleGroup>
                                 </div>
                             </div>

@@ -96,5 +96,9 @@ export async function createPost(data:PostcreateSchema) {
   return await ac.post(`/api/user_post`,data);
 }
 
+export async function makeReaction(data:{postId:bigint; reaction:'like' | 'dislike'}) {
+  return await ac.post(`/api/user_makeReaction`, data);
+}
+
 
 //http://localhost:6769/api/users/1
