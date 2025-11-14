@@ -18,6 +18,7 @@ app.use(cors({
 
 app.use(cookieParser());
 
+const cloudRouter = require("./api/routes/cloudRoutes")
 const authRoutes = require("./api/routes/authRoutes");
 const userRoutes = require("./api/routes/userRoutes");
 const user_profileRoutes = require("./api/routes/user_profileRoutes");
@@ -37,11 +38,12 @@ api.use("/", userRoutes);
 api.use("/", user_profileRoutes);
 api.use("/", user_postRouter);
 api.use("/", user_post_reactionRoutes);
+app.use("/cloud",cloudRouter)
+
+app.use("/cloud", express.static("public/cloud"));
 
 api.use(errorHandler.notFound);
-
 app.use(errorHandler.showError);
-
 app.use(errorHandler.notFound);
 
 
