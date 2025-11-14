@@ -110,15 +110,15 @@ class User_Post_ReactionService {
 
 
         // letezik e a post amire reakciot akarok adni
-        const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID) || [];
-        if (targetPost.length === 0) {
+        const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID);
+        if (!targetPost) {
             throw new BadRequestError("a cel post nem található");
         }
 
 
         // adtam e mar reakciot a kivalasztott postra
-        const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(reactionData.USER_ID, reactionData.POST_ID) || [];
-        if (existingReaction.length !== 0)  // ha igen, akkor frissitjuk a reakciot es a postot is
+        const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(reactionData.USER_ID, reactionData.POST_ID);
+        if (existingReaction)  // ha igen, akkor frissitjuk a reakciot es a postot is
         {
            if (reactionData.reaction == existingReaction.reaction) {
                 throw new BadRequestError("egy postra nem lehet ugyanazt a reakciot tobbszor adni");
@@ -132,10 +132,10 @@ class User_Post_ReactionService {
             const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction(reactionData);
             const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
 
-            if (updatedReaction.length === 0) {
+            if (!updatedReaction) {
                 throw new BadRequestError("a frissitett user post reakcio nem található", { details: `item: ${reactionData}` });
             }
-            if (updatedPost.length === 0) {
+            if (!updatedPost) {
                 throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
             }
 
@@ -151,10 +151,10 @@ class User_Post_ReactionService {
             const createdReaction = await this.user_post_reactionRepository.createUsers_posts_reaction(reactionData);
             const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
 
-            if (createdReaction.length === 0) {
+            if (!createdReaction) {
                 throw new BadRequestError("a létrehozott user post reakcio nem található", { details: `item: ${reactionData}` });
             }
-            if (!updatedPost.length === 0) {
+            if (!updatedPost) {
                 throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
             }
 
