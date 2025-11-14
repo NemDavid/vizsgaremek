@@ -5,6 +5,6 @@ exports.UploadPicture = (req, res, next) => {
         success: true,
         message: "Kép feltöltve!",
         file: req.file.filename,
-        path: `/public/${req.file.filename}`,
+        path: `/cloud/${req.file.filename}`,
     });
 };

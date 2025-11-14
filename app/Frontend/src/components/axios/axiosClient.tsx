@@ -56,6 +56,7 @@ export const formSchema = z.object({
 })
 
 
+
 export async function loginRequest(data: LoginSchema ) {
   return await ac.post("/api/login",data);
 }
@@ -96,9 +97,12 @@ export async function createPost(data:PostcreateSchema) {
   return await ac.post(`/api/user_post`,data);
 }
 
-export async function makeReaction(data:{postId:bigint; reaction:'like' | 'dislike'}) {
+export async function makeReaction(data:{POST_ID:bigint; reaction:'like' | 'dislike'}) {
   return await ac.post(`/api/user_makeReaction`, data);
 }
-
+export async function getMyreaction(POST_ID: bigint) {
+  const response = await ac.get(`/api/users_posts_reaction/${POST_ID}`)
+  return response.data
+}
 
 //http://localhost:6769/api/users/1
