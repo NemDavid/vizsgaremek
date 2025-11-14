@@ -10,6 +10,16 @@ exports.getUsers_posts_reactions = async (req, res, next) => {
     }
 };
 
+exports.getUsers_posts_reaction = async (req, res, next) => {
+        const token = req.cookies['user_token'];
+
+    try {
+        res.status(200).json(await user_post_reactionService.getUsers_posts_reaction(token, req.itemId));
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 exports.deleteUsers_posts_reaction = async (req, res, next) => {
     try {

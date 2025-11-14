@@ -10,6 +10,7 @@ router.param("itemId", paramHandler.paramItemId);
 
 router.get("/users_posts_reactions", user_post_reactionController.getUsers_posts_reactions);
 
+router.get("/users_posts_reaction/:itemId", user_post_reactionController.getUsers_posts_reaction);
 
 router.delete("/users_posts_reaction/:itemId", user_post_reactionController.deleteUsers_posts_reaction);
 

@@ -11,8 +11,10 @@ class User_Post_ReactionService {
         return await this.user_post_reactionRepository.getUsers_posts_reactions();
     }
 
-    async getUsers_posts_reaction(itemId) {
-        return await this.user_post_reactionRepository.getUsers_posts_reaction(itemId);
+    async getUsers_posts_reaction(token, itemId) {
+        const encodedToken = authUtils.verifyToken(token);
+        
+        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, itemId);
     }
 
     async deleteUsers_posts_reaction(itemId) {
@@ -56,6 +58,8 @@ class User_Post_ReactionService {
         if (existingReaction)  // ha igen, akkor frissitjuk a reakciot es a postot is
         {
            if (reactionData.reaction == existingReaction.reaction) { // ugyan az a reakcio akkor leszedjuk az elozor
+                
+
                 this.user_post_reactionRepository.deleteUsers_posts_reaction(existingReaction.ID); // reakcio torles
 
                 const updatePost = {
@@ -69,8 +73,9 @@ class User_Post_ReactionService {
                     throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
                 }
 
-                // throw new BadRequestError("egy postra nem lehet ugyanazt a reakciot tobbszor adni");
                 return { removedReaction: true, updatedPost };
+
+                // return await removePreviousReaction(reactionData, existingReaction, targetPost);
            }
 
 
@@ -109,6 +114,24 @@ class User_Post_ReactionService {
             return { createdReaction, updatedPost };
         }
     }
+
+    async removePreviousReaction(reactionData, existingReaction, targetPost) {
+            this.user_post_reactionRepository.deleteUsers_posts_reaction(existingReaction.ID); // reakcio torles
+
+            const updatePost = {
+                like: reactionData.reaction === 'like' ? targetPost.like - 1 : targetPost.like,
+                dislike: reactionData.reaction === 'dislike' ? targetPost.dislike - 1 : targetPost.dislike,
+            };
+
+            const updatedPost = await this.user_postRepository.updateUser_Post(reactionData.POST_ID, updatePost);
+
+            if (!updatedPost) {
+                throw new BadRequestError("a frissitett user post nem található", { details: `item: ${updatePost, reactionData}` });
+            }
+
+            return { removedReaction: true, updatedPost };
+    }
+
 }
 
 module.exports = User_Post_ReactionService;
