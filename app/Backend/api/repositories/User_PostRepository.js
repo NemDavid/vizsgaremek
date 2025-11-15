@@ -1,8 +1,10 @@
 const { DbError } = require("../errors");
+const models = require("../models");
 
 class User_PostRepository {
     constructor(db) {
         this.User_Post = db.User_Post;
+        this.User_Post_Comment = db.User_Post_Comment;
         this.sequelize = db.sequelize;
     }
 
@@ -13,6 +15,13 @@ class User_PostRepository {
                     order: [
                         ["created_at", "ASC"]
                     ],
+                    include: [
+                        { 
+                            model: this.User_Post_Comment,
+                            as: "comments",
+                            scope: "allUserPostCommentData",
+                         }
+                    ]
                 });
         } catch (error) {
             throw new DbError("Failed to fetch user posts", { details: error.message });
@@ -73,7 +82,7 @@ class User_PostRepository {
     }
 
     ///--------------------VÉGLEGES-----------------------------
-    async updateUser_POST_LikeDislike(postId, like, dislike){
+    async updateUser_POST_LikeDislike(postId, like, dislike){ // nem is hasznaljuk !!!!
         try {
             await this.User_Post.update({like,dislike},{
                 where: {ID: postId}

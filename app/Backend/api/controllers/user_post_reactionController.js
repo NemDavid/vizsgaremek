@@ -29,32 +29,12 @@ exports.deleteUsers_posts_reaction = async (req, res, next) => {
     }
 };
 
-exports.createUsers_posts_reaction = async (req, res, next) => {
-    const { USER_ID, POST_ID, reaction } = req.body || {};
-    const token = req.cookies['user_token'];
-    
-    try {
-        const createdUser_Post_Reaction = await user_post_reactionService.createUsers_posts_reaction({
-                USER_ID,
-                POST_ID,
-                reaction,
-            },
-            token
-        );
-
-        res.status(200).json(createdUser_Post_Reaction);
-    } catch (error) {
-        next(error);
-    }
-};
-
 exports.userMakeReaction = async (req, res, next) => {
-    const { USER_ID, POST_ID, reaction } = req.body || {};
+    const { POST_ID, reaction } = req.body || {};
     const token = req.cookies['user_token'];
     
     try {
         const createdUser_Post_Reaction = await user_post_reactionService.userMakeReaction({
-                USER_ID,
                 POST_ID,
                 reaction,
             },

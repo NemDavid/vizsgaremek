@@ -14,8 +14,6 @@ router.get("/users_posts_reaction/:itemId", user_post_reactionController.getUser
 
 router.delete("/users_posts_reaction/:itemId", user_post_reactionController.deleteUsers_posts_reaction);
 
-router.post("/users_posts_reaction", user_post_reactionController.createUsers_posts_reaction);
-
 router.post("/user_makeReaction", user_post_reactionController.userMakeReaction);
 
 router.patch("/users_posts_reaction_update", user_post_reactionController.updateUsers_posts_reaction);
