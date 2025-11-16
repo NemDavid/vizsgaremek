@@ -47,6 +47,28 @@ export type UserPost = {
   updated_at: Date
 }
 
+export type Post = {
+    ID: bigint,
+    USER_ID: bigint,
+    like: number,
+    dislike: number,
+    content: string,
+    title: string,
+    media_url: string,
+    created_at: Date,
+    updated_at: Date,
+    comments?: comment[],
+
+}
+export type comment = {
+    ID: bigint,
+    USER_ID: bigint,
+    POST_ID: bigint,
+    comment: string,
+}
+
+
+
 export type formSchema = z.infer<typeof formSchema>
 
 export const formSchema = z.object({
@@ -102,6 +124,13 @@ export async function makeReaction(data:{POST_ID:bigint; reaction:'like' | 'disl
 }
 export async function getMyreaction(POST_ID: bigint) {
   const response = await ac.get(`/api/users_posts_reaction/${POST_ID}`)
+  return response.data
+}
+
+import type { PostFormSchema } from "../comment-according"
+
+export async function MakeCommentForPost(comment:PostFormSchema) {
+  const response = await ac.post(`/api/users_posts_comment`,comment )
   return response.data
 }
 

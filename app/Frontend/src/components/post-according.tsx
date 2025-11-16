@@ -11,6 +11,8 @@ import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getMyreaction, makeReaction } from './axios/axiosClient'
+import { CommentsAccord } from './comment-according'
+
 
 export type Post = {
     ID: bigint,
@@ -22,20 +24,29 @@ export type Post = {
     media_url: string,
     created_at: Date,
     updated_at: Date,
+    comments?: comment[],
+
 }
+export type comment = {
+    ID: bigint,
+    USER_ID: bigint,
+    POST_ID: bigint,
+    comment: string,
+}
+
 
 export function PostAccord({ post }: { post: Post }) {
     const queryclinet = useQueryClient();
     const { mutate: doReaction } = useMutation({
         mutationFn: async (data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) => makeReaction(data),
-        onSuccess(){
-            queryclinet.refetchQueries({queryKey: ["Posts"]});
-            queryclinet.refetchQueries({queryKey: ["reaction"]});
+        onSuccess() {
+            queryclinet.refetchQueries({ queryKey: ["Posts"] });
+            queryclinet.refetchQueries({ queryKey: ["reaction"] });
         }
     })
-    const {data: react} = useQuery({
+    const { data: react } = useQuery({
         queryKey: ["reaction"],
-        queryFn: ()=> getMyreaction(post.ID),
+        queryFn: () => getMyreaction(post.ID),
         retry: 0,
     })
 
@@ -77,23 +88,20 @@ export function PostAccord({ post }: { post: Post }) {
                                     )}
                                 </div>
                                 <div className="flex flex-col items-center gap-2">
-                                    <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-8 w-full max-w-xs" value={react? react.reaction : ""}>
+                                    <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-8 w-full max-w-xs" value={react ? react.reaction : ""}>
                                         <ToggleGroupItem onClick={() => doReaction(like)} value="like" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500'><ThumbsUp />{post.like} Like </ToggleGroupItem>
-                                        <ToggleGroupItem onClick={() => doReaction(dislike)}value="dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>
+                                        <ToggleGroupItem onClick={() => doReaction(dislike)} value="dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>
                                     </ToggleGroup>
                                 </div>
                             </div>
                         </AccordionContent>
                     </AccordionItem>
+                    <AccordionItem value="item-2" className="border-t bg-gray-50 py-3 px-4 w-full">
+                        <CommentsAccord postID={post.ID} commentsList={post.comments}/>
+                    </AccordionItem>
                 </Accordion>
             </CardContent>
-            <CardFooter className="border-t bg-gray-50 py-3 px-4">
-                <input
-                    type="text"
-                    placeholder="Írj egy kommentet..."
-                    className="w-full rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
-                />
-            </CardFooter>
         </Card>
     )
 }
+
