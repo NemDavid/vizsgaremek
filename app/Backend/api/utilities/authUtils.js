@@ -7,7 +7,7 @@ const salt = 14;
 exports.generateUserToken = (user) =>
 {
     return jwt.sign({ userID: user.ID, username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET, {
-        expiresIn: '30m'
+        expiresIn: '3d' // 3 nap
     });
 }
 // Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót
