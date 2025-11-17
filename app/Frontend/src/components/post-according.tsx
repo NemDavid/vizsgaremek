@@ -41,11 +41,11 @@ export function PostAccord({ post }: { post: Post }) {
         mutationFn: async (data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) => makeReaction(data),
         onSuccess() {
             queryclinet.refetchQueries({ queryKey: ["Posts"] });
-            queryclinet.refetchQueries({ queryKey: ["reaction"] });
+            queryclinet.refetchQueries({ queryKey: ["reaction", post.ID] });
         }
     })
     const { data: react } = useQuery({
-        queryKey: ["reaction"],
+        queryKey: ["reaction", post.ID],
         queryFn: () => getMyreaction(post.ID),
         retry: 0,
     })
