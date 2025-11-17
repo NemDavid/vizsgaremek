@@ -17,7 +17,7 @@ A projekt célja, hogy:
 ## 👥 Készítők
 
 - **Hartwig-Matos Dávid Gábor** *(Frontend, UI, React)*  
-- **Murrár Bálint** *(Backend, Adatbázis, API)*  
+- **Murár Bálint** *(Backend, Adatbázis, API)*  
 
 ---
 
@@ -101,5 +101,5 @@ A projekt célja, hogy:
 
 ---
 
-✨ *Készítette: Hartwig-Matos Dávid Gábor & Murrár Bálint*  
+✨ *Készítette: Hartwig-Matos Dávid Gábor & Murár Bálint*  
 📅 *Fejlesztés kezdete: 2025. szeptember*
