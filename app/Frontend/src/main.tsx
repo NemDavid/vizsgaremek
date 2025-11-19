@@ -10,6 +10,9 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
+// Not found component
+import { NotFound } from './components/NotFound.tsx'
+
 // Create a new router instance
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
@@ -22,6 +25,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultNotFoundComponent: () => <NotFound/>,
 })
 
 // Register the router instance for type safety
