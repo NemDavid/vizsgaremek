@@ -114,3 +114,14 @@ exports.logout = (req, res, next) =>
 
     res.sendStatus(200);
 }
+
+exports.getActiveTokenDetails = (req, res, next) =>
+{
+    const active = authUtils.verifyToken(req.params.token);
+    
+    if (!active) {
+        res.sendStatus(404).json(active);
+    } else {
+        res.status(200).json(active);
+    }
+}

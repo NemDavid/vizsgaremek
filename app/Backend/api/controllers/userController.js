@@ -64,3 +64,15 @@ exports.updateUser = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getExistingUserByToken = async (req, res, next) => {
+    const token = req.params.token;
+
+    try {
+        res.status(200).json(await userService.getExistingUserByToken(token));
+    } catch (error) {
+        next(error);
+    }
+
+
+};
