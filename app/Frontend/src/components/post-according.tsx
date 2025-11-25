@@ -76,7 +76,7 @@ export function PostAccord({ post }: { post: Post }) {
                         <AccordionContent>
                             <div className="flex px-4 py-3">
                                 <div className="flex-1 pr-4">
-                                    <p className="text-sm text-gray-700 whitespace-pre-line">
+                                    <p className="text-sm text-gray-700 whitespace-pre-line text-wrap">
                                         {post.content}
                                     </p>
                                     {post.media_url && (

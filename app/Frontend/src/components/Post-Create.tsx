@@ -60,9 +60,11 @@ export function PostCreate() {
         defaultValues: {
             content: "",
             title: "",
-        }
+            
+        },
+        mode: "onChange",
+        reValidateMode: "onBlur"
     })
-
     // 2. Define a submit handler.
     function onSubmit(values: PostcreateSchema) {
         upload(values)
@@ -87,9 +89,6 @@ export function PostCreate() {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         {/* Profil + Title */}
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center font-bold text-lg">
-                                A
-                            </div>
                             <FormField
                                 control={form.control}
                                 name="title"

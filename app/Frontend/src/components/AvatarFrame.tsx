@@ -23,13 +23,16 @@ export function AvatarFrame({ userid, className }: { userid: bigint, className?:
         retry: 0,
         refetchOnWindowFocus: false,
     })
-
+    if (User && User.profil.avatar_url === "") {
+        User.profil.avatar_url = "/default-Profil.png";
+    }
+    
     if (isLoading) {
         return <Spinner />
     }
     return (
         <HoverCard>
-            <HoverCardTrigger onClick={() => nav({to:"/profil/$profilId", params:{profilId:`${userid}`}})} className="cursor-pointer">
+            <HoverCardTrigger onClick={() => nav({ to: "/profil/$profilId", params: { profilId: `${userid}` } })} className="cursor-pointer">
                 <Card key={userid} className={`bg-red-200 rounded-none rounded-l-3xl hover:bg-red-600 hover:text-white ${className}`}>
                     <CardContent className="p-0 flex">
                         <Avatar className="p-0 border-2 border-red-500 ">
