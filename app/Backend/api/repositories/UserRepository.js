@@ -92,6 +92,16 @@ class UserRepository {
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
         }
+    
+    }
+    async getExistingUserByToken(username) {
+        try {
+            return await this.User.scope("allUserData").findOne({
+                where: [ { username: username } ]  
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch users", { details: error.message });
+        }
     }
 }
 

@@ -16,4 +16,6 @@ router.get("/status", [ authMiddleware.userIsLoggedIn ], authController.status);
 
 router.delete("/logout", authController.logout);
 
+router.get("/active_token/:token", authController.getActiveTokenDetails);
+
 module.exports = router;

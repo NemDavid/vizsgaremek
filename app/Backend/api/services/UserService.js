@@ -106,6 +106,24 @@ class UserService
     }
 
 
+    async getExistingUserByToken(token) 
+    {   
+        if (!token) throw new BadRequestError("Hiányzó user token");
+        const decoded = authUtils.verifyToken(token);
+        if (!decoded) {
+            throw new BadRequestError("Érvénytelen vagy lejárt token");
+        }
+        
+        const existingUser = await this.userRepository.getExistingUserByToken(decoded.username);
+
+        if (existingUser) {
+            throw new BadRequestError("van ilyen felhasználó");
+        }
+
+        return existingUser;
+    }
+
+
 
 
 }
