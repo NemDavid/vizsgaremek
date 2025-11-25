@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ProfilSetupForm } from "@/components/profil-setup-form"
+import { Toaster } from "sonner"
 
 export const Route = createFileRoute('/register/$token/')({
   component: RouteComponent,
@@ -9,7 +10,7 @@ function RouteComponent() {
   const params = Route.useParams()
   const token = params.token
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-slate-200">
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gradient-to-b from-red-900 to-slate-400">
       <div className="w-full max-w-sm bg-slate-100 p-6 rounded-4xl">
         <div className="flex items-center gap-2 font-medium">
             <div className="bg-rose-600 text-primary-foreground flex size-6 items-center justify-center rounded-md">
@@ -21,6 +22,8 @@ function RouteComponent() {
         </div>
         <ProfilSetupForm token={token} />
       </div>
+    <Toaster richColors position="top-center" />
+    
     </div>
   )
 }

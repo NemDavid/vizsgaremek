@@ -21,8 +21,6 @@ import { RegisterConfirmRequest } from "./axios/axiosClient"
 import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { Toaster } from "sonner"
-
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
   token: string; // <-- hozzáadva ide
@@ -50,8 +48,8 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
     },
     onSuccess:()=>{
       toast.success("Fiók létrehozása sikeres 🎉", {
-        description: "Kérjük, ellenőrizd a postaládád!",
-        duration: 12000,
+        description: "Üdvözlünk az oldalon, folytasd a bejelentkezéssel!",
+        duration: 6000,
         onAutoClose: () => {
           nav({to: '/'})
         },
@@ -211,8 +209,6 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
       </FieldDescription>
     </Field>
   </form>
-  <Toaster richColors position="top-center" />
-
   </Form> 
   )
 }
