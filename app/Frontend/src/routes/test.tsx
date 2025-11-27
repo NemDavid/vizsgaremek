@@ -1,4 +1,5 @@
 import { DrawerFriends } from '@/components/Drawer-Friends'
+import { ForgetPasswordModal } from '@/components/Forget-Password-Modal'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/test')({
@@ -7,6 +8,9 @@ export const Route = createFileRoute('/test')({
 
 function RouteComponent() {
   return (
+    <>
     <DrawerFriends/>
+    <ForgetPasswordModal/>
+    </>
   )
 }
