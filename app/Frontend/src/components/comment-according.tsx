@@ -47,6 +47,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
     function onSubmit(values: PostFormSchema) {
         values.POST_ID = postID
         createComment(values)
+        form.setValue("comment"," ");
     }
     return (
         <AccordionItem value="item-2" className='w-full p-0 m-0'>
