@@ -8,6 +8,7 @@ export function MainPage() {
     return (
         <DefaultUIFrame Hirdetes={true}>
             <PostsFrame/>
+            
         </DefaultUIFrame>
     )
 }
