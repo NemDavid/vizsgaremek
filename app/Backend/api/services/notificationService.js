@@ -53,7 +53,6 @@ class NotificationService {
             const verify_code = authUtils.generateVerifyCode();
 
             const verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code });
-            console.log(verify_code);
             
 
             const subject = 'MiHirunk - Jelszó visszaállítási ellenőrző kód';
@@ -69,8 +68,6 @@ class NotificationService {
     }
     // new password set
     async setNewPassword(newPasswordData) {
-        console.log(newPasswordData);
-        
             if (!newPasswordData.userId) {
                 throw new BadRequestError("hiányzó userId");
             }
@@ -111,8 +108,6 @@ class NotificationService {
             }
 
             const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(newPasswordData.email); // töröljük a használt codeokat
-            console.log(deleteProcess);
-            
             if (deleteProcess.deleted == 0) {
                 throw new BadRequestError("nem sikerült törölni a használt verify_codeokat");
             }

@@ -51,8 +51,6 @@ class Verify_CodeRepository {
 
     async deleteVerify_codesByEmail(email) {
         try {
-            console.log(email);
-            
             const deletedRow = await this.Verify_Code.destroy({ where: { email: email } });
 
             return { success: true, deleted: deletedRow };
