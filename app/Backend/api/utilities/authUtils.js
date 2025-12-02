@@ -10,6 +10,7 @@ exports.generateUserToken = (user) =>
         expiresIn: '3d' // 3 nap
     });
 }
+
 // Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót
 exports.generateRegistrationToken = (userData) => {
     const password_hash = bcrypt.hashSync(userData.password, salt);
@@ -46,4 +47,14 @@ exports.verifyToken = (token) =>
 exports.hashPassword = (password) =>
 {
     return bcrypt.hashSync(password, salt);
+}
+
+exports.hashCode = (verify_code) =>
+{
+    return bcrypt.hashSync(verify_code, salt);
+}
+
+exports.generateVerifyCode = () =>
+{
+    return Math.floor(100000 + Math.random() * 900000); // 6 jegyű kód
 }

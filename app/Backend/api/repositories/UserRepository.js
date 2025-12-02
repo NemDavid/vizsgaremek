@@ -95,6 +95,18 @@ class UserRepository {
             throw new DbError("Sikertelen frissítés", { details: error.message });
         }
     }
+
+    async updateUser_Password(userId, updateData) {
+        try {
+            const [affectedRows] = await this.User.update(updateData, {
+                where: { ID: userId },
+            });
+
+            return affectedRows;
+        } catch (error) {
+            throw new DbError("Sikertelen frissítés", { details: error.message });
+        }
+    }
     
     async getUser(userId) {
         try {

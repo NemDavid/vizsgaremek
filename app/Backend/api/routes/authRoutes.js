@@ -18,4 +18,8 @@ router.delete("/logout", authController.logout);
 
 router.get("/active_token/:token", authController.getActiveTokenDetails);
 
+// ----
+router.post("/reset_password/send_verify_code", authController.sendVerifyCode);
+router.post("/reset_password/set_new_password", authController.setNewPassword);
+
 module.exports = router;

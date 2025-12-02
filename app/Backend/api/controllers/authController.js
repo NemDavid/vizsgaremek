@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const { userService } = require("../services")(db);
-const notificationService = require("../services/notificationService");
+const { userService, notificationService, verify_codeService } = require("../services")(db);
 const authUtils = require("../utilities/authUtils");
 
 // --- 1. lépés: regisztráció form adatok fogadása ---
@@ -30,7 +29,7 @@ exports.registerUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+}
 
 // --- 2. lépés: e-mailben kapott token alapján user + profil létrehozása ---
 exports.confirmRegistration = async (req, res, next) => {
@@ -70,7 +69,7 @@ exports.confirmRegistration = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+}
 
 exports.login = async (req, res, next) => {
     const { username, email, password } = req.body;
@@ -101,7 +100,7 @@ exports.login = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+}
 
 exports.status = (req, res, next) =>
 {
@@ -124,4 +123,32 @@ exports.getActiveTokenDetails = (req, res, next) =>
     } else {
         res.status(200).json(active);
     }
+}
+
+// send verify code to email for password reset
+exports.sendVerifyCode = async (req, res, next) => {
+    const { email } = req.body || {};
+
+    try {
+        res.status(200).json(await notificationService.sendVerifyCode(email));
+    } catch (error) {
+        next(error);
+    }
+}
+
+// setNewPassword 
+exports.setNewPassword = async (req, res, next) => {
+    const { userId, email, verify_code, password } = req.body || {};
+
+    try {
+        res.status(200).json(await notificationService.setNewPassword({
+            userId,
+            email,
+            verify_code,
+            password
+        }));
+    } catch (error) {
+        next(error);
+    }
+
 }

@@ -110,6 +110,28 @@ class UserService
         return updateUser; 
     }
 
+    async updateUser_Password(userId, updateData) 
+    {   
+        if (!userId) throw new BadRequestError("Hiányzó user ID");
+        if (!updateData.password_hash) {
+            throw new BadRequestError("Hiányzó password_hash");
+        }
+
+        const affectedRows = await this.userRepository.updateUser_Password(userId, updateData);
+
+        if (!affectedRows) {
+            throw new BadRequestError("user nem található", {details: `userId: ${userId}`})
+        }
+
+        const updateUser = await this.userRepository.getUser(userId);
+
+        if (!updateUser) {
+            throw new BadRequestError("a frissitett user nem található", {details: `userId: ${userId}`});
+        }
+        return updateUser; 
+    }
+
+    
 
     async getExistingUserByToken(token) 
     {   

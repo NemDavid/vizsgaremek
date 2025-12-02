@@ -2,10 +2,10 @@ const { Model } = require("sequelize")
 
 module.exports = (sequelize, DataTypes) =>
 {
-    class Generated_Verify_Code extends Model { } 
+    class Verify_Code extends Model { } 
 
     
-    Generated_Verify_Code.init
+    Verify_Code.init
     (
         {
             ID: 
@@ -22,9 +22,9 @@ module.exports = (sequelize, DataTypes) =>
                 allowNull: false,
             },
 
-            verify_code:
+            verify_code_hash:
             {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
             },
 
@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) =>
             {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
+                defaultValue: false
             },
 
 
@@ -45,17 +46,17 @@ module.exports = (sequelize, DataTypes) =>
 
         {
             sequelize,
-            modelName: "Generated_Verify_Code",
+            modelName: "Verify_Code",
             freezeTableName: true,
             createdAt: "created_at", 
             updatedAt: false, 
             scopes: {
-                allGenerated_Verify_Code:{
-                    attributes: [], // Define attributes as needed
+                allVerify_CodeData:{
+                    attributes: ["ID", "email", "verify_code_hash", "used", "created_at"],
                 }
             },
         }
     )
 
-    return Generated_Verify_Code;
+    return Verify_Code;
 }
