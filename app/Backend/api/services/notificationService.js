@@ -110,6 +110,12 @@ class NotificationService {
                 throw new BadRequestError("a user jelszava nem lett frissítve");
             }
 
+            const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(newPasswordData.email); // töröljük a használt codeokat
+            console.log(deleteProcess);
+            
+            if (deleteProcess.deleted == 0) {
+                throw new BadRequestError("nem sikerült törölni a használt verify_codeokat");
+            }
 
             return { message: "jelszó sikeresen frissítve" };
     }

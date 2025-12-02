@@ -39,7 +39,7 @@ class Verify_codeService {
         const deleteProcess = await this.verify_codeRepository.deleteVerify_codesByEmail(email);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen egyetlen code ehez at email-hez db ben");
+            throw new BadRequestError("Nincs ilyen code db ben ehhez az emailhez");
         }
         return deleteProcess;
     }
