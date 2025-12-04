@@ -34,7 +34,7 @@ exports.registerUser = async (req, res, next) => {
 // --- 2. lépés: e-mailben kapott token alapján user + profil létrehozása ---
 exports.confirmRegistration = async (req, res, next) => {
     const { token } = req.params;
-    const { first_name, last_name, birth_date, birth_place, schools, bio, avatar_url } = req.body || {};
+    const { first_name, last_name, birth_date, birth_place, schools, bio } = req.body || {};
 
     try {
         const decoded = authUtils.verifyToken(token);
@@ -42,12 +42,17 @@ exports.confirmRegistration = async (req, res, next) => {
             return res.status(400).json({ message: "Érvénytelen vagy lejárt token." });
         }
 
+        let avatar_url = "";
+        if (req.file) {
+            avatar_url = `/cloud/${req.file.filename}`;
+        }
+
         const createdUser = await userService.createUser({
             username: decoded.username,
             email: decoded.email,
             password_hash: decoded.password_hash
         });
-        
+
         const { user_profileService } = require("../services")(db);
         const newProfile = await user_profileService.createUser_Profile({
             USER_ID: createdUser.ID,
@@ -96,28 +101,25 @@ exports.login = async (req, res, next) => {
         authUtils.setCookie(res, "user_token", token);
 
         res.status(200).json({ token });
-        
+
     } catch (error) {
         next(error);
     }
 }
 
-exports.status = (req, res, next) =>
-{
+exports.status = (req, res, next) => {
     res.status(200).json(req.user);
 }
 
-exports.logout = (req, res, next) =>
-{
+exports.logout = (req, res, next) => {
     res.clearCookie("user_token");
 
     res.sendStatus(200);
 }
 
-exports.getActiveTokenDetails = (req, res, next) =>
-{
+exports.getActiveTokenDetails = (req, res, next) => {
     const active = authUtils.verifyToken(req.params.token);
-    
+
     if (!active) {
         res.sendStatus(404).json(active);
     } else {

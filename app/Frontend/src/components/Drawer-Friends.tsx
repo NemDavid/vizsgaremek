@@ -33,9 +33,8 @@ export function DrawerFriends() {
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter>
-                    <Button>Submit</Button>
                     <DrawerClose>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">Bezárás</Button>
                     </DrawerClose>
                 </DrawerFooter>
             </DrawerContent>

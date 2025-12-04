@@ -2,7 +2,6 @@ import axios from "axios"
 import z from "zod"
 import type { LoginSchema } from "../login-form"
 import type { RegisterSchema } from "../signup-form"
-import type {ConfirmSchema} from "../profil-setup-form"
 export const ac = axios.create({
   baseURL: "http://localhost:6769",
   headers: {
@@ -10,6 +9,13 @@ export const ac = axios.create({
   },
   withCredentials: true,
 })
+
+export const RegApi = axios.create({
+  baseURL: "http://localhost:6769",
+  withCredentials: true,
+});
+
+
 import type { PostcreateSchema } from "../Post-Create"
 
 export type User = {
@@ -87,8 +93,8 @@ export async function RegisterRequest(data: RegisterSchema ) {
   return await ac.post("/api/registerUser",data);
 }
 
-export async function RegisterConfirmRequest(data: ConfirmSchema,token: string ) {
-  return await ac.post(`/api/confirm/${token}`,data);
+export async function RegisterConfirmRequest(data: FormData, token: string) {
+  return await RegApi.post(`/api/confirm/${token}`, data);
 }
 
 export async function authStatusRequest() {
@@ -133,5 +139,12 @@ export async function MakeCommentForPost(comment:PostFormSchema) {
   const response = await ac.post(`/api/users_posts_comment`,comment )
   return response.data
 }
+
+export async function TokenStatusRequest(Token: string) {
+  return await ac.get(`/api/active_token/${Token}`);
+}
+
+//
+
 
 //http://localhost:6769/api/users/1

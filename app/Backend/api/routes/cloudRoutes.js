@@ -6,6 +6,6 @@ const { getStorage } = require("../utilities/cloudUtils");
 
 const upload = getStorage()
 
-router.post("/upload",upload.single("image"),controller.UploadPicture)
+router.post("/upload",upload.single("avatar"),controller.UploadPicture)
 
 module.exports = router;
