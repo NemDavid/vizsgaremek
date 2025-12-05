@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute} from '@tanstack/react-router'
 import { ProfilSetupForm } from "@/components/profil-setup-form"
 import { Toaster } from "sonner"
 import { useQuery } from '@tanstack/react-query'

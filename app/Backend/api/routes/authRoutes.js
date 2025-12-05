@@ -24,5 +24,11 @@ router.get("/active_token/:token", authController.getActiveTokenDetails);
 // ----
 router.post("/reset_password/send_verify_code", authController.sendVerifyCode);
 router.post("/reset_password/set_new_password", authController.setNewPassword);
+/* 
+küld 
+-  post (email) -> email 6 számjegyű kód érkezik
+-  post - 6 számu kod helyes (number) => emailnek a fiokjait adot vissza (Válasz: (useid,email, avatar_Url, username))
+-  post - Kivalaszott fiok (userid, newpassword password) => elenőrződ a két jelszó  ha jó => megegyik jelszó változtatás Response( success: true )
+*/
 
 module.exports = router;
