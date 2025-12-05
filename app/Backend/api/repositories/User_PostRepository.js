@@ -28,13 +28,13 @@ class User_PostRepository {
         }
     }
 
-    async getUser_PostsByLimit(limit) {
+    async getUser_PostsByLimit(limit) {    
         try {
             return await this.User_Post.scope("allPostData").findAll({
                     order: [
                         ["created_at", "ASC"]
                     ],
-                    limit: limit,
+                    limit: Number(limit),
                     include: [
                         { 
                             model: this.User_Post_Comment,
