@@ -119,7 +119,8 @@ exports.logout = (req, res, next) => {
 
 exports.getActiveTokenDetails = (req, res, next) => {
     const active = authUtils.verifyToken(req.params.token);
-
+    console.log(active);
+    
     if (!active) {
         res.sendStatus(404).json(active);
     } else {

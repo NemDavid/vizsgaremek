@@ -5,9 +5,12 @@ const paramHandler = require("../middlewares/paramHandler")
 
 router.param("userId", paramHandler.paramUserId);
 router.param("postId", paramHandler.paramPostId);
+router.param("limit", paramHandler.paramPostLimit);
 
 
 router.get("/user_posts", user_postController.getUser_Posts);
+
+router.get("/user_postsByLimit/:limit", user_postController.getUser_PostsByLimit);
 
 router.get("/user_posts/:userId", user_postController.getUser_Posts_ByuserId);
 

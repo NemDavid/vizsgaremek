@@ -28,6 +28,26 @@ class User_PostRepository {
         }
     }
 
+    async getUser_PostsByLimit(limit) {
+        try {
+            return await this.User_Post.scope("allPostData").findAll({
+                    order: [
+                        ["created_at", "ASC"]
+                    ],
+                    limit: limit,
+                    include: [
+                        { 
+                            model: this.User_Post_Comment,
+                            as: "comments",
+                            scope: "allUserPostCommentData",
+                         }
+                    ]
+                });
+        } catch (error) {
+            throw new DbError("Failed to fetch user posts", { details: error.message });
+        }
+    }
+
     async getUser_Posts_ByuserId(userId) {
         try {
             return await this.User_Post.scope("allPostData").findOne({
