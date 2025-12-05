@@ -9,6 +9,14 @@ exports.getUser_Posts = async (req, res, next) => {
     }
 };
 
+exports.getUser_PostsByLimit = async (req, res, next) => {
+    try {
+        res.status(200).json(await user_postService.getUser_PostsByLimit(req.limit));
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.getUser_Posts_ByuserId = async (req, res, next) => {
     try {
         res.status(200).json(await user_postService.getUser_Posts_ByuserId(req.userId));

@@ -14,6 +14,15 @@ class User_PostService
         return await this.user_postRepository.getUser_Posts();
     }
 
+    async getUser_PostsByLimit(limit)
+    {
+        if (!limit) {
+            throw new BadRequestError("hiányzó limit");
+        }
+
+        return await this.user_postRepository.getUser_PostsByLimit(limit);
+    }
+
     async getUser_Posts_ByuserId(userId)
     {
         return await this.user_postRepository.getUser_Posts_ByuserId(userId);

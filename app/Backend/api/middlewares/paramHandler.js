@@ -1,4 +1,3 @@
-
 function paramPage(req, res, next, paramPage) {
     req.paramPage = paramPage;
     next();
@@ -19,4 +18,9 @@ function paramItemId(req, res, next, itemId) {
     next();
 }
 
-module.exports = { paramPage, paramUserId, paramPostId, paramItemId };
+function paramPostLimit(req, res, next, limit) {
+    req.limit = limit;
+    next();
+}
+
+module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit };
