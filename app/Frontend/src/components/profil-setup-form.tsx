@@ -19,9 +19,8 @@ import {
 } from "@/components/ui/form"
 import { RegisterConfirmRequest } from "./axios/axiosClient"
 import { toast } from "sonner"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation} from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { TokenStatusRequest } from "./axios/axiosClient"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
   token: string; // <-- hozzáadva ide
@@ -44,10 +43,6 @@ export type ConfirmSchema = z.infer<typeof confirmSchema>
 
 export function ProfilSetupForm({ className, onSwitch, token, ...props }: SignupFormProps) {
   const nav = useNavigate();
-  const {data:TokenValid} = useQuery({
-    queryKey: ['token-validate'],
-    queryFn: () => TokenStatusRequest(token),
-  })
   const { mutate: confirm, isPending } = useMutation({
     mutationFn: ({ data }: { data: FormData }) => RegisterConfirmRequest(data, token),
     onError: () => {
@@ -79,9 +74,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
     },
     mode: "onChange",
   })
-  if(TokenValid?.status !== 200){
-    nav({to: '/'})
-  }
+
   function onSubmit(values: ConfirmSchema) {
     const formData = new FormData();
 
