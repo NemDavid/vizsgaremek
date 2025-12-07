@@ -35,6 +35,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
         mutationFn: async (comment: PostFormSchema) => MakeCommentForPost(comment),
         onSuccess() {
             queryclinet.refetchQueries({ queryKey: ["Posts"] });
+            form.resetField("comment")
         }
     })
     const form = useForm<PostFormSchema>({

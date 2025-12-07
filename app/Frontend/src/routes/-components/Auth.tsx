@@ -18,7 +18,7 @@ export function AuthPage() {
   if (!isReady) return null;
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-slate-100">
+    <div className="relative w-full h-screen overflow-hidden">
       {/* Login oldal */}
       <motion.div
         animate={{

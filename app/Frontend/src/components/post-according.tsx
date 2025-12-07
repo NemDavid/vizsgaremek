@@ -61,20 +61,20 @@ export function PostAccord({ post }: { post: Post }) {
     }
 
     return (
-        <Card className="rounded-2xl border shadow-md gap-0 py-0">
+        <Card className="rounded-2xl border shadow-md gap-0 py-0 bg-red-50">
             <CardContent className="p-0">
                 <Accordion type="single" collapsible>
                     <AccordionItem value="item-1">
                         <AccordionTrigger className="flex items-center justify-between gap-2 px-0 py-0 bg-gray-50 ">
-                            <div className="flex items-center gap-3">
-                                <AvatarFrame userid={userid} className="bg-transparent rounded-l-none rounded-tl-lg" />
+                            <div className="flex items-center gap-3 bg-red-50 w-full">
+                                <AvatarFrame userid={userid} className="bg-red-50 rounded-l-none rounded-tl-lg" />
                                 <h2 className="text-xl font-semibold tracking-tight">
                                     {post.title}
                                 </h2>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent>
-                            <div className="flex px-4 py-3">
+                        <AccordionContent className='bg-red-100'>
+                            <div className="flex px-4 py-3  ">
                                 <div className="flex-1 pr-4">
                                     <p className="text-sm text-gray-700 whitespace-pre-line text-wrap">
                                         {post.content}
@@ -87,8 +87,8 @@ export function PostAccord({ post }: { post: Post }) {
                                         />
                                     )}
                                 </div>
-                                <div className="flex flex-col items-center gap-2">
-                                    <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-8 w-full max-w-xs" value={react ? react.reaction : ""}>
+                                <div className="flex flex-col items-center gap-2 bg-red-200 rounded-lg justify-center p-0 m-0">
+                                    <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-4 mb-4 mx-2 w-full max-w-xs" value={react ? react.reaction : ""}>
                                         <ToggleGroupItem onClick={() => doReaction(like)} value="like" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500'><ThumbsUp />{post.like} Like </ToggleGroupItem>
                                         <ToggleGroupItem onClick={() => doReaction(dislike)} value="dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>
                                     </ToggleGroup>
@@ -96,7 +96,7 @@ export function PostAccord({ post }: { post: Post }) {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="border-t bg-gray-50 py-3 px-4 w-full">
+                    <AccordionItem value="item-2" className="border-t bg-red-50 py-3 px-4 w-full">
                         <CommentsAccord postID={post.ID} commentsList={post.comments}/>
                     </AccordionItem>
                 </Accordion>

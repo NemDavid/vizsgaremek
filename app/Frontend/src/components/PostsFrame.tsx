@@ -13,10 +13,10 @@ export function PostsFrame() {
     })
     if (isLoading) {
         return;
-    }
+    }//bg-radial from-rose-500 to-red-950
     return (
-        <ScrollArea className="w-full z-1">
-            <main className="flex-1 h-[calc(100vh-200px)] overflow-y-auto flex justify-center">
+        <ScrollArea className="w-full h-full ">
+            <main className="flex-1 h-[calc(100vh-99px)] overflow-y-auto flex justify-center">
                 <div className="w-full max-w-xl flex flex-col gap-8 py-6">
                     <PostCreate />
                     {posts?.slice().reverse().map((ps) => (

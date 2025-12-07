@@ -49,58 +49,58 @@ const components: { title: string; to: string; description: string }[] = [
   },
 ]
 
-export default function Header({className}:{className?:string}) {
-  const {mutate: logut} = useMutation({
+export default function Header({ className }: { className?: string }) {
+  const { mutate: logut } = useMutation({
     mutationFn: () => logoutRequest(),
-    onSuccess:() => {
+    onSuccess: () => {
       window.location.reload();
     }
   })
 
   return (
-    <header className={`p-4 bg-red-600 text-white flex items-center justify-between z-1 ${className}`}>
+    <header className={`p-4 bg-red-950 text-white flex items-center justify-between z-99 ${className}`}>
       <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
 
       <div className="flex-1 flex justify-self-center">
         <NavigationMenu viewport={false}>
-        <NavigationMenuList className="flex gap-6 justify-center">
+          <NavigationMenuList className="flex gap-6 justify-center">
 
-          {/* Kezdőlap */}
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-600`}>
-              <Link to="/">Kezdőlap</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+            {/* Kezdőlap */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                <Link to="/">Kezdőlap</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
 
-          {/* Profil */}
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-600`}>
-              <Link to="/profil/$profilId" params={{ profilId: "1" }}>Profil</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+            {/* Profil */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                <Link to="/profil/$profilId" params={{ profilId: "1" }}>Profil</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
 
-          {/* Barátok */}
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-600`}>
-              <Link to="/friends">Barátok</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+            {/* Barátok */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                <Link to="/friends">Barátok</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
 
-          {/* Beállítások */}
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="text-white bg-red-600">Beállítások</NavigationMenuTrigger>
-            <NavigationMenuContent className="text-white border-red-800 absolute z-[2]">
-              <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
-                {components.map((component) => (
-                  <ListItem key={component.title} title={component.title} to={component.to}>
-                    {component.description}
-                  </ListItem>
-                ))}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+            {/* Beállítások */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="text-white bg-red-900">Beállítások</NavigationMenuTrigger>
+              <NavigationMenuContent className="bg-red-300! text-white border-red-800 absolute ">
+                <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
+                  {components.map((component) => (
+                    <ListItem key={component.title} title={component.title} to={component.to}>
+                      {component.description}
+                    </ListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
       <div className="bg-red-300 rounded-md p-1">
         <AlertDialog>
@@ -116,7 +116,7 @@ export default function Header({className}:{className?:string}) {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Mégse</AlertDialogCancel>
-              <AlertDialogAction onClick={()=> logut()}>Kijelentkezés</AlertDialogAction>
+              <AlertDialogAction onClick={() => logut()}>Kijelentkezés</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
