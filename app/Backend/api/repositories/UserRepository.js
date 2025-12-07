@@ -1,9 +1,11 @@
+const { where } = require("sequelize");
 const { DbError } = require("../errors");
 
 class UserRepository {
     constructor(db) {
         this.User = db.User;
         this.User_Profile = db.User_Profile;
+        this.Connections = db.Connections;
         this.sequelize = db.sequelize;
     }
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
@@ -24,12 +26,37 @@ class UserRepository {
     }
     ///--------------------VÉGLEGES-----------------------------
 
-    async getUserByUsernameEmail(username) {
+    async getUserByUsername(username) {
         try {
             return await this.User.scope("allUserData").findOne({
-                where: [ { 
+                where: {
                     username: username,
-                } ]  
+                }
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch users", { details: error.message });
+        }
+    }
+
+    async getUserByID(userId) {
+        try {
+            return await this.User.scope("allUserData").findOne({
+                where: {
+                    ID: userId,
+                },
+                include: [
+                    {
+                        model: this.User_Profile,
+                        as: "profile",
+                        scope: "allUser_ProfileData"
+                    },
+                    {
+                        model: this.Connections,
+                        as: "profile",
+                        scope: "allConnectionData",
+                        where: { ID: userId }
+                    }
+                ]
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
@@ -39,9 +66,16 @@ class UserRepository {
     async getUserByEmail(email) {
         try {
             return await this.User.scope("allUserData").findAll({
-                where: [ { 
+                where: {
                     email: email
-                } ]  
+                },
+                include: [
+                    {
+                        model: this.User_Profile,
+                        as: "profile",
+                        scope: "allUser_ProfileData"
+                    },
+                ]
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
@@ -73,7 +107,7 @@ class UserRepository {
     }
 
     async createUser(userData) {
-        try {      
+        try {
             return await this.User.create(userData);
         } catch (error) {
             throw new DbError("Failed to create user object", {
@@ -106,21 +140,21 @@ class UserRepository {
             throw new DbError("Sikertelen frissítés", { details: error.message });
         }
     }
-    
+
     async getUser(userId) {
         try {
             return await this.User.scope("allUserData").findOne({
-                where: [ { ID: userId } ]  
+                where: { ID: userId }
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
         }
-    
+
     }
     async getExistingUserByToken(username) {
         try {
             return await this.User.scope("allUserData").findOne({
-                where: [ { username: username } ]  
+                where: { username: username }
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });

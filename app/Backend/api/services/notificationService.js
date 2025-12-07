@@ -104,13 +104,20 @@ class NotificationService {
 
 
         // létezik e ilyen emailhez user
-        const existingProfiles = await this.userService.getUserByEmail(verifyData.email); // letezik e ilyen emailhez user
-        if (!existingProfiles) {
+        const existingUsers = await this.userService.getUserByEmail(verifyData.email); // letezik e ilyen emailhez user
+        if (!existingUsers) {
             throw new BadRequestError("ehez az emailhez nincs felhasználói fiók");
         }
 
+        const filteredUsers = existingUsers.map(user => ({
+            ID: user.ID,
+            email: user.email,
+            username: user.username,
+            avatar_url: user.profile.avatar_url
+        }));
 
-        return existingProfiles;
+
+        return filteredUsers;
     }
 
     // new password set

@@ -8,6 +8,11 @@ function paramUserId(req, res, next, userId) {
     next();
 }
 
+function paramAction(req, res, next, action) {
+    req.action = action;
+    next();
+}
+
 function paramPostId(req, res, next, postId) {
     req.postId = postId;
     next();
@@ -28,4 +33,4 @@ function paramPostLimit(req, res, next, limit) {
     next();
 }
 
-module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit, paramEmail };
+module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit, paramEmail, paramAction };

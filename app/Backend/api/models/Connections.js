@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) =>
                 type: DataTypes.BIGINT,
                 allowNull: false
             },
+
             Status:
             {
                 type: DataTypes.ENUM("pending", "accepted", "declined", "blocked"),
@@ -41,6 +42,11 @@ module.exports = (sequelize, DataTypes) =>
             freezeTableName: true,
             createdAt: "Added_at", 
             updatedAt: false, 
+            scopes: {
+                allConnectionData:{
+                    attributes: ["ID", "User_Requested_ID", "To_User_ID", "Status"],
+                }
+            },
         }
     )
 

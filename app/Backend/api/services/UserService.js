@@ -97,7 +97,6 @@ class UserService
         updateData.password_hash = await bcrypt.hash(updateData.password, salt);
 
         const affectedRows = await this.userRepository.updateUser(userId, updateData);
-
         if (!affectedRows) {
             throw new BadRequestError("user nem található", {details: `userId: ${userId}`})
         }
