@@ -16,6 +16,7 @@ exports.getVerify_code = async (req, res, next) => {
         next(error);
     }
 };
+
 exports.getVerify_codeByEmail = async (req, res, next) => {
     const { email } = req.body || {};
 
@@ -25,7 +26,6 @@ exports.getVerify_codeByEmail = async (req, res, next) => {
         next(error);
     }
 };
-
 
 exports.deleteVerify_code = async (req, res, next) => {
     try {
@@ -60,6 +60,15 @@ exports.createVerify_code = async (req, res, next) => {
 exports.updateVerify_code = async (req, res, next) => {
     try {
         const updatedVerify_code = await verify_codeService.updateVerify_code(req.itemId, req.body);
+        res.status(200).json(updatedVerify_code);
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.updateVerify_codeByEmail = async (req, res, next) => {
+    try {
+        const updatedVerify_code = await verify_codeService.updateVerify_codeByEmail(req.email, req.body);
         res.status(200).json(updatedVerify_code);
     } catch (error) {
         next(error);

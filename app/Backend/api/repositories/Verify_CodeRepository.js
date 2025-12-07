@@ -81,6 +81,18 @@ class Verify_CodeRepository {
             throw new DbError("Sikertelen frissítés", { details: error.message });
         }
     }
+
+    async updateVerify_codeByEmail(email, updateData) {
+        try {
+            const [affectedRows] = await this.Verify_Code.update(updateData, {
+                where: { email: email },
+            });
+
+            return affectedRows;
+        } catch (error) {
+            throw new DbError("Sikertelen frissítés", { details: error.message });
+        }
+    }
 }
 
 module.exports = Verify_CodeRepository;

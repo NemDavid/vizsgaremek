@@ -5,6 +5,7 @@ const paramHandler = require("../middlewares/paramHandler")
 
 
 router.param("itemId", paramHandler.paramItemId);
+router.param("email", paramHandler.paramEmail);
 
 
 
@@ -22,6 +23,8 @@ router.delete("/verify_codes", verify_codeController.deleteVerify_codesByEmail);
 router.post("/verify_code", verify_codeController.createVerify_code);
 
 router.patch("/verify_code/:itemId", verify_codeController.updateVerify_code);
+
+router.patch("/verify_code/:email", verify_codeController.updateVerify_codeByEmail);
 
 
 module.exports = router;

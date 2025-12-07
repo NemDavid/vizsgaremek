@@ -52,7 +52,14 @@ class NotificationService {
 
             const verify_code = authUtils.generateVerifyCode();
 
-            const verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code });
+            const existing_verify_codes = await this.verify_codeService.getVerify_codeByEmail(email);
+            const verify_codeData = null;
+            if (!existing_verify_codes) {
+                verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code });
+            }
+            else {
+                verify_codeData = this.verify_codeService.updateVerify_code(email, {verify_code}); 
+            }
             
 
             const subject = 'MiHirunk - Jelszó visszaállítási ellenőrző kód';

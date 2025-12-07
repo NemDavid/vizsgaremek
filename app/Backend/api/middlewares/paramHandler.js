@@ -18,9 +18,14 @@ function paramItemId(req, res, next, itemId) {
     next();
 }
 
+function paramEmail(req, res, next, email) {
+    req.email = email;
+    next();
+}
+
 function paramPostLimit(req, res, next, limit) {
     req.limit = limit;
     next();
 }
 
-module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit };
+module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit, paramEmail };
