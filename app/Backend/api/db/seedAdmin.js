@@ -16,7 +16,7 @@ async function seedAdminUser(db) {
         const userService = new UserService(db);
         const userProfileService = new User_ProfileService(db);
 
-        const existingAdmin = await userService.getUserByUsernameEmail(ADMIN_DATA.username, ADMIN_DATA.email);
+        const existingAdmin = await userService.getUserByUsername(ADMIN_DATA.username);
         if (!existingAdmin) {
             // létrehozod az admin usert
             const newUser = await userService.createUser({
@@ -24,7 +24,7 @@ async function seedAdminUser(db) {
                 password_hash: authUtils.hashPassword(ADMIN_DATA.password),
                 username: ADMIN_DATA.username,
             });
-
+            
 
             // létrehozod a profilját
             await userProfileService.createUser_Profile({

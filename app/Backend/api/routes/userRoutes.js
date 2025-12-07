@@ -6,6 +6,7 @@ const paramHandler = require("../middlewares/paramHandler")
 
 router.param("userId", paramHandler.paramUserId);
 router.param("paramPage", paramHandler.paramPage);
+router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
 
 
 router.get("/users", userController.getUsers);
@@ -13,6 +14,8 @@ router.get("/users", userController.getUsers);
 router.get("/user/:userId", userController.getUser);
 
 router.get("/users/:paramPage", userController.getUsersByPage);
+
+router.get("/users/:uniqIdentifier", userController.getUserByUsernameOrUserId);
 
 
 router.delete("/user/:userId", userController.deleteUser);

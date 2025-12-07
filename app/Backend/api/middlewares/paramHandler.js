@@ -8,6 +8,11 @@ function paramUserId(req, res, next, userId) {
     next();
 }
 
+function paramUniqIdentifier(req, res, next, uniqIdentifier) {
+    req.uniqIdentifier = uniqIdentifier;
+    next();
+}
+
 function paramAction(req, res, next, action) {
     req.action = action;
     next();
@@ -33,4 +38,4 @@ function paramPostLimit(req, res, next, limit) {
     next();
 }
 
-module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit, paramEmail, paramAction };
+module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit, paramEmail, paramAction, paramUniqIdentifier };

@@ -131,7 +131,7 @@ class NotificationService {
 
 
         // létezik e ilyen emailhez user
-        const existingUser = await this.userService.getUser(newPasswordData.userId); // letezik e ilyen emailhez user
+        const existingUser = await this.userService.getUserByID(newPasswordData.userId); // letezik e ilyen emailhez user
         if (!existingUser) {
             throw new BadRequestError("nincs ilyen id-vel user");
         }

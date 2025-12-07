@@ -86,7 +86,7 @@ exports.login = async (req, res, next) => {
             });
         }
 
-        const user = await userService.getUserByUsernameEmail(username, email);
+        const user = await userService.getUserByUsername(username);
         if (!user) {
             return res.status(404).json({ message: "Nincs ilyen felhasználó" });
         }

@@ -71,23 +71,29 @@ module.exports = (sequelize) => {
     });
 
 
+
+    
+
     User.hasMany(Connections, {
         foreignKey: "User_Requested_ID",
-        as: "sentConnections"
-    });
-    Connections.belongsTo(User, {
-        foreignKey: "User_Requested_ID",
-        as: "requester"
+        as: "sentConnections" // Ő küldte a kérést
     });
 
     User.hasMany(Connections, {
         foreignKey: "To_User_ID",
-        as: "receivedConnections"
+        as: "receivedConnections" // Ő kapta a kérést
     });
+
+    Connections.belongsTo(User, {
+        foreignKey: "User_Requested_ID",
+        as: "requester" // aki küldte
+    });
+
     Connections.belongsTo(User, {
         foreignKey: "To_User_ID",
-        as: "receiver"
+        as: "receiver" // aki kapta
     });
+
 
 
 

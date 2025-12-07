@@ -31,7 +31,14 @@ class UserRepository {
             return await this.User.scope("allUserData").findOne({
                 where: {
                     username: username,
-                }
+                },
+                include: [
+                    {
+                        model: this.User_Profile,
+                        as: "profile",
+                        scope: "allUser_ProfileData"
+                    },
+                ]
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
@@ -50,17 +57,30 @@ class UserRepository {
                         as: "profile",
                         scope: "allUser_ProfileData"
                     },
-                    {
-                        model: this.Connections,
-                        as: "profile",
-                        scope: "allConnectionData",
-                        where: { ID: userId }
-                    }
+                    // {
+                    //     model: this.Connections,
+                    //     as: "connections",
+                    //     scope: "allConnectionData",
+                    //     // where: { User_Requested_ID: userId }
+                    // }
                 ]
             });
         } catch (error) {
             throw new DbError("Failed to fetch users", { details: error.message });
         }
+    }
+
+    async getUser(userId) {
+        try {
+            return await this.User.scope("allUserData").findOne({
+                where: {
+                    ID: userId
+                }
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch users", { details: error.message });
+        }
+
     }
 
     async getUserByEmail(email) {
@@ -141,16 +161,6 @@ class UserRepository {
         }
     }
 
-    async getUser(userId) {
-        try {
-            return await this.User.scope("allUserData").findOne({
-                where: { ID: userId }
-            });
-        } catch (error) {
-            throw new DbError("Failed to fetch users", { details: error.message });
-        }
-
-    }
     async getExistingUserByToken(username) {
         try {
             return await this.User.scope("allUserData").findOne({
