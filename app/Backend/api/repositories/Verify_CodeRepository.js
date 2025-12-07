@@ -18,9 +18,9 @@ class Verify_CodeRepository {
     async getVerify_code(itemId) {
         try {
             return await this.Verify_Code.scope("allVerify_CodeData").findOne({
-                where: [ { 
+                where: {
                     ID: itemId,
-                } ]  
+                }
             });
         } catch (error) {
             throw new DbError("Failed to fetch Verify_Code", { details: error.message });
@@ -29,10 +29,10 @@ class Verify_CodeRepository {
 
     async getVerify_codeByEmail(email) {
         try {
-            return await this.Verify_Code.scope("allVerify_CodeData").findAll({
-                where: [ { 
+            return await this.Verify_Code.scope("allVerify_CodeData").findOne({
+                where: {
                     email: email
-                } ]  
+                }
             });
         } catch (error) {
             throw new DbError("Failed to fetch Verify_Code", { details: error.message });
@@ -60,7 +60,7 @@ class Verify_CodeRepository {
     }
 
     async createVerify_code(verify_codeData) {
-        try {      
+        try {
             return await this.Verify_Code.create(verify_codeData);
         } catch (error) {
             throw new DbError("Failed to create verify_code object", {

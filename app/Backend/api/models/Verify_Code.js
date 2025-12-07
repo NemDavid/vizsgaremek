@@ -1,4 +1,4 @@
-const { Model } = require("sequelize") 
+const { Model, DATE } = require("sequelize") 
 
 module.exports = (sequelize, DataTypes) =>
 {
@@ -36,11 +36,18 @@ module.exports = (sequelize, DataTypes) =>
                 defaultValue: false
             },
 
+            expire_at:
+            {
+                type: DataTypes.DATE,
+                allowNull: true,
+                defaultValue: () => new Date(Date.now() + 5 * 60 * 1000) // 5 perc
+            },
 
             created_at:
             {
-                type: DataTypes.DATEONLY,
-                allowNull: true
+                type: DataTypes.DATE,
+                allowNull: true,
+                defaultValue: DataTypes.NOW
             },
             
         },
@@ -53,7 +60,7 @@ module.exports = (sequelize, DataTypes) =>
             updatedAt: false, 
             scopes: {
                 allVerify_CodeData:{
-                    attributes: ["ID", "email", "verify_code_hash", "used", "created_at"],
+                    attributes: ["ID", "email", "verify_code_hash", "used", "expire_at", "created_at"],
                 }
             },
         }

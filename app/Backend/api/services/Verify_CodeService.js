@@ -77,6 +77,10 @@ class Verify_codeService {
 
     async updateVerify_codeByEmail(email, updateData) {
         if (!email) throw new BadRequestError("Hiányzó email");
+        if (!updateData.verify_code) throw new BadRequestError("hiányzó verify_code");
+
+        updateData.verify_code = !updateData.verify_code ? authUtils.generateVerifyCode() : updateData.verify_code;
+        updateData.verify_code_hash = authUtils.hashCode(""+updateData.verify_code);
 
         const affectedRows = await this.verify_codeRepository.updateVerify_codeByEmail(email, updateData);
 
@@ -89,6 +93,12 @@ class Verify_codeService {
         if (!updateverify_code) {
             throw new BadRequestError("a frissitett code nem található", { details: `id: ${email}` });
         }
+        
+        updateverify_code.verify_code = updateData.verify_code;
+
+        console.log(updateverify_code);
+        
+
         return updateverify_code;
     }
 

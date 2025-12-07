@@ -20,9 +20,9 @@ class UserService
         return await this.userRepository.getUser(userId);
     }
 
-    async getUserByUsernameEmail(username, email)
+    async getUserByUsernameEmail(username)
     {
-        return await this.userRepository.getUserByUsernameEmail(username, email);
+        return await this.userRepository.getUserByUsernameEmail(username);
     }
     
     async getUserByEmail(email)
@@ -149,8 +149,6 @@ class UserService
 
         return existingUser;
     }
-
-
 
 
 }

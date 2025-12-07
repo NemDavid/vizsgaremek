@@ -119,8 +119,7 @@ exports.logout = (req, res, next) => {
 
 exports.getActiveTokenDetails = (req, res, next) => {
     const active = authUtils.verifyToken(req.params.token);
-    console.log(active);
-    
+
     if (!active) {
         res.sendStatus(404).json(active);
     } else {
@@ -139,15 +138,26 @@ exports.sendVerifyCode = async (req, res, next) => {
     }
 }
 
+exports.verifyTheCode = async (req, res, next) => {
+    const { email, verify_code } = req.body || {};
+    
+    try {
+        res.status(200).json(await notificationService.verifyTheCode({
+                email,
+                verify_code
+            }));
+    } catch (error) {
+        next(error);
+    }
+}
+
 // setNewPassword 
 exports.setNewPassword = async (req, res, next) => {
-    const { userId, email, verify_code, password } = req.body || {};
+    const { userId, password } = req.body || {};
 
     try {
         res.status(200).json(await notificationService.setNewPassword({
             userId,
-            email,
-            verify_code,
             password
         }));
     } catch (error) {

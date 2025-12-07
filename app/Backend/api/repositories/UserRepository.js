@@ -24,12 +24,11 @@ class UserRepository {
     }
     ///--------------------VÉGLEGES-----------------------------
 
-    async getUserByUsernameEmail(username, email) {
+    async getUserByUsernameEmail(username) {
         try {
             return await this.User.scope("allUserData").findOne({
                 where: [ { 
                     username: username,
-                    email: email
                 } ]  
             });
         } catch (error) {
@@ -39,7 +38,7 @@ class UserRepository {
 
     async getUserByEmail(email) {
         try {
-            return await this.User.scope("allUserData").findOne({
+            return await this.User.scope("allUserData").findAll({
                 where: [ { 
                     email: email
                 } ]  

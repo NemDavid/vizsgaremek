@@ -45,22 +45,27 @@ class NotificationService {
 
     // send verify code for password reset
     async sendVerifyCode(email) {
-        try {  
+        try {
             if (!email) {
                 throw new BadRequestError("hiányzó email");
             }
 
+            const existingProfiles = await this.userService.getUserByEmail(email); // letezik e ilyen emailhez user
+            if (existingProfiles.length == 0) {
+                throw new BadRequestError("ehez az emailhez nincs felhasználói fiók");
+            }
+
             const verify_code = authUtils.generateVerifyCode();
 
-            const existing_verify_codes = await this.verify_codeService.getVerify_codeByEmail(email);
-            const verify_codeData = null;
-            if (!existing_verify_codes) {
+            const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(email);
+
+            let verify_codeData = null;
+            if (!existing_verify_code) {
                 verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code });
             }
             else {
-                verify_codeData = this.verify_codeService.updateVerify_code(email, {verify_code}); 
+                verify_codeData = await this.verify_codeService.updateVerify_codeByEmail(email, { verify_code });
             }
-            
 
             const subject = 'MiHirunk - Jelszó visszaállítási ellenőrző kód';
             const html = `
@@ -73,53 +78,73 @@ class NotificationService {
             throw err;
         }
     }
+
+    // verify the code and return the profiles
+    async verifyTheCode(verifyData) {
+        if (!verifyData.email) {
+            throw new BadRequestError("hiányzó email");
+        }
+        if (!verifyData.verify_code) {
+            throw new BadRequestError("hiányzó verify_code");
+        }
+
+        // van e ilyen emailhez code
+        const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(verifyData.email);  // van e ilyen emailhez code
+        if (!existing_verify_code) {
+            throw new BadRequestError("ehez az emailhoz nem lett code generálva");
+        }
+
+
+        // van e érvényes code  és lejárt e már
+        const has_valid_code = bcrypt.compareSync(verifyData.verify_code, existing_verify_code.verify_code_hash) &&
+            existing_verify_code.created_at.getTime() < existing_verify_code.expire_at.getTime();
+        if (!has_valid_code) {
+            throw new BadRequestError("nincs érvényes verify_code ehhez az emailhez");
+        }
+
+
+        // létezik e ilyen emailhez user
+        const existingProfiles = await this.userService.getUserByEmail(verifyData.email); // letezik e ilyen emailhez user
+        if (!existingProfiles) {
+            throw new BadRequestError("ehez az emailhez nincs felhasználói fiók");
+        }
+
+
+        return existingProfiles;
+    }
+
     // new password set
     async setNewPassword(newPasswordData) {
-            if (!newPasswordData.userId) {
-                throw new BadRequestError("hiányzó userId");
-            }
-            if (!newPasswordData.email) {
-                throw new BadRequestError("hiányzó email");
-            }
-            if (!newPasswordData.verify_code) {
-                throw new BadRequestError("hiányzó verify_code");
-            }
-            if (!newPasswordData.password) {
-                throw new BadRequestError("hiányzó password");
-            }
+        if (!newPasswordData.userId) {
+            throw new BadRequestError("hiányzó userId");
+        }
+        if (!newPasswordData.password) {
+            throw new BadRequestError("hiányzó password");
+        }
 
-            const existingUser = await this.userService.getUser(newPasswordData.userId); // letezik e ilyen emailhez user
-            if (!existingUser) {
-                throw new BadRequestError("nincs ilyen emailhez user");
-            }
 
-            const existing_verify_codes = await this.verify_codeService.getVerify_codeByEmail(newPasswordData.email);  // van e ilyen emailhez code
-            if (!existing_verify_codes) {
-                throw new BadRequestError("ehez az emailhoz nem lett code generálva"); 
-            }
+        // létezik e ilyen emailhez user
+        const existingUser = await this.userService.getUser(newPasswordData.userId); // letezik e ilyen emailhez user
+        if (!existingUser) {
+            throw new BadRequestError("nincs ilyen id-vel user");
+        }
 
-            // van e érvényes code
-            const has_valid_code = existing_verify_codes.find(vc =>
-                bcrypt.compareSync(newPasswordData.verify_code, vc.verify_code_hash) &&
-                !vc.used
-            )
-            if (!has_valid_code) {
-                throw new BadRequestError("nincs érvényes verify_code ehhez az emailhez");
-            }
 
-            // update user password
-            const updatedUser = await this.userService.updateUser_Password(newPasswordData.userId, { password_hash: authUtils.hashPassword(newPasswordData.password) });
 
-            if (!updatedUser) {
-                throw new BadRequestError("a user jelszava nem lett frissítve");
-            }
+        // update user password
+        const updatedUser = await this.userService.updateUser_Password(newPasswordData.userId, { password_hash: authUtils.hashPassword(newPasswordData.password) });
+        if (!updatedUser) {
+            throw new BadRequestError("a user jelszava nem lett frissítve");
+        }
 
-            const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(newPasswordData.email); // töröljük a használt codeokat
-            if (deleteProcess.deleted == 0) {
-                throw new BadRequestError("nem sikerült törölni a használt verify_codeokat");
-            }
+        // töröljük a használt codeokat
+        const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(existingUser.email); // töröljük a használt codeokat
+        if (deleteProcess.deleted == 0) {
+            throw new BadRequestError("nem sikerült törölni a használt verify_codeokat");
+        }
 
-            return { message: "jelszó sikeresen frissítve" };
+
+        return { message: "jelszó sikeresen frissítve" };
     }
 }
 
