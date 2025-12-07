@@ -1,5 +1,4 @@
 const db = require("../db");
-const { param } = require("../routes/cloudRoutes");
 const { userService } = require("../services")(db);
 const authUtils = require("../utilities/authUtils");
 
@@ -20,18 +19,16 @@ exports.getUser = async (req, res, next) => {
 };
 exports.getUserByUsernameOrUserId = async (req, res, next) => {
     const uniqIdentifier = req.uniqIdentifier;
-
+    
     let user = null;
     try {
         // próbáljuk számként értelmezni
-        const asNumber = Number(uniqIdentifier);
+        const asNumber = parseInt(uniqIdentifier, 10);
 
-        if (!isNaN(asNumber)) {
-            user = await this.userService.getUserByID(asNumber);
-        } 
-        else 
-        {
-            user = await this.userService.getUserByUsername(uniqIdentifier); 
+        if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
+            user = await userService.getUserByID(asNumber);
+        } else {
+            user = await userService.getUserByUsername(uniqIdentifier);
         }
 
 

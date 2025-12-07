@@ -11,7 +11,7 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
 
 router.get("/users", userController.getUsers);
 
-router.get("/user/:userId", userController.getUser);
+router.get("/user/id/:userId", userController.getUser);
 
 router.get("/users/:paramPage", userController.getUsersByPage);
 
