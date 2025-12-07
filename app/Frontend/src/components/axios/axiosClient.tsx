@@ -107,7 +107,7 @@ export async function logoutRequest() {
 
 
 export async function getuserByid(id:bigint){
-  const user = await ac.get<User>(`/api/user/${id}`)
+  const user = await ac.get<User>(`/api/user/id/${id}`)
   const profil = await ac.get<UserProfile>(`/api/user_profile/${id}`)
   const adat = await {
     user: user.data,
