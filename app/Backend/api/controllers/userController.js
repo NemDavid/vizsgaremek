@@ -28,11 +28,14 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
 
         if (!isNaN(asNumber)) {
             user = await this.userService.getUserByID(asNumber);
-        } else {
+        } 
+        else 
+        {
             user = await this.userService.getUserByUsername(uniqIdentifier); 
         }
 
-        res.status(200).json();
+
+        res.status(200).json(user);
     } catch (error) {
         next(error);
     }
