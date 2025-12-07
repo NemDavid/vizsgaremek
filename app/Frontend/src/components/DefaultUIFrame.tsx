@@ -1,5 +1,6 @@
 
 import { AdsFrame } from "./AdsFrame";
+import { DrawerFriends } from "./Drawer-Friends";
 import { Footer } from "./footer";
 import Header from "./Header";
 
@@ -11,17 +12,16 @@ export function DefaultUIFrame({ children, Hirdetes, className}: { children?: Re
             <div className="flex flex-col h-screen">
                 <Header/>
                 <div className="flex flex-1 bg-white text-black">
-                    {/* <FriendList/> */}
                     <div className="flex flex-1 h-full">
-                        {Hirdetes? <AdsFrame url={"/hirdetes.png"} /> : null}
-                        <div className={`w-full z-1 ${className}`}>
+                        {Hirdetes? <AdsFrame url={"/hirdetes.png"} className="border-r-2"/> : null}
+                        <div className={`w-full z-1 h-full ${className}`}>
                             {children}
-
                         </div>
-                        {Hirdetes? <AdsFrame url={"/hirdetes2.png"} /> : null}
+                        {Hirdetes? <AdsFrame url={"/hirdetes2.png"} className="border-l-2"/> : null}
                     </div>
                 </div>
             </div>
+            <DrawerFriends/>
             <Footer/>
         </div>
 

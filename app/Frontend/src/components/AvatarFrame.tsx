@@ -36,7 +36,7 @@ export function AvatarFrame({ userid, className }: { userid: bigint, className?:
                 <Card key={userid} className={`bg-red-200 rounded-none rounded-l-3xl hover:bg-red-600 hover:text-white ${className}`}>
                     <CardContent className="p-0 flex">
                         <Avatar className="p-0 border-2 border-red-500 ">
-                            <AvatarImage src={`${User?.profil.avatar_url}`} />
+                            <AvatarImage src={`http://localhost:6769${User?.profil.avatar_url}`} />
                             <AvatarFallback>{User?.profil.first_name} {User?.profil.last_name}</AvatarFallback>
                         </Avatar>
                         <h3 className="scroll-m-20 text-xs font-semibold tracking-tight p-2">

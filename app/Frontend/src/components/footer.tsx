@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-      <div className="flex flex-col w-full h-fit bg-[#8d0909] text-[#ffffff] px-14 py-14">
+      <div className="flex flex-col w-full h-fit bg-red-950 text-[#ffffff] px-14 py-14">
         <div className="flex flex-row">
             <div className="flex flex-col gap-2 justify-center w-[35%] w-[35%]">
                 <div className="flex items-center w-full gap-4">

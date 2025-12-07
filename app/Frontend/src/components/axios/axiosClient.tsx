@@ -144,6 +144,20 @@ export async function TokenStatusRequest(Token: string) {
   return await ac.get(`/api/active_token/${Token}`);
 }
 
+export async function SendOTPToPasswordReset(email:string)
+{
+  return await ac.post(`/api/reset_password/send_verify_code`,{email});
+}
+//VTCR Verify the code request
+export async function SendVTCR({email,verify_code}:{verify_code:string,email:string})
+{
+  return await ac.post(`/api/reset_password/verify_the_code`,{verify_code,email});
+}
+export async function ChangePassword({userId,password}:{userId:number,password:string})
+{
+  return await ac.post(`/api/reset_password/set_new_password`,{userId,password});
+}
+
 //
 
 

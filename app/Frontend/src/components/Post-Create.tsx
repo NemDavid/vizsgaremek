@@ -72,10 +72,10 @@ export function PostCreate() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Mire gondolsz most?</Button>
+                <Button variant="outline" className="bg-red-300 hover:bg-red-400">Mire gondolsz most?</Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md space-y-6 bg-red-50 border-black">
                 <DialogHeader>
                     <DialogTitle>Új bejegyzés</DialogTitle>
                     <DialogDescription>
@@ -85,8 +85,8 @@ export function PostCreate() {
                 {isPending? (
                     <Spinner/>    
                 ):(
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <Form {...form} >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
                         {/* Profil + Title */}
                         <div className="flex items-center gap-3">
                             <FormField
@@ -96,7 +96,7 @@ export function PostCreate() {
                                     <FormItem className="flex-1">
                                         <FormLabel>Cím</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Add meg a címet..." {...field} />
+                                            <Input placeholder="Add meg a címet..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200"/>
                                         </FormControl>
                                         <FormDescription>A bejegyzés címe</FormDescription>
                                         <FormMessage />
@@ -113,7 +113,7 @@ export function PostCreate() {
                                 <FormItem>
                                     <FormLabel>Tartalom</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Írj valamit..." {...field} />
+                                        <Textarea placeholder="Írj valamit..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
                                     </FormControl>
                                     <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
                                     <FormMessage />
@@ -126,14 +126,14 @@ export function PostCreate() {
                             control={form.control}
                             name="media"
                             render={({ field }) => (
-                                <FormItem className="bg-slate-100 p-3 rounded-xl">
+                                <FormItem className="bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
                                     <FormLabel>Kép feltöltése (opcionális)</FormLabel>
-                                    <FormControl>
+                                    <FormControl >
                                         <input
                                             type="file"
                                             accept="image/*"
                                             onChange={(e) => field.onChange(e.target.files?.[0])}
-                                            className="mt-1"
+                                            className="mt-1 "
                                         />
                                     </FormControl>
                                     <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>
@@ -144,9 +144,9 @@ export function PostCreate() {
                         {/* Submit gomb */}
                         <DialogFooter className="sm:justify-start">
                             <DialogClose asChild>
-                                <Button type="button" variant="secondary">Bezárás</Button>
+                                <Button type="button" className="bg-red-400">Bezárás</Button>
                             </DialogClose>
-                            <Button type="submit">Küldés</Button>
+                            <Button type="submit" className="bg-red-400">Küldés</Button>
                         </DialogFooter>
                     </form>
                 </Form>
