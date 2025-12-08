@@ -49,6 +49,7 @@ export type LoginSchema = z.infer<typeof loginSchema>
 
 export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
   const nav = useNavigate()
+  const [PasswordShown, setPasswordShown] = useState<boolean>(false)
   const [captchaValue, setCaptchaValue] = useState<string | null>(null)
   const { mutate: Login, isPending } = useMutation({
     mutationFn: ({ data }: { data: LoginSchema }) => loginRequest(data),

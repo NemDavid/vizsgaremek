@@ -44,7 +44,7 @@ exports.confirmRegistration = async (req, res, next) => {
 
         let avatar_url = "";
         if (req.file) {
-            avatar_url = `/cloud/${req.file.filename}`;
+            avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
         }
 
         const createdUser = await userService.createUser({

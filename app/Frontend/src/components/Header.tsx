@@ -102,7 +102,7 @@ export default function Header({ className }: { className?: string }) {
           </NavigationMenuList>
         </NavigationMenu>
       </div>
-      <div className="bg-red-300 rounded-md p-1">
+      <div className="bg-red-700 rounded-md p-1">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="outline" className="bg-slate-200 text-black hover:text-white hover:bg-slate-600">Kijelentkezés</Button>
