@@ -50,7 +50,6 @@ app.use("/cloud", express.static("public/cloud"));
 
 api.use(errorHandler.notFound);
 app.use(errorHandler.showError);
-app.use(errorHandler.notFound);
 
 
 module.exports = app;
