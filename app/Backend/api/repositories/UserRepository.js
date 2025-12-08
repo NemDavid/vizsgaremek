@@ -20,10 +20,15 @@ class UserRepository {
                     },
                     {
                         model: this.Connections,
-                        as: "connections",
+                        as: "sentConnections",
                         scope: "allConnectionData",
-                        // where: { User_Requested_ID: userId }
-                    }
+                    },
+                    {
+                        model: this.Connections,
+                        as: "receivedConnections",
+                        scope: "allConnectionData",
+                    },
+                    
                 ]
             });
         } catch (error) {
