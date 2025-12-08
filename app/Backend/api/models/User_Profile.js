@@ -52,7 +52,8 @@ module.exports = (sequelize, DataTypes) =>
             avatar_url:
             {
                 type: DataTypes.TEXT,
-                allowNull: true
+                allowNull: true,
+                defaultValue: "/default-Profil.png"
             },
         },
 

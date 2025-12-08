@@ -31,6 +31,7 @@ async function seedAdminUser(db) {
                 USER_ID: newUser.ID ?? 1,
                 first_name: "Admin",
                 last_name: "User",
+                avatar_url: ""
             });
 
             console.log("[Seed] Admin felhasználó sikeresen létrehozva");
