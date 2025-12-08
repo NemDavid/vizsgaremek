@@ -17,13 +17,13 @@ export function DrawerFriends() {
     return (
         <Drawer >
             <DrawerTrigger className="contents">
-                <Button variant="outline" className="fixed bottom-4 right-4 bg-red-500 text-black hover:bg-red-700 hover:text-white rounded-full w-12 h-12">
-                    <Users/>
-                </Button>
+                <div className="fixed bottom-4 right-4 bg-red-500 text-black hover:bg-red-700 hover:text-white rounded-full w-12 h-12 flex items-center justify-center">
+                    <Users size={24} />
+                </div>
             </DrawerTrigger>
             <DrawerContent className="bg-red-900">
                 <DrawerHeader>
-                    <DrawerTitle>Friends</DrawerTitle>
+                    <DrawerTitle className="text-white">Friends</DrawerTitle>
                     <DrawerDescription>
                         <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
                             <div className="flex gap-3 overflow-x-auto p-3">
@@ -33,8 +33,10 @@ export function DrawerFriends() {
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter>
-                    <DrawerClose>
-                        <Button variant="outline">Bezárás</Button>
+                    <DrawerClose className="flex justify-center">
+                        <div className="bg-red-300 w-30 rounded-lg hover:bg-red-500 hover:text-white">
+                            Bezárás
+                        </div>
                     </DrawerClose>
                 </DrawerFooter>
             </DrawerContent>

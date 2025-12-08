@@ -25,7 +25,18 @@ import { useMutation } from "@tanstack/react-query"
 import { loginRequest } from "./axios/axiosClient"
 import { useNavigate } from "@tanstack/react-router"
 import { ForgetPasswordModal } from "./password-reset-modal/Forget-Password-Modal"
-
+import { Eye, EyeClosed, InfoIcon } from "lucide-react"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 type LoginFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void; // 🔹 új prop
@@ -63,7 +74,7 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
   })
 
 
-  const form = useForm<LoginSchema>({
+  const LoginForm = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
@@ -90,8 +101,8 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onLogin)} className={cn("flex flex-col gap-6", className)} {...props}>
+    <Form {...LoginForm}>
+      <form onSubmit={LoginForm.handleSubmit(onLogin)} className={cn("flex flex-col gap-6", className)} {...props}>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Jelentkezzen be fiókjába</h1>
           <p className="text-muted-foreground text-sm text-balance">
@@ -99,7 +110,7 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
           </p>
         </div>
         <FormField
-          control={form.control}
+          control={LoginForm.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -113,7 +124,7 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
           )}
         />
         <FormField
-          control={form.control}
+          control={LoginForm.control}
           name="username"
           render={({ field }) => (
             <FormItem>
@@ -127,7 +138,7 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
           )}
         />
         <FormField
-          control={form.control}
+          control={LoginForm.control}
           name="password"
           render={({ field }) => (
             <FormItem>
@@ -136,7 +147,33 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
                 <ForgetPasswordModal />
               </div>
               <FormControl>
-                <Input id="password" type="password" placeholder="Jelszavam321" {...field} required />
+                <InputGroup>
+                  <InputGroupInput placeholder="Add meg jelszavad" type={PasswordShown ? "text" : "password"}{...field} required />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton 
+                      variant="ghost"
+                      aria-label="Info"
+                      size="icon-xs"
+                      onClick={() => setPasswordShown(!PasswordShown)} 
+                    >
+                      {PasswordShown? <Eye /> : <EyeClosed />}
+                    </InputGroupButton>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <InputGroupButton
+                          variant="ghost"
+                          aria-label="Info"
+                          size="icon-xs"
+                        >
+                          <InfoIcon />
+                        </InputGroupButton>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>A jelszónak legalább 8 karakter hosszúnak kell lennie, és tartalmaznia kell egy számot valamint egy speciális karaktert.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </InputGroupAddon>
+                </InputGroup>
               </FormControl>
               <FormDescription />
               <FormMessage />
