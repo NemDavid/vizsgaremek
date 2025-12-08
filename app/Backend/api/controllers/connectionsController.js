@@ -10,11 +10,41 @@ exports.getConnections = async (req, res, next) => {
     }
 };
 
-exports.getCurrentUserConnections = async (req, res, next) => {
+exports.getCurrentUserConnectionsAll = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserConnections(token));
+        res.status(200).json(await connectionsService.getCurrentUserConnectionsAll(token));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getCurrentUserConnections = async (req, res, next, status) => {
+    const token = req.cookies['user_token'];
+
+    try {
+        res.status(200).json(await connectionsService.getCurrentUserConnections(token, status));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getCurrentUserFriendRequests = async (req, res, next) => {
+    const token = req.cookies['user_token'];
+
+    try {
+        res.status(200).json(await connectionsService.getCurrentUserFriendRequests(token));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getCurrentUserFriendlint = async (req, res, next) => {
+    const token = req.cookies['user_token'];
+
+    try {
+        res.status(200).json(await connectionsService.getCurrentUserFriendlint(token));
     } catch (error) {
         next(error);
     }

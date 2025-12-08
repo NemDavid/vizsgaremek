@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class ConnectionsRepository {
@@ -28,12 +28,54 @@ class ConnectionsRepository {
         }
     }
 
-    async getCurrentUserConnections(User_Requested_ID) {
+    async getCurrentUserConnectionsAll(User_Requested_ID) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
-                    User_Requested_ID: User_Requested_ID
+                    User_Requested_ID: User_Requested_ID,
                 }
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch connections", { details: error.message });
+        }
+    }
+
+    async getCurrentUserConnections(User_Requested_ID, status) {
+        try {
+            return await this.Connections.scope("allConnectionData").findAll({
+                where: {
+                    User_Requested_ID: User_Requested_ID,
+                    Status: status
+                }
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch connections", { details: error.message });
+        }
+    }
+
+    async getCurrentUserFriendRequests(User_Requested_ID) {
+        try {
+            return await this.Connections.scope("allConnectionData").findAll({
+                where: {
+                    To_User_ID: User_Requested_ID,
+                }
+            });
+        } catch (error) {
+            throw new DbError("Failed to fetch connections", { details: error.message });
+        }
+    }
+
+    async getCurrentUserFriendlint(User_Requested_ID) {
+        try {
+            return await this.Connections.scope("allConnectionData").findAll({
+                where: {
+                    Status: "accepted",
+                    [Op.or]: [
+                        { User_Requested_ID: User_Requested_ID },
+                        { To_User_ID: User_Requested_ID }
+                    ]
+                }
+
             });
         } catch (error) {
             throw new DbError("Failed to fetch connections", { details: error.message });
@@ -56,7 +98,7 @@ class ConnectionsRepository {
     }
 
     async createConnection(connectionData) {
-        
+
         try {
             return await this.Connections.create(connectionData);
         } catch (error) {
