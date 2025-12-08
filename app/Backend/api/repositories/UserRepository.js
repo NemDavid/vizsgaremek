@@ -17,6 +17,12 @@ class UserRepository {
                         model: this.User_Profile,
                         as: "profile",
                         scope: "allUser_ProfileData"
+                    },
+                    {
+                        model: this.Connections,
+                        as: "connections",
+                        scope: "allConnectionData",
+                        // where: { User_Requested_ID: userId }
                     }
                 ]
             });

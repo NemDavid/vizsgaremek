@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) =>
             {
                 type: DataTypes.TEXT,
                 allowNull: true,
-                defaultValue: "/default-Profil.png"
+                defaultValue: "/dpfp.png"
             },
         },
 
