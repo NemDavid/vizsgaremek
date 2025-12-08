@@ -18,16 +18,16 @@ class UserRepository {
                         as: "profile",
                         scope: "allUser_ProfileData"
                     },
-                    {
-                        model: this.Connections,
-                        as: "sentConnections",
-                        scope: "allConnectionData",
-                    },
-                    {
-                        model: this.Connections,
-                        as: "receivedConnections",
-                        scope: "allConnectionData",
-                    },
+                    // {
+                    //     model: this.Connections,
+                    //     as: "sentConnections",
+                    //     scope: "allConnectionData",
+                    // },
+                    // {
+                    //     model: this.Connections,
+                    //     as: "receivedConnections",
+                    //     scope: "allConnectionData",
+                    // },
                     
                 ]
             });
