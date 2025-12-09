@@ -33,9 +33,6 @@ function paramEmail(req, res, next, email) {
     next();
 }
 
-function paramPostLimit(req, res, next, limit) {
-    req.limit = limit;
-    next();
-}
 
-module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramPostLimit, paramEmail, paramAction, paramUniqIdentifier };
+
+module.exports = { paramPage, paramUserId, paramPostId, paramItemId, paramEmail, paramAction, paramUniqIdentifier };

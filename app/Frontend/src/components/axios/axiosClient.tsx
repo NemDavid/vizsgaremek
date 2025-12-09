@@ -2,6 +2,9 @@ import axios from "axios"
 import z from "zod"
 import type { LoginSchema } from "../login-form"
 import type { RegisterSchema } from "../signup-form"
+import type { PostFormSchema } from "../comment-according"
+
+
 export const ac = axios.create({
   baseURL: "http://localhost:6769",
   headers: {
@@ -14,9 +17,6 @@ export const FileApi = axios.create({
   baseURL: "http://localhost:6769",
   withCredentials: true,
 });
-
-
-
 
 export type User = {
   ID: bigint;
@@ -54,23 +54,23 @@ export type UserPost = {
 }
 
 export type Post = {
-    ID: bigint,
-    USER_ID: bigint,
-    like: number,
-    dislike: number,
-    content: string,
-    title: string,
-    media_url: string,
-    created_at: Date,
-    updated_at: Date,
-    comments?: comment[],
+  ID: bigint,
+  USER_ID: bigint,
+  like: number,
+  dislike: number,
+  content: string,
+  title: string,
+  media_url: string,
+  created_at: Date,
+  updated_at: Date,
+  comments?: comment[],
 
 }
 export type comment = {
-    ID: bigint,
-    USER_ID: bigint,
-    POST_ID: bigint,
-    comment: string,
+  ID: bigint,
+  USER_ID: bigint,
+  POST_ID: bigint,
+  comment: string,
 }
 
 
@@ -83,84 +83,87 @@ export const formSchema = z.object({
   password: z.string().min(6, "Legalább 6 karakter"),
 })
 
+//AUTH ROUTES
 
-
-export async function loginRequest(data: LoginSchema ) {
-  return await ac.post("/api/login",data);
+export async function loginRequest(data: LoginSchema) {
+  return await ac.post("/api/auth/login", data);
 }
 
-export async function RegisterRequest(data: RegisterSchema ) {
-  return await ac.post("/api/registerUser",data);
+export async function RegisterRequest(data: RegisterSchema) {
+  return await ac.post("/api/auth/register", data);
 }
 
 export async function RegisterConfirmRequest(data: FormData, token: string) {
-  return await FileApi.post(`/api/confirm/${token}`, data);
+  return await FileApi.post(`/api/auth/register/confirm/${token}`, data);
 }
 
 export async function authStatusRequest() {
-  return await ac.get("/api/status");
+  return await ac.get("/api/auth/status");
 }
 
 export async function logoutRequest() {
-  return await ac.delete("/api/logout");
+  return await ac.delete("/api/auth/logout");
 }
 
+// #TODO: 
 
-export async function getuserByid(id:bigint){
-  const user = await ac.get<User>(`/api/user/id/${id}`)
-  const profil = await ac.get<UserProfile>(`/api/user_profile/${id}`)
+export async function getuserByid(id: bigint) {
+  const user = await ac.get<User>(`/api/users/id/${id}`)
+  const profil = await ac.get<UserProfile>(`/api/profiles/${id}`)
   const adat = await {
     user: user.data,
     profil: profil.data,
   }
-  return adat;  
+  return adat;
 }
 
-export async function getPosts() {
-  const response = await ac.get<UserPost[]>(`/api/user_posts`)
+export async function getPostsAll() {
+  const response = await ac.get<UserPost[]>(`/api/posts/all`)
   return response.data
 }
-// export async function getPosts(PostsNumber: number) {
-//   const response = await ac.get<UserPost[]>(`/api/user_posts${PostsNumber}`)
-//   return response.data
-// }
 
-
-export async function createPost(data:FormData) {
-  return await FileApi.post(`/api/user_post`,data);
+export async function getPosts({page,perPage}:{page:number,perPage:number}) {
+  const response = await ac.get<any>(`/api/posts`,{
+    params:{
+      page,
+      perPage,
+    }
+  })
+  return response.data
 }
 
-export async function makeReaction(data:{POST_ID:bigint; reaction:'like' | 'dislike'}) {
-  return await ac.post(`/api/user_makeReaction`, data);
+
+export async function createPost(data: FormData) {
+  return await FileApi.post(`/api/posts`, data);
 }
+
+export async function makeReaction(data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) {
+  return await ac.post(`/api/reactions`, data);
+}
+
 export async function getMyreaction(POST_ID: bigint) {
-  const response = await ac.get(`/api/users_posts_reaction/${POST_ID}`)
+  const response = await ac.get(`/api/reactions/${POST_ID}`)
   return response.data
 }
 
-import type { PostFormSchema } from "../comment-according"
-
-export async function MakeCommentForPost(comment:PostFormSchema) {
-  const response = await ac.post(`/api/users_posts_comment`,comment )
+export async function MakeCommentForPost(comment: PostFormSchema) {
+  const response = await ac.post(`/api/comments`, comment)
   return response.data
 }
 
 export async function TokenStatusRequest(Token: string) {
-  return await ac.get(`/api/active_token/${Token}`);
+  return await ac.get(`/api/auth/token/${Token}`);
 }
 
-export async function SendOTPToPasswordReset(email:string)
-{
-  return await ac.post(`/api/reset_password/send_verify_code`,{email});
+export async function SendOTPToPasswordReset(email: string) {
+  return await ac.post(`/api/reset/send`, { email });
 }
 //VTCR Verify the code request
-export async function SendVTCR({email,verify_code}:{verify_code:string,email:string})
-{
-  return await ac.post(`/api/reset_password/verify_the_code`,{verify_code,email});
+export async function SendVTCR({ email, verify_code }: { verify_code: string, email: string }) {
+  return await ac.post(`/api/reset/verify-code`, { verify_code, email });
 }
-export async function ChangePassword({userId,password}:{userId:number,password:string})
-{
-  return await ac.post(`/api/reset_password/set_new_password`,{userId,password});
+export async function ChangePassword({ userId, password }: { userId: number, password: string }) {
+  return await ac.post(`/api/reset/new_password`, { userId, password });
 }
 
 //

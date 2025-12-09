@@ -14,13 +14,13 @@ class User_PostService
         return await this.user_postRepository.getUser_Posts();
     }
 
-    async getUser_PostsByLimit(limit)
+    async getUser_PostsByLimit(page,perpage)
     {
-        if (!limit) {
-            throw new BadRequestError("hiányzó limit");
+        if (page === undefined || perpage === undefined) {
+            throw new BadRequestError("hiányzó Adatok");
         }
 
-        return await this.user_postRepository.getUser_PostsByLimit(limit);
+        return await this.user_postRepository.getUser_PostsByLimit(page,perpage);
     }
 
     async getUser_Posts_ByuserId(userId)

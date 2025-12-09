@@ -5,24 +5,24 @@ const paramHandler = require("../middlewares/paramHandler")
 
 router.param("userId", paramHandler.paramUserId);
 router.param("postId", paramHandler.paramPostId);
-router.param("limit", paramHandler.paramPostLimit);
+
 
 // Cloud
 const { getStorage } = require("../utilities/cloudUtils");
 const upload = getStorage()
 const cloudMiddleware = require("../middlewares/uploadMiddleware");
 
-router.get("/user_posts", user_postController.getUser_Posts);
+router.get("/all", user_postController.getUser_Posts);
 
-router.get("/user_postsByLimit/:limit", user_postController.getUser_PostsByLimit);
+router.get("/", user_postController.getUser_PostsByLimit);
 
-router.get("/user_posts/:userId", user_postController.getUser_Posts_ByuserId);
+router.get("/user/:userId", user_postController.getUser_Posts_ByuserId);
 
 
-router.delete("/user_post/:postId", user_postController.deleteUser_Post);
+router.delete("/:postId", user_postController.deleteUser_Post);
 
-router.post("/user_post", upload.single("media"),cloudMiddleware.AvatarReq_HasFile,user_postController.createUser_Post);
+router.post("/", upload.single("media"),cloudMiddleware.Req_HasFile,user_postController.createUser_Post);
 
-router.patch("/user_post/:postId", user_postController.updateUser_Post);
+router.patch("/:postId", user_postController.updateUser_Post);
 
 module.exports = router;

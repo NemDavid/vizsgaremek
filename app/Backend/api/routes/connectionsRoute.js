@@ -8,26 +8,21 @@ router.param("userId", paramHandler.paramUserId);
 router.param("action", paramHandler.paramAction);
 
 
-router.get("/connections", connectionsController.getConnections);
+router.get("/", connectionsController.getConnections);
 
 
-router.get("/current_user_sent_connections/all", connectionsController.getCurrentUserConnectionsAll);
+router.get("/me", connectionsController.getCurrentUserConnectionsAll);
 
 // ----------
-router.get("/current_user_sent_connections/accepted", (req, res, next) => 
-    connectionsController.getCurrentUserConnections(req, res, next, "accepted")
-);
-router.get("/current_user_sent_connections/pending", (req, res, next) => 
-    connectionsController.getCurrentUserConnections(req, res, next, "pending")
-);
-router.get("/current_user_sent_connections/blocked", (req, res, next) => 
-    connectionsController.getCurrentUserConnections(req, res, next, "blocked")
-);
+router.get("/me/filter", (req, res, next) =>{
+    const status = req.query.status;
+    connectionsController.getCurrentUserConnections(req, res, next, status)
+});
 // ----------
 
-router.get("/current_user_gotFriendRequests", connectionsController.getCurrentUserFriendRequests);
+router.get("/me/received-request", connectionsController.getCurrentUserFriendRequests);
 
-router.get("/current_user_friendlist", connectionsController.getCurrentUserFriendlint);
+router.get("/me/friends", connectionsController.getCurrentUserFriendlint);
 
 
 router.delete("/connection/:userId", connectionsController.deleteConnection);

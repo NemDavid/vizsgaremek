@@ -11,7 +11,10 @@ exports.getUser_Posts = async (req, res, next) => {
 
 exports.getUser_PostsByLimit = async (req, res, next) => {
     try {
-        res.status(200).json(await user_postService.getUser_PostsByLimit(req.limit));
+        const page = parseInt(req.query.page);
+        const perPage = parseInt(req.query.perPage);
+
+        res.status(200).json(await user_postService.getUser_PostsByLimit(page,perPage));
     } catch (error) {
         next(error);
     }

@@ -11,20 +11,20 @@ const cloudMiddleware = require("../middlewares/uploadMiddleware");
 
 router.post("/login", authController.login);
 
-router.post("/registerUser", authController.registerUser);
+router.post("/register", authController.registerUser);
 
-router.post("/confirm/:token", upload.single("avatar"),cloudMiddleware.AvatarReq_HasFile, authController.confirmRegistration);
+router.post("/register/confirm/:token", upload.single("avatar"), cloudMiddleware.Req_HasFile, authController.confirmRegistration);
 
-router.get("/status", [ authMiddleware.userIsLoggedIn ], authController.status);
+router.get("/status", [authMiddleware.userIsLoggedIn], authController.status);
 
 router.delete("/logout", authController.logout);
 
-router.get("/active_token/:token", authController.getActiveTokenDetails);
+router.get("/token/:token", authController.getActiveTokenDetails);
 
 // ----
-router.post("/reset_password/send_verify_code", authController.sendVerifyCode);
-router.post("/reset_password/verify_the_code", authController.verifyTheCode);
-router.post("/reset_password/set_new_password", authController.setNewPassword);
+router.post("/reset/send-code", authController.sendVerifyCode);
+router.post("/reset/verify-code", authController.verifyTheCode);
+router.post("/reset/new_password", authController.setNewPassword);
 /* 
 küld 
 -  post (email) -> email 6 számjegyű kód érkezik

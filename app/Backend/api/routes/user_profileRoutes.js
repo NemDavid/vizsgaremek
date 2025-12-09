@@ -8,18 +8,18 @@ router.param("paramPage", paramHandler.paramPage)
 router.param("userId", paramHandler.paramUserId)
 
 
-router.get("/user_profiles", user_profileController.getUser_Profiles);
+router.get("/all", user_profileController.getUser_Profiles);
 
-router.get("/user_profile/:userId", user_profileController.getUser_Profile);
+router.get("/pages/:paramPage", user_profileController.getUser_ProfilesByPage); // todo
 
-router.get("/user_profiles/:paramPage", user_profileController.getUser_ProfilesByPage);
+router.get("/:userId", user_profileController.getUser_Profile);
 
 
-router.delete("/user_profile/:userId", user_profileController.deleteUser_Profile);
+router.delete("/:userId", user_profileController.deleteUser_Profile);
 
-router.post("/user_profile", user_profileController.createUser_Profile);
+router.post("/", user_profileController.createUser_Profile);
 
-router.patch("/user_profile/:userId", user_profileController.updateUser_Profile);
+router.patch("/:userId", user_profileController.updateUser_Profile);
 
 
 module.exports = router;

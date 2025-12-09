@@ -29,13 +29,24 @@ class User_PostRepository {
         }
     }
 
-    async getUser_PostsByLimit(limit) {
+    async getUser_PostsByLimit(page, perPage) {
         try {
-            return await this.User_Post.scope("allPostData").findAll({
-                order: [
-                    ["created_at", "ASC"]
-                ],
-                limit: Number(limit),
+            const p = Number(page);
+            const pp = Number(perPage);
+
+            const limit = pp;
+            const offset = p * pp;
+
+            // 1) összes poszt száma
+            const total = await this.User_Post.count({
+                where: {}
+            });
+
+            // 2) jelenlegi oldal posztjai
+            const posts = await this.User_Post.scope("allPostData").findAll({
+                order: [["ID", "DESC"]],
+                limit,
+                offset,
                 include: [
                     {
                         model: this.User_Post_Comment,
@@ -49,6 +60,15 @@ class User_PostRepository {
                     }
                 ]
             });
+
+            // 3) van-e több oldal?
+            const hasMore = offset + limit < total;
+
+            // 4) válasz formátuma React Query infiniteQuery-hez
+            return {
+                data: posts,
+                nextCursor: hasMore ? p + 1 : null
+            };
         } catch (error) {
             throw new DbError("Failed to fetch user posts", { details: error.message });
         }

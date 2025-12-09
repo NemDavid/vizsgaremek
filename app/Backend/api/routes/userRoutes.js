@@ -9,21 +9,21 @@ router.param("paramPage", paramHandler.paramPage);
 router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
 
 
-router.get("/users", userController.getUsers);
+router.get("/all", userController.getUsers);
 
-router.get("/user/id/:userId", userController.getUser);
+router.get("/id/:userId", userController.getUser);
 
-router.get("/users/:paramPage", userController.getUsersByPage);
+//router.get("/page/:paramPage", userController.getUsersByPage); //todo
 
-router.get("/user/:uniqIdentifier", userController.getUserByUsernameOrUserId);
+router.get("/see/:uniqIdentifier", userController.getUserByUsernameOrUserId);
 
 
-router.delete("/user/:userId", userController.deleteUser);
+router.delete("/:userId", userController.deleteUser);
 
-router.post("/user", userController.createUser);
+router.post("/", userController.createUser);
 
-router.patch("/user/:userId", userController.updateUser);
+router.patch("/:userId", userController.updateUser);
 
-router.get("/get_existing_user/:token", userController.getExistingUserByToken);
+//router.get("/get_existing_user/:token", userController.getExistingUserByToken);
 
 module.exports = router;

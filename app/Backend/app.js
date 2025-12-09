@@ -36,16 +36,16 @@ require("./api/db/");
 
 app.use("/api", api);
 
-api.use("/", authRoutes);
-api.use("/", userRoutes);
-api.use("/", user_profileRoutes);
-api.use("/", user_postRouter);
-api.use("/", user_post_reactionRoutes);
-api.use("/", user_post_commentRoutes);
-api.use("/", connectionsRoute);
-api.use("/", verify_codeRoutes);
-app.use("/cloud",cloudRouter);
+api.use("/auth", authRoutes);
+api.use("/connections", connectionsRoute);
+api.use("/comments", user_post_commentRoutes);
+api.use("/reactions", user_post_reactionRoutes);
+api.use("/posts", user_postRouter);
+api.use("/profiles", user_profileRoutes);
+api.use("/users", userRoutes);
+api.use("/verify", verify_codeRoutes);
 
+app.use("/cloud",cloudRouter);
 app.use("/cloud", express.static("public/cloud"));
 
 api.use(errorHandler.notFound);
