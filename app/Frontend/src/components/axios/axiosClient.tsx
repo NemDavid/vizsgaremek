@@ -10,13 +10,13 @@ export const ac = axios.create({
   withCredentials: true,
 })
 
-export const RegApi = axios.create({
+export const FileApi = axios.create({
   baseURL: "http://localhost:6769",
   withCredentials: true,
 });
 
 
-import type { PostcreateSchema } from "../Post-Create"
+
 
 export type User = {
   ID: bigint;
@@ -94,7 +94,7 @@ export async function RegisterRequest(data: RegisterSchema ) {
 }
 
 export async function RegisterConfirmRequest(data: FormData, token: string) {
-  return await RegApi.post(`/api/confirm/${token}`, data);
+  return await FileApi.post(`/api/confirm/${token}`, data);
 }
 
 export async function authStatusRequest() {
@@ -117,12 +117,17 @@ export async function getuserByid(id:bigint){
 }
 
 export async function getPosts() {
-  const response = await ac.get<UserPost[]>("/api/user_posts")
+  const response = await ac.get<UserPost[]>(`/api/user_posts`)
   return response.data
 }
+// export async function getPosts(PostsNumber: number) {
+//   const response = await ac.get<UserPost[]>(`/api/user_posts${PostsNumber}`)
+//   return response.data
+// }
 
-export async function createPost(data:PostcreateSchema) {
-  return await ac.post(`/api/user_post`,data);
+
+export async function createPost(data:FormData) {
+  return await FileApi.post(`/api/user_post`,data);
 }
 
 export async function makeReaction(data:{POST_ID:bigint; reaction:'like' | 'dislike'}) {

@@ -43,32 +43,42 @@ export type PostcreateSchema = z.infer<typeof postcreateSchema>;
 export function PostCreate() {
     const [open, setOpen] = useState(false);
     const queryclient = useQueryClient()
-    const {mutate: upload, isPending} = useMutation({
-        mutationFn: (data:PostcreateSchema) => createPost(data),
-        onSuccess(){
-            queryclient.refetchQueries({queryKey: ["Posts"]})
+    const { mutate: upload, isPending } = useMutation({
+        mutationFn: (data: FormData) => createPost(data),
+        onSuccess() {
+            queryclient.refetchQueries({ queryKey: ["Posts"] })
             form.resetField("content");
             form.resetField("media");
             form.resetField("title");
             setOpen(false);
 
         },
-        retry:0
+        retry: 0
     })
     const form = useForm<PostcreateSchema>({
         resolver: zodResolver(postcreateSchema),
         defaultValues: {
             content: "",
             title: "",
-            
+
         },
         mode: "onChange",
         reValidateMode: "onBlur"
     })
     // 2. Define a submit handler.
     function onSubmit(values: PostcreateSchema) {
-        upload(values)
+        const formData = new FormData();
+        Object.entries(values).forEach(([key, value]) => {
+            if (key !== "media" && value !== undefined && value !== null && value !== "") {
+                formData.append(key, value as any);
+            }
+        });
+        if (values.media instanceof File) {
+            formData.append("media", values.media);
+        }
+        upload(formData)
     }
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -82,74 +92,80 @@ export function PostCreate() {
                         Oszd meg gondolataidat másokkal.
                     </DialogDescription>
                 </DialogHeader>
-                {isPending? (
-                    <Spinner/>    
-                ):(
-                <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                        {/* Profil + Title */}
-                        <div className="flex items-center gap-3">
+                {isPending ? (
+                    <Spinner />
+                ) : (
+                    <Form {...form} >
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                            <div className="flex items-center gap-3">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormLabel>Cím</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Add meg a címet..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
+                                            </FormControl>
+                                            <FormDescription>A bejegyzés címe</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Content */}
                             <FormField
                                 control={form.control}
-                                name="title"
-                                render={({ field}) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Cím</FormLabel>
+                                name="content"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tartalom</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Add meg a címet..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200"/>
+                                            <Textarea placeholder="Írj valamit..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
                                         </FormControl>
-                                        <FormDescription>A bejegyzés címe</FormDescription>
+                                        <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        </div>
 
-                        {/* Content */}
-                        <FormField
-                            control={form.control}
-                            name="content"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Tartalom</FormLabel>
-                                    <FormControl>
-                                        <Textarea placeholder="Írj valamit..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
-                                    </FormControl>
-                                    <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            {/* Kép feltöltés */}
+                            <FormField
+                                control={form.control}
+                                name="media"
+                                render={({ field }) => (
+                                    <FormItem className="bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
+                                        <FormLabel>Kép feltöltése (opcionális)</FormLabel>
+                                        <FormControl >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file && allowedTypes.includes(file.type)) {
+                                                        field.onChange(file);
+                                                    } else {
+                                                        field.onChange(null); // vagy töröld a mezőt
+                                                    }
+                                                }}
+                                                className="mt-1 "
+                                            />
+                                        </FormControl>
+                                        <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>
+                                    </FormItem>
+                                )}
+                            />
 
-                        {/* Kép feltöltés */}
-                        <FormField
-                            control={form.control}
-                            name="media"
-                            render={({ field }) => (
-                                <FormItem className="bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
-                                    <FormLabel>Kép feltöltése (opcionális)</FormLabel>
-                                    <FormControl >
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => field.onChange(e.target.files?.[0])}
-                                            className="mt-1 "
-                                        />
-                                    </FormControl>
-                                    <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Submit gomb */}
-                        <DialogFooter className="sm:justify-start">
-                            <DialogClose asChild>
-                                <Button type="button" className="bg-red-400">Bezárás</Button>
-                            </DialogClose>
-                            <Button type="submit" className="bg-red-400">Küldés</Button>
-                        </DialogFooter>
-                    </form>
-                </Form>
+                            {/* Submit gomb */}
+                            <DialogFooter className="sm:justify-start">
+                                <DialogClose asChild>
+                                    <Button type="button" className="bg-red-400">Bezárás</Button>
+                                </DialogClose>
+                                <Button type="submit" className="bg-red-400">Küldés</Button>
+                            </DialogFooter>
+                        </form>
+                    </Form>
                 )}
             </DialogContent>
         </Dialog>

@@ -42,7 +42,7 @@ exports.deleteUser_Post = async (req, res, next) => {
 };
 
 exports.createUser_Post = async (req, res, next) => {
-    const { title, content, media_url } = req.body || {};
+    const { title, content} = req.body || {};
     const token = req.cookies['user_token'];
     
 
@@ -51,7 +51,7 @@ exports.createUser_Post = async (req, res, next) => {
             token, 
             title, 
             content,  
-            media_url
+            media_url: req.file ? `http://localhost:6769/cloud/${req.file.filename}` : undefined
         }));
     } catch (error) {
         next(error);

@@ -87,7 +87,7 @@ export function PostAccord({ post }: { post: Post }) {
                                         />
                                     )}
                                 </div>
-                                <div className="flex flex-col items-center gap-2 bg-red-200 rounded-lg justify-center p-0 m-0">
+                                <div className="flex flex-col items-center gap-2 bg-red-200 rounded-lg justify-center p-0 m-0 h-20">
                                     <ToggleGroup type="single" variant="outline" spacing={2} size="sm" className="flex flex-col items-center mt-4 mb-4 mx-2 w-full max-w-xs" value={react ? react.reaction : ""}>
                                         <ToggleGroupItem onClick={() => doReaction(like)} value="like" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500'><ThumbsUp />{post.like} Like </ToggleGroupItem>
                                         <ToggleGroupItem onClick={() => doReaction(dislike)} value="dislike" className='data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500'><ThumbsDown />{post.dislike} Dislike</ToggleGroupItem>

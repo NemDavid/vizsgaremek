@@ -5,6 +5,7 @@ class User_PostRepository {
     constructor(db) {
         this.User_Post = db.User_Post;
         this.User_Post_Comment = db.User_Post_Comment;
+        this.User_Post_Reaction = db.User_Post_Reaction;
         this.sequelize = db.sequelize;
     }
 
@@ -12,37 +13,42 @@ class User_PostRepository {
     async getUser_Posts() {
         try {
             return await this.User_Post.scope("allPostData").findAll({
-                    order: [
-                        ["created_at", "ASC"]
-                    ],
-                    include: [
-                        { 
-                            model: this.User_Post_Comment,
-                            as: "comments",
-                            scope: "allUserPostCommentData",
-                         }
-                    ]
-                });
+                order: [
+                    ["created_at", "ASC"]
+                ],
+                include: [
+                    {
+                        model: this.User_Post_Comment,
+                        as: "comments",
+                        scope: "allUserPostCommentData",
+                    }
+                ]
+            });
         } catch (error) {
             throw new DbError("Failed to fetch user posts", { details: error.message });
         }
     }
 
-    async getUser_PostsByLimit(limit) {    
+    async getUser_PostsByLimit(limit) {
         try {
             return await this.User_Post.scope("allPostData").findAll({
-                    order: [
-                        ["created_at", "ASC"]
-                    ],
-                    limit: Number(limit),
-                    include: [
-                        { 
-                            model: this.User_Post_Comment,
-                            as: "comments",
-                            scope: "allUserPostCommentData",
-                         }
-                    ]
-                });
+                order: [
+                    ["created_at", "ASC"]
+                ],
+                limit: Number(limit),
+                include: [
+                    {
+                        model: this.User_Post_Comment,
+                        as: "comments",
+                        scope: "allUserPostCommentData",
+                    },
+                    {
+                        model: this.User_Post_Reaction,
+                        as: "reactions",
+                        scope: "allUserPostReactionData",
+                    }
+                ]
+            });
         } catch (error) {
             throw new DbError("Failed to fetch user posts", { details: error.message });
         }
@@ -102,10 +108,10 @@ class User_PostRepository {
     }
 
     ///--------------------VÉGLEGES-----------------------------
-    async updateUser_POST_LikeDislike(postId, like, dislike){ // nem is hasznaljuk !!!!
+    async updateUser_POST_LikeDislike(postId, like, dislike) { // nem is hasznaljuk !!!!
         try {
-            await this.User_Post.update({like,dislike},{
-                where: {ID: postId}
+            await this.User_Post.update({ like, dislike }, {
+                where: { ID: postId }
             })
 
         } catch (error) {
