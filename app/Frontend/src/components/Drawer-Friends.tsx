@@ -11,9 +11,19 @@ import {
 import { Button } from "@/components/ui/button"
 import { Users } from 'lucide-react'
 import { AvatarFrame } from "./AvatarFrame"
+import { useQuery } from "@tanstack/react-query"
+import { GetFriends } from "./axios/axiosClient"
 
 
 export function DrawerFriends() {
+    const {data} = useQuery({
+        queryFn: () => GetFriends(),
+        queryKey: ["Friends"],
+        retry: 0,
+        refetchOnWindowFocus: false,
+    })
+    console.log(data);
+    
     return (
         <Drawer >
             <DrawerTrigger className="contents">

@@ -166,6 +166,10 @@ export async function ChangePassword({ userId, password }: { userId: number, pas
   return await ac.post(`/api/auth/reset/new_password`, { userId, password });
 }
 
+export async function GetFriends() {
+  return await ac.get(`/api/connections/me`);
+}
+
 //
 
 
