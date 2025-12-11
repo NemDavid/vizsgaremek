@@ -156,14 +156,14 @@ export async function TokenStatusRequest(Token: string) {
 }
 
 export async function SendOTPToPasswordReset(email: string) {
-  return await ac.post(`/api/reset/send`, { email });
+  return await ac.post(`/api/auth/reset/send-code`, { email });
 }
 //VTCR Verify the code request
 export async function SendVTCR({ email, verify_code }: { verify_code: string, email: string }) {
-  return await ac.post(`/api/reset/verify-code`, { verify_code, email });
+  return await ac.post(`/api/auth/reset/verify-code`, { verify_code, email });
 }
 export async function ChangePassword({ userId, password }: { userId: number, password: string }) {
-  return await ac.post(`/api/reset/new_password`, { userId, password });
+  return await ac.post(`/api/auth/reset/new_password`, { userId, password });
 }
 
 //
