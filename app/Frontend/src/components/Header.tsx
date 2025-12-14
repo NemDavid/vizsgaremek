@@ -20,8 +20,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { logoutRequest } from "./axios/axiosClient";
-import { useMutation } from "@tanstack/react-query";
+import { authStatusRequest, logoutRequest } from "./axios/axiosClient";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
+import { Spinner } from "./ui/spinner";
 
 const components: { title: string; to: string; description: string }[] = [
   {
@@ -48,6 +50,16 @@ const components: { title: string; to: string; description: string }[] = [
     description: "Megtekintheted és kezelheted a facebookos bejelentkezéshez használt, illetve a Facebook-fiókoddal összekapcsolt alkalmazásokat és webhelyeket.",
   },
 ]
+type AuthUser = {
+  email: string
+  exp: number
+  iat: number
+  role: "user" | "admin"
+  userID: number
+  username: string
+}
+
+type AuthResponse = AxiosResponse<AuthUser>
 
 export default function Header({ className }: { className?: string }) {
   const { mutate: logut } = useMutation({
@@ -56,7 +68,11 @@ export default function Header({ className }: { className?: string }) {
       window.location.reload();
     }
   })
-
+  const { data: auth,isLoading } = useQuery<AuthResponse>({
+    queryKey: ["auth-status"],
+    queryFn: authStatusRequest,
+    enabled: false,
+  })
   return (
     <header className={`p-4 bg-red-950 text-white flex items-center justify-between z-99 ${className}`}>
       <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
@@ -75,7 +91,7 @@ export default function Header({ className }: { className?: string }) {
             {/* Profil */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                <Link to="/profil/$profilId" params={{ profilId: "1" }}>Profil</Link>
+                <Link to="/profil/$profilId" params={{ profilId: String(auth?.data.userID)  }}>Profil</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
 

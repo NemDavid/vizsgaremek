@@ -7,8 +7,8 @@ import { PostsFrame } from "@/components/PostsFrame";
 export function MainPage() {
     return (
         <DefaultUIFrame Hirdetes={true}>
-            <PostsFrame/>
-            
+            <PostsFrame />
+
         </DefaultUIFrame>
     )
 }

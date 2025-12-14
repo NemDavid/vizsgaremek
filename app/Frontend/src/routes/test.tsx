@@ -1,5 +1,6 @@
-import { DrawerFriends } from '@/components/Drawer-Friends'
+
 import { createFileRoute } from '@tanstack/react-router'
+import { PasswordResetPage } from './-components/PasswordReset'
 
 export const Route = createFileRoute('/test')({
   component: RouteComponent,
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/test')({
 function RouteComponent() {
   return (
     <>
-    <DrawerFriends/>
+    <PasswordResetPage onSwitch={()=> {}}/>
     </>
   )
 }

@@ -17,7 +17,9 @@ import { Spinner } from "../ui/spinner"
 import { SendOTPToPasswordReset } from "../axios/axiosClient"
 
 const formSchema = z.object({
-    email: z.email(),
+    email: z.email({
+        message: "Kérlek email-t adj meg!"
+    }),
 })
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -25,8 +27,8 @@ type FormSchema = z.infer<typeof formSchema>;
 //api/reset_password/send_verify_code
 
 export function PhaseEmail({ onSuccess }: { onSuccess: (email: string) => void }) {
-    const { mutate: SendEmail, isPending} = useMutation({
-        mutationFn: (email:string) => SendOTPToPasswordReset(email),
+    const { mutate: SendEmail, isPending } = useMutation({
+        mutationFn: (email: string) => SendOTPToPasswordReset(email),
     })
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
@@ -44,7 +46,11 @@ export function PhaseEmail({ onSuccess }: { onSuccess: (email: string) => void }
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    form.handleSubmit(onSubmit)(e)
+                }}
                 className="space-y-5 p-2"
             >
                 <FormField

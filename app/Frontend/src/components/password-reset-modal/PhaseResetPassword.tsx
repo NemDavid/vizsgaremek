@@ -54,13 +54,17 @@ export function PhaseResetPassword({ onSuccess, user }: { onSuccess: () => void,
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log("asd");
-        
+
         UpdatePassword(values.password)
     }
     return (
         <Form {...form}>
             <h1 className="p-3">Írd be az új jelszavad, majd írd be mégegyszer, hogy megerősítsd.</h1>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+            <form onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                form.handleSubmit(onSubmit)(e)
+            }} className="flex flex-col gap-6">
                 <FormField
                     control={form.control}
                     name="password"

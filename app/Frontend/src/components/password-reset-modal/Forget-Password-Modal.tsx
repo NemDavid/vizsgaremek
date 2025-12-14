@@ -3,7 +3,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
 import { PhaseEmail } from "./PhaseEmail"
@@ -12,7 +11,7 @@ import { PhaseSelectAccount } from "./PhaseSelectAccount"
 import { PhaseResetPassword } from "./PhaseResetPassword"
 
 
-export type PR_User={
+export type PR_User = {
     ID: number,
     email: string,
     username: string,
@@ -25,16 +24,20 @@ export function ForgetPasswordModal() {
 
     const [email, setEmail] = useState<string>("")
     const [accounts, setAccounts] = useState<PR_User[]>([])
-    const [selectedUser, setSelectedUser] = useState<PR_User| undefined>()
-    
-    
+    const [selectedUser, setSelectedUser] = useState<PR_User | undefined>()
+
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild >
-                <a href="#Forgot-Password" className="ml-auto text-sm underline-offset-4 hover:underline" >
-                    Elfelejtette jelszavát?
-                </a>
-            </DialogTrigger>
+
+            <a href="#Forgot-Password" className="ml-auto text-sm underline-offset-4 hover:underline" onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                setOpen(true)
+            }}>
+                Elfelejtette jelszavát?
+            </a>
+
             <DialogContent className="bg-red-100">
                 <DialogTitle>
                     Jelszó-visszaállítás

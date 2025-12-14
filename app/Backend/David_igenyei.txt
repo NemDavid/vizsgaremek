@@ -7,10 +7,10 @@ post ki addol (cooki), kit addolok id vagy username re is mukodjon
 
 
 tervek:
-infinite scroll
+infinite scroll ✔
 profile lekeres befejezes
-post kep feltoltese
+post kep feltoltese ✔
 redesign
 frind list lekeres, tobb moddal
 options elkezdese
-elfelejtett jelszo masik oldalra
+elfelejtett jelszo masik oldalra --- Offos ✔

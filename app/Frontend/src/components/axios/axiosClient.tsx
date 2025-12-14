@@ -170,6 +170,9 @@ export async function GetFriends() {
   return await ac.get(`/api/connections/me`);
 }
 
+export async function GetProfil(id:string) {
+  return await ac.get(`/api/profiles/${id}`);
+}
 //
 
 

@@ -22,7 +22,7 @@ export function DrawerFriends() {
         retry: 0,
         refetchOnWindowFocus: false,
     })
-    console.log(data);
+    //console.log(data);
     
     return (
         <Drawer >
