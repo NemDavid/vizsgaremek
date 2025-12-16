@@ -11,9 +11,9 @@ module.exports = (db) =>
 {
     const userService = new UserService(db);
     const user_profileService = new User_ProfileService(db);
-    const user_postService = new User_PostService(db);
-    const user_post_reactionService = new User_Post_ReactionService(db);
-    const user_post_commentService = new User_Post_CommentService(db);
+    const user_postService = new User_PostService(db, user_profileService);
+    const user_post_reactionService = new User_Post_ReactionService(db, user_profileService);
+    const user_post_commentService = new User_Post_CommentService(db, user_profileService);
     const verify_codeService = new Verify_CodeService(db);
     const connectionsService = new ConnectionsService(db);
     const notificationService = new NotificationService(verify_codeService, userService);

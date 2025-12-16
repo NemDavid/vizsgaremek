@@ -73,7 +73,6 @@ class User_ProfileRepository {
         try {
             return await this.User_Profile.scope("allUser_ProfileData").findOne({ 
                 where: { USER_ID: userId },
-                raw: true 
             });
         } catch (error) {
             throw new DbError("Failed to fetch user profiles", { details: error.message });

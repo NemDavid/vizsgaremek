@@ -76,13 +76,6 @@ module.exports = (sequelize, DataTypes) =>
                 type: DataTypes.DATEONLY,
                 allowNull: false
             },
-
-            level:
-            {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                defaultValue: 1
-            }
             
         },
 

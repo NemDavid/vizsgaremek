@@ -3,10 +3,11 @@ const authUtils = require("../utilities/authUtils");
 
 class User_PostService
 {
-    constructor(db)
+    constructor(db, user_profileService)
     {
         this.user_postRepository = require("../repositories")(db).user_postRepository;
         this.userRepository = require("../repositories")(db).userRepository;
+        this.user_profileService = user_profileService;
     }
 
     async getUser_Posts()
@@ -73,6 +74,12 @@ class User_PostService
         }
     
         
+        console.log("-----------");
+        console.log(this.user_profileService);
+        
+        // add xp
+        await this.user_profileService.addXPToUser(postData.USER_ID, 100);
+
 
         return await this.user_postRepository.createUser_Post(postData);
     }

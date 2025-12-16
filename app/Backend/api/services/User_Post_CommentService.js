@@ -2,9 +2,10 @@ const { BadRequestError } = require("../errors");
 const authUtils = require("../utilities/authUtils");
 
 class User_Post_CommentService {
-    constructor(db) {
+    constructor(db, user_profileService) {
         this.user_post_CommentRepository = require("../repositories")(db).user_post_commentRepository;
         this.user_postRepository = require("../repositories")(db).user_postRepository;
+        this.user_profileService = user_profileService;
     }
 
     async getUsers_posts_comments() {
@@ -47,6 +48,9 @@ class User_Post_CommentService {
         if (!targetPost) {
             throw new BadRequestError("a cel post nem található");
         }
+
+        // add xp
+        await this.user_profileService.addXPToUser(commentData.USER_ID, 50);
 
         return await this.user_post_CommentRepository.createUsers_posts_comment(commentData);
     }
