@@ -27,7 +27,7 @@ export function DrawerFriends() {
     return (
         <Drawer >
             <DrawerTrigger className="contents">
-                <div className="fixed bottom-4 right-4 bg-red-500 text-black hover:bg-red-700 hover:text-white rounded-full w-12 h-12 flex items-center justify-center">
+                <div className="fixed bottom-4 right-4 bg-red-500 text-black hover:bg-red-700 hover:text-white rounded-full w-12 h-12 flex items-center justify-center z-60">
                     <Users size={24} />
                 </div>
             </DrawerTrigger>
