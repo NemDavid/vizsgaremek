@@ -4,20 +4,20 @@ module.exports = (sequelize, DataTypes) => {
     class User_Profiles extends Model {
 
         // XP hozzáadása a felhasználóhoz
-        async addXP(amount) {
+        async addXP(amount, transaction = null) {
             if (amount == null || isNaN(amount)) {
                 throw new Error(`Érvénytelen XP érték: ${amount}`);
             }
 
-            const transaction = await sequelize.transaction();
+            const shouldCommit = !transaction; // Ha nem kapunk transaction-t, itt hozzuk létre
+            const currentTransaction = transaction || await sequelize.transaction();
 
-            console.log(`[XP] Starting for user ${this.USER_ID}, amount: ${amount}`);
 
             try {
-                // Reload with lock
+                // Reload with lock - használjuk az átadott transaction-t
                 await this.reload({
-                    transaction,
-                    lock: transaction.LOCK.UPDATE
+                    transaction: currentTransaction,
+                    lock: currentTransaction.LOCK.UPDATE
                 });
 
                 const XP_PER_LEVEL = 1000;
@@ -37,15 +37,15 @@ module.exports = (sequelize, DataTypes) => {
                 this.XP = newXP;
                 this.level = newLevel;
 
-                console.log(`[XP] ${this.USER_ID}: ${totalXPBefore} -> ${totalXPAfter} XP, Level: ${currentLevel} -> ${newLevel}`);
 
                 // Save with transaction
-                await this.save({ transaction });
+                await this.save({ transaction: currentTransaction });
 
-                // Commit
-                await transaction.commit();
+                // Ha mi hoztuk létre a transaction-t, akkor commit-oljuk
+                if (shouldCommit) {
+                    await currentTransaction.commit();
+                }
 
-                console.log(`[XP] Completed for user ${this.USER_ID}`);
 
                 return {
                     success: true,
@@ -57,10 +57,13 @@ module.exports = (sequelize, DataTypes) => {
                 };
 
             } catch (err) {
-                await transaction.rollback();
+                // Ha mi hoztuk létre a transaction-t, akkor rollback
+                if (shouldCommit && currentTransaction) {
+                    await currentTransaction.rollback();
+                }
+                
                 console.error(`[XP ERROR] User ${this.USER_ID}, amount ${amount}:`, err.message);
 
-                // Rethrow with better message
                 if (err.name === 'SequelizeDatabaseError') {
                     throw new Error(`Database error: ${err.message}`);
                 }
@@ -98,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     User_Profiles.init(
-{
+        {
             ID:
             {
                 type: DataTypes.BIGINT,
@@ -223,14 +226,19 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    // Static helper method
-    // User_Profiles.addXPToUser = async function (userId, amount) {
-    //     const profile = await this.findOne({ where: { USER_ID: userId } });
-    //     if (!profile) {
-    //         throw new Error(`User profile not found: ${userId}`);
-    //     }
-    //     return await profile.addXP(amount);
-    // };
+    // Static helper method - TRANSACTION SUPPORT ADDED
+    User_Profiles.addXPToUser = async function (userId, amount, transaction = null) {
+        const profile = await this.findOne({ 
+            where: { USER_ID: userId },
+            transaction: transaction // Ha van transaction, használjuk
+        });
+        
+        if (!profile) {
+            throw new Error(`User profile not found: ${userId}`);
+        }
+        
+        return await profile.addXP(amount, transaction);
+    };
 
     return User_Profiles;
 };

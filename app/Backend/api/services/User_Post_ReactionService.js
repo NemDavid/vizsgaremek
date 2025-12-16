@@ -53,7 +53,7 @@ class User_Post_ReactionService {
             reactionData.POST_ID
         );
 
-        // Transaction indítása
+        // EGY transaction a teljes műveletre
         const transaction = await this.db.sequelize.transaction();
 
         try {
@@ -136,14 +136,13 @@ class User_Post_ReactionService {
             throw new BadRequestError("a frissitett user post nem található");
         }
 
-        // XP hozzáadása transaction-ben 
-            try {
-                await this.user_profileService.addXPToUser(reactionData.USER_ID, -10);
-            } catch (xpErr) {
-                console.warn("XP hiba:", xpErr.message);
-                // Ne dobjuk tovább, mert a reaction sikeres volt
-            }
-
+        // XP hozzáadása transaction-ben - MOST MÁR UGYANAZT A TRANSACTION-T HASZNÁLJUK
+        try {
+            await this.user_profileService.addXPToUser(reactionData.USER_ID, -10, transaction);
+        } catch (xpErr) {
+            console.warn("XP hiba:", xpErr.message);
+            // Ne dobjuk tovább, mert a reaction sikeres volt
+        }
 
         return { removedReaction: true, updatedPost };
     }
@@ -202,14 +201,13 @@ class User_Post_ReactionService {
             throw new BadRequestError("a frissitett user post nem található");
         }
 
-        // XP hozzáadása transaction-ben
-            try {
-                await this.user_profileService.addXPToUser(reactionData.USER_ID, 10);
-            } catch (xpErr) {
-                console.warn("XP hiba:", xpErr.message);
-                // Ne dobjuk tovább, mert a reaction sikeres volt
-            }
-
+        // XP hozzáadása transaction-ben - MOST MÁR UGYANAZT A TRANSACTION-T HASZNÁLJUK
+        try {
+            await this.user_profileService.addXPToUser(reactionData.USER_ID, 10, transaction);
+        } catch (xpErr) {
+            console.warn("XP hiba:", xpErr.message);
+            // Ne dobjuk tovább, mert a reaction sikeres volt
+        }
 
         return { createdReaction, updatedPost };
     }

@@ -74,9 +74,6 @@ class User_PostService
         }
     
         
-        console.log("-----------");
-        console.log(this.user_profileService);
-        
         // add xp
         await this.user_profileService.addXPToUser(postData.USER_ID, 100);
 

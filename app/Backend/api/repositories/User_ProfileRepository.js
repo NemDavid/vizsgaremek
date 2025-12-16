@@ -5,6 +5,7 @@ class User_ProfileRepository {
         this.User_Profile = db.User_Profile;
         this.sequelize = db.sequelize;
     }
+    
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
     async getUser_Profiles() {
         try {
@@ -33,14 +34,12 @@ class User_ProfileRepository {
                 where: { USER_ID: userId },
             });
 
-
             return affectedRows;
         } catch (error) {
             throw new DbError("Sikertelen frissítés", { details: error.message });
         }
     }
 
-    
     async deleteUser_Profile(userId) {
         try {
             const deletedRow = await this.User_Profile.destroy({ where: { USER_ID: userId } });
@@ -69,13 +68,36 @@ class User_ProfileRepository {
         }
     }
 
-     async getUser_Profile(userId) {
+    async getUser_Profile(userId) {
         try {
             return await this.User_Profile.scope("allUser_ProfileData").findOne({ 
                 where: { USER_ID: userId },
             });
         } catch (error) {
             throw new DbError("Failed to fetch user profiles", { details: error.message });
+        }
+    }
+
+    // ÚJ METÓDUS: XP hozzáadása transaction támogatással
+    async addXPToUser(userId, amount, transaction = null) {
+        try {
+            const options = {};
+            if (transaction) {
+                options.transaction = transaction;
+            }
+            
+            const profile = await this.User_Profile.findOne({
+                where: { USER_ID: userId },
+                ...options
+            });
+            
+            if (!profile) {
+                throw new DbError("User profile not found", { details: `userId: ${userId}` });
+            }
+            
+            return await profile.addXP(amount, transaction);
+        } catch (error) {
+            throw new DbError("Failed to add XP", { details: error.message });
         }
     }
 }
