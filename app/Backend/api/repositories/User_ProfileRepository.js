@@ -77,29 +77,6 @@ class User_ProfileRepository {
             throw new DbError("Failed to fetch user profiles", { details: error.message });
         }
     }
-
-    // ÚJ METÓDUS: XP hozzáadása transaction támogatással
-    async addXPToUser(userId, amount, transaction = null) {
-        try {
-            const options = {};
-            if (transaction) {
-                options.transaction = transaction;
-            }
-            
-            const profile = await this.User_Profile.findOne({
-                where: { USER_ID: userId },
-                ...options
-            });
-            
-            if (!profile) {
-                throw new DbError("User profile not found", { details: `userId: ${userId}` });
-            }
-            
-            return await profile.addXP(amount, transaction);
-        } catch (error) {
-            throw new DbError("Failed to add XP", { details: error.message });
-        }
-    }
 }
 
 module.exports = User_ProfileRepository;

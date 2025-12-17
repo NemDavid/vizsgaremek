@@ -92,7 +92,7 @@ class User_ProfileService {
         return updateUser_Profile;
     }
 
-    async addXPToUser(userId, XP) {
+    async addXPToUser(userId, XP, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (XP == null || isNaN(XP)) {
             throw new BadRequestError("Érvénytelen XP érték");
@@ -121,7 +121,7 @@ class User_ProfileService {
         }
 
 
-        const result = await userProfile.addXP(XP);
+        const result = await userProfile.addXP(XP, transaction);
         return result;
     }
 

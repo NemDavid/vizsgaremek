@@ -71,9 +71,12 @@ class User_PostService {
 
         try {
             // add xp
-            await this.user_profileService.addXPToUser(postData.USER_ID, 100, transaction);
+            await this.user_profileService.addXPToUser(postData.USER_ID,
+                100,
+                transaction
+            );
 
-            const newPost = await this.user_postRepository.createUser_Post(postData, 
+            const newPost = await this.user_postRepository.createUser_Post(postData,
                 {
                     transaction
                 }

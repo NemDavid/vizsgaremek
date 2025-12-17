@@ -142,7 +142,10 @@ class User_Post_ReactionService {
 
         // XP hozzáadása transaction-ben - MOST MÁR UGYANAZT A TRANSACTION-T HASZNÁLJUK
         try {
-            await this.user_profileService.addXPToUser(reactionData.USER_ID, -10, transaction);
+            await this.user_profileService.addXPToUser(reactionData.USER_ID,
+                -10,
+                transaction
+            );
         } catch (xpErr) {
             console.warn("XP hiba:", xpErr.message);
             // Ne dobjuk tovább, mert a reaction sikeres volt
