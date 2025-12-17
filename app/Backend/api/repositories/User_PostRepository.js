@@ -104,9 +104,11 @@ class User_PostRepository {
         }
     }
 
-    async createUser_Post(postData) {
+    async createUser_Post(postData, options = {}) {
         try {
-            return await this.User_Post.create(postData);
+            return await this.User_Post.create(postData, {
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Failed to create user post object", {
                 details: error.message,
@@ -115,10 +117,11 @@ class User_PostRepository {
         }
     }
 
-    async updateUser_Post(postId, updateData) {
+    async updateUser_Post(postId, updateData, options = {}) {
         try {
             const [affectedRows] = await this.User_Post.update(updateData, {
                 where: { ID: postId },
+                transaction: options.transaction
             });
 
             return affectedRows;

@@ -30,7 +30,7 @@ class User_Post_ReactionService {
         if (deleteProcess.deleted == 0) {
             throw new BadRequestError("Nincs ilyen user post reakcio");
         }
-        
+
         return deleteProcess;
     }
 
@@ -47,14 +47,18 @@ class User_Post_ReactionService {
             throw new BadRequestError("a cel post nem található");
         }
 
-        // Meglévő reakció ellenőrzése
-        const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
-            reactionData.USER_ID, 
-            reactionData.POST_ID
-        );
+
 
         // EGY transaction a teljes műveletre
         const transaction = await this.db.sequelize.transaction();
+
+
+        // Meglévő reakció ellenőrzése
+        const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
+            reactionData.USER_ID,
+            reactionData.POST_ID,
+            transaction
+        );
 
         try {
             let result;
@@ -97,9 +101,9 @@ class User_Post_ReactionService {
     }
 
     _calculatePostStats(action, reactionType, currentStats) {
-        const stats = { 
-            like: currentStats.like || 0, 
-            dislike: currentStats.dislike || 0 
+        const stats = {
+            like: currentStats.like || 0,
+            dislike: currentStats.dislike || 0
         };
 
         if (reactionType === 'like') {
@@ -120,16 +124,16 @@ class User_Post_ReactionService {
     async _removePreviousReaction(reactionData, existingReaction, targetPost, transaction) {
         // Reakció törlése transaction-ben
         await this.user_post_reactionRepository.deleteUsers_posts_reaction(
-            existingReaction.ID, 
+            existingReaction.ID,
             { transaction }
         );
 
         // Post statisztika frissítése transaction-ben
         const updatePost = this._calculatePostStats('remove', reactionData.reaction, targetPost);
         const updatedPost = await this.user_postRepository.updateUser_Post(
-            reactionData.POST_ID, 
-            updatePost, 
-            { transaction }
+            reactionData.POST_ID,
+            updatePost,
+            transaction
         );
 
         if (!updatedPost) {
@@ -150,7 +154,7 @@ class User_Post_ReactionService {
     async _updateReaction(reactionData, targetPost, existingReaction, transaction) {
         // Régi reakció csökkentése
         let updatePost = this._calculatePostStats('remove', existingReaction.reaction, targetPost);
-        
+
         // Új reakció növelése
         updatePost = this._calculatePostStats('add', reactionData.reaction, updatePost);
 
@@ -158,13 +162,15 @@ class User_Post_ReactionService {
         const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction({
             ...reactionData,
             ID: existingReaction.ID
-        }, { transaction });
+        },
+            transaction
+        );
 
         // Post frissítése transaction-ben
         const updatedPost = await this.user_postRepository.updateUser_Post(
-            reactionData.POST_ID, 
-            updatePost, 
-            { transaction }
+            reactionData.POST_ID,
+            updatePost,
+            transaction
         );
 
         if (!updatedReaction) {
@@ -183,15 +189,15 @@ class User_Post_ReactionService {
 
         // Reakció létrehozása transaction-ben
         const createdReaction = await this.user_post_reactionRepository.createUsers_posts_reaction(
-            reactionData, 
-            { transaction }
+            reactionData,
+            transaction
         );
-        
+
         // Post frissítése transaction-ben
         const updatedPost = await this.user_postRepository.updateUser_Post(
-            reactionData.POST_ID, 
-            updatePost, 
-            { transaction }
+            reactionData.POST_ID,
+            updatePost,
+            transaction
         );
 
         if (!createdReaction) {
