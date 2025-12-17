@@ -31,7 +31,7 @@ async function seedAdminUser(db) {
                 USER_ID: newUser.ID ?? 1,
                 first_name: "Admin",
                 last_name: "User",
-                avatar_url: ""
+                avatar_url: "https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
             });
 
             console.log("[Seed] Admin felhasználó sikeresen létrehozva");

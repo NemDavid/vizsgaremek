@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
                 const levelUps = newLevel - currentLevel;
 
                 // Update
-                this.XP = newXP;
+                this.XP = newLevel < 50 ? newXP : 0;
                 this.level = newLevel;
 
 
@@ -226,19 +226,20 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
+    // nem is kelll :(
     // Static helper method - TRANSACTION SUPPORT ADDED
-    User_Profiles.addXPToUser = async function (userId, amount, transaction = null) {
-        const profile = await this.findOne({ 
-            where: { USER_ID: userId },
-            transaction: transaction // Ha van transaction, használjuk
-        });
+    // User_Profiles.addXPToUser = async function (userId, amount, transaction = null) {
+    //     const profile = await this.findOne({ 
+    //         where: { USER_ID: userId },
+    //         transaction: transaction // Ha van transaction, használjuk
+    //     });
         
-        if (!profile) {
-            throw new Error(`User profile not found: ${userId}`);
-        }
+    //     if (!profile) {
+    //         throw new Error(`User profile not found: ${userId}`);
+    //     }
         
-        return await profile.addXP(amount, transaction);
-    };
+    //     return await profile.addXP(amount, transaction);
+    // };
 
     return User_Profiles;
 };

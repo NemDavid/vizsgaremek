@@ -92,6 +92,8 @@ class User_ProfileService {
         return updateUser_Profile;
     }
 
+
+    // add xp to user
     async addXPToUser(userId, XP, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (XP == null || isNaN(XP)) {

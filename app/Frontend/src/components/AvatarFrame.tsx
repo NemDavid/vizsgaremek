@@ -43,8 +43,8 @@ export function AvatarFrame({ userid, className }: { userid: bigint, className?:
             </HoverCardTrigger>
             <HoverCardContent className="w-72 bg-[#1a0f10] text-white border border-[#3a1b1d] shadow-xl">
                 <button
-                    className="absolute top-[6px] right-[6px] h-7 w-7 rounded-full bg-[#ff3b3b] hover:bg-[#cc2f2f] flex items-center justify-center text-white text-sm cursor-pointer"
-                    onClick={() => console.log('Profil megnyitása')}>
+                    className="absolute top-[6px] right-[6px] h-7 w-7 rounded-full bg-[#ff3b3b] hover:bg-[#cc2f2f] flex items-center justify-center text-white text-sm cursor-pointer z-70"
+                    onClick={() => nav({to:"/profil/$profilId", params:{profilId: `${userid}`}})}>
                     ›
                 </button>
                 <div className="flex items-center gap-4">
