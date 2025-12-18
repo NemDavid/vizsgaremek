@@ -48,42 +48,47 @@ class User_Post_ReactionService {
         }
 
 
-
-        // EGY transaction a teljes műveletre
-        const transaction = await this.db.sequelize.transaction();
-
-
-        // Meglévő reakció ellenőrzése
-        const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
-            reactionData.USER_ID,
-            reactionData.POST_ID,
-            transaction
-        );
-
+        // transaction
+        //------------------------------------------------------------ 
         try {
-            let result;
+            const result = await this.db.sequelize.transaction(async transaction => {
+                let result;
 
-            // Reakció feldolgozása transaction-ben
-            if (existingReaction) {
-                if (reactionData.reaction == existingReaction.reaction) {
-                    result = await this._removePreviousReaction(reactionData, existingReaction, targetPost, transaction);
+
+                // Meglévő reakció ellenőrzése
+                const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
+                    reactionData.USER_ID,
+                    reactionData.POST_ID,
+                    transaction
+                );
+
+
+                // Reakció feldolgozása transaction-ben
+                if (existingReaction) {
+                    if (reactionData.reaction == existingReaction.reaction) {
+                        result = await this._removePreviousReaction(reactionData, existingReaction, targetPost, transaction);
+                    } else {
+                        result = await this._updateReaction(reactionData, targetPost, existingReaction, transaction);
+                    }
                 } else {
-                    result = await this._updateReaction(reactionData, targetPost, existingReaction, transaction);
+                    result = await this._createdReaction(reactionData, targetPost, transaction);
                 }
-            } else {
-                result = await this._createdReaction(reactionData, targetPost, transaction);
-            }
 
-            // Minden sikeres -> commit
-            await transaction.commit();
+                return result;
+            });
+
+
             return result;
 
+            // If the execution reaches this line, the transaction has been committed successfully
+            // `result` is whatever was returned from the transaction callback (the `user`, in this case)
         } catch (error) {
-            // Valami hibázott -> rollback
-            await transaction.rollback();
+            // If the execution reaches this line, an error occurred.
+            // The transaction has already been rolled back automatically by Sequelize!
             console.error("Reaction transaction error:", error);
             throw error;
         }
+        //------------------------------------------------------------
     }
 
     // ========== PRIVÁT HELPER METÓDUSOK ==========

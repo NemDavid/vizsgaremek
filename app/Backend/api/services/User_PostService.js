@@ -47,7 +47,7 @@ class User_PostService {
         postData.USER_ID = encodedToken.userID;
 
 
-
+        // validate
         if (!postData.USER_ID) {
             throw new BadRequestError("hiányzó USER_ID");
         }
@@ -66,30 +66,38 @@ class User_PostService {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
 
-        // EGY transaction a teljes műveletre
-        const transaction = await this.db.sequelize.transaction();
 
+        // transaction
+        //------------------------------------------------------------
         try {
-            // add xp
-            await this.user_profileService.addXPToUser(postData.USER_ID,
-                100,
-                transaction
-            );
-
-            const newPost = await this.user_postRepository.createUser_Post(postData,
-                {
+            const result = await this.db.sequelize.transaction(async transaction => {
+                // add xp
+                await this.user_profileService.addXPToUser(postData.USER_ID,
+                    100,
                     transaction
-                }
-            );
+                );
 
-            await transaction.commit();
-            return newPost;
+                const newPost = await this.user_postRepository.createUser_Post(postData,
+                    {
+                        transaction
+                    }
+                );
+
+                return newPost;
+            });
+
+            
+            return result;
+
+            // If the execution reaches this line, the transaction has been committed successfully
+            // `result` is whatever was returned from the transaction callback (the `user`, in this case)
         } catch (error) {
-            // Valami hibázott -> rollback
-            await transaction.rollback();
+            // If the execution reaches this line, an error occurred.
+            // The transaction has already been rolled back automatically by Sequelize!
             console.error("Reaction transaction error:", error);
             throw error;
         }
+        //------------------------------------------------------------
     }
 
     async updateUser_Post(postId, updateData) {

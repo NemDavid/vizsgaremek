@@ -13,7 +13,7 @@ class User_Post_CommentService {
         return await this.user_post_CommentRepository.getUsers_posts_comments();
     }
 
-    async getUsers_posts_comment(itemId) {  
+    async getUsers_posts_comment(itemId) {
         return await this.user_post_CommentRepository.getUsers_posts_comment(itemId);
     }
 
@@ -43,51 +43,60 @@ class User_Post_CommentService {
             throw new BadRequestError("a cel post nem található");
         }
 
-        // Transaction létrehozása a teljes műveletre
-        const transaction = await this.db.sequelize.transaction();
 
+        // transaction
+        //------------------------------------------------------------
         try {
-            // 1. Komment létrehozása transaction-ben
-            const createdComment = await this.user_post_CommentRepository.createUsers_posts_comment(
-                commentData,
-                { transaction }
-            );
+            const result = await this.db.sequelize.transaction(async transaction => {
 
-            if (!createdComment) {
-                throw new BadRequestError("a létrehozott user post comment nem található");
-            }
-
-            // 2. XP hozzáadása UGYANABBA a transaction-be
-            // A user_profileService már támogatja a transaction átadást
-            let xpResult = null;
-            try {
-                xpResult = await this.user_profileService.addXPToUser(
-                    commentData.USER_ID,
-                    50,
-                    transaction
+                // 1. Komment létrehozása transaction-ben
+                const createdComment = await this.user_post_CommentRepository.createUsers_posts_comment(
+                    commentData,
+                    { transaction }
                 );
-            } catch (xpErr) {
-                // Ha az XP hozzáadás hibázik, de nem akarjuk megszakítani a comment létrehozást
-                console.warn("XP hozzáadás sikertelen:", xpErr.message);
-                // Itt döntés kérdése: ha kritikus az XP hozzáadás, akkor dobjuk tovább a hibát
-                // Ha nem kritikus, csak logoljuk és folytatjuk
-                // Most úgy döntök, hogy nem dobom tovább, mert a komment létrehozása fontosabb
-            }
 
-            // Minden sikeres -> commit
-            await transaction.commit();
+                if (!createdComment) {
+                    throw new BadRequestError("a létrehozott user post comment nem található");
+                }
 
-            return {
-                comment: createdComment,
-                xpAdded: xpResult
-            };
+                // 2. XP hozzáadása UGYANABBA a transaction-be
+                // A user_profileService már támogatja a transaction átadást
+                let xpResult = null;
+                try {
+                    xpResult = await this.user_profileService.addXPToUser(
+                        commentData.USER_ID,
+                        50,
+                        transaction
+                    );
+                } catch (xpErr) {
+                    // Ha az XP hozzáadás hibázik, de nem akarjuk megszakítani a comment létrehozást
+                    console.warn("XP hozzáadás sikertelen:", xpErr.message);
+                    // Itt döntés kérdése: ha kritikus az XP hozzáadás, akkor dobjuk tovább a hibát
+                    // Ha nem kritikus, csak logoljuk és folytatjuk
+                    // Most úgy döntök, hogy nem dobom tovább, mert a komment létrehozása fontosabb
+                }
 
+
+                return {
+                    comment: createdComment,
+                    xpAdded: xpResult
+                };
+
+            });
+
+
+            return result;
+
+            // If the execution reaches this line, the transaction has been committed successfully
+            // `result` is whatever was returned from the transaction callback (the `user`, in this case)
         } catch (error) {
-            // Valami hibázott -> rollback
-            await transaction.rollback();
+            // If the execution reaches this line, an error occurred.
+            // The transaction has already been rolled back automatically by Sequelize!
             console.error("Comment creation transaction error:", error);
             throw error;
         }
+        //------------------------------------------------------------
+
     }
 
     async updateUsers_posts_comment(commentData, token) {
@@ -134,7 +143,7 @@ class User_Post_CommentService {
         if (!commentData.comment) {
             throw new BadRequestError("Hiányzó user comment");
         }
-        
+
         // Opcionális: komment hossz validálása
         if (commentData.comment.length > 500) {
             throw new BadRequestError("A komment túl hosszú (max 500 karakter)");
