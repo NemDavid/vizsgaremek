@@ -13,8 +13,10 @@ import { Route as TestRouteImport } from './routes/test'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegistrationIndexRouteImport } from './routes/registration/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as AdminPanelIndexRouteImport } from './routes/AdminPanel/index'
-import { Route as RegisterTokenIndexRouteImport } from './routes/register/$token/index'
+import { Route as RegistrationTokenIndexRouteImport } from './routes/registration/$token/index'
 import { Route as ProfilProfilIdIndexRouteImport } from './routes/profil/$profilId/index'
 
 const TestRoute = TestRouteImport.update({
@@ -37,14 +39,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegistrationIndexRoute = RegistrationIndexRouteImport.update({
+  id: '/registration/',
+  path: '/registration/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPanelIndexRoute = AdminPanelIndexRouteImport.update({
   id: '/AdminPanel/',
   path: '/AdminPanel/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RegisterTokenIndexRoute = RegisterTokenIndexRouteImport.update({
-  id: '/register/$token/',
-  path: '/register/$token/',
+const RegistrationTokenIndexRoute = RegistrationTokenIndexRouteImport.update({
+  id: '/registration/$token/',
+  path: '/registration/$token/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilProfilIdIndexRoute = ProfilProfilIdIndexRouteImport.update({
@@ -59,8 +71,10 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/AdminPanel': typeof AdminPanelIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/registration': typeof RegistrationIndexRoute
   '/profil/$profilId': typeof ProfilProfilIdIndexRoute
-  '/register/$token': typeof RegisterTokenIndexRoute
+  '/registration/$token': typeof RegistrationTokenIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,8 +82,10 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/AdminPanel': typeof AdminPanelIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/registration': typeof RegistrationIndexRoute
   '/profil/$profilId': typeof ProfilProfilIdIndexRoute
-  '/register/$token': typeof RegisterTokenIndexRoute
+  '/registration/$token': typeof RegistrationTokenIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,8 +94,10 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/AdminPanel/': typeof AdminPanelIndexRoute
+  '/login/': typeof LoginIndexRoute
+  '/registration/': typeof RegistrationIndexRoute
   '/profil/$profilId/': typeof ProfilProfilIdIndexRoute
-  '/register/$token/': typeof RegisterTokenIndexRoute
+  '/registration/$token/': typeof RegistrationTokenIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -89,8 +107,10 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test'
     | '/AdminPanel'
+    | '/login'
+    | '/registration'
     | '/profil/$profilId'
-    | '/register/$token'
+    | '/registration/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,8 +118,10 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test'
     | '/AdminPanel'
+    | '/login'
+    | '/registration'
     | '/profil/$profilId'
-    | '/register/$token'
+    | '/registration/$token'
   id:
     | '__root__'
     | '/'
@@ -107,8 +129,10 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test'
     | '/AdminPanel/'
+    | '/login/'
+    | '/registration/'
     | '/profil/$profilId/'
-    | '/register/$token/'
+    | '/registration/$token/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,8 +141,10 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   TestRoute: typeof TestRoute
   AdminPanelIndexRoute: typeof AdminPanelIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
+  RegistrationIndexRoute: typeof RegistrationIndexRoute
   ProfilProfilIdIndexRoute: typeof ProfilProfilIdIndexRoute
-  RegisterTokenIndexRoute: typeof RegisterTokenIndexRoute
+  RegistrationTokenIndexRoute: typeof RegistrationTokenIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -151,6 +177,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/registration/': {
+      id: '/registration/'
+      path: '/registration'
+      fullPath: '/registration'
+      preLoaderRoute: typeof RegistrationIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/AdminPanel/': {
       id: '/AdminPanel/'
       path: '/AdminPanel'
@@ -158,11 +198,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPanelIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/register/$token/': {
-      id: '/register/$token/'
-      path: '/register/$token'
-      fullPath: '/register/$token'
-      preLoaderRoute: typeof RegisterTokenIndexRouteImport
+    '/registration/$token/': {
+      id: '/registration/$token/'
+      path: '/registration/$token'
+      fullPath: '/registration/$token'
+      preLoaderRoute: typeof RegistrationTokenIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profil/$profilId/': {
@@ -181,8 +221,10 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   TestRoute: TestRoute,
   AdminPanelIndexRoute: AdminPanelIndexRoute,
+  LoginIndexRoute: LoginIndexRoute,
+  RegistrationIndexRoute: RegistrationIndexRoute,
   ProfilProfilIdIndexRoute: ProfilProfilIdIndexRoute,
-  RegisterTokenIndexRoute: RegisterTokenIndexRoute,
+  RegistrationTokenIndexRoute: RegistrationTokenIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

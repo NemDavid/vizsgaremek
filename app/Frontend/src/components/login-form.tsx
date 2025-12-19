@@ -37,6 +37,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Spinner } from "./ui/spinner"
 
 type LoginFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void; // 🔹 új prop
@@ -97,7 +98,7 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
   }
 
   if (isPending) {
-    return <div>Loading...</div>
+    return <Spinner/>
   }
 
   return (

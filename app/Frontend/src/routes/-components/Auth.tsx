@@ -4,8 +4,8 @@ import { LoginPage } from "./Login";
 import { SignUpPage } from "./Register";
 import { Toaster } from "sonner"
 
-export function AuthPage() {
-    const [showLogin, setShowLogin] = useState(true);
+export function AuthPage({Side}: {Side?: 'login' | 'register'}) {
+    const [showLogin, setShowLogin] = useState(Side ? (Side == "login" ? true : false) : true);
     const [isReady, setIsReady] = useState(false);
 
     const handleSwitch = () => setShowLogin((prev) => !prev);

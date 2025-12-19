@@ -35,26 +35,18 @@ exports.registerUser = async (req, res, next) => {
 exports.confirmRegistration = async (req, res, next) => {
     const { token } = req.params;
     const { first_name, last_name, birth_date, birth_place, schools, bio } = req.body || {};
-
+    const { user_profileService } = require("../services")(db);
     try {
         const decoded = authUtils.verifyToken(token);
         if (!decoded) {
             return res.status(400).json({ message: "Érvénytelen vagy lejárt token." });
         }
-
-        let avatar_url = "";
-        if (req.file) {
-            avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
-        }
-
         const createdUser = await userService.createUser({
             username: decoded.username,
             email: decoded.email,
             password_hash: decoded.password_hash
         });
-
-        const { user_profileService } = require("../services")(db);
-        const newProfile = await user_profileService.createUser_Profile({
+        let newProfile={
             USER_ID: createdUser.ID,
             first_name,
             last_name,
@@ -62,8 +54,13 @@ exports.confirmRegistration = async (req, res, next) => {
             birth_place,
             schools,
             bio,
-            avatar_url
-        });
+        }
+        if (req.file) {
+            avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
+            newProfile.avatar_url = avatar_url;
+        }
+        
+        await user_profileService.createUser_Profile(newProfile);
 
         res.status(201).json({
             message: "A fiókod és a profilod sikeresen létrehozva!",

@@ -21,6 +21,7 @@ import { RegisterConfirmRequest } from "./axios/axiosClient"
 import { toast } from "sonner"
 import { useMutation} from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
+import { Spinner } from "./ui/spinner"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
   token: string; // <-- hozzáadva ide
@@ -93,7 +94,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
   }
 
   if (isPending) {
-    return <div>Loading...</div>
+    return <Spinner/>
   }
   return (
     <Form {...form}>

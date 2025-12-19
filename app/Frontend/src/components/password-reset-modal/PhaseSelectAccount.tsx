@@ -14,7 +14,7 @@ export function PhaseSelectAccount({accounts,onSuccess}: {accounts: any[],onSucc
                         onClick={() => onSuccess(acc)}
                         className="flex items-center gap-2"
                     >
-                        <img src={`http://localhost:6769${acc.avatar_url}`} className="w-6 h-6 rounded-full" />
+                        <img src={`${acc.avatar_url}`} className="w-6 h-6 rounded-full bg-white" />
                         {acc.username}
                     </Button>
 
