@@ -42,7 +42,11 @@ type SignupFormProps = React.ComponentProps<"form"> & {
 
 export const registerSchema = z.object({
   username: z.string().min(2, {
-    message: "A felhasználónévnek legalább 2 karakter hosszúnak kell lennie.",
+    message: "A felhasználónévnek legalább 3 karakter hosszúnak kell lennie.",
+  }).max(21, {
+    message: "A felhasználónév legfeljebb 21 karakter hosszú lehet.",
+  }).regex(/^[a-zA-Z0-9_]+$/, {
+    message: "A felhasználónév csak betűket, számokat és aláhúzásokat tartalmazhat.",
   }),
   email: z.email({
     message: "Érvénytelen e-mail cím.",
