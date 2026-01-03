@@ -72,14 +72,14 @@ class UserService
 
     async registerUser(userData)
     {
-        if (!userData.email) {
-            throw new BadRequestError("hiányzó email");
-        }
-        if (!userData.password) {
-            throw new BadRequestError("hiányzó password");
+        if (!userData.email || authUtils.isValidEmail(userData.email)) {
+            throw new BadRequestError("hiányzó email vagy érvényytelen email");
         }
         if (!userData.username) {
             throw new BadRequestError("hiányzó username");
+        }
+        if (!userData.password) {
+            throw new BadRequestError("hiányzó password");
         }
         if (!(userData.password.length >= 8 && userData.password.length <= 21)) {
             throw new BadRequestError("a jelszónak 8-21 karakter között kell lennie");

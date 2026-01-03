@@ -58,3 +58,10 @@ exports.generateVerifyCode = () =>
 {
     return Math.floor(100000 + Math.random() * 900000); // 6 jegyű kód
 }
+
+exports.isValidEmail = (email) =>
+{
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
