@@ -35,6 +35,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Loader } from "./Loader"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
@@ -106,9 +107,6 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
     else {
       register({ data: values })
     }
-  }
-  if (isPending) {
-    return <div>Loading...</div>
   }
   return (
     <Form {...form}>
@@ -251,7 +249,7 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
           onChange={handleCaptchaChange}
           className="mx-auto"
         />
-
+        { isPending ? <Loader/> : ""}
         <Button type="submit">Fiók létrehozása</Button>
       </form>
     </Form>

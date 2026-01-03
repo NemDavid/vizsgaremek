@@ -22,6 +22,7 @@ import { toast } from "sonner"
 import { useMutation} from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Spinner } from "./ui/spinner"
+import { Loader } from "./Loader"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
   token: string; // <-- hozzáadva ide
@@ -93,9 +94,6 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
     confirm({ data: formData });
   }
 
-  if (isPending) {
-    return <Spinner/>
-  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
@@ -217,7 +215,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
             </FormItem>
           )}
         />
-
+        { isPending ? <Loader/> : ""}
         <Field>
           <FieldDescription className="px-6 text-center">
             A Folytatás gombra kattintással elfogadod a Szolgáltatási feltételeinket és az Adatvédelmi irányelveinket.
@@ -225,6 +223,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
             <Button type="submit">Fiók létrehozása és megerősítéséhez</Button>
           </FieldDescription>
         </Field>
+        
       </form>
     </Form>
   )

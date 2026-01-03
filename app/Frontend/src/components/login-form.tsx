@@ -38,6 +38,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Spinner } from "./ui/spinner"
+import { Loader } from "./Loader"
 
 type LoginFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void; // 🔹 új prop
@@ -96,11 +97,6 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
   function handleCaptchaChange(value: string | null) {
     setCaptchaValue(value)
   }
-
-  if (isPending) {
-    return <Spinner/>
-  }
-
   return (
     <Form {...LoginForm}>
       <form onSubmit={LoginForm.handleSubmit(onLogin)} className={cn("flex flex-col gap-6", className)} {...props}>
@@ -198,6 +194,7 @@ export function LoginForm({ className, onSwitch, ...props }: LoginFormProps) {
           onChange={handleCaptchaChange}
           className="mx-auto"
         />
+        { isPending ? <Loader/> : ""}
         <Button type="submit">Belépés</Button>
       </form>
     </Form>

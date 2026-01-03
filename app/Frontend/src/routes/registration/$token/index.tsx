@@ -39,7 +39,7 @@ function RouteComponent() {
           <ProfilSetupForm token={token} />
         </div>
         <Toaster richColors position="top-center" />
-
+        
       </div>
     )
   }
