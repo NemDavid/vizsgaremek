@@ -29,13 +29,13 @@ type SignupFormProps = React.ComponentProps<"form"> & {
 
 
 export const confirmSchema = z.object({
-  first_name: z.string().min(1, { message: "Kérjük add meg a keresztneved!" }),
-  last_name: z.string().min(1, { message: "Kérjük add meg a vezetékneved!" }),
-  schools: z.string().optional(),
-  birth_date: z.string().optional(),
-  birth_place: z.string().optional(),
+  first_name: z.string().min(1, { message: "Kérjük add meg a keresztneved!" }).max(60, { message: "A keresztnév legfeljebb 60 karakter hosszú lehet." }),
+  last_name: z.string().min(1, { message: "Kérjük add meg a vezetékneved!" }).max(60, { message: "A vezetékneved legfeljebb 60 karakter hosszú lehet." }),
+  schools: z.string().max(100, { message: "Az iskolák mező legfeljebb 100 karakter hosszú lehet." }).optional(),
+  birth_date: z.string().max(100, { message: "A születési dátum mező legfeljebb 100 karakter hosszú lehet." }).optional(),
+  birth_place: z.string().max(100, { message: "Az születési hely mező legfeljebb 100 karakter hosszú lehet." }).optional(),
   avatar: z.any().refine(file => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.").optional(),
-  bio: z.string().optional(),
+  bio: z.string().max(255, { message: "A bio mező legfeljebb 255 karakter hosszú lehet." }).optional(),
 })
 
 export type ConfirmSchema = z.infer<typeof confirmSchema>
