@@ -72,18 +72,34 @@ class UserService
 
     async registerUser(userData)
     {
-        if (!userData.email || authUtils.isValidEmail(userData.email)) {
-            throw new BadRequestError("hiányzó email vagy érvényytelen email");
+        if (!userData.email) {
+            throw new BadRequestError("hiányzó email");
+        }
+        if (!authUtils.isValidEmail(userData.email)) {
+            throw new BadRequestError("érvényytelen email");
         }
         if (!userData.username) {
             throw new BadRequestError("hiányzó username");
         }
+        if (!authUtils.isValidUsername(userData.username)) {
+            throw new BadRequestError("érvénytelen username");
+        }
         if (!userData.password) {
             throw new BadRequestError("hiányzó password");
         }
-        if (!(userData.password.length >= 8 && userData.password.length <= 21)) {
-            throw new BadRequestError("a jelszónak 8-21 karakter között kell lennie");
+        if (!authUtils.isValidPassword(userData.password)) {
+            throw new BadRequestError("a jelszó nem felel meg a követelményeknek");
         }
+        if (!userData.confirm_password) {
+            throw new BadRequestError("hiányzó confirm_password");
+        }
+        if (!authUtils.isValidPassword(userData.confirm_password)) {
+            throw new BadRequestError("a jelszó nem felel meg a követelményeknek");
+        }
+        if (userData.password !== userData.confirm_password) {
+            throw new BadRequestError("a jelszavak nem egyeznek");
+        }
+
         return userData;
     }
 

@@ -4,8 +4,7 @@ const bcrypt = require("bcrypt");
 
 const salt = 14;
 
-exports.generateUserToken = (user) =>
-{
+exports.generateUserToken = (user) => {
     return jwt.sign({ userID: user.ID, username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: '3d' // 3 nap
     });
@@ -21,47 +20,97 @@ exports.generateRegistrationToken = (userData) => {
     );
 };
 
-exports.setCookie = (res, cookieName, value) =>
-{
-    res.cookie(cookieName, value, 
-    {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 72, // 3nap
-        secure: process.env.NODE_ENV == "production",
-        sameSite: "lax",
-    });
+exports.setCookie = (res, cookieName, value) => {
+    res.cookie(cookieName, value,
+        {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 72, // 3nap
+            secure: process.env.NODE_ENV == "production",
+            sameSite: "lax",
+        });
 }
 
-exports.verifyToken = (token) =>
-{
-    try
-    {
+exports.verifyToken = (token) => {
+    try {
         return jwt.verify(token, process.env.JWT_SECRET);
     }
-    catch(error)
-    {
+    catch (error) {
         return null;
     }
 }
 
-exports.hashPassword = (password) =>
-{
+exports.hashPassword = (password) => {
     return bcrypt.hashSync(password, salt);
 }
 
-exports.hashCode = (verify_code) =>
-{
+exports.hashCode = (verify_code) => {
     return bcrypt.hashSync(verify_code, salt);
 }
 
-exports.generateVerifyCode = () =>
-{
+exports.generateVerifyCode = () => {
     return Math.floor(100000 + Math.random() * 900000); // 6 jegyű kód
 }
 
-exports.isValidEmail = (email) =>
-{
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+exports.isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Egyszerű email ellenőrzés
     return regex.test(email);
 }
 
+exports.isValidUsername = (username) => {
+    console.log(username);
+
+    const regex = /^[a-zA-Z0-9_]+$/; // Csak betűk, számok és alulvonás
+    return regex.test(username);
+}
+
+exports.isValidPassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,21}$/; // Legalább egy kisbetű, egy nagybetű, egy szám és egy speciális karakter, 8-21 karakter hosszú
+    return regex.test(password);
+}
+
+
+// Közös helper
+const isString = (value) => typeof value === "string";
+
+exports.isValidFirstName = (first_name) => {
+    if (first_name == null) return true;
+    return isString(first_name) && first_name.trim().length > 0 && first_name.length <= 60;
+};
+
+exports.isValidLastName = (last_name) => {
+    if (last_name == null) return true;
+    return isString(last_name) && last_name.trim().length > 0 && last_name.length <= 60;
+};
+
+exports.isValidSchools = (schools) => {
+    if (schools == null) return true;
+    return (isString(schools) && schools.length <= 100);
+};
+
+exports.isValidBirthDate = (birth_date) => {
+    if (birth_date == null) return true;
+    return (isString(birth_date) && birth_date.length <= 100);
+};
+
+exports.isValidBirthPlace = (birth_place) => {
+    if (birth_place == null) return true;
+    return (isString(birth_place) && birth_place.length <= 100);
+};
+
+exports.isValidAvatar = (file) => {
+    if (file == null) return true;
+    return (file.size && file.size <= 5_000_000);
+};
+
+exports.isValidBio = (bio) => {
+    if (bio == null) return true;
+    return (isString(bio) && bio.length <= 255);
+};
+
+exports.isValidPostTittle = (title) => {
+    return typeof title === "string" && title.trim().length >= 3 && title.trim().length <= 255;
+};
+
+exports.isValidPostContent = (content) => {
+    return typeof content === "string" && content.trim().length >= 3 && content.trim().length <= 1000;
+};

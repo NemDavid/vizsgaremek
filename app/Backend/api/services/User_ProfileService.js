@@ -1,4 +1,5 @@
 const { BadRequestError } = require("../errors");
+const authUtils = require("../utilities/authUtils");
 
 class User_ProfileService {
     constructor(db) {
@@ -47,8 +48,31 @@ class User_ProfileService {
         if (!userData.first_name) {
             throw new BadRequestError("hiányzó first_name");
         }
+        if (!authUtils.isValidFirstName(userData.first_name)) {
+            throw new BadRequestError("Hiányzó vagy érvénytelen first_name");
+        }
         if (!userData.last_name) {
             throw new BadRequestError("hiányzó last_name");
+        }
+        if (!authUtils.isValidLastName(userData.last_name)) {
+            throw new BadRequestError("Hiányzó vagy érvénytelen last_name");
+        }
+
+        // opcionalisak
+        if (!authUtils.isValidSchools(userData.schools)) {
+            throw new BadRequestError("Érvénytelen schools mező");
+        }
+        if (!authUtils.isValidBirthDate(userData.birth_date)) {
+            throw new BadRequestError("Érvénytelen birth_date mező");
+        }
+        if (!authUtils.isValidBirthPlace(userData.birth_place)) {
+            throw new BadRequestError("Érvénytelen birth_place mező");
+        }
+        if (!authUtils.isValidAvatar(userData.avatar)) {
+            throw new BadRequestError("Érvénytelen avatar");
+        }
+        if (!authUtils.isValidBio(userData.bio)) {
+            throw new BadRequestError("Érvénytelen bio");
         }
 
         return await this.user_profileRepository.createUser_Profile(userData);

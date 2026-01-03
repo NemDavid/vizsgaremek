@@ -54,12 +54,19 @@ class User_PostService {
         if (!postData.title) {
             throw new BadRequestError("hiányzó title");
         }
+        if (!authUtils.isValidPostTittle(postData.title)) {
+            throw new BadRequestError("A cím 3 és 255 karakter között lehet");
+        }
         if (!postData.content) {
             throw new BadRequestError("hiányzó content");
+        }
+        if (!authUtils.isValidPostContent(postData.content)) {
+            throw new BadRequestError("A tartalom 3 és 1000 karakter között lehet");
         }
         if (!postData.token) {
             throw new BadRequestError("hiányzó token");
         }
+
 
         const validUser = await this.userRepository.getUser(postData.USER_ID);
         if (!validUser) {
@@ -86,7 +93,7 @@ class User_PostService {
                 return newPost;
             });
 
-            
+
             return result;
 
             // If the execution reaches this line, the transaction has been committed successfully

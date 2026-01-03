@@ -12,8 +12,10 @@ exports.registerUser = async (req, res, next) => {
         const pendingUser = await userService.registerUser({
             email,
             username,
-            password
+            password,
+            confirm_password
         });
+
 
         // Token generálása e-mail megerősítéshez
         const registrationToken = authUtils.generateRegistrationToken(pendingUser);
