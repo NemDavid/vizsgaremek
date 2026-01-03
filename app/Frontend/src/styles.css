@@ -144,3 +144,43 @@ code {
     transform: translateY(100%);
   }
 }
+
+/* Loader */
+
+.loader {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  display: inline-block;
+}
+
+.loader::before {
+  content: '';
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(255, 61, 0, 0.2) 33%, #ff3d00 100%);
+  animation: rotation 1s linear infinite;
+}
+
+.loader::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: #263238;
+}
+
+.loader img {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  z-index: 2;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg) }
+  100% { transform: rotate(360deg)}
+} 
