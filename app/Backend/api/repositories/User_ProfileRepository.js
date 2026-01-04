@@ -14,17 +14,15 @@ class User_ProfileRepository {
         try {
             return await this.User_Profile.scope("allUser_ProfileData").findAll();
         } catch (error) {
-            throw new DbError("Failed to fetch user profiles", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználói profilokat.", { details: error.message });
         }
     }
-
-    ///--------------------VÉGLEGES-----------------------------
 
     async createUser_Profile(userData) {
         try {
             return await this.User_Profile.create(userData);
         } catch (error) {
-            throw new DbError("Failed to create user profile object", {
+            throw new DbError("Nem sikerült létrehozni a felhasználói profilt.", {
                 details: error.message,
                 data: userData,
             });
@@ -39,7 +37,7 @@ class User_ProfileRepository {
 
             return affectedRows;
         } catch (error) {
-            throw new DbError("Sikertelen frissítés", { details: error.message });
+            throw new DbError("A felhasználói profil frissítése sikertelen.", { details: error.message });
         }
     }
 
@@ -48,12 +46,12 @@ class User_ProfileRepository {
             const deletedRow = await this.User_Profile.destroy({ where: { USER_ID: userId } });
 
             if (deletedRow === 0) {
-                throw new DbError("Nincs ilyen user profile", { details: `userId: ${userId}` });
+                throw new DbError("A felhasználói profil nem található.", { details: `userId: ${userId}` });
             }
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
-            throw new DbError("Sikertelen törlés", { details: error.message });
+            throw new DbError("A felhasználói profil törlése sikertelen.", { details: error.message });
         }
     }
 
@@ -67,45 +65,46 @@ class User_ProfileRepository {
                 order: [["USER_ID", "ASC"]],
             });
         } catch (error) {
-            throw new DbError("Rossz paraméter", { details: error.message });
+            throw new DbError("Érvénytelen lapozási paraméter.", { details: error.message });
         }
     }
 
     async getUser_Profile(userId) {
         try {
             const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
-            where: { USER_ID: userId },
-            include: [
-                {
-                    model: this.User,
-                    as: "user",
-                    include: [
-                        {
-                            model: this.User_Post,
-                            as: "post"
-                        }
-                    ]
-                }
-            ]
-        });
-        if (!profile) return null
+                where: { USER_ID: userId },
+                include: [
+                    {
+                        model: this.User,
+                        as: "user",
+                        include: [
+                            {
+                                model: this.User_Post,
+                                as: "post"
+                            }
+                        ]
+                    }
+                ]
+            });
 
-        const { Connections } = this;
+            if (!profile) return null;
 
-        const sentCount = await Connections.count({
-            where: { User_Requested_ID: userId, Status: "accepted" }
-        });
+            const { Connections } = this;
 
-        const receivedCount = await Connections.count({
-            where: { To_User_ID: userId, Status: "accepted" }
-        });
+            const sentCount = await Connections.count({
+                where: { User_Requested_ID: userId, Status: "accepted" }
+            });
 
-        const result = profile.toJSON();
-        result.friendCount = sentCount + receivedCount;
+            const receivedCount = await Connections.count({
+                where: { To_User_ID: userId, Status: "accepted" }
+            });
 
-        return {result,profile}
+            const result = profile.toJSON();
+            result.friendCount = sentCount + receivedCount;
+
+            return { result, profile };
         } catch (error) {
-            throw new DbError("Failed to fetch user profiles", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználói profilt.", { details: error.message });
         }
     }
 }

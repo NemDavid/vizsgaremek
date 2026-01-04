@@ -9,47 +9,47 @@ class User_Post_ReactionRepository {
     async getUsers_posts_reactions() {
         try {
             return await this.User_Post_Reaction.scope("allUserPostReactionData").findAll({
-                transaction: options.transaction 
+                transaction: options.transaction
             });
         } catch (error) {
-            throw new DbError("Failed to fetch users", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználói reakciókat.", { details: error.message });
         }
     }
 
     async getUsers_posts_reaction(userId, postId, options = {}) {
         try {
-            return await this.User_Post_Reaction.scope("allUserPostReactionData").findOne({ 
-                where: { 
+            return await this.User_Post_Reaction.scope("allUserPostReactionData").findOne({
+                where: {
                     USER_ID: userId,
-                    POST_ID: postId 
+                    POST_ID: postId
                 },
-                transaction: options.transaction 
+                transaction: options.transaction
             });
         } catch (error) {
-            throw new DbError("Failed to fetch users reaction", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználó reakcióját.", { details: error.message });
         }
     }
 
     async deleteUsers_posts_reaction(itemId, options = {}) {
         try {
-            const deletedRow = await this.User_Post_Reaction.destroy({ 
+            const deletedRow = await this.User_Post_Reaction.destroy({
                 where: { ID: itemId },
-                transaction: options.transaction 
+                transaction: options.transaction
             });
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
-            throw new DbError("Sikertelen törlés", { details: error.message });
+            throw new DbError("A reakció törlése sikertelen.", { details: error.message });
         }
     }
 
     async createUsers_posts_reaction(reactionData, options = {}) {
         try {
             return await this.User_Post_Reaction.create(reactionData, {
-                transaction: options.transaction 
+                transaction: options.transaction
             });
         } catch (error) {
-            throw new DbError("Failed to create user_post_reactionData object", {
+            throw new DbError("Nem sikerült létrehozni a reakciót.", {
                 details: error.message,
                 data: user_post_reactionData,
             });
@@ -63,12 +63,12 @@ class User_Post_ReactionRepository {
                     POST_ID: updateData.POST_ID,
                     USER_ID: updateData.USER_ID,
                 },
-                transaction: options.transaction 
+                transaction: options.transaction
             });
-            
+
             return affectedRows;
         } catch (error) {
-            throw new DbError("Sikertelen frissítés", { details: error.message });
+            throw new DbError("A reakció frissítése sikertelen.", { details: error.message });
         }
     }
 }

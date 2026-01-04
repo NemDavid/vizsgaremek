@@ -1,4 +1,3 @@
-const { verify } = require("jsonwebtoken");
 const { DbError } = require("../errors");
 
 class Verify_CodeRepository {
@@ -11,7 +10,7 @@ class Verify_CodeRepository {
         try {
             return await this.Verify_Code.scope("allVerify_CodeData").findAll({});
         } catch (error) {
-            throw new DbError("Failed to fetch Verify_Code", { details: error.message });
+            throw new DbError("Nem sikerült lekérni az Verify_Code", { details: error.message });
         }
     }
 
@@ -23,7 +22,7 @@ class Verify_CodeRepository {
                 }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch Verify_Code", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a Verify_Code", { details: error.message });
         }
     }
 
@@ -35,7 +34,7 @@ class Verify_CodeRepository {
                 }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch Verify_Code", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a Verify_Code", { details: error.message });
         }
     }
 
@@ -63,7 +62,7 @@ class Verify_CodeRepository {
         try {
             return await this.Verify_Code.create(verify_codeData);
         } catch (error) {
-            throw new DbError("Failed to create verify_code object", {
+            throw new DbError("Szerver oldali hiba törtent, próbáld meg késöbb", {
                 details: error.message,
                 data: verify_codeData,
             });

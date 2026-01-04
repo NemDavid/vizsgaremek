@@ -11,7 +11,7 @@ class ConnectionsRepository {
         try {
             return await this.Connections.scope("allConnectionData").findAll();
         } catch (error) {
-            throw new DbError("Failed to fetch connections", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a kapcsolatokat.", { details: error.message });
         }
     }
 
@@ -19,24 +19,22 @@ class ConnectionsRepository {
         try {
             return await this.Connections.scope("allConnectionData").findOne({
                 where: {
-                    User_Requested_ID: User_Requested_ID,
-                    To_User_ID: To_User_ID
+                    User_Requested_ID,
+                    To_User_ID
                 }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch connections", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a kapcsolatot.", { details: error.message });
         }
     }
 
     async getCurrentUserConnectionsAll(User_Requested_ID) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
-                where: {
-                    User_Requested_ID: User_Requested_ID,
-                }
+                where: { User_Requested_ID }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch connections", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználó kapcsolatait.", { details: error.message });
         }
     }
 
@@ -44,12 +42,12 @@ class ConnectionsRepository {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
-                    User_Requested_ID: User_Requested_ID,
+                    User_Requested_ID,
                     Status: status
                 }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch connections", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználó kapcsolatait.", { details: error.message });
         }
     }
 
@@ -61,7 +59,7 @@ class ConnectionsRepository {
                 }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch connections", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a barátkérelmeket.", { details: error.message });
         }
     }
 
@@ -71,14 +69,13 @@ class ConnectionsRepository {
                 where: {
                     Status: "accepted",
                     [Op.or]: [
-                        { User_Requested_ID: User_Requested_ID },
+                        { User_Requested_ID },
                         { To_User_ID: User_Requested_ID }
                     ]
                 }
-
             });
         } catch (error) {
-            throw new DbError("Failed to fetch connections", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a barátlistát.", { details: error.message });
         }
     }
 
@@ -86,23 +83,22 @@ class ConnectionsRepository {
         try {
             const deletedRow = await this.Connections.destroy({
                 where: {
-                    User_Requested_ID: User_Requested_ID,
-                    To_User_ID: To_User_ID
+                    User_Requested_ID,
+                    To_User_ID
                 }
             });
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
-            throw new DbError("Sikertelen törlés", { details: error.message });
+            throw new DbError("A kapcsolat törlése sikertelen.", { details: error.message });
         }
     }
 
     async createConnection(connectionData) {
-
         try {
             return await this.Connections.create(connectionData);
         } catch (error) {
-            throw new DbError("Failed to create connections object", {
+            throw new DbError("Nem sikerült létrehozni a kapcsolatot.", {
                 details: error.message,
                 data: userData,
             });
@@ -113,14 +109,14 @@ class ConnectionsRepository {
         try {
             const [affectedRows] = await this.Connections.update({ Status }, {
                 where: {
-                    User_Requested_ID: User_Requested_ID,
-                    To_User_ID: To_User_ID
+                    User_Requested_ID,
+                    To_User_ID
                 }
             });
 
             return affectedRows;
         } catch (error) {
-            throw new DbError("Sikertelen frissítés", { details: error.message });
+            throw new DbError("A kapcsolat frissítése sikertelen.", { details: error.message });
         }
     }
 }

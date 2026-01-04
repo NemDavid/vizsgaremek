@@ -25,7 +25,7 @@ class User_PostRepository {
                 ]
             });
         } catch (error) {
-            throw new DbError("Failed to fetch user posts", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználói bejegyzéseket.", { details: error.message });
         }
     }
 
@@ -37,12 +37,8 @@ class User_PostRepository {
             const limit = pp;
             const offset = p * pp;
 
-            // 1) összes poszt száma
-            const total = await this.User_Post.count({
-                where: {}
-            });
+            const total = await this.User_Post.count({ where: {} });
 
-            // 2) jelenlegi oldal posztjai
             const posts = await this.User_Post.scope("allPostData").findAll({
                 order: [["ID", "DESC"]],
                 limit,
@@ -61,16 +57,14 @@ class User_PostRepository {
                 ]
             });
 
-            // 3) van-e több oldal?
             const hasMore = offset + limit < total;
 
-            // 4) válasz formátuma React Query infiniteQuery-hez
             return {
                 data: posts,
                 nextCursor: hasMore ? p + 1 : null
             };
         } catch (error) {
-            throw new DbError("Failed to fetch user posts", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználói bejegyzéseket.", { details: error.message });
         }
     }
 
@@ -80,7 +74,7 @@ class User_PostRepository {
                 where: { USER_ID: userId }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch user posts", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználó bejegyzéseit.", { details: error.message });
         }
     }
 
@@ -90,7 +84,7 @@ class User_PostRepository {
                 where: { ID: postId }
             });
         } catch (error) {
-            throw new DbError("Failed to fetch user posts", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a bejegyzést.", { details: error.message });
         }
     }
 
@@ -100,7 +94,7 @@ class User_PostRepository {
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
-            throw new DbError("Sikertelen törlés", { details: error.message });
+            throw new DbError("A bejegyzés törlése sikertelen.", { details: error.message });
         }
     }
 
@@ -110,7 +104,7 @@ class User_PostRepository {
                 transaction: options.transaction
             });
         } catch (error) {
-            throw new DbError("Failed to create user post object", {
+            throw new DbError("Nem sikerült létrehozni a bejegyzést.", {
                 details: error.message,
                 data: postData,
             });
@@ -126,19 +120,17 @@ class User_PostRepository {
 
             return affectedRows;
         } catch (error) {
-            throw new DbError("Sikertelen frissítés", { details: error.message });
+            throw new DbError("A bejegyzés frissítése sikertelen.", { details: error.message });
         }
     }
 
-    ///--------------------VÉGLEGES-----------------------------
-    async updateUser_POST_LikeDislike(postId, like, dislike) { // nem is hasznaljuk !!!!
+    async updateUser_POST_LikeDislike(postId, like, dislike) {
         try {
             await this.User_Post.update({ like, dislike }, {
                 where: { ID: postId }
-            })
-
+            });
         } catch (error) {
-            throw new DbError("Sikertelen frissítés", { details: error.message });
+            throw new DbError("A bejegyzés frissítése sikertelen.", { details: error.message });
         }
     }
 }
