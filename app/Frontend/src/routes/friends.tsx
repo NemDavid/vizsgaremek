@@ -11,7 +11,9 @@ export const Route = createFileRoute('/friends')({
   ),
 })
 
+
 function RouteComponent() {
+  
   return (
     <DefaultUIFrame>
 
