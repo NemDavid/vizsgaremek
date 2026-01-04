@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { authStatusRequest, logoutRequest } from "./axios/axiosClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
-import { Spinner } from "./ui/spinner";
+import type { AuthResponse } from "./axios/AxiosResponseTypes";
+import { useEffect, useState } from "react";
 
 const components: { title: string; to: string; description: string }[] = [
   {
@@ -50,29 +50,34 @@ const components: { title: string; to: string; description: string }[] = [
     description: "Megtekintheted és kezelheted a facebookos bejelentkezéshez használt, illetve a Facebook-fiókoddal összekapcsolt alkalmazásokat és webhelyeket.",
   },
 ]
-type AuthUser = {
-  email: string
-  exp: number
-  iat: number
-  role: "user" | "admin"
-  userID: number
-  username: string
-}
 
-type AuthResponse = AxiosResponse<AuthUser>
 
 export default function Header({ className }: { className?: string }) {
+  const [ShowHamburgermanu, setShowHamburgermanu] = useState(false); //-----------------------------------!!!
+  const [ShowSettings, setShowSettings] = useState(true); //-----------------------------------!!!
+
+  useEffect(() => {
+    const checkSize = () => {
+      setShowSettings(window.innerWidth >= 900);
+      setShowHamburgermanu(window.innerWidth >= 900);
+    };
+
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
+  }, []);
   const { mutate: logut } = useMutation({
     mutationFn: () => logoutRequest(),
     onSuccess: () => {
       window.location.reload();
     }
   })
-  const { data: auth,isLoading } = useQuery<AuthResponse>({
+  const { data: auth } = useQuery<AuthResponse>({
     queryKey: ["auth-status"],
     queryFn: authStatusRequest,
     enabled: false,
   })
+
   return (
     <header className={`p-4 bg-red-950 text-white flex items-center justify-between z-99 ${className}`}>
       <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
@@ -91,7 +96,7 @@ export default function Header({ className }: { className?: string }) {
             {/* Profil */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                <Link to="/profil/$profilId" params={{ profilId: String(auth?.data.userID)  }}>Profil</Link>
+                <Link to="/profil/$profilId" params={{ profilId: String(auth?.data.userID) }}>Profil</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
 
@@ -104,6 +109,7 @@ export default function Header({ className }: { className?: string }) {
 
             {/* Beállítások */}
             <NavigationMenuItem>
+              {}
               <NavigationMenuTrigger className="text-white bg-red-900">Beállítások</NavigationMenuTrigger>
               <NavigationMenuContent className="bg-red-300! text-white border-red-800 absolute ">
                 <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
@@ -114,6 +120,7 @@ export default function Header({ className }: { className?: string }) {
                   ))}
                 </ul>
               </NavigationMenuContent>
+
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

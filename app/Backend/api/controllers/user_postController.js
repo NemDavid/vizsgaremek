@@ -13,9 +13,7 @@ exports.getUser_PostsByLimit = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page);
         const perPage = parseInt(req.query.perPage);
-        console.log(page);
         
-
         res.status(200).json(await user_postService.getUser_PostsByLimit(page,perPage));
     } catch (error) {
         next(error);

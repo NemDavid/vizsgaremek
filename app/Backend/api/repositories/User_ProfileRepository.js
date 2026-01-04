@@ -3,9 +3,12 @@ const { DbError } = require("../errors");
 class User_ProfileRepository {
     constructor(db) {
         this.User_Profile = db.User_Profile;
+        this.User = db.User;
+        this.User_Post = db.User_Post;
+        this.Connections = db.Connections;
         this.sequelize = db.sequelize;
     }
-    
+
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
     async getUser_Profiles() {
         try {
@@ -14,7 +17,7 @@ class User_ProfileRepository {
             throw new DbError("Failed to fetch user profiles", { details: error.message });
         }
     }
-    
+
     ///--------------------VÉGLEGES-----------------------------
 
     async createUser_Profile(userData) {
@@ -70,9 +73,37 @@ class User_ProfileRepository {
 
     async getUser_Profile(userId) {
         try {
-            return await this.User_Profile.scope("allUser_ProfileData").findOne({ 
-                where: { USER_ID: userId },
-            });
+            const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
+            where: { USER_ID: userId },
+            include: [
+                {
+                    model: this.User,
+                    as: "user",
+                    include: [
+                        {
+                            model: this.User_Post,
+                            as: "post"
+                        }
+                    ]
+                }
+            ]
+        });
+        if (!profile) return null
+
+        const { Connections } = this;
+
+        const sentCount = await Connections.count({
+            where: { User_Requested_ID: userId, Status: "accepted" }
+        });
+
+        const receivedCount = await Connections.count({
+            where: { To_User_ID: userId, Status: "accepted" }
+        });
+
+        const result = profile.toJSON();
+        result.friendCount = sentCount + receivedCount;
+
+        return {result,profile}
         } catch (error) {
             throw new DbError("Failed to fetch user profiles", { details: error.message });
         }

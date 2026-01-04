@@ -72,6 +72,7 @@ class UserService
 
     async registerUser(userData)
     {
+        
         if (!userData.email) {
             throw new BadRequestError("hiányzó email");
         }
@@ -83,6 +84,10 @@ class UserService
         }
         if (!authUtils.isValidUsername(userData.username)) {
             throw new BadRequestError("érvénytelen username");
+        }
+        const FindName = await this.userRepository.getUserByUsername(userData.username)
+        if(FindName !== null){
+            throw new BadRequestError("Ez a felhasználó név már létezik");
         }
         if (!userData.password) {
             throw new BadRequestError("hiányzó password");

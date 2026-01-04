@@ -12,7 +12,8 @@ exports.getUser_Profiles = async (req, res, next) => {
 
 exports.getUser_Profile = async (req, res, next) => {
     try {
-        res.status(200).json(await user_profileService.getUser_Profile(req.userId));
+        const {result} = await user_profileService.getUser_Profile(req.userId)
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }

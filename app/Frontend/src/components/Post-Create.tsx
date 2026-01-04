@@ -27,6 +27,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Spinner } from "./ui/spinner"
 import { createPost } from "./axios/axiosClient"
 import { useState } from "react"
+import { Loader } from "./Loader"
 
 
 const postcreateSchema = z.object({
@@ -92,81 +93,76 @@ export function PostCreate() {
                         Oszd meg gondolataidat másokkal.
                     </DialogDescription>
                 </DialogHeader>
-                {isPending ? (
-                    <Spinner />
-                ) : (
-                    <Form {...form} >
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                            <div className="flex items-center gap-3">
-                                <FormField
-                                    control={form.control}
-                                    name="title"
-                                    render={({ field }) => (
-                                        <FormItem className="flex-1">
-                                            <FormLabel>Cím</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Add meg a címet..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
-                                            </FormControl>
-                                            <FormDescription>A bejegyzés címe</FormDescription>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* Content */}
+                <Form {...form} >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                        <div className="flex items-center gap-3">
                             <FormField
                                 control={form.control}
-                                name="content"
+                                name="title"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Tartalom</FormLabel>
+                                    <FormItem className="flex-1">
+                                        <FormLabel>Cím</FormLabel>
                                         <FormControl>
-                                            <Textarea placeholder="Írj valamit..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
+                                            <Input placeholder="Add meg a címet..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
                                         </FormControl>
-                                        <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
+                                        <FormDescription>A bejegyzés címe</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+                        </div>
 
-                            {/* Kép feltöltés */}
-                            <FormField
-                                control={form.control}
-                                name="media"
-                                render={({ field }) => (
-                                    <FormItem className="bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
-                                        <FormLabel>Kép feltöltése (opcionális)</FormLabel>
-                                        <FormControl >
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (file && allowedTypes.includes(file.type)) {
-                                                        field.onChange(file);
-                                                    } else {
-                                                        field.onChange(null); // vagy töröld a mezőt
-                                                    }
-                                                }}
-                                                className="mt-1 "
-                                            />
-                                        </FormControl>
-                                        <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>
-                                    </FormItem>
-                                )}
-                            />
+                        {/* Content */}
+                        <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Tartalom</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder="Írj valamit..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
+                                    </FormControl>
+                                    <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            {/* Submit gomb */}
-                            <DialogFooter className="sm:justify-start">
-                                <DialogClose asChild>
-                                    <Button type="button" className="bg-red-400">Bezárás</Button>
-                                </DialogClose>
-                                <Button type="submit" className="bg-red-400">Küldés</Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
-                )}
+                        {/* Kép feltöltés */}
+                        <FormField
+                            control={form.control}
+                            name="media"
+                            render={({ field }) => (
+                                <FormItem className="bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
+                                    <FormLabel>Kép feltöltése (opcionális)</FormLabel>
+                                    <FormControl >
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file && allowedTypes.includes(file.type)) {
+                                                    field.onChange(file);
+                                                } else {
+                                                    field.onChange(null); // vagy töröld a mezőt
+                                                }
+                                            }}
+                                            className="mt-1 "
+                                        />
+                                    </FormControl>
+                                    <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>
+                                </FormItem>
+                            )}
+                        />
+                        {isPending ?<Loader /> : ""}
+                        <DialogFooter className="sm:justify-start">
+                            <DialogClose asChild>
+                                <Button type="button" className="bg-red-400">Bezárás</Button>
+                            </DialogClose>
+                            <Button type="submit" className="bg-red-400">Küldés</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     )

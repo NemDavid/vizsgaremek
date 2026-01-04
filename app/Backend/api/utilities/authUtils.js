@@ -57,14 +57,12 @@ exports.isValidEmail = (email) => {
 }
 
 exports.isValidUsername = (username) => {
-    console.log(username);
-
     const regex = /^[a-zA-Z0-9_]+$/; // Csak betűk, számok és alulvonás
     return regex.test(username);
 }
 
 exports.isValidPassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,21}$/; // Legalább egy kisbetű, egy nagybetű, egy szám és egy speciális karakter, 8-21 karakter hosszú
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#+-])[A-Za-z\d@$!%*?&#+-]{8,21}$/;
     return regex.test(password);
 }
 

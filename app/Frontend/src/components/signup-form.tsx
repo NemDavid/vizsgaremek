@@ -36,6 +36,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Loader } from "./Loader"
+import type { AxiosErrorObject } from "./axios/AxiosResponseTypes"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
@@ -56,8 +57,10 @@ export const registerSchema = z.object({
     .string()
     .min(8, { message: "A jelszónak legalább 8 karakter hosszúnak kell lennie." })
     .max(21, { message: "A jelszó legfeljebb 21 karakter hosszú lehet." })
+    .regex(/[a-z]/, { message: "A jelszónak tartalmaznia kell legalább egy kisbetűt." })
     .regex(/[A-Z]/, { message: "A jelszónak tartalmaznia kell legalább egy nagybetűt." })
-    .regex(/[^A-Za-z0-9]/, { message: "A jelszónak tartalmaznia kell legalább egy speciális karaktert." }),
+    .regex(/\d/, { message: "A jelszónak tartalmaznia kell legalább egy számot." })
+    .regex(/[@$!%*?&#+-]/, { message: "A jelszónak tartalmaznia kell legalább egy speciális karaktert (@$!%*?&#)." }),
   confirm_password: z
     .string()
     .min(8, { message: "A jelszónak legalább 8 karakter hosszúnak kell lennie." })
@@ -76,8 +79,8 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null)
   const { mutate: register, isPending } = useMutation({
     mutationFn: ({ data }: { data: RegisterSchema }) => RegisterRequest(data),
-    onError: () => {
-      toast.error("Hiba történt a Regisztráció során. Probáld újra.")
+    onError: (error: AxiosErrorObject) => {
+      toast.error(error.response.data.message)
     },
     onSuccess: () => {
       toast.success("Fiók aktiválás", {
@@ -199,7 +202,14 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
                         </InputGroupButton>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>A jelszónak legalább 8 karakter hosszúnak kell lennie, és tartalmaznia kell egy számot valamint egy speciális karaktert.</p>
+                        <p>A jelszónak a következő feltételeknek kell megfelelnie:</p>
+                        <ul>
+                          <li>Legalább 8 karakter hosszú, maximum 21 karakter.</li>
+                          <li>Tartalmaznia kell legalább egy <strong>kisbetűt</strong>.</li>
+                          <li>Tartalmaznia kell legalább egy <strong>nagybetűt</strong>.</li>
+                          <li>Tartalmaznia kell legalább egy <strong>számot</strong>.</li>
+                          <li>Tartalmaznia kell legalább egy <strong>speciális karaktert</strong> (@$!%*?&#+-).</li>
+                        </ul>
                       </TooltipContent>
                     </Tooltip>
                   </InputGroupAddon>
@@ -222,7 +232,7 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
                 <FieldLabel htmlFor="password">Jelszó megerősítése</FieldLabel>
               </div>
               <FormControl>
-                <Input onFocus={()=> {setPasswordShown(false)}} id="password" type="password" {...field} required placeholder="********" />
+                <Input onFocus={() => { setPasswordShown(false) }} id="password" type="password" {...field} required placeholder="********" />
               </FormControl>
               <FormDescription>
                 Kérjük, erősítsd meg a jelszavadat.
@@ -249,7 +259,7 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
           onChange={handleCaptchaChange}
           className="mx-auto"
         />
-        { isPending ? <Loader/> : ""}
+        {isPending ? <Loader /> : ""}
         <Button type="submit">Fiók létrehozása</Button>
       </form>
     </Form>

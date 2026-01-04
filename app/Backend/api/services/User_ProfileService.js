@@ -108,7 +108,7 @@ class User_ProfileService {
             throw new BadRequestError("user profile nem található", { details: `userId: ${userId}` })
         }
 
-        const updateUser_Profile = await this.user_profileRepository.getUser_Profile(userId);
+        const {profile:updateUser_Profile} = await this.user_profileRepository.getUser_Profile(userId);
 
         if (!updateUser_Profile) {
             throw new BadRequestError("a frissitett user profile nem található", { details: `userId: ${userId}` });
@@ -131,11 +131,10 @@ class User_ProfileService {
         }
 
         // Profil lekérése
-        const userProfile = await this.getUser_Profile(userId);
+        const {profile:userProfile} = await this.getUser_Profile(userId);
         if (!userProfile) {
             throw new BadRequestError("Profil nem található");
         }
-
 
         // Ha invalid adat, NE próbáljuk meg javítani, dobjunk hibát
         if (userProfile.XP === undefined || userProfile.XP === null) {

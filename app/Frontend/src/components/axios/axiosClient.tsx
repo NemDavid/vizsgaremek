@@ -3,6 +3,7 @@ import z from "zod"
 import type { LoginSchema } from "../login-form"
 import type { RegisterSchema } from "../signup-form"
 import type { PostFormSchema } from "../comment-according"
+import type { UserProfileResponse } from "./AxiosResponseTypes"
 
 
 export const ac = axios.create({
@@ -170,8 +171,9 @@ export async function GetFriends() {
   return await ac.get(`/api/connections/me`);
 }
 
+
 export async function GetProfil(id:string) {
-  return await ac.get(`/api/profiles/${id}`);
+  return await ac.get<UserProfileResponse>(`/api/profiles/${id}`);
 }
 //
 
