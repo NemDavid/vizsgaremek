@@ -57,6 +57,11 @@ module.exports = (sequelize, DataTypes) => {
                 freezeTableName: true,
                 createdAt: false,
                 updatedAt: false,
+                scopes: {
+                    allUser_SettingsData: {
+                        attributes: ["ID", "new_post", "new_comment_on_post", "new_reaction_on_post", "new_login", "new_friend_request", "consent_given"],
+                    }
+                },
             }
         )
 

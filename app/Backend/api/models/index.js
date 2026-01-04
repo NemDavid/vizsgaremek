@@ -8,6 +8,7 @@ module.exports = (sequelize) => {
     const User_Post_Comment = require("./User_Post_Comment")(sequelize, DataTypes);
     const Verify_Code = require("./Verify_Code")(sequelize, DataTypes);
     const Connections = require("./Connections")(sequelize, DataTypes);
+    const Settings = require("./Settings")(sequelize, DataTypes);
 
 
     User.hasOne(User_Profile, {
@@ -72,7 +73,7 @@ module.exports = (sequelize) => {
 
 
 
-    
+
 
     User.hasMany(Connections, {
         foreignKey: "User_Requested_ID",
@@ -96,6 +97,19 @@ module.exports = (sequelize) => {
 
 
 
+    // User_Profile ↔ Settings 1–1 kapcsolat USER_ID alapján
+    User_Profile.hasOne(Settings, {
+        foreignKey: "ID",  // Settings.ID mutat User_Profile.USER_ID-re
+        sourceKey: "USER_ID",
+        as: "settings"
+    });
+
+    Settings.belongsTo(User_Profile, {
+        foreignKey: "ID",  // Settings.ID mutat User_Profile.USER_ID-re
+        targetKey: "USER_ID",
+        as: "profile"
+    });
+
 
 
 
@@ -107,6 +121,7 @@ module.exports = (sequelize) => {
         User_Post_Reaction,
         User_Post_Comment,
         Verify_Code,
-        Connections
+        Connections,
+        Settings
     };
 };

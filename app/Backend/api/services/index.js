@@ -5,6 +5,7 @@ const User_Post_ReactionService = require("./User_Post_ReactionService");
 const User_Post_CommentService = require("./User_Post_CommentService");
 const Verify_CodeService = require("./Verify_CodeService");
 const ConnectionsService = require("./ConnectionsService");
+const User_SettingsService = require("./User_SettingsService");
 const NotificationService = require("./NotificationService");
 
 module.exports = (db) =>
@@ -16,6 +17,7 @@ module.exports = (db) =>
     const user_post_commentService = new User_Post_CommentService(db, user_profileService);
     const verify_codeService = new Verify_CodeService(db);
     const connectionsService = new ConnectionsService(db);
+    const user_SettingsService = new User_SettingsService(db);
     const notificationService = new NotificationService(verify_codeService, userService);
 
     return { 
@@ -26,6 +28,7 @@ module.exports = (db) =>
         user_post_commentService, 
         verify_codeService,
         connectionsService,
+        user_SettingsService,
         notificationService, 
     };
 };
