@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 export function Footer() {
     return (
         <div className="flex flex-col w-full h-fit bg-red-950 text-[#ffffff] px-14 py-14">
@@ -14,20 +16,20 @@ export function Footer() {
                     <div className="grid grid-cols-3 gap-24">
                         <div className="flex flex-col gap-2">
                             <div className="font-bold uppercase text-[#f3ce00] pb-3">Felfedezés</div>
-                            <p className="hover:underline">Funkciók</p>
-                            <p className="hover:underline">Biztonság</p>
+                            <p className="hover:underline"><Link to="/aboutus">Funkciók</Link></p>
+                            <p className="hover:underline"><Link to="/privacy">Biztonság</Link></p>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold uppercase text-[#f3ce00] pb-3">About us</div>
-                            <p className="hover:underline">Rólunk</p>
-                            <p className="hover:underline">Kapcsolat</p>
-                            <p className="hover:underline">Hírek</p>
+                            <p className="hover:underline"><Link to="/aboutus">Rólunk</Link></p>
+                            <p className="hover:underline"><Link to="/aboutus">Kapcsolat</Link></p>
+                            <p className="hover:underline"><Link to="/news">Hírek</Link></p>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold uppercase text-[#f3ce00] pb-3">Jogi</div>
-                            <p className="hover:underline">Impresszum</p>
-                            <p className="hover:underline">Adatvédelmi irányelvek</p>
-                            <p className="hover:underline">Felhasználási feltételek</p>
+                            <p className="hover:underline"><Link to="/privacy">Impresszum</Link></p>
+                            <p className="hover:underline"><Link to="/privacy">Adatvédelmi irányelvek</Link></p>
+                            <p className="hover:underline"><Link to="/privacy">Felhasználási feltételek</Link></p>
                         </div>
                     </div>
                 </div>

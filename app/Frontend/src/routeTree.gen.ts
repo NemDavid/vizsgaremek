@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as NewsRouteImport } from './routes/news'
 import { Route as FriendsRouteImport } from './routes/friends'
+import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegistrationIndexRouteImport } from './routes/registration/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
@@ -28,9 +31,24 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FriendsRoute = FriendsRouteImport.update({
   id: '/friends',
   path: '/friends',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutusRoute = AboutusRouteImport.update({
+  id: '/aboutus',
+  path: '/aboutus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -61,7 +79,10 @@ const ProfilProfilIdIndexRoute = ProfilProfilIdIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aboutus': typeof AboutusRoute
   '/friends': typeof FriendsRoute
+  '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/login': typeof LoginIndexRoute
@@ -71,7 +92,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aboutus': typeof AboutusRoute
   '/friends': typeof FriendsRoute
+  '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/login': typeof LoginIndexRoute
@@ -82,7 +106,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aboutus': typeof AboutusRoute
   '/friends': typeof FriendsRoute
+  '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/login/': typeof LoginIndexRoute
@@ -94,7 +121,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aboutus'
     | '/friends'
+    | '/news'
+    | '/privacy'
     | '/settings'
     | '/test'
     | '/login'
@@ -104,7 +134,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aboutus'
     | '/friends'
+    | '/news'
+    | '/privacy'
     | '/settings'
     | '/test'
     | '/login'
@@ -114,7 +147,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/aboutus'
     | '/friends'
+    | '/news'
+    | '/privacy'
     | '/settings'
     | '/test'
     | '/login/'
@@ -125,7 +161,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutusRoute: typeof AboutusRoute
   FriendsRoute: typeof FriendsRoute
+  NewsRoute: typeof NewsRoute
+  PrivacyRoute: typeof PrivacyRoute
   SettingsRoute: typeof SettingsRoute
   TestRoute: typeof TestRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -150,11 +189,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/friends': {
       id: '/friends'
       path: '/friends'
       fullPath: '/friends'
       preLoaderRoute: typeof FriendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aboutus': {
+      id: '/aboutus'
+      path: '/aboutus'
+      fullPath: '/aboutus'
+      preLoaderRoute: typeof AboutusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -197,7 +257,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutusRoute: AboutusRoute,
   FriendsRoute: FriendsRoute,
+  NewsRoute: NewsRoute,
+  PrivacyRoute: PrivacyRoute,
   SettingsRoute: SettingsRoute,
   TestRoute: TestRoute,
   LoginIndexRoute: LoginIndexRoute,

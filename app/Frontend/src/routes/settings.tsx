@@ -1,9 +1,20 @@
+import { AuthGuard } from '@/components/AuthGuard'
+import { DefaultUIFrame } from '@/components/DefaultUIFrame'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/settings')({
-  component: RouteComponent,
+  component: () => (
+    <AuthGuard>
+      <RouteComponent />
+    </AuthGuard>
+  ),
 })
 
 function RouteComponent() {
-  return <div>Hello "/settings"!</div>
+  return (
+    <DefaultUIFrame>
+
+
+    </DefaultUIFrame>
+  )
 }

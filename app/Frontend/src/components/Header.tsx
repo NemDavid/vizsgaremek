@@ -24,6 +24,19 @@ import { authStatusRequest, logoutRequest } from "./axios/axiosClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { AuthResponse } from "./axios/AxiosResponseTypes";
 import { useEffect, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
+import { Menu, Settings, User, Users } from "lucide-react";
 
 const components: { title: string; to: string; description: string }[] = [
   {
@@ -59,7 +72,7 @@ export default function Header({ className }: { className?: string }) {
   useEffect(() => {
     const checkSize = () => {
       setShowSettings(window.innerWidth >= 900);
-      setShowHamburgermanu(window.innerWidth >= 900);
+      setShowHamburgermanu(window.innerWidth >= 777);
     };
 
     checkSize();
@@ -81,69 +94,123 @@ export default function Header({ className }: { className?: string }) {
   return (
     <header className={`p-4 bg-red-950 text-white flex items-center justify-between z-99 ${className}`}>
       <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
+      {
+        ShowHamburgermanu ? <>
+          <div className="flex-1 flex justify-self-center">
+            <NavigationMenu viewport={false}>
+              <NavigationMenuList className="flex gap-6 justify-center">
 
-      <div className="flex-1 flex justify-self-center">
-        <NavigationMenu viewport={false}>
-          <NavigationMenuList className="flex gap-6 justify-center">
+                {/* Kezdőlap */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                    <Link to="/">Kezdőlap</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
 
-            {/* Kezdőlap */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                <Link to="/">Kezdőlap</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+                {/* Profil */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                    <Link to="/profil/$profilId" params={{ profilId: String(auth?.data.userID) }}>Profil</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
 
-            {/* Profil */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                <Link to="/profil/$profilId" params={{ profilId: String(auth?.data.userID) }}>Profil</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+                {/* Barátok */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                    <Link to="/friends">Barátok</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
 
-            {/* Barátok */}
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                <Link to="/friends">Barátok</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+                {/* Beállítások */}
+                <NavigationMenuItem>
+                  {ShowSettings ?
+                    <>
+                      <NavigationMenuTrigger className="text-white bg-red-900">Beállítások</NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-red-300! text-white border-red-800 absolute ">
+                        <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
+                          {components.map((component) => (
+                            <ListItem key={component.title} title={component.title} to={component.to}>
+                              {component.description}
+                            </ListItem>
+                          ))}
+                        </ul>
+                      </NavigationMenuContent>
+                    </>
+                    :
+                    <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                      <Link to="/friends">Beállítások</Link>
+                    </NavigationMenuLink>
+                  }
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div className="bg-red-700 rounded-md p-1">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="bg-slate-200 text-black hover:text-white hover:bg-slate-600">Kijelentkezés</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Biztos kijelentkezel?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Amennyiben kijelentkezel, újra be kell jelentkezned a fiókodba.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Mégse</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => logut()}>Kijelentkezés</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </>
+          :
+          <>
+            <Sheet>
+              <SheetTrigger className="bg-red-200 rounded-full w-10 h-10 flex items-center justify-center"><Menu className="size-6 text-black rounded-full"/></SheetTrigger>
+              <SheetContent className="z-999 bg-red-200">
+                <SheetHeader className="bg-red-400">
+                  <SheetTitle className="text-black rounded-full bg-red-300 w-30 text-center">A fiókóm</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 flex flex-col gap-2">
+                  <Link
+                    to="/"
+                    className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
+                  >
+                    Kezdő oldal
+                  </Link>
+                  <Link
+                    params={{ profilId: String(auth?.data.userID) }}
+                    to="/profil/$profilId"
+                    className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
+                  >
+                    <User className="bg-red-200 rounded-full" />Profil
+                  </Link>
+                  <Link
+                    to="/friends"
+                    className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
+                  >
+                    <Users className="bg-red-200 rounded-full" />Barátok
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
+                  >
+                    <Settings className="bg-red-200 rounded-full"  />Beállítások
+                  </Link>
+                  <button
+                    onClick={() => logut()}
+                    className="px-4 py-2 rounded text-red-600 hover:bg-red-400 hover:text-white bg-red-100"
+                  >
+                    Kijelentkezés
+                  </button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </>
+      }
 
-            {/* Beállítások */}
-            <NavigationMenuItem>
-              {}
-              <NavigationMenuTrigger className="text-white bg-red-900">Beállítások</NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-red-300! text-white border-red-800 absolute ">
-                <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
-                  {components.map((component) => (
-                    <ListItem key={component.title} title={component.title} to={component.to}>
-                      {component.description}
-                    </ListItem>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
-      <div className="bg-red-700 rounded-md p-1">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" className="bg-slate-200 text-black hover:text-white hover:bg-slate-600">Kijelentkezés</Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Biztos kijelentkezel?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Amennyiben kijelentkezel, újra be kell jelentkezned a fiókodba.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Mégse</AlertDialogCancel>
-              <AlertDialogAction onClick={() => logut()}>Kijelentkezés</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
     </header>
   )
 }
