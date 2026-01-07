@@ -48,7 +48,7 @@ exports.confirmRegistration = async (req, res, next) => {
             email: decoded.email,
             password_hash: decoded.password_hash
         });
-        let newProfile={
+        let newProfile = {
             USER_ID: createdUser.ID,
             first_name,
             last_name,
@@ -61,7 +61,7 @@ exports.confirmRegistration = async (req, res, next) => {
             avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
             newProfile.avatar_url = avatar_url;
         }
-        
+
         await user_profileService.createUser_Profile(newProfile);
 
         res.status(201).json({
@@ -119,9 +119,10 @@ exports.logout = (req, res, next) => {
 exports.getActiveTokenDetails = (req, res, next) => {
     const active = authUtils.verifyToken(req.params.token);
 
-    if (!active) {
-        res.sendStatus(404).json(active);
-    } else {
+    if (active == null) {
+        res.sendStatus(404);
+    }
+    else {
         res.status(200).json(active);
     }
 }
@@ -139,12 +140,12 @@ exports.sendVerifyCode = async (req, res, next) => {
 
 exports.verifyTheCode = async (req, res, next) => {
     const { email, verify_code } = req.body || {};
-    
+
     try {
         res.status(200).json(await notificationService.verifyTheCode({
-                email,
-                verify_code
-            }));
+            email,
+            verify_code
+        }));
     } catch (error) {
         next(error);
     }
