@@ -86,8 +86,19 @@ exports.isValidSchools = (schools) => {
 };
 
 exports.isValidBirthDate = (birth_date) => {
-    if (birth_date == null) return true;
-    return (isString(birth_date) && birth_date.length <= 100);
+    if (!birth_date) return true;
+    if (!isString(birth_date)) return false;
+
+    const date = new Date(birth_date);
+    if (isNaN(date)) return false;
+
+    const today = new Date();
+    const max = new Date(today);
+    max.setFullYear(today.getFullYear() - 6);
+    const min = new Date(today);
+    min.setFullYear(today.getFullYear() - 100);
+
+    return date >= min && date <= max;
 };
 
 exports.isValidBirthPlace = (birth_place) => {
