@@ -23,7 +23,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Loader } from "./Loader"
 import type { AxiosErrorObject } from "./axios/AxiosResponseTypes"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
   token: string; // <-- hozzáadva ide
@@ -42,10 +42,15 @@ export const confirmSchema = z.object({
 
 export type ConfirmSchema = z.infer<typeof confirmSchema>
 
-
+const formatDate = (date: Date) => {
+  return date.toISOString().split("T")[0];
+};
 
 export function ProfilSetupForm({ className, onSwitch, token, ...props }: SignupFormProps) {
   const [ShowContiune, setShowContiune] = useState(false)
+  const [birthDayMin, setBirthDayMin] = useState("");
+  const [birthDayMax, setBirthDayMax] = useState("");
+
   const nav = useNavigate();
   const { mutate: confirm, isPending } = useMutation({
     mutationFn: ({ data }: { data: FormData }) => RegisterConfirmRequest(data, token),
@@ -73,6 +78,18 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
     },
     mode: "onChange",
   })
+  useEffect(() => {
+    const today = new Date();
+
+    const max = new Date(today);
+    max.setFullYear(today.getFullYear() - 6);
+    const min = new Date(today);
+    min.setFullYear(today.getFullYear() - 100);
+
+    setBirthDayMax(formatDate(max));
+    setBirthDayMin(formatDate(min));
+  }, []);
+
 
   function onSubmit(values: ConfirmSchema) {
     const formData = new FormData();
@@ -90,6 +107,8 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
 
     confirm({ data: formData });
   }
+
+
   if (!ShowContiune) {
     return (
       <Form {...form}>
@@ -151,7 +170,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
               <FormItem>
                 <FormLabel htmlFor="birthdate">Születési dátum</FormLabel>
                 <FormControl>
-                  <Input id="birthdate" type="date" {...field} />
+                  <Input id="birthdate" type="date" max={birthDayMax} min={birthDayMin} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

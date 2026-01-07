@@ -27,9 +27,7 @@ export function Footer() {
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold uppercase text-[#f3ce00] pb-3">Jogi</div>
-                            <p className="hover:underline"><Link to="/privacy">Impresszum</Link></p>
                             <p className="hover:underline"><Link to="/privacy">Adatvédelmi irányelvek</Link></p>
-                            <p className="hover:underline"><Link to="/privacy">Felhasználási feltételek</Link></p>
                         </div>
                     </div>
                 </div>
