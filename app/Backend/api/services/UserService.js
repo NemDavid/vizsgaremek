@@ -64,10 +64,10 @@ class UserService
         return deleteProcess;
     }
 
-    async createUser(userData)
+    async createUser(userData, options = {})
     {
         // userData.password_hash = authUtils.hashPassword(userData.password_hash);
-        return await this.userRepository.createUser(userData);
+        return await this.userRepository.createUser(userData, options);
     }
 
     async registerUser(userData)

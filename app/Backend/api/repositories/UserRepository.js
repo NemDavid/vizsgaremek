@@ -1,3 +1,4 @@
+const { Transaction } = require("sequelize");
 const { DbError } = require("../errors");
 
 class UserRepository {
@@ -58,10 +59,11 @@ class UserRepository {
         }
     }
 
-    async getUser(userId) {
+    async getUser(userId, options = {}) {
         try {
             return await this.User.scope("allUserData").findOne({
-                where: { ID: userId }
+                where: { ID: userId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
@@ -108,9 +110,11 @@ class UserRepository {
         }
     }
 
-    async createUser(userData) {
+    async createUser(userData, options = {}) {
         try {
-            return await this.User.create(userData);
+            return await this.User.create(userData, {
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a felhasználót.", {
                 details: error.message,

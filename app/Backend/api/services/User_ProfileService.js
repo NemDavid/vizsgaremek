@@ -39,8 +39,10 @@ class User_ProfileService {
         return deleteProcess;
     }
 
-    async createUser_Profile(userData) {
-        const validUser = await this.userRepository.getUser(userData.USER_ID);
+    async createUser_Profile(userData, options = {}) {
+        console.log(userData);
+        
+        const validUser = await this.userRepository.getUser(userData.USER_ID, options);
 
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
@@ -75,7 +77,7 @@ class User_ProfileService {
             throw new BadRequestError("Érvénytelen bio");
         }
 
-        return await this.user_profileRepository.createUser_Profile(userData);
+        return await this.user_profileRepository.createUser_Profile(userData, options);
     }
 
     async updateUser_Profile(userId, updateData) {

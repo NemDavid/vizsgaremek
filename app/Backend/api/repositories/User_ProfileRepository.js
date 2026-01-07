@@ -18,9 +18,11 @@ class User_ProfileRepository {
         }
     }
 
-    async createUser_Profile(userData) {
+    async createUser_Profile(userData, options = {}) {
         try {
-            return await this.User_Profile.create(userData);
+            return await this.User_Profile.create(userData, {
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a felhasználói profilt.", {
                 details: error.message,

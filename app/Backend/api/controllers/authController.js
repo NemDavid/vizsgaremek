@@ -43,34 +43,55 @@ exports.confirmRegistration = async (req, res, next) => {
         if (!decoded) {
             return res.status(400).json({ message: "Érvénytelen vagy lejárt token." });
         }
-        const createdUser = await userService.createUser({
-            username: decoded.username,
-            email: decoded.email,
-            password_hash: decoded.password_hash
-        });
-        let newProfile = {
-            USER_ID: createdUser.ID,
-            first_name,
-            last_name,
-            birth_date,
-            birth_place,
-            schools,
-            bio,
-        }
-        if (req.file) {
-            avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
-            newProfile.avatar_url = avatar_url;
-        }
 
-        await user_profileService.createUser_Profile(newProfile);
+        const result = await db.sequelize.transaction(async transaction => {
+
+            const createdUser = await userService.createUser({
+                username: decoded.username,
+                email: decoded.email,
+                password_hash: decoded.password_hash
+            },
+                {
+                    transaction
+                }
+            );
+
+            let newProfile = {
+                USER_ID: createdUser.ID,
+                first_name,
+                last_name,
+                birth_date,
+                birth_place,
+                schools,
+                bio,
+            }
+
+            if (req.file) {
+                avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
+                newProfile.avatar_url = avatar_url;
+            }
+
+            const createdUser_Profile = await user_profileService.createUser_Profile(newProfile,
+                {
+                    transaction
+                }
+            );
+
+            return {
+                user: createdUser,
+                profile: createdUser_Profile
+            };
+
+        });
 
         res.status(201).json({
             message: "A fiókod és a profilod sikeresen létrehozva!",
-            user: createdUser,
-            profile: newProfile
+            user: result.user,
+            profile: result.profile
         });
 
     } catch (error) {
+        console.error("Reaction transaction error:", error);
         next(error);
     }
 }
