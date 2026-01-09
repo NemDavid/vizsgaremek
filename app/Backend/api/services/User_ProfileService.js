@@ -40,8 +40,6 @@ class User_ProfileService {
     }
 
     async createUser_Profile(userData, options = {}) {
-        console.log(userData);
-        
         const validUser = await this.userRepository.getUser(userData.USER_ID, options);
 
         if (!validUser) {
