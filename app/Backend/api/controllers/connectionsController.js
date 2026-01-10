@@ -40,11 +40,11 @@ exports.getCurrentUserFriendRequests = async (req, res, next) => {
     }
 };
 
-exports.getCurrentUserFriendlint = async (req, res, next) => {
+exports.getCurrentUserFriendlist = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserFriendlint(token));
+        res.status(200).json(await connectionsService.getCurrentUserFriendlist(token));
     } catch (error) {
         next(error);
     }

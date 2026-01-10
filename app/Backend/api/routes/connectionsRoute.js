@@ -22,7 +22,7 @@ router.get("/me/filter", (req, res, next) =>{
 
 router.get("/me/received-request", connectionsController.getCurrentUserFriendRequests);
 
-router.get("/me/friends", connectionsController.getCurrentUserFriendlint);
+router.get("/me/friends", connectionsController.getCurrentUserFriendlist);
 
 
 router.delete("/connection/:userId", connectionsController.deleteConnection);

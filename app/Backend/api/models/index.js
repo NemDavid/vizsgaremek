@@ -9,6 +9,7 @@ module.exports = (sequelize) => {
     const Verify_Code = require("./Verify_Code")(sequelize, DataTypes);
     const Connections = require("./Connections")(sequelize, DataTypes);
     const Settings = require("./Settings")(sequelize, DataTypes);
+    const Kick = require("./Kick")(sequelize, DataTypes);
 
 
     User.hasOne(User_Profile, {
@@ -109,6 +110,29 @@ module.exports = (sequelize) => {
         targetKey: "USER_ID",
         as: "profile"
     });
+
+
+
+    
+    // User → User (Kick mint kapcsolótábla)
+
+    // User → akiket megrúgott
+    User.belongsToMany(User, {
+        through: Kick,
+        foreignKey: "FROM_USER_ID",
+        otherKey: "TO_USER_ID",
+        as: "kickedUsers"
+    });
+
+    // User → akik őt rúgták meg
+    User.belongsToMany(User, {
+        through: Kick,
+        foreignKey: "TO_USER_ID",
+        otherKey: "FROM_USER_ID",
+        as: "kickedByUsers"
+    });
+
+
 
 
 

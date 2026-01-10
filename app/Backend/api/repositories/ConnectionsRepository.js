@@ -63,7 +63,7 @@ class ConnectionsRepository {
         }
     }
 
-    async getCurrentUserFriendlint(User_Requested_ID) {
+    async getCurrentUserFriendlist(User_Requested_ID) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {

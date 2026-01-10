@@ -33,10 +33,10 @@ class ConnectionsService {
         return await this.connectionsRepository.getCurrentUserFriendRequests(encodedToken.userID);
     }
 
-    async getCurrentUserFriendlint(token) {
+    async getCurrentUserFriendlist(token) {
         const encodedToken = authUtils.verifyToken(token);
 
-        const rawFriendlist = await this.connectionsRepository.getCurrentUserFriendlint(encodedToken.userID);
+        const rawFriendlist = await this.connectionsRepository.getCurrentUserFriendlist(encodedToken.userID);
 
         const filteredFriendlist = rawFriendlist.map(friendItem => (
             {

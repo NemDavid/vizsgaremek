@@ -1,4 +1,3 @@
-const { Transaction } = require("sequelize");
 const { DbError } = require("../errors");
 
 class UserRepository {
