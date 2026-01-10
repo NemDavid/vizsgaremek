@@ -6,6 +6,7 @@ const User_Post_CommentRepository = require("./User_Post_CommentRepository");
 const ConnectionsRepository = require("./ConnectionsRepository");
 const Verify_CodeRepository = require("./Verify_CodeRepository");
 const User_SettingsRepository = require("./User_SettingsRepository");
+const KickRepository = require("./KickRepository");
 
 module.exports = (db) =>
 {
@@ -17,6 +18,7 @@ module.exports = (db) =>
     const connectionsRepository = new ConnectionsRepository(db);
     const verify_codeRepository = new Verify_CodeRepository(db);
     const user_SettingsRepository = new User_SettingsRepository(db);
+    const kickRepository = new KickRepository(db);
 
     return { userRepository, 
         user_profileRepository, 
@@ -25,6 +27,7 @@ module.exports = (db) =>
         user_post_commentRepository,
         connectionsRepository, 
         verify_codeRepository,
-        user_SettingsRepository
+        user_SettingsRepository,
+        kickRepository
     };
 };

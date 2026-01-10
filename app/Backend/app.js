@@ -28,6 +28,7 @@ const user_post_commentRoutes = require("./api/routes/user_post_commentRoutes");
 const connectionsRoute = require("./api/routes/connectionsRoute");
 const verify_codeRoutes = require("./api/routes/verify_codeRoutes");
 const user_settingsRoutes = require("./api/routes/user_settingsRoutes");
+const kickRoutes = require("./api/routes/kickRoutes");
 
 const errorHandler = require("./api/middlewares/errorHandler");
 
@@ -46,6 +47,7 @@ api.use("/profiles", user_profileRoutes);
 api.use("/users", userRoutes);
 api.use("/verify", verify_codeRoutes);
 api.use("/settings", user_settingsRoutes);
+api.use("/kicks", kickRoutes);
 
 app.use("/cloud",cloudRouter);
 app.use("/cloud", express.static("public/cloud"));

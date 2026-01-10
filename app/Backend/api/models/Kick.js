@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) =>
             updatedAt: "updated_at", 
             scopes: {
                 allKickData:{
-                    attributes: ["ID", "FROM_USER_ID", "TO_USER_ID", "created_at", "updated_at","last_login"],
+                    attributes: ["ID", "FROM_USER_ID", "TO_USER_ID", "created_at", "updated_at"],
                 }
             },
         }

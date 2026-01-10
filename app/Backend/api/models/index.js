@@ -113,7 +113,7 @@ module.exports = (sequelize) => {
 
 
 
-    
+
     // User → User (Kick mint kapcsolótábla)
 
     // User → akiket megrúgott
@@ -146,6 +146,7 @@ module.exports = (sequelize) => {
         User_Post_Comment,
         Verify_Code,
         Connections,
-        Settings
+        Settings,
+        Kick
     };
 };

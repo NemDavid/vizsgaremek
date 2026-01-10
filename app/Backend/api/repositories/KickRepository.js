@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { DbError } = require("../errors");
 
 class KickRepository {
@@ -7,7 +6,7 @@ class KickRepository {
         this.User = db.User;
         this.sequelize = db.sequelize;
     }
-    ///--------------------CRUD NEM VÉGLEGES-----------------------------
+
     async getKicks() {
         try {
             return await this.Kick.scope("allKickData").findAll();
@@ -16,7 +15,7 @@ class KickRepository {
         }
     }
 
-    async getKickByID(FROM_USER_ID, TO_USER_ID) {
+    async getKickByUserId(FROM_USER_ID, TO_USER_ID) {
         try {
             return await this.Kick.scope("allKickData").findOne({
                 where: { 
@@ -29,6 +28,7 @@ class KickRepository {
         }
     }
 
+    // én kiket rúgtam
     async getKicksSentByUser(userId) {
         try {
             return await this.Kick.scope("allKickData").findAll({
@@ -39,6 +39,7 @@ class KickRepository {
         }
     }
 
+    // ki rúgott engem
     async getKicksRecievedByUser(userId) {
         try {
             return await this.Kick.scope("allKickData").findAll({
@@ -65,18 +66,16 @@ class KickRepository {
 
     async deleteKick(kickId) {
         try {
-            const deletedRow = await this.Kick.destroy({ where: { ID: KickId } });
+            const deletedRow = await this.Kick.destroy({ where: { ID: kickId } });
             return { success: true, deleted: deletedRow };
         } catch (error) {
             throw new DbError("A rúgás törlése sikertelen.", { details: error.message });
         }
     }
 
-    async createKick(KickData, options = {}) {
+    async createKick(kickData) {
         try {
-            return await this.Kick.create(KickData, {
-                transaction: options.transaction
-            });
+            return await this.Kick.create(kickData);
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a rúgást.", {
                 details: error.message,
@@ -85,10 +84,13 @@ class KickRepository {
         }
     }
 
-    async updateKick(KickId, updateData) {
+    async updateKick(kickId, updateData) {
         try {
+            console.log(kickId);
+            console.log(updateData);
+            
             const [affectedRows] = await this.Kick.update(updateData, {
-                where: { ID: KickId },
+                where: { ID: kickId },
             });
             return affectedRows;
         } catch (error) {
