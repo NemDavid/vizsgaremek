@@ -86,28 +86,16 @@ class User_ProfileService {
         if (!updateData.last_name) {
             throw new BadRequestError("Hiányzó last_name");
         }
-        if (!updateData.birth_date) {
-            throw new BadRequestError("Hiányzó birthd_ate");
+        if(updateData.birth_date === "0000-00-00"){
+            updateData.birth_date = ""
         }
-        if (!updateData.birth_place) {
-            throw new BadRequestError("Hiányzó birth_place");
-        }
-        if (!updateData.schools) {
-            throw new BadRequestError("Hiányzó schools");
-        }
-        if (!updateData.bio) {
-            throw new BadRequestError("Hiányzó bio");
-        }
-        if (!updateData.avatar_url) {
-            throw new BadRequestError("Hiányzó avatar_url");
-        }
-
+        
         const affectedRows = await this.user_profileRepository.updateUser_Profile(userId, updateData);
-
+        
         if (!affectedRows) {
             throw new BadRequestError("user profile nem található", { details: `userId: ${userId}` })
         }
-
+        
         const {profile:updateUser_Profile} = await this.user_profileRepository.getUser_Profile(userId);
 
         if (!updateUser_Profile) {

@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { authStatusRequest, logoutRequest } from "./axios/axiosClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { AuthResponse } from "./axios/AxiosResponseTypes";
+import type { AuthResponse } from "./axios/Types";
 import { useEffect, useState } from "react";
 import {
   Sheet,

@@ -3,16 +3,14 @@ import { DefaultUIFrame } from '@/components/DefaultUIFrame'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { AvatarFrame } from '@/components/AvatarFrame'
 import { Button } from '@/components/ui/button'
-import { BadgePlus, BadgeX, Trash } from 'lucide-react'
+import { BadgePlus, BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from 'lucide-react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/friends')({
   component: () => (
@@ -24,145 +22,116 @@ export const Route = createFileRoute('/friends')({
 
 
 function RouteComponent() {
-  const asd = 1;
+  const [ShowMenu, setMenu] = useState("FriendsMenu");
   return (
     <DefaultUIFrame className='bg-red-100'>
-      <Card className='bg-red-200 border-1 border-red-700 my-4 mx-2'>
-        <CardHeader>
-          <CardTitle>Barátok</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='flex gap-4 flex-wrap'>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card className='bg-red-200 border-1 border-red-700 my-4 mx-2'>
-        <CardHeader>
-          <CardTitle>Felkérések</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='flex gap-4 flex-wrap'>
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <div className='grid grid-cols-2 gap-2 w-full'>
-                <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Block</Button>
-              </div>
-            </div>
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <div className='grid grid-cols-2 gap-2 w-full'>
-                <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Block</Button>
-              </div>
-            </div>
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <div className='grid grid-cols-2 gap-2 w-full'>
-                <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Block</Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card className='bg-red-200 border-1 border-red-700 my-4 mx-2'>
-        <CardHeader>
-          <CardTitle>Tiltások</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='flex gap-4 flex-wrap'>
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 mt-4 mb-2' />
-              <Button variant={"destructive"} className='mb-3 mx-3'> <BadgeX className='size-4' />Feloldás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 mt-4 mb-2' />
-              <Button variant={"destructive"} className='mb-3 mx-3'> <BadgeX className='size-4' />Feloldás</Button>
-            </div>
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={asd} className='max-w-max max-h-min p-0 bg-slate-200 mt-4 mb-2' />
-              <Button variant={"destructive"} className='mb-3 mx-3'> <BadgeX className='size-4' />Feloldás</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className='flex flex-col h-full'>
+        <Card className='bg-red-200 border-0 border-b-1 border-red-700 shrink-0 rounded-none'>
+          <CardHeader>
+            <CardTitle>Ismerősök kezelése</CardTitle>
+          </CardHeader>
+          <CardContent className='flex gap-3'>
+            <Button variant={'outline'} onClick={() => setMenu("FriendsMenu")} className={`bg-${ShowMenu === "FriendsMenu" ? "rose-300 border-black border-2" : "red-400"} hover:bg-rose-300`} ><Users /> Barátok</Button>
+            <Button variant={'outline'} onClick={() => setMenu("FriendRequestMenu")} className={`bg-${ShowMenu === "FriendRequestMenu" ? "rose-300 border-black border-2" : "red-400"} hover:bg-rose-300`}><ShieldQuestionMark size={4} />Felkérések</Button>
+            <Button variant={'outline'} onClick={() => setMenu("BlackListMenu")} className={`bg-${ShowMenu === "BlackListMenu" ? "rose-300 border-black border-2" : "red-400"} hover:bg-rose-300`}><ShieldBan size={4} />Tiltot Felhasználok</Button>
+          </CardContent>
+        </Card>
+        <div className='flex-1 overflow-auto'>
+          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu /> : <FriendRequestMenu /> : <FriendsMenu />}
+
+        </div>
+      </div>
     </DefaultUIFrame>
   )
 }
 
+function FriendsMenu() {
+  return (
+    <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
+      <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
+        <CardTitle className='my-4'>
+          <div className="flex items-center gap-2 text-2xl bg-red-200 w-fit p-2 rounded-full border-black border-1">
+            <Users className="w-[1em] h-[1em]" />
+            Barátok
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className='flex gap-4 flex-wrap'>
+          {
+
+            <FriendsList id={1}/>
+
+          }
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export function FriendsList({id}:{id:bigint}) {
+  return (
+    <div className='bg-rose-100 flex items-center rounded-xl p-2 px-4 '>
+      <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
+      <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
+    </div>
+  )
+}
+
+function FriendRequestMenu() {
+  return (
+    <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
+      <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
+        <CardTitle className='my-4'>
+          <div className="flex items-center gap-2 text-2xl bg-red-200 w-fit p-2 rounded-full border-black border-1">
+            <ShieldQuestionMark className="w-[1em] h-[1em]" />
+            Felkérések
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className='flex gap-4 flex-wrap'>
+          {
+
+            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
+              <AvatarFrame userid={1} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
+              <div className='grid grid-cols-2 gap-2 w-full'>
+                <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
+                <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
+                <Button variant={'destructive'} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Block</Button>
+              </div>
+            </div>
+
+          }
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function BlackListMenu() {
+  return (
+    <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
+      <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
+        <CardTitle className='my-4'>
+          <div className="flex items-center gap-2 text-2xl bg-red-200 w-fit p-2 rounded-full border-black border-1">
+            <ShieldBan className="w-[1em] h-[1em]" />
+            Tiltások
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className='flex gap-4 flex-wrap'>
+
+          {
+            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
+              <AvatarFrame userid={1} className='max-w-max max-h-min p-0 bg-slate-200 mt-4 mb-2' />
+              <Button variant={"destructive"} className='mb-3 mx-3'> <BadgeX className='size-4' />Feloldás</Button>
+            </div>
+          }
+
+        </div>
+      </CardContent>
+    </Card>
+  )
+}

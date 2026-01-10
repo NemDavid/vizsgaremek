@@ -3,7 +3,7 @@ import z from "zod"
 import type { LoginSchema } from "../login-form"
 import type { RegisterSchema } from "../signup-form"
 import type { PostFormSchema } from "../comment-according"
-import type { UserProfileResponse } from "./AxiosResponseTypes"
+import type { UserProfileResponse } from "./Types"
 
 
 export const ac = axios.create({
@@ -25,20 +25,21 @@ export type User = {
   password_hash: string;
   username: string;
   role: "user" | "admin" | "moderator" | "owner";
-  is_active: number; // TINYINT, 0 vagy 1
-  last_login: string | null; // DATEONLY -> string formátumú dátum
-  created_at: string; // DATEONLY -> string formátumú dátum
-  updated_at: string; // DATEONLY -> string formátumú dátum
+  is_active: number;
+  last_login: string | null;
+  created_at: string;
+  updated_at: string;
 }
 export type UserProfile = {
   USER_ID: bigint;
   first_name: string;
   last_name: string;
-  birth_date: string | null; // DATEONLY → string formátumú dátum
+  birth_date: string | null;
   birth_place: string | null;
   schools: string | null;
   bio: string | null;
   avatar_url: string | null;
+  user: any;
 }
 
 export type UserPost = {
@@ -84,8 +85,6 @@ export const formSchema = z.object({
   password: z.string().min(6, "Legalább 6 karakter"),
 })
 
-//AUTH ROUTES
-
 export async function loginRequest(data: LoginSchema) {
   return await ac.post("/api/auth/login", data);
 }
@@ -106,13 +105,11 @@ export async function logoutRequest() {
   return await ac.delete("/api/auth/logout");
 }
 
-// #TODO: 
 
 export async function getuserByid(id: bigint) {
-  const user = await ac.get<User>(`/api/users/id/${id}`)
   const profil = await ac.get<UserProfile>(`/api/profiles/${id}`)
   const adat = await {
-    user: user.data,
+    user: profil.data.user,
     profil: profil.data,
   }
   return adat;
@@ -132,7 +129,6 @@ export async function getPosts({page,perPage}:{page:number,perPage:number}) {
   })
   return response.data
 }
-
 
 export async function createPost(data: FormData) {
   return await FileApi.post(`/api/posts`, data);
@@ -175,6 +171,11 @@ export async function GetFriends() {
 export async function GetProfil(id:string) {
   return await ac.get<UserProfileResponse>(`/api/profiles/${id}`);
 }
+
+export async function UpdateProfile(data: FormData, id: number) {
+  return await FileApi.patch(`/api/profiles/${id}`, data);
+}
+
 //
 
 

@@ -1,5 +1,4 @@
-
-import { Loader } from '@/components/Loader'
+import { UserProfileModify } from '@/components/UserProfilModify'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/test')({
@@ -9,7 +8,7 @@ export const Route = createFileRoute('/test')({
 function RouteComponent() {
   return (
     <>
-      <Loader />
+      
     </>
   )
 }

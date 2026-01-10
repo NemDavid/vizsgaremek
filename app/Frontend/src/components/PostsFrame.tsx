@@ -5,6 +5,9 @@ import { getPosts } from "./axios/axiosClient";
 import { useInfiniteQuery } from '@tanstack/react-query'
 import React, { useRef, useState } from "react";
 import { GhostPost } from "./GhostPost";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+
 
 
 export function PostsFrame() {
@@ -16,6 +19,7 @@ export function PostsFrame() {
         hasNextPage,
         isFetchingNextPage,
         status,
+        refetch: Ujra
     } = useInfiniteQuery({
         queryKey: ['Posts'],
         queryFn: ({ pageParam = 0 }) =>
@@ -27,25 +31,36 @@ export function PostsFrame() {
     });
 
     const handleScroll = () => {
-        
+
         const el = scrollRef.current;
         if (!el) return;
-        
+
         const scrollTop = el.scrollTop;
         const scrollHeight = el.scrollHeight;
         const clientHeight = el.clientHeight;
-        
+
         const scrolledPercent = (scrollTop + clientHeight) / scrollHeight * 100;
         if (scrolledPercent > 78 && hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
         }
     };
 
-    if (status === 'error') return <p className="flex justify-center">More baj van</p>; //-------------------------------------------- IDE KELL VLMI
+    if (status === 'error') return (
+        <Card className='bg-red-200  rounded-none '>
+            <CardHeader>
+                <CardTitle>Hiba</CardTitle>
+            </CardHeader>
+            <CardContent className='flex gap-4 flex-wrap'>
+                <p className="flex justify-center">Hiba történt! Töltsd újra az oldalt, vagy próbáld később.</p>
+                <Button onClick={() => Ujra()}>Oldal újra Töltése</Button>
+            </CardContent>
+        </Card>
+    );
+
 
     return (
         <ScrollArea className="w-full h-full" >
-            <main className="flex-1 h-[calc(100vh-99px)] overflow-y-auto flex justify-center"
+            <main className="flex-1 h-full overflow-y-auto flex justify-center"
                 ref={scrollRef}
                 onScroll={handleScroll}
             >

@@ -76,3 +76,18 @@ export type AxiosErrorObject = {
     }
     stack?: string
 }
+
+export type UserProfil = {
+    id: number;
+    user_id: number;
+    xp: number;
+    avatar_url: string;
+    bio: string;
+    birth_date: string;
+    birth_place: string;
+    first_name: string;
+    last_name: string;
+    friendCount: number;
+    level: number;
+    schools: string;
+}

@@ -36,7 +36,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Loader } from "./Loader"
-import type { AxiosErrorObject } from "./axios/AxiosResponseTypes"
+import type { AxiosErrorObject } from "./axios/Types"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;

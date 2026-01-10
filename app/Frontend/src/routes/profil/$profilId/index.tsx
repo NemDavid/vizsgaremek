@@ -3,7 +3,6 @@ import { DefaultUIFrame } from "@/components/DefaultUIFrame";
 import { AuthGuard } from "@/components/AuthGuard";
 import { useQuery } from '@tanstack/react-query';
 import { authStatusRequest, GetProfil } from '@/components/axios/axiosClient';
-import { Spinner } from '@/components/ui/spinner';
 import {
   Card,
   CardHeader,
@@ -14,9 +13,10 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PopOver } from '@/components/OpenMenus';
-import { EllipsisVertical, PenLine, ShieldX, User, UserMinus, UserPlus } from 'lucide-react';
-import type { AuthResponse } from '@/components/axios/AxiosResponseTypes';
+import { EllipsisVertical, ShieldX, User, UserMinus, UserPlus } from 'lucide-react';
+import type { AuthResponse } from '@/components/axios/Types';
 import { Loader } from '@/components/Loader';
+import { UserProfileModify } from '@/components/UserProfilModify';
 
 export const Route = createFileRoute('/profil/$profilId/')({
   component: () => (
@@ -43,7 +43,7 @@ function RouteComponent() {
   })
 
   if (isLoading) {
-    return <Loader/>
+    return <Loader />
   }
 
   if (profil?.data == null) {
@@ -92,11 +92,11 @@ function RouteComponent() {
       <div className="-mt-20 flex flex-col items-center text-center px-4 border-b-10 pb-5 bg-red-400 pt-40">
         <h1 className="text-2xl font-semibold">{profil?.data.first_name} {profil?.data.last_name}</h1>
         <div className={`ml-auto`}>
-          {auth?.data.userID == profil?.data.ID ?
+          {auth?.data.userID == Number(profilId) ?
             <PopOver trigger={<EllipsisVertical className='size-7' />} ButtonStyle='text-black bg-red-300 w-8 h-8 rounded-full' ContentStyle='bg-red-200 border-solid border-1 border-red-500 rounded-3xl'>
               <div className="flex flex-col gap-2">
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800'><PenLine  className='text-black' />Profil Modositása</Button>
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800'><User  className='text-black' />Barátaim</Button>
+                <UserProfileModify id={Number(profilId)} myuserdata={profil?.data} />
+                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' onClick={() => nav({ to: "/friends" })}><User className='text-black' />Barátaim</Button>
               </div>
             </PopOver>
             :
@@ -123,15 +123,45 @@ function RouteComponent() {
             <span>Szint</span>
           </div>
         </div>
+        <div className='flex flex-wrap gap-6 py-2'>
+          {profil?.data.bio !== "" ?
+            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
+              <span className='text-black font-bold'>Bio</span>
+              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.bio}</span>
+            </div>
+            :
+            ""
+          }
+          {profil?.data.schools !== "" ?
+            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
+              <span className='text-black font-bold'>Iskolák</span>
+              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.schools}</span>
+            </div>
+            :
+            ""
+          }
+          {profil?.data.birth_date !== "0000-00-00" ?
+            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
+              <span className='text-black font-bold'>Születési Dátum</span>
+              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.birth_date}</span>
+            </div>
+            :
+            ""
+          }
+          {profil?.data.birth_place !== "" ?
+            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
+              <span className='text-black font-bold'>Születési hely</span>
+              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.bio}</span>
+            </div>
+            :
+            ""
+          }
+        </div>
       </div>
-
-      {/* Legutóbbi aktivitások */}
       <div className="mt-10 px-6 pb-10">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
-
-        {/* Lista — te töltöd majd meg */}
         <div className="space-y-4 ">
-          {/* Példák törölve — üresen hagyva neked */}
+
         </div>
       </div>
 

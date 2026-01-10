@@ -22,7 +22,7 @@ import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Loader } from "./Loader"
-import type { AxiosErrorObject } from "./axios/AxiosResponseTypes"
+import type { AxiosErrorObject } from "./axios/Types"
 import { useEffect, useState } from "react"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;

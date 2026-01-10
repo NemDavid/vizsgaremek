@@ -12,7 +12,7 @@ exports.getUser_Profiles = async (req, res, next) => {
 
 exports.getUser_Profile = async (req, res, next) => {
     try {
-        const {result} = await user_profileService.getUser_Profile(req.userId)
+        const { result } = await user_profileService.getUser_Profile(req.userId)
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -55,7 +55,21 @@ exports.createUser_Profile = async (req, res, next) => {
 
 exports.updateUser_Profile = async (req, res, next) => {
     try {
-        const updatedUser = await user_profileService.updateUser_Profile(req.userId, req.body);
+        const {first_name,last_name,birth_date,birth_place,schools,bio} = req.body;
+        let updatedprofil = {
+            first_name,
+            last_name,
+            birth_date,
+            birth_place,
+            schools,
+            bio,
+        }
+
+        if (req.file) {
+            updatedprofil.avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
+        }
+
+        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil);
         res.status(200).json(updatedUser);
     } catch (error) {
         next(error);
