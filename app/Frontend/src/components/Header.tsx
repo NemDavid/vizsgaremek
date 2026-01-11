@@ -31,11 +31,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import {
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu"
 import { Menu, Settings, User, Users } from "lucide-react";
 
 const components: { title: string; to: string; description: string }[] = [
@@ -125,7 +120,7 @@ export default function Header({ className }: { className?: string }) {
                 <NavigationMenuItem>
                   {ShowSettings ?
                     <>
-                      <NavigationMenuTrigger className="text-white bg-red-900">Beállítások</NavigationMenuTrigger>
+                      <NavigationMenuTrigger className="text-white bg-red-900"><Link to="/settings">Beállítások</Link></NavigationMenuTrigger>
                       <NavigationMenuContent className="bg-red-300! text-white border-red-800 absolute ">
                         <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-1 lg:w-[600px] text-black">
                           {components.map((component) => (
@@ -138,7 +133,7 @@ export default function Header({ className }: { className?: string }) {
                     </>
                     :
                     <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                      <Link to="/friends">Beállítások</Link>
+                      <Link to="/settings">Beállítások</Link>
                     </NavigationMenuLink>
                   }
                 </NavigationMenuItem>

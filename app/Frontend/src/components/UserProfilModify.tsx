@@ -3,8 +3,6 @@ import { Button } from "./ui/button";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
@@ -23,13 +21,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { AxiosErrorObject, UserProfileResponse } from "./axios/Types";
-import { RegisterConfirmRequest, UpdateProfile } from "./axios/axiosClient";
+import { UpdateProfile } from "./axios/axiosClient";
 import { Loader } from "./Loader";
 import { Field, FieldDescription } from "./ui/field";
-import { cn } from "@/lib/utils";
 
 
 export const confirmSchema = z.object({

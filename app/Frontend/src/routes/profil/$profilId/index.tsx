@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PopOver } from '@/components/OpenMenus';
-import { EllipsisVertical, ShieldX, User, UserMinus, UserPlus } from 'lucide-react';
+import { EllipsisVertical, ShieldX, User, UserMinus } from 'lucide-react';
 import type { AuthResponse } from '@/components/axios/Types';
 import { Loader } from '@/components/Loader';
 import { UserProfileModify } from '@/components/UserProfilModify';
 import { ReqFriend } from '@/components/UserConnectionButton';
+
 
 export const Route = createFileRoute('/profil/$profilId/')({
   component: () => (
@@ -26,8 +27,6 @@ export const Route = createFileRoute('/profil/$profilId/')({
     </AuthGuard>
   ),
 })
-
-
 
 function RouteComponent() {
   const { profilId } = Route.useParams()
@@ -42,7 +41,7 @@ function RouteComponent() {
     queryFn: () => GetProfil(profilId),
     retry: 0,
   })
-
+  const maxFriend: Number = (profil?.data.level || 50) + 50;
   if (isLoading) {
     return <Loader />
   }
@@ -71,7 +70,6 @@ function RouteComponent() {
       </DefaultUIFrame>
     )
   }
-
   return (
 
     <DefaultUIFrame className='bg-red-300 text-white '>
@@ -103,7 +101,7 @@ function RouteComponent() {
             :
             <PopOver trigger={<EllipsisVertical className='size-7' />} ButtonStyle='text-black bg-red-300 w-8 h-8 rounded-full' ContentStyle='bg-red-200 border-solid border-1 border-red-500 rounded-3xl'>
               <div className="flex flex-col gap-2">
-                <ReqFriend userID={BigInt(profilId)}/>
+                <ReqFriend userID={BigInt(profilId)} />
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' disabled><UserMinus className='text-black' />Barát elutasitása</Button>
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800'><ShieldX className='text-black Hove' />Tiltás</Button>
               </div>
@@ -112,7 +110,7 @@ function RouteComponent() {
         </div>
         <div className="flex gap-8 mt-4 text-sm text-slate-300">
           <div className="flex flex-col items-center">
-            <span className="text-white font-bold text-lg">{profil?.data.friendCount}</span>
+            <span className="text-white font-bold text-lg">{profil?.data.friendCount}/{`${maxFriend}`}</span>
             <span>Barát</span>
           </div>
           <div className="flex flex-col items-center">
@@ -159,10 +157,10 @@ function RouteComponent() {
           }
         </div>
       </div>
-      <div className="mt-10 px-6 pb-10">
+      <div className="mt-10 px-6">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
         <div className="space-y-4 ">
-
+          
         </div>
       </div>
 

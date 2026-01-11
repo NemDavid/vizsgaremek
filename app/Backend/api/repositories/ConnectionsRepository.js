@@ -18,10 +18,14 @@ class ConnectionsRepository {
     async getConnection(User_Requested_ID, To_User_ID) {
         try {
             return await this.Connections.scope("allConnectionData").findOne({
-                where: {
-                    User_Requested_ID,
-                    To_User_ID
-                }
+                [Op.or]: [
+                    { User_Requested_ID },
+                    { To_User_ID: User_Requested_ID }
+                ],
+                [Op.or]: [
+                    { User_Requested_ID: To_User_ID },
+                    { To_User_ID }
+                ]
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a kapcsolatot.", { details: error.message });
@@ -116,9 +120,7 @@ class ConnectionsRepository {
         }
     }
 
-    async updateConnection(User_Requested_ID, To_User_ID, Status) {
-        console.log(User_Requested_ID, To_User_ID, Status);
-        
+    async updateConnection(To_User_ID, User_Requested_ID, Status) {
         try {
             const [affectedRows] = await this.Connections.update({ Status }, {
                 where: {

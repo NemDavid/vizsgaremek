@@ -82,10 +82,12 @@ class User_ProfileRepository {
                         include: [
                             {
                                 model: this.User_Post,
-                                as: "post"
+                                as: "post",
+                                limit: 3,
+                                order: [["id","desc"]]
                             }
                         ]
-                    }
+                    },
                 ]
             });
 

@@ -65,10 +65,9 @@ exports.deleteConnection = async (req, res, next) => {
 exports.createConnection = async (req, res, next) => {
     const To_User_ID = req.userId;
     const token = req.cookies['user_token'];
-
+    
     try {
         const newConnection = await connectionsService.createConnection(token, To_User_ID);
-        
         
         res.status(200).json({
             user: newConnection,

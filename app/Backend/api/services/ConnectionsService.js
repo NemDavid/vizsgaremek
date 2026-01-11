@@ -2,7 +2,6 @@ const { BadRequestError } = require("../errors");
 const authUtils = require("../utilities/authUtils");
 
 
-
 class ConnectionsService {
     constructor(db) {
         this.connectionsRepository = require("../repositories")(db).connectionsRepository;
@@ -24,8 +23,8 @@ class ConnectionsService {
             let sv;
             if (item.Status == "pending" || item.Status == "blocked") {
                 sv = {
-                    UserID: item.User_Requested_ID == Tid ? item.To_User_ID : item.User_Requested_ID,
-                    Requested_BY: Tid,
+                    UserID: item.To_User_ID,
+                    Requested_BY: item.User_Requested_ID,
                     Status: item.Status
                 }
             }
@@ -102,12 +101,28 @@ class ConnectionsService {
 
         const encodedToken = authUtils.verifyToken(token);
 
-        return await this.connectionsRepository.createConnection({
-            User_Requested_ID: encodedToken.userID,
-            To_User_ID
-        });
-    }
+        const friendlist = await getCurrentUserFriendlist(token);
+        const p = await this.userRepository.getUserByID(encodedToken.userID)
+        const maxFriend = p.profile.level+50;
+        if(friendlist.length > maxFriend){
+            throw new BadRequestError("Elérted a barát limited")
+        }
 
+        const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
+        if (existingConnection && existingConnection.Status == "pending") {
+            await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
+            return await this.connectionsRepository.createConnection({
+                User_Requested_ID: encodedToken.userID,
+                To_User_ID
+            });
+        }
+        else if(!existingConnection){
+            return await this.connectionsRepository.createConnection({
+                User_Requested_ID: encodedToken.userID,
+                To_User_ID
+            });
+        }
+    }
 
     async updateConnection(token, To_User_ID, action) {
         if (!token) throw new BadRequestError("Hiányzó token");
@@ -119,12 +134,10 @@ class ConnectionsService {
         }
         if (!(action == "accepted" || action == "blocked")) {
             throw new BadRequestError("rossz action érték");
-            
+
         }
-
-        const encodedToken = authUtils.verifyToken(token);
-
         const affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, action);
+
         if (!affectedRows) {
             throw new BadRequestError("connection nem található")
         }

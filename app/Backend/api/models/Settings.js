@@ -14,41 +14,22 @@ module.exports = (sequelize, DataTypes) => {
                     autoIncrement: true,
                     allowNull: false
                 },
-                new_post: {
+                Notifications: {
+                    type: DataTypes.JSON,
+                    allowNull: false,
+                    defaultValue: {
+                        "new_post": false,
+                        "new_comment_on_post": true,
+                        "new_reaction_on_post": true,
+                        "new_login": true,
+                        "new_friend_request": false,
+                    }
+                },
+                DataPrivacy: {
                     type: DataTypes.BOOLEAN,
                     allowNull: false,
-                    defaultValue: false,
-                },
-
-                new_comment_on_post: {
-                    type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
-
-                new_reaction_on_post: {
-                    type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
-
-                new_login: {
-                    type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: true,
-                },
-
-                new_friend_request: {
-                    type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
-
-                consent_given: {
-                    type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
+                    defaultValue: true
+                }
             },
 
             {
@@ -59,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
                 updatedAt: false,
                 scopes: {
                     allUser_SettingsData: {
-                        attributes: ["ID", "new_post", "new_comment_on_post", "new_reaction_on_post", "new_login", "new_friend_request", "consent_given"],
+                        attributes: ["ID", "Notifications","DataPrivacy"],
                     }
                 },
             }

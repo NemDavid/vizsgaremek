@@ -42,32 +42,10 @@ class User_SettingsService {
         const encodedToken = authUtils.verifyToken(token);
         updateData.ID = encodedToken.userID;
 
-        if (!updateData.new_post) {
-            throw new BadRequestError("Hiányzó new_post");
+        if (!updateData.Settings) {
+            throw new BadRequestError("Hiányzik JSON Fálj");
         }
-        if (!updateData.new_comment_on_post) {
-            throw new BadRequestError("Hiányzó new_comment_on_post");
-        }
-        if (!updateData.new_reaction_on_post) {
-            throw new BadRequestError("Hiányzó new_reaction_on_post");
-        }
-        if (!updateData.new_login) {
-            throw new BadRequestError("Hiányzó new_login");
-        }
-        if (!updateData.new_friend_request) {
-            throw new BadRequestError("Hiányzó new_friend_request");
-        }
-        if (!updateData.consent_given) {
-            throw new BadRequestError("Hiányzó consent_given");
-        } 
 
-        updateData.new_post = updateData.new_post == 'true' ? true : false;
-        updateData.new_comment_on_post = updateData.new_comment_on_post == 'true' ? true : false;
-        updateData.new_reaction_on_post = updateData.new_reaction_on_post == 'true' ? true : false;
-        updateData.new_login = updateData.new_login == 'true' ? true : false;
-        updateData.new_friend_request = updateData.new_friend_request == 'true' ? true : false;
-        updateData.consent_given = updateData.consent_given == 'true' ? true : false;
-        
         const affectedRows = await this.user_settingsRepository.updateUser_Settings(updateData.ID, updateData);
         if (!affectedRows) {
             throw new BadRequestError("user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })

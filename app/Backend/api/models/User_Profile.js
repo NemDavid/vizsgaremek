@@ -146,25 +146,29 @@ module.exports = (sequelize, DataTypes) => {
             birth_date:
             {
                 type: DataTypes.DATEONLY,
-                allowNull: true
+                allowNull: true,
+                defaultValue: new Date('2000-01-01')
             },
 
             birth_place:
             {
                 type: DataTypes.STRING(255),
-                allowNull: true
+                allowNull: true,
+                defaultValue: ""
             },
 
             schools:
             {
                 type: DataTypes.STRING(255),
-                allowNull: true
+                allowNull: true,
+                defaultValue: ""
             },
 
             bio:
             {
                 type: DataTypes.STRING(255),
-                allowNull: true
+                allowNull: true,
+                defaultValue: ""
             },
 
             avatar_url:

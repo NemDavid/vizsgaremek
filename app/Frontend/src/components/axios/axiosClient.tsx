@@ -183,13 +183,16 @@ export async function UpdateProfile(data: FormData, id: number) {
 }
 
 export async function connectionMangager({ ConType, id }: { ConType?: string, id: bigint }) {
-  return await ac.post(`/api/connections/${id}${ConType ? `/${ConType}` : ""}`);
+  return await ac.patch(`/api/connections/${id}${ConType ? `/${ConType}` : ""}`);
 }
 export async function AddFriend({ id }: { id: bigint }) {
   return await ac.post(`/api/connections/${id}`);
 }
 export async function myFriends() {
   return await ac.get<UserConnection[]>(`/api/connections/me`);
+}
+export async function deletConnectionReqest({ id }: { id: bigint }) {
+  return await ac.delete(`/api/connections/${id}`);
 }
 
 export async function postKick(userId: bigint) {

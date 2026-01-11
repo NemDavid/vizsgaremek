@@ -31,7 +31,6 @@ export function PostsFrame() {
     });
 
     const handleScroll = () => {
-
         const el = scrollRef.current;
         if (!el) return;
 
@@ -59,12 +58,12 @@ export function PostsFrame() {
 
 
     return (
-        <ScrollArea className="w-full h-full" >
-            <main className="flex-1 h-full overflow-y-auto flex justify-center"
+        <ScrollArea className="w-full h-full">
+            <main className="flex-1 h-[calc(100vh-90px)] overflow-y-auto flex justify-center"
                 ref={scrollRef}
                 onScroll={handleScroll}
             >
-                <div className="w-full max-w-xl flex flex-col gap-8 py-6" >
+                <div className="w-full max-w-xl flex flex-col gap-8 py-6">
                     <PostCreate />
                     {!posts ? (
                         <>

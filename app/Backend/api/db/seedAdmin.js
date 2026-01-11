@@ -5,7 +5,7 @@ const authUtils = require("../utilities/authUtils");
 const ADMIN_DATA = {
     email: "ad@ad.ad",
     username: "admin",
-    password: "AdminAdmin",
+    password: "12345678",
     role: "admin",
     is_active: 1,
 };
