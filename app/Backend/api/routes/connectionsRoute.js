@@ -25,11 +25,11 @@ router.get("/me/received-request", connectionsController.getCurrentUserFriendReq
 router.get("/me/friends", connectionsController.getCurrentUserFriendlist);
 
 
-router.delete("/connection/:userId", connectionsController.deleteConnection);
+router.delete("/:userId", connectionsController.deleteConnection);
 
-router.post("/connection/:userId", connectionsController.createConnection);
+router.post("/:userId", connectionsController.createConnection);
 
-router.patch("/connection/:userId/:action", connectionsController.updateConnection);
+router.patch("/:userId/:action", connectionsController.updateConnection);
 
 
 module.exports = router;

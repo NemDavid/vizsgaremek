@@ -13,6 +13,7 @@ import { BadgePlus, BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from '
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { myFriends } from '@/components/axios/axiosClient'
+import { KickButton } from '@/components/kick'
 
 export const Route = createFileRoute('/friends')({
   component: () => (
@@ -81,12 +82,12 @@ export function FriendsList({id}:{id:bigint}) {
   return (
     <div className='bg-rose-100 flex items-center rounded-xl p-2 px-4 '>
       <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
-      <Button variant={"outline"}> <img src="/kicking.png" alt="Kick" className='size-6 bg-slate-200 rounded-full' /> Rugás</Button>
+      <KickButton id={id} />
     </div>
   )
 }
 
-function FriendRequestMenu() {
+function FriendRequestMenu({list}:{list?:any}) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -103,10 +104,12 @@ function FriendRequestMenu() {
 
             <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
               <AvatarFrame userid={1} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <div className='grid grid-cols-2 gap-2 w-full'>
+              <div className='grid grid-cols-3 gap-2 w-full'>
                 <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
+                <Button variant={"outline"} className='mb-2 mx-1'> <Trash className='size-4' />Vissza vonás</Button>
                 <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Block</Button>
+                {/* ---------------------------------------------------------------------------------------------------- */}
+                <Button variant={'destructive'} className='mb-2 mx-1 col-span-3 '> <Trash className='size-4' />Block</Button>
               </div>
             </div>
 
