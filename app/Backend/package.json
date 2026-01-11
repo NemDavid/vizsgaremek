@@ -19,8 +19,7 @@
     "multer": "^2.0.2",
     "mysql2": "^3.15.0",
     "nodemailer": "^7.0.10",
-    "sequelize": "^6.37.7",
-    "uuid": "^13.0.0"
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "dotenv": "^17.2.2",

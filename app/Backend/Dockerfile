@@ -1,20 +1,14 @@
-# 1. lépés: Node környezet
 FROM node:18
 
-# Mappa a konténerben
 WORKDIR /app
 
-# package.json és lock
 COPY package*.json ./
+RUN npm install --production
 
-# Függőségek telepítése
-RUN npm install
-
-# A teljes backend kód másolása
 COPY . .
 
-# Port, amin a szerver fut
+ENV NODE_ENV=production
+
 EXPOSE 6769
 
-# Konténer indítási parancs
 CMD ["node", "server.js"]
