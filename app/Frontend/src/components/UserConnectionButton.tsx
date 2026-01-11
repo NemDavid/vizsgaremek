@@ -66,7 +66,7 @@ export function AcceptFriend({ className, userID }: { className?: string, userID
 }
 export function DeletFriend({ className, userID }: { className?: string, userID: bigint }) {
     const QueryClient = useQueryClient()
-    const { mutate: AcceptFriend, isPending } = useMutation({
+    const { mutate: Delete, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id}),
         onError: (error: AxiosErrorObject) => {
             toast.error(error.response.data.message)
@@ -79,7 +79,7 @@ export function DeletFriend({ className, userID }: { className?: string, userID:
         }
     })
     return (
-        <Button variant={'destructive'} className={`mb-2 mx-1 ${className}`} onClick={!isPending ? () => AcceptFriend({ id: userID }) : () => null}>
+        <Button variant={'destructive'} className={`mb-2 mx-1 ${className}`} onClick={!isPending ? () => Delete({ id: userID }) : () => null}>
             {isPending ? <Spinner /> :
                 <>
                     <UserMinus className='text-black' />Barát elutasitása

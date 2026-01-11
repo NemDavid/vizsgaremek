@@ -136,7 +136,7 @@ function FriendsreqListPerEach({ item, myid }: { item: UserConnection, myid: big
             <Button variant={"outline"} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Vissza vonás</Button>
           </>
           :
-          <>
+          <>  
             <AcceptFriend userID={item.Requested_BY || -1n} />
             <DeletFriend userID={item.Requested_BY || -1n} />
             <BlockUser userID={item.Requested_BY || -1n} className="col-span-3" />

@@ -100,14 +100,13 @@ class ConnectionsService {
         }
 
         const encodedToken = authUtils.verifyToken(token);
-
-        const friendlist = await getCurrentUserFriendlist(token);
+        const friendlist = await this.getCurrentUserFriendlist(token);
         const p = await this.userRepository.getUserByID(encodedToken.userID)
         const maxFriend = p.profile.level+50;
         if(friendlist.length > maxFriend){
             throw new BadRequestError("Elérted a barát limited")
         }
-
+        
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
         if (existingConnection && existingConnection.Status == "pending") {
             await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
@@ -136,6 +135,8 @@ class ConnectionsService {
             throw new BadRequestError("rossz action érték");
 
         }
+        const encodedToken = authUtils.verifyToken(token);
+        
         const affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, action);
 
         if (!affectedRows) {
