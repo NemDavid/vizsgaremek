@@ -31,7 +31,12 @@ class ConnectionsRepository {
     async getCurrentUserConnectionsAll(User_Requested_ID) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
-                where: { User_Requested_ID }
+                where: {
+                    [Op.or]: [
+                        { User_Requested_ID },
+                        { To_User_ID: User_Requested_ID }
+                    ]
+                }
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználó kapcsolatait.", { details: error.message });

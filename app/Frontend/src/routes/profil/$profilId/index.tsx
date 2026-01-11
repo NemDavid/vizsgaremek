@@ -17,6 +17,7 @@ import { EllipsisVertical, ShieldX, User, UserMinus, UserPlus } from 'lucide-rea
 import type { AuthResponse } from '@/components/axios/Types';
 import { Loader } from '@/components/Loader';
 import { UserProfileModify } from '@/components/UserProfilModify';
+import { ReqFriend } from '@/components/UserConnectionButton';
 
 export const Route = createFileRoute('/profil/$profilId/')({
   component: () => (
@@ -102,7 +103,7 @@ function RouteComponent() {
             :
             <PopOver trigger={<EllipsisVertical className='size-7' />} ButtonStyle='text-black bg-red-300 w-8 h-8 rounded-full' ContentStyle='bg-red-200 border-solid border-1 border-red-500 rounded-3xl'>
               <div className="flex flex-col gap-2">
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800'><UserPlus className='text-black' />Barát hozzáadása</Button>
+                <ReqFriend userID={BigInt(profilId)}/>
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' disabled><UserMinus className='text-black' />Barát elutasitása</Button>
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800'><ShieldX className='text-black Hove' />Tiltás</Button>
               </div>
@@ -151,7 +152,7 @@ function RouteComponent() {
           {profil?.data.birth_place !== "" ?
             <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
               <span className='text-black font-bold'>Születési hely</span>
-              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.bio}</span>
+              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.birth_place}</span>
             </div>
             :
             ""

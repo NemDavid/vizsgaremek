@@ -3,7 +3,7 @@ import { AdsFrame } from "./AdsFrame";
 import { DrawerFriends } from "./Drawer-Friends";
 import { Footer } from "./footer";
 import Header from "./Header";
-
+import { Toaster } from "sonner"
 
 export function DefaultUIFrame({ children, Hirdetes, className}: { children?: React.ReactNode , Hirdetes?: boolean, className?: string}) {
 
@@ -23,6 +23,7 @@ export function DefaultUIFrame({ children, Hirdetes, className}: { children?: Re
             </div>
             <DrawerFriends/>
             <Footer/>
+            <Toaster richColors position="top-center" />
         </div>
 
     )

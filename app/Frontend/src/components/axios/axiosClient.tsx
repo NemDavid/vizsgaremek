@@ -176,8 +176,15 @@ export async function UpdateProfile(data: FormData, id: number) {
   return await FileApi.patch(`/api/profiles/${id}`, data);
 }
 
-//
-
+export async function connectionMangager({ConType,id}:{ConType?:string,id:bigint}) {
+  return await ac.post(`/api/connections/connection/${id}${ConType? `/${ConType}`:""}`);
+}
+export async function AddFriend({id}:{id:bigint}) {
+  return await ac.post(`/api/connections/connection/${id}`);
+}
+export async function myFriends() {
+  return await ac.get(`/api/connections/me`);
+}
 
 
 //http://localhost:6769/api/users/1

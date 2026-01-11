@@ -14,8 +14,28 @@ class ConnectionsService {
 
     async getCurrentUserConnectionsAll(token) {
         const encodedToken = authUtils.verifyToken(token);
+        const Tid = encodedToken.userID;
+        const data = await this.connectionsRepository.getCurrentUserConnectionsAll(Tid)
 
-        return await this.connectionsRepository.getCurrentUserConnectionsAll(encodedToken.userID);
+        let response = []
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i].dataValues
+            if (item.status == "pending" || item.status == "blocked") {
+                const sv = {
+                    UserID: item.To_User_ID,
+                    Status: item.Status
+                }
+            }
+            else {
+                const sv = {
+                    UserID: item.User_Requested_ID === Tid ? item.To_User_ID : item.User_Requested_ID,
+                    Status: item.Status
+                }
+            }
+            response.push(sv)
+        }
+
+        return response;
     }
 
     async getCurrentUserConnections(token, status) {
@@ -45,8 +65,8 @@ class ConnectionsService {
         ));
 
         const friendsWithProfile = await Promise.all(filteredFriendlist.map(
-                friend => this.userRepository.getUserByID(friend.friendId)
-            )
+            friend => this.userRepository.getUserByID(friend.friendId)
+        )
         );
 
         return friendsWithProfile;

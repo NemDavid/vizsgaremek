@@ -11,6 +11,8 @@ import { AvatarFrame } from '@/components/AvatarFrame'
 import { Button } from '@/components/ui/button'
 import { BadgePlus, BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from 'lucide-react'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { myFriends } from '@/components/axios/axiosClient'
 
 export const Route = createFileRoute('/friends')({
   component: () => (
@@ -22,6 +24,12 @@ export const Route = createFileRoute('/friends')({
 
 
 function RouteComponent() {
+  const {data:Connections} = useQuery({
+    queryKey: ["friends"],
+    queryFn: () => myFriends()
+  })
+  console.log(Connections);
+  
   const [ShowMenu, setMenu] = useState("FriendsMenu");
   return (
     <DefaultUIFrame className='bg-red-100'>
