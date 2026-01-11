@@ -2,6 +2,7 @@ const { BadRequestError } = require("../errors");
 const authUtils = require("../utilities/authUtils");
 
 
+
 class ConnectionsService {
     constructor(db) {
         this.connectionsRepository = require("../repositories")(db).connectionsRepository;

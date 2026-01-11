@@ -91,3 +91,9 @@ export type UserProfil = {
     level: number;
     schools: string;
 }
+
+export type UserConnection = {
+    UserID: bigint;
+    Status: "pending" | "blocked" | "friends" | string;
+    Requested_BY?: bigint;
+};

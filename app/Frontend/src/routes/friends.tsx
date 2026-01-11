@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button'
 import { BadgePlus, BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { myFriends } from '@/components/axios/axiosClient'
+import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
 import { KickButton } from '@/components/kick'
+import type { AuthResponse, UserConnection } from '@/components/axios/Types'
 
 export const Route = createFileRoute('/friends')({
   component: () => (
@@ -24,13 +25,21 @@ export const Route = createFileRoute('/friends')({
 })
 
 
+
 function RouteComponent() {
-  const {data:Connections} = useQuery({
+  const { data: Connections } = useQuery({
     queryKey: ["friends"],
     queryFn: () => myFriends()
   })
-  console.log(Connections);
-  
+  const { data: auth } = useQuery<AuthResponse>({
+    queryKey: ["auth-status"],
+    queryFn: authStatusRequest,
+    enabled: false,
+  })
+  const PendingList = Connections?.data?.filter((item) => item.Status === "pending") || [];
+  const blockedList = Connections?.data?.filter((item) => item.Status === "blocked") || [];
+  const friendsList = Connections?.data?.filter((item) => item.Status === "friends") || [];
+
   const [ShowMenu, setMenu] = useState("FriendsMenu");
   return (
     <DefaultUIFrame className='bg-red-100'>
@@ -46,7 +55,7 @@ function RouteComponent() {
           </CardContent>
         </Card>
         <div className='flex-1 overflow-auto'>
-          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu /> : <FriendRequestMenu /> : <FriendsMenu />}
+          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu /> : <FriendRequestMenu list={PendingList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu />}
 
         </div>
       </div>
@@ -69,7 +78,7 @@ function FriendsMenu() {
         <div className='flex gap-4 flex-wrap'>
           {
 
-            <FriendsList id={1}/>
+            <FriendsList id={1} />
 
           }
         </div>
@@ -78,7 +87,7 @@ function FriendsMenu() {
   )
 }
 
-export function FriendsList({id}:{id:bigint}) {
+export function FriendsList({ id }: { id: bigint }) {
   return (
     <div className='bg-rose-100 flex items-center rounded-xl p-2 px-4 '>
       <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
@@ -87,7 +96,7 @@ export function FriendsList({id}:{id:bigint}) {
   )
 }
 
-function FriendRequestMenu({list}:{list?:any}) {
+function FriendRequestMenu({ list, myid }: { list?: UserConnection[], myid: bigint }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -100,23 +109,47 @@ function FriendRequestMenu({list}:{list?:any}) {
       </CardHeader>
       <CardContent>
         <div className='flex gap-4 flex-wrap'>
-          {
-
-            <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
-              <AvatarFrame userid={1} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
-              <div className='grid grid-cols-3 gap-2 w-full'>
-                <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
-                <Button variant={"outline"} className='mb-2 mx-1'> <Trash className='size-4' />Vissza vonás</Button>
-                <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
-                {/* ---------------------------------------------------------------------------------------------------- */}
-                <Button variant={'destructive'} className='mb-2 mx-1 col-span-3 '> <Trash className='size-4' />Block</Button>
-              </div>
-            </div>
-
+          {list?.map((item: UserConnection) => (
+            <FriendsreqListPerEach item={item} myid={myid} />
+          ))
           }
         </div>
       </CardContent>
     </Card>
+  )
+}
+function FriendsreqListPerEach({ item, myid }: { item: UserConnection, myid: bigint }) {
+  console.log(item);
+
+  console.log(item.Requested_BY == myid);
+  console.log(item.Requested_BY);
+  console.log(myid);
+
+  return (
+    <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl' key={item?.UserID}>
+      {item.Requested_BY == myid ?
+        <>
+          <AvatarFrame userid={item?.UserID} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
+        </>
+        :
+        <>
+          <AvatarFrame userid={item?.Requested_BY || -1n} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
+        </>
+      }
+      <div className='grid grid-cols-2 gap-2 w-full'>
+        {item.UserID == myid ?
+          <>
+            <Button variant={"outline"} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Vissza vonás</Button>
+          </>
+          :
+          <>
+            <Button variant={"outline"} className='mb-2 mx-1'> <BadgePlus className='size-4' />Elfogad</Button>
+            <Button variant={'destructive'} className='mb-2 mx-1'> <Trash className='size-4' />Elutasit</Button>
+            <Button variant={'destructive'} className='mb-2 mx-1 col-span-3 '> <Trash className='size-4' />Block</Button>
+          </>
+        }
+      </div>
+    </div>
   )
 }
 

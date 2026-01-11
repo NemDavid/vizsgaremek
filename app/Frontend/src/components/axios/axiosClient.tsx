@@ -3,7 +3,7 @@ import z from "zod"
 import type { LoginSchema } from "../login-form"
 import type { RegisterSchema } from "../signup-form"
 import type { PostFormSchema } from "../comment-according"
-import type { UserProfileResponse } from "./Types"
+import type { UserConnection, UserProfileResponse } from "./Types"
 
 
 export const ac = axios.create({
@@ -183,7 +183,7 @@ export async function AddFriend({id}:{id:bigint}) {
   return await ac.post(`/api/connections/${id}`);
 }
 export async function myFriends() {
-  return await ac.get(`/api/connections/me`);
+  return await ac.get<UserConnection[]>(`/api/connections/me`);
 }
 
 
