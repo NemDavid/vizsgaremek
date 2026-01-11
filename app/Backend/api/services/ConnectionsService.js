@@ -20,14 +20,16 @@ class ConnectionsService {
         let response = []
         for (let i = 0; i < data.length; i++) {
             const item = data[i].dataValues
-            if (item.status == "pending" || item.status == "blocked") {
-                const sv = {
-                    UserID: item.To_User_ID,
+            let sv;
+            if (item.Status == "pending" || item.Status == "blocked") {
+                sv = {
+                    UserID: item.User_Requested_ID == Tid ? item.To_User_ID : item.User_Requested_ID,
+                    Requested_BY: Tid,
                     Status: item.Status
                 }
             }
             else {
-                const sv = {
+                sv = {
                     UserID: item.User_Requested_ID === Tid ? item.To_User_ID : item.User_Requested_ID,
                     Status: item.Status
                 }
