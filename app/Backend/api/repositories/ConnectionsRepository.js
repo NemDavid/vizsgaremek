@@ -117,6 +117,8 @@ class ConnectionsRepository {
     }
 
     async updateConnection(User_Requested_ID, To_User_ID, Status) {
+        console.log(User_Requested_ID, To_User_ID, Status);
+        
         try {
             const [affectedRows] = await this.Connections.update({ Status }, {
                 where: {

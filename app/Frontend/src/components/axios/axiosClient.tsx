@@ -68,6 +68,7 @@ export type Post = {
   comments?: comment[],
 
 }
+
 export type comment = {
   ID: bigint,
   USER_ID: bigint,
@@ -75,7 +76,12 @@ export type comment = {
   comment: string,
 }
 
-
+export type Kick = {
+  ID: bigint;
+  User_Requested_ID: bigint;
+  To_User_ID: bigint;
+  Status: "pendin" | "accepted" | "rejected";
+}
 
 export type formSchema = z.infer<typeof formSchema>
 
@@ -120,9 +126,9 @@ export async function getPostsAll() {
   return response.data
 }
 
-export async function getPosts({page,perPage}:{page:number,perPage:number}) {
-  const response = await ac.get<any>(`/api/posts`,{
-    params:{
+export async function getPosts({ page, perPage }: { page: number, perPage: number }) {
+  const response = await ac.get<any>(`/api/posts`, {
+    params: {
       page,
       perPage,
     }
@@ -168,7 +174,7 @@ export async function GetFriends() {
 }
 
 
-export async function GetProfil(id:string) {
+export async function GetProfil(id: string) {
   return await ac.get<UserProfileResponse>(`/api/profiles/${id}`);
 }
 
@@ -176,14 +182,18 @@ export async function UpdateProfile(data: FormData, id: number) {
   return await FileApi.patch(`/api/profiles/${id}`, data);
 }
 
-export async function connectionMangager({ConType,id}:{ConType?:string,id:bigint}) {
-  return await ac.post(`/api/connections/${id}${ConType? `/${ConType}`:""}`);
+export async function connectionMangager({ ConType, id }: { ConType?: string, id: bigint }) {
+  return await ac.post(`/api/connections/${id}${ConType ? `/${ConType}` : ""}`);
 }
-export async function AddFriend({id}:{id:bigint}) {
+export async function AddFriend({ id }: { id: bigint }) {
   return await ac.post(`/api/connections/${id}`);
 }
 export async function myFriends() {
   return await ac.get(`/api/connections/me`);
+}
+
+export async function postKick(userId: bigint) {
+  return await ac.post(`/api/kicks/kick/${userId}`);
 }
 
 

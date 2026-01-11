@@ -113,11 +113,17 @@ class ConnectionsService {
         if (!To_User_ID) {
             throw new BadRequestError("Hiányzó To_User_ID");
         }
+        if (!action) {
+            throw new BadRequestError("Hiányzó action");
+        }
+        if (!(action == "accepted" || action == "blocked")) {
+            throw new BadRequestError("rossz action érték");
+            
+        }
 
         const encodedToken = authUtils.verifyToken(token);
 
         const affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, action);
-
         if (!affectedRows) {
             throw new BadRequestError("connection nem található")
         }
