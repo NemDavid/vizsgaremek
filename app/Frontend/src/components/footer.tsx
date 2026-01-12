@@ -21,15 +21,15 @@ export function Footer() {
                         {/* Felfedezés */}
                         <div className="flex flex-col gap-2">
                             <div className="font-bold uppercase text-[#f3ce00] pb-2">Felfedezés</div>
-                            <p className="hover:underline"><Link to="/aboutus">Funkciók</Link></p>
+                            <p className="hover:underline"><Link to="/about">Funkciók</Link></p>
                             <p className="hover:underline"><Link to="/privacy">Biztonság</Link></p>
                         </div>
 
                         {/* About us */}
                         <div className="flex flex-col gap-2">
                             <div className="font-bold uppercase text-[#f3ce00] pb-2">About us</div>
-                            <p className="hover:underline"><Link to="/aboutus">Rólunk</Link></p>
-                            <p className="hover:underline"><Link to="/aboutus">Kapcsolat</Link></p>
+                            <p className="hover:underline"><Link to="/about">Rólunk</Link></p>
+                            <p className="hover:underline"><Link to="/about">Kapcsolat</Link></p>
                             <p className="hover:underline"><Link to="/news">Hírek</Link></p>
                         </div>
 

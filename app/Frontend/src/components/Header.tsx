@@ -145,7 +145,7 @@ export default function Header({ className }: { className?: string }) {
               <AlertDialogTrigger asChild>
                 <Button variant="outline" className="bg-slate-200 text-black hover:text-white hover:bg-slate-600">Kijelentkezés</Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="bg-rose-100">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Biztos kijelentkezel?</AlertDialogTitle>
                   <AlertDialogDescription>
