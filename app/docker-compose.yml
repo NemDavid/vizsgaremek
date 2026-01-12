@@ -37,7 +37,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "6769:6769"
+      - "6769:6769" # if has proxy dont open port
     environment:
       DB_HOST: db
       DB_USER: root
@@ -60,9 +60,11 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3000:80"  # nginx alapból 80-as porton fut
+      - "3000:80"  # nginx alapból 80-as porton fut if has proxy dont open port
     depends_on:
       - backend
+
+  #nginx or treafik reverse proxy, open port 80 or 443
 
 
 volumes:
