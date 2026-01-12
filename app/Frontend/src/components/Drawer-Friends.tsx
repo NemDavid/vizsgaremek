@@ -8,9 +8,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Button } from "@/components/ui/button"
 import { Users } from 'lucide-react'
-import { AvatarFrame } from "./AvatarFrame"
 import { useQuery } from "@tanstack/react-query"
 import { GetFriends } from "./axios/axiosClient"
 import { FriendsList } from "@/routes/friends"
