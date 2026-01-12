@@ -48,7 +48,7 @@ function RouteComponent() {
 
   if (profil?.data == null) {
     return (
-      <DefaultUIFrame className="bg-red-300 min-h-screen flex items-center justify-center">
+      <DefaultUIFrame className="bg-red-300 min-h-0 flex items-center justify-center">
         <Card className="max-w-md w-full text-center shadow-xl">
           <CardHeader>
             <CardTitle>Profil nem található</CardTitle>

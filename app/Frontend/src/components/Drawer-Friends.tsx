@@ -13,17 +13,17 @@ import { Users } from 'lucide-react'
 import { AvatarFrame } from "./AvatarFrame"
 import { useQuery } from "@tanstack/react-query"
 import { GetFriends } from "./axios/axiosClient"
+import { FriendsList } from "@/routes/friends"
 
 
 export function DrawerFriends() {
-    const {data} = useQuery({
+    const { data } = useQuery({
         queryFn: () => GetFriends(),
         queryKey: ["Friends"],
         retry: 0,
         refetchOnWindowFocus: false,
     })
-    //console.log(data);
-    
+
     return (
         <Drawer >
             <DrawerTrigger className="contents">
@@ -37,7 +37,9 @@ export function DrawerFriends() {
                     <DrawerDescription>
                         <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
                             <div className="flex gap-3 overflow-x-auto p-3">
-                                {/* <AvatarFrame userid={1n} className='max-w-max max-h-min p-0' /> */}
+                                {data?.data.map((item:any) => (
+                                    <FriendsList id={item.UserID} key={item.UserID} className={"bg-rose-900"}/>
+                                ))}
                             </div>
                         </div>
                     </DrawerDescription>

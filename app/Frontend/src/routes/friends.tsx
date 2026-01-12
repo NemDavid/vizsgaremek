@@ -87,9 +87,9 @@ function FriendsMenu({ list }: { list: UserConnection[] }) {
   )
 }
 
-export function FriendsList({ id }: { id: bigint }) {
+export function FriendsList({ id,className }: { id: bigint ,className?:string}) {
   return (
-    <div className='bg-rose-100 flex items-center rounded-xl p-2 px-4 '>
+    <div className={`bg-rose-100 flex items-center rounded-xl p-2 px-4 gap-3 ${className}`}>
       <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
       <KickButton id={id} />
     </div>
