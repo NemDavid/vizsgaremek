@@ -1,5 +1,5 @@
 
-import { AdsFrame } from "./AdsFrame";
+import { AdsFrame } from "./custom/AdsFrame";
 import { DrawerFriends } from "./Drawer-Friends";
 import { Footer } from "./footer";
 import Header from "./Header";

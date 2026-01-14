@@ -45,10 +45,10 @@ class User_SettingsRepository {
         }
     }
 
-    async updateUser_Settings(user_SettingsId, updateData) {;
+    async updateUser_Settings(ID, updateData) {;
         try {
             const [affectedRows] = await this.User_Settings.update(updateData, {
-                where: { ID: user_SettingsId },
+                where: { ID },
             });
             return affectedRows;
         } catch (error) {

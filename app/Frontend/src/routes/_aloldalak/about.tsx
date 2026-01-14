@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Mail, Users, ImageIcon, FileText } from 'lucide-react'
 
-export const Route = createFileRoute('/about')({
+export const Route = createFileRoute('/_aloldalak/about')({
     component: () => (
         <AuthGuard>
             <RouteComponent />

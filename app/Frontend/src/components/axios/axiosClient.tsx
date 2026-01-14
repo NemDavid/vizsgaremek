@@ -199,5 +199,13 @@ export async function postKick(userId: bigint) {
   return await ac.post(`/api/kicks/kick/${userId}`);
 }
 
+export async function SaveSettings(Notifications: any) {
+  return await ac.patch(`/api/settings`,{Notifications});
+}
+export async function GetSettings() {
+  return await ac.get<any>(`/api/settings`);
+}
+
+
 
 //http://localhost:6769/api/users/1

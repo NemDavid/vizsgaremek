@@ -9,51 +9,33 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestRouteImport } from './routes/test'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as NewsRouteImport } from './routes/news'
 import { Route as FriendsRouteImport } from './routes/friends'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as RegistrationIndexRouteImport } from './routes/registration/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as SettingsPrivacyRouteImport } from './routes/settings/privacy'
+import { Route as SettingsNotificationRouteImport } from './routes/settings/notification'
+import { Route as SettingsAccountRouteImport } from './routes/settings/account'
+import { Route as AloldalakPrivacyRouteImport } from './routes/_aloldalak/privacy'
+import { Route as AloldalakNewsRouteImport } from './routes/_aloldalak/news'
+import { Route as AloldalakAboutRouteImport } from './routes/_aloldalak/about'
 import { Route as RegistrationTokenIndexRouteImport } from './routes/registration/$token/index'
 import { Route as ProfilProfilIdIndexRouteImport } from './routes/profil/$profilId/index'
 
-const TestRoute = TestRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsRoute = NewsRouteImport.update({
-  id: '/news',
-  path: '/news',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FriendsRoute = FriendsRouteImport.update({
   id: '/friends',
   path: '/friends',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegistrationIndexRoute = RegistrationIndexRouteImport.update({
@@ -64,6 +46,36 @@ const RegistrationIndexRoute = RegistrationIndexRouteImport.update({
 const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
+  id: '/settings/privacy',
+  path: '/settings/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsNotificationRoute = SettingsNotificationRouteImport.update({
+  id: '/settings/notification',
+  path: '/settings/notification',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsAccountRoute = SettingsAccountRouteImport.update({
+  id: '/settings/account',
+  path: '/settings/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AloldalakPrivacyRoute = AloldalakPrivacyRouteImport.update({
+  id: '/_aloldalak/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AloldalakNewsRoute = AloldalakNewsRouteImport.update({
+  id: '/_aloldalak/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AloldalakAboutRoute = AloldalakAboutRouteImport.update({
+  id: '/_aloldalak/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegistrationTokenIndexRoute = RegistrationTokenIndexRouteImport.update({
@@ -79,41 +91,47 @@ const ProfilProfilIdIndexRoute = ProfilProfilIdIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/friends': typeof FriendsRoute
-  '/news': typeof NewsRoute
-  '/privacy': typeof PrivacyRoute
-  '/settings': typeof SettingsRoute
-  '/test': typeof TestRoute
+  '/about': typeof AloldalakAboutRoute
+  '/news': typeof AloldalakNewsRoute
+  '/privacy': typeof AloldalakPrivacyRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/notification': typeof SettingsNotificationRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/login': typeof LoginIndexRoute
   '/registration': typeof RegistrationIndexRoute
+  '/settings': typeof SettingsIndexRoute
   '/profil/$profilId': typeof ProfilProfilIdIndexRoute
   '/registration/$token': typeof RegistrationTokenIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/friends': typeof FriendsRoute
-  '/news': typeof NewsRoute
-  '/privacy': typeof PrivacyRoute
-  '/settings': typeof SettingsRoute
-  '/test': typeof TestRoute
+  '/about': typeof AloldalakAboutRoute
+  '/news': typeof AloldalakNewsRoute
+  '/privacy': typeof AloldalakPrivacyRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/notification': typeof SettingsNotificationRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/login': typeof LoginIndexRoute
   '/registration': typeof RegistrationIndexRoute
+  '/settings': typeof SettingsIndexRoute
   '/profil/$profilId': typeof ProfilProfilIdIndexRoute
   '/registration/$token': typeof RegistrationTokenIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/friends': typeof FriendsRoute
-  '/news': typeof NewsRoute
-  '/privacy': typeof PrivacyRoute
-  '/settings': typeof SettingsRoute
-  '/test': typeof TestRoute
+  '/_aloldalak/about': typeof AloldalakAboutRoute
+  '/_aloldalak/news': typeof AloldalakNewsRoute
+  '/_aloldalak/privacy': typeof AloldalakPrivacyRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/notification': typeof SettingsNotificationRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/login/': typeof LoginIndexRoute
   '/registration/': typeof RegistrationIndexRoute
+  '/settings/': typeof SettingsIndexRoute
   '/profil/$profilId/': typeof ProfilProfilIdIndexRoute
   '/registration/$token/': typeof RegistrationTokenIndexRoute
 }
@@ -121,88 +139,68 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/friends'
+    | '/about'
     | '/news'
     | '/privacy'
-    | '/settings'
-    | '/test'
+    | '/settings/account'
+    | '/settings/notification'
+    | '/settings/privacy'
     | '/login'
     | '/registration'
+    | '/settings'
     | '/profil/$profilId'
     | '/registration/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/friends'
+    | '/about'
     | '/news'
     | '/privacy'
-    | '/settings'
-    | '/test'
+    | '/settings/account'
+    | '/settings/notification'
+    | '/settings/privacy'
     | '/login'
     | '/registration'
+    | '/settings'
     | '/profil/$profilId'
     | '/registration/$token'
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/friends'
-    | '/news'
-    | '/privacy'
-    | '/settings'
-    | '/test'
+    | '/_aloldalak/about'
+    | '/_aloldalak/news'
+    | '/_aloldalak/privacy'
+    | '/settings/account'
+    | '/settings/notification'
+    | '/settings/privacy'
     | '/login/'
     | '/registration/'
+    | '/settings/'
     | '/profil/$profilId/'
     | '/registration/$token/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   FriendsRoute: typeof FriendsRoute
-  NewsRoute: typeof NewsRoute
-  PrivacyRoute: typeof PrivacyRoute
-  SettingsRoute: typeof SettingsRoute
-  TestRoute: typeof TestRoute
+  AloldalakAboutRoute: typeof AloldalakAboutRoute
+  AloldalakNewsRoute: typeof AloldalakNewsRoute
+  AloldalakPrivacyRoute: typeof AloldalakPrivacyRoute
+  SettingsAccountRoute: typeof SettingsAccountRoute
+  SettingsNotificationRoute: typeof SettingsNotificationRoute
+  SettingsPrivacyRoute: typeof SettingsPrivacyRoute
   LoginIndexRoute: typeof LoginIndexRoute
   RegistrationIndexRoute: typeof RegistrationIndexRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
   ProfilProfilIdIndexRoute: typeof ProfilProfilIdIndexRoute
   RegistrationTokenIndexRoute: typeof RegistrationTokenIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/news': {
-      id: '/news'
-      path: '/news'
-      fullPath: '/news'
-      preLoaderRoute: typeof NewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/friends': {
       id: '/friends'
       path: '/friends'
@@ -210,18 +208,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FriendsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/registration/': {
@@ -236,6 +234,48 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/privacy': {
+      id: '/settings/privacy'
+      path: '/settings/privacy'
+      fullPath: '/settings/privacy'
+      preLoaderRoute: typeof SettingsPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/notification': {
+      id: '/settings/notification'
+      path: '/settings/notification'
+      fullPath: '/settings/notification'
+      preLoaderRoute: typeof SettingsNotificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/account': {
+      id: '/settings/account'
+      path: '/settings/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof SettingsAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_aloldalak/privacy': {
+      id: '/_aloldalak/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof AloldalakPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_aloldalak/news': {
+      id: '/_aloldalak/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof AloldalakNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_aloldalak/about': {
+      id: '/_aloldalak/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AloldalakAboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/registration/$token/': {
@@ -257,14 +297,16 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   FriendsRoute: FriendsRoute,
-  NewsRoute: NewsRoute,
-  PrivacyRoute: PrivacyRoute,
-  SettingsRoute: SettingsRoute,
-  TestRoute: TestRoute,
+  AloldalakAboutRoute: AloldalakAboutRoute,
+  AloldalakNewsRoute: AloldalakNewsRoute,
+  AloldalakPrivacyRoute: AloldalakPrivacyRoute,
+  SettingsAccountRoute: SettingsAccountRoute,
+  SettingsNotificationRoute: SettingsNotificationRoute,
+  SettingsPrivacyRoute: SettingsPrivacyRoute,
   LoginIndexRoute: LoginIndexRoute,
   RegistrationIndexRoute: RegistrationIndexRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
   ProfilProfilIdIndexRoute: ProfilProfilIdIndexRoute,
   RegistrationTokenIndexRoute: RegistrationTokenIndexRoute,
 }

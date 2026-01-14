@@ -37,21 +37,26 @@ class User_SettingsService {
 
         return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID });
     }
+    async createUser_Settings(ID) {
+
+        return await this.user_settingsRepository.createUser_Settings({ ID });
+    }
+
 
     async updateUser_Settings(token, updateData) {
         const encodedToken = authUtils.verifyToken(token);
-        updateData.ID = encodedToken.userID;
+        const ID = encodedToken.userID;
 
-        if (!updateData.Settings) {
+        if (!updateData.Notifications) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
 
-        const affectedRows = await this.user_settingsRepository.updateUser_Settings(updateData.ID, updateData);
+        const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData);
         if (!affectedRows) {
             throw new BadRequestError("user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })
         }
 
-        const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(updateData.ID);
+        const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(ID);
 
         if (!updateUser_Settings) {
             throw new BadRequestError("a frissitett user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` });

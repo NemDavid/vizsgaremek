@@ -24,7 +24,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "./ui/textarea"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Spinner } from "./ui/spinner"
 import { createPost } from "./axios/axiosClient"
 import { useState } from "react"
 import { Loader } from "./Loader"

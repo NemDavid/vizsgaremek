@@ -3,7 +3,7 @@ import { DefaultUIFrame } from '@/components/DefaultUIFrame'
 import { createFileRoute } from '@tanstack/react-router'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-export const Route = createFileRoute('/privacy')({
+export const Route = createFileRoute('/_aloldalak/privacy')({
     component: () => (
         <AuthGuard>
             <RouteComponent />

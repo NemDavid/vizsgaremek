@@ -1,0 +1,245 @@
+import { AuthGuard } from '@/components/AuthGuard'
+import { DefaultUIFrame } from '@/components/DefaultUIFrame'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Button } from '@/components/ui/button'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { GetSettings, SaveSettings } from '@/components/axios/axiosClient'
+import { toast } from 'sonner'
+import type { AxiosErrorObject } from '@/components/axios/Types'
+import { Loader } from '@/components/Loader'
+
+export const Route = createFileRoute('/settings/')({
+    component: () => (
+        <AuthGuard>
+            <RouteComponent />
+        </AuthGuard>
+    ),
+})
+
+function RouteComponent() {
+    return (
+        <SideBar>
+            <div className="p-6 m-4 bg-rose-50 w-full rounded-2xl shadow-sm">
+                <h1 className="text-2xl font-bold mb-4 text-gray-800">
+                    Beállítások – Segítség
+                </h1>
+
+                <div className="space-y-6 text-gray-700">
+                    <div>
+                        <h2 className="text-lg font-semibold mb-1">
+                            Fiókbeállítások
+                        </h2>
+                        <p className="text-sm leading-relaxed">
+                            Itt módosíthatod a felhasználónevedet, a jelszavadat és az e-mail címedet.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h2 className="text-lg font-semibold mb-1">
+                            Értesítések
+                        </h2>
+                        <p className="text-sm leading-relaxed">
+                            Itt beállíthatod, hogy milyen eseményekről szeretnél értesítést kapni.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h2 className="text-lg font-semibold mb-1">
+                            Adatvédelem
+                        </h2>
+                        <p className="text-sm leading-relaxed">
+                            Itt szabályozhatod, hogy az oldal milyen módon használhatja fel az adataidat
+                            a szolgáltatás fejlesztése érdekében.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </SideBar>
+    )
+}
+
+export function SideBar({ children }: { children?: React.ReactNode }) {
+
+    return (
+        <DefaultUIFrame>
+            <div className="flex flex-col md:flex-row h-full bg-red-200">
+                {/* Sidebar */}
+                <div className="w-full md:w-64 shadow rounded-md p-4 mb-6 md:mb-0 bg-red-100">
+                    <h2 className="text-xl font-bold mb-6"><Link to='/settings'>Beállítások</Link></h2>
+                    <ul className="space-y-3">
+                        <Link to='/settings/account'><li className="cursor-pointer p-2 m-4 rounded hover:bg-gray-200 hover:border-2 hover:border-black bg-red-200 rounded-lg underline hover:no-underline">Fiók</li></Link>
+                        <Link to='/settings/notification'><li className="cursor-pointer p-2 m-4 rounded hover:bg-gray-200 hover:border-2 hover:border-black bg-red-200 rounded-lg underline hover:no-underline">Értesítések</li></Link>
+                        <Link to='/settings/privacy'><li className="cursor-pointer p-2 m-4 rounded hover:bg-gray-200 hover:border-2 hover:border-black bg-red-200 rounded-lg underline hover:no-underline">Adatvédelem</li></Link>
+                    </ul>
+                </div>
+                {children}
+
+            </div>
+        </DefaultUIFrame>
+    )
+}
+
+
+export function FiokSettings() {
+    return (
+        <div className="flex-1 md:ml-6 bg-red-100 shadow rounded-md p-6">
+            <h1 className="text-2xl font-bold mb-6">Fiók beállítások</h1>
+            <div className="space-y-4">
+
+            </div>
+        </div>
+    )
+}
+export function ErtesitesSettings() {
+    const queryclint = useQueryClient()
+    const { data, isLoading } = useQuery({
+        queryKey: ['settings'],
+        queryFn: GetSettings,
+    })
+    const { mutate: save } = useMutation({
+        mutationFn: (Settings: any) => SaveSettings(Settings),
+        onError: (error: AxiosErrorObject) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Beálitásod ell lett mentve 🎉", {
+                duration: 3000,
+            })
+            queryclint.refetchQueries({queryKey: ["settings"]})
+        }
+    })
+    const [terms1, setTerms1] = useState(false)
+    const [terms2, setTerms2] = useState(false)
+    const [terms3, setTerms3] = useState(false)
+    const [terms4, setTerms4] = useState(false)
+    const [terms5, setTerms5] = useState(false)
+    const [originalNotif, setOriginalNotif] = useState({
+        new_post: false,
+        new_comment_on_post: false,
+        new_reaction_on_post: false,
+        new_login: false,
+        new_friend_request: false,
+    })
+    useEffect(() => {
+        if (!data?.data.Notifications) return
+        const notif = JSON.parse(data.data.Notifications)
+
+        setTerms1(!!notif.new_post)
+        setTerms2(!!notif.new_comment_on_post)
+        setTerms3(!!notif.new_reaction_on_post)
+        setTerms4(!!notif.new_login)
+        setTerms5(!!notif.new_friend_request)
+
+        setOriginalNotif({
+            new_post: !!notif.new_post,
+            new_comment_on_post: !!notif.new_comment_on_post,
+            new_reaction_on_post: !!notif.new_reaction_on_post,
+            new_login: !!notif.new_login,
+            new_friend_request: !!notif.new_friend_request,
+        })
+    }, [data])
+    const hasChanged =
+        terms1 !== originalNotif.new_post ||
+        terms2 !== originalNotif.new_comment_on_post ||
+        terms3 !== originalNotif.new_reaction_on_post ||
+        terms4 !== originalNotif.new_login ||
+        terms5 !== originalNotif.new_friend_request
+
+    const GetJson = () => {
+        let Settings = {
+            new_post: terms1,
+            new_comment_on_post: terms2,
+            new_reaction_on_post: terms3,
+            new_login: terms4,
+            new_friend_request: terms5,
+        };
+        save(Settings)
+    }
+
+
+
+    if (isLoading) return <Loader />
+
+    return (
+        <div className="flex-1 md:ml-6 bg-red-100 shadow rounded-md p-6">
+            <h1 className="text-2xl font-bold mb-6">Értesítések beállítások</h1>
+            <div className="space-y-4 bg-rose-50 p-6 py-10 rounded-lg">
+                <div className="flex flex-col gap-6">
+
+                    <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
+                        <Checkbox id="terms-1" className="bg-red-300" checked={terms1} onCheckedChange={(checked) => setTerms1(checked === true)} />
+                        <div className="grid gap-2">
+                            <Label htmlFor="terms-1">Értesítés új posztról</Label>
+                            <p className="text-muted-foreground text-sm">
+                                Ha valaki új posztot tesz közzé, kapsz értesítést.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
+                        <Checkbox id="terms-2" className="bg-red-300" checked={terms2} onCheckedChange={(checked) => setTerms2(checked === true)} />
+                        <div className="grid gap-2">
+                            <Label htmlFor="terms-2">Értesítés új kommentről a posztodon</Label>
+                            <p className="text-muted-foreground text-sm">
+                                Ha valaki kommentel a posztodra, kapsz értesítést.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
+                        <Checkbox id="terms-3" className="bg-red-300" checked={terms3} onCheckedChange={(checked) => setTerms3(checked === true)} />
+                        <div className="grid gap-2">
+                            <Label htmlFor="terms-3">Értesítés új reakcióról a posztodon</Label>
+                            <p className="text-muted-foreground text-sm">
+                                Ha valaki reagál a posztodra, kapsz értesítést.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
+                        <Checkbox id="terms-4" className="bg-red-300" checked={terms4} onCheckedChange={(checked) => setTerms4(checked === true)} />
+                        <div className="grid gap-2">
+                            <Label htmlFor="terms-4">Értesítés bejelentkezésről</Label>
+                            <p className="text-muted-foreground text-sm">
+                                Ha valaki bejelentkezik a fiókodba, kapsz értesítést.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
+                        <Checkbox id="terms-5" className="bg-red-300" checked={terms5} onCheckedChange={(checked) => setTerms5(checked === true)} />
+                        <div className="grid gap-2">
+                            <Label htmlFor="terms-5">Értesítés új barátkérésről</Label>
+                            <p className="text-muted-foreground text-sm">
+                                Ha valaki barátkérést küld neked, kapsz értesítést.
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <Button variant={"outline"} onClick={() => GetJson() } disabled={!hasChanged}>Mentés</Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+export function AdatvedelemSettings() {
+
+    return (
+        <div className="flex-1 md:ml-6 bg-red-100 shadow rounded-md p-6">
+            <h1 className="text-2xl font-bold mb-6">Adat védelmi beállítások</h1>
+            <div className="space-y-4">
+                <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
+                    <Checkbox id="terms-6" className="bg-red-300" />
+                    <div className="grid gap-2">
+                        <Label htmlFor="terms-6">Engedélyezed, hogy az oldal felhasználja az adataidat az oldal javítása érdekében!</Label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}

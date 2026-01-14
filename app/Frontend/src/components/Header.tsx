@@ -36,28 +36,24 @@ import { Menu, Settings, User, Users } from "lucide-react";
 const components: { title: string; to: string; description: string }[] = [
   {
     title: "Adatvédelem",
-    to: "/",
+    to: "/settings/privacy",
     description:
-      "Beállíthatod, ki láthatja a későbbi bejegyzéseidet, és ki kereshet rád.",
+      "Itt beállíthatod, hogy az adataidat kivel és milyen célból osztod meg.",
   },
   {
     title: "Fiókbeállítások",
-    to: "/",
+    to: "/settings/account",
     description:
-      "Módosíthatod az olyan alapvető beállításokat, mint például a neved, a felhasználóneved vagy az e-mail-címed. A Nyelv és régió lehetőségre kattintva beállíthatod többek között azt a nyelvet és dátumformátumot, amelyet a Facebookon használni szeretnél.",
+      "Módosíthatod az alapvető fiókbeállításokat, például a nevedet, a felhasználónevedet, az e-mail-címedet és a jelszavadat.",
   },
   {
-    title: "Biztonság",
-    to: "/",
+    title: "Értesítések",
+    to: "/settings/notification",
     description:
-      "Megváltoztathatod a jelszavadat, és bekapcsolhatsz olyan figyelmeztetéseket és jóváhagyásokat, amelyek segítenek a fiókod biztonságának megőrzésében.",
-  },
-  {
-    title: "Alkalmazások és webhelyek",
-    to: "/",
-    description: "Megtekintheted és kezelheted a facebookos bejelentkezéshez használt, illetve a Facebook-fiókoddal összekapcsolt alkalmazásokat és webhelyeket.",
+      "Itt beállíthatod, hogy milyen értesítéseket szeretnél e-mailben megkapni.",
   },
 ]
+
 
 
 export default function Header({ className }: { className?: string }) {
@@ -88,7 +84,7 @@ export default function Header({ className }: { className?: string }) {
 
   return (
     <header className={`p-4 bg-red-950 text-white flex items-center justify-between z-99 ${className}`}>
-      <h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1>
+      <Link to="/"><h1 className="text-3xl font-bold text-left p-2 pr-10">Mi Hírünk</h1></Link>
       {
         ShowHamburgermanu ? <>
           <div className="flex-1 flex justify-self-center">
@@ -163,7 +159,7 @@ export default function Header({ className }: { className?: string }) {
           :
           <>
             <Sheet>
-              <SheetTrigger className="bg-red-200 rounded-full w-10 h-10 flex items-center justify-center"><Menu className="size-6 text-black rounded-full"/></SheetTrigger>
+              <SheetTrigger className="bg-red-200 rounded-full w-10 h-10 flex items-center justify-center"><Menu className="size-6 text-black rounded-full" /></SheetTrigger>
               <SheetContent className="z-999 bg-red-200">
                 <SheetHeader className="bg-red-400">
                   <SheetTitle className="text-black rounded-full bg-red-300 w-30 text-center">A fiókóm</SheetTitle>
@@ -192,7 +188,7 @@ export default function Header({ className }: { className?: string }) {
                     to="/settings"
                     className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
                   >
-                    <Settings className="bg-red-200 rounded-full"  />Beállítások
+                    <Settings className="bg-red-200 rounded-full" />Beállítások
                   </Link>
                   <button
                     onClick={() => logut()}

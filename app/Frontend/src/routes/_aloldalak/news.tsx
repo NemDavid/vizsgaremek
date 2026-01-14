@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/news')({
+export const Route = createFileRoute('/_aloldalak/news')({
     component: () => (
         <AuthGuard>
             <RouteComponent />

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { AvatarFrame } from '@/components/AvatarFrame'
 import { Button } from '@/components/ui/button'
-import { BadgePlus, BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from 'lucide-react'
+import { BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
