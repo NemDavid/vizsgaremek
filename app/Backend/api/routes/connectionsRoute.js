@@ -28,6 +28,7 @@ router.get("/me/friends", connectionsController.getCurrentUserFriendlist);
 router.delete("/:userId", connectionsController.deleteConnection);
 
 router.post("/:userId", connectionsController.createConnection);
+router.post("/:userId/:action", connectionsController.createConnection);
 
 router.patch("/:userId/:action", connectionsController.updateConnection);
 

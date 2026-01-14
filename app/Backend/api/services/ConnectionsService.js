@@ -92,33 +92,39 @@ class ConnectionsService {
         return deleteProcess;
     }
 
-    async createConnection(token, To_User_ID) {
+    async createConnection(token, To_User_ID, action) {
         if (!token)
             throw new BadRequestError("hiányzó token");
         if (!To_User_ID) {
             throw new BadRequestError("hiányzó To_User_ID");
         }
+        if (action != "pending" && action != "blocked") {
+            throw new BadRequestError("rossz paramáter action érték");
+        }
 
+        
         const encodedToken = authUtils.verifyToken(token);
         const friendlist = await this.getCurrentUserFriendlist(token);
         const p = await this.userRepository.getUserByID(encodedToken.userID)
-        const maxFriend = p.profile.level+50;
-        if(friendlist.length > maxFriend){
+        const maxFriend = p.profile.level + 50;
+        if (friendlist.length > maxFriend) {
             throw new BadRequestError("Elérted a barát limited")
         }
-        
+
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
         if (existingConnection && existingConnection.Status == "pending") {
             await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,
-                To_User_ID
+                To_User_ID,
+                Status: action
             });
         }
-        else if(!existingConnection){
+        else if (!existingConnection) {
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,
-                To_User_ID
+                To_User_ID,
+                Status: action
             });
         }
     }
@@ -136,17 +142,34 @@ class ConnectionsService {
 
         }
         const encodedToken = authUtils.verifyToken(token);
+
+        // magadat nem kezelheted
+        if (To_User_ID == encodedToken.userID) {
+            throw new BadRequestError("magadat nem tudod kezelni");
+        }
+
+
+        const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
+        if (!existingConnection) {
+            throw new BadRequestError("Nincs ilyen kapcsolat");
+        }
+
+        console.log(existingConnection);
         
+
         // elfogadas es blockolas kezelese
         let affectedRows = 0;
         if (action == "accepted") {
             affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, { Status: action });
         }
-        else { // blockolasnal megforditjuk a kapcsolatot
-            affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, { 
-                User_Requested_ID: To_User_ID, 
-                To_User_ID: User_Requested_ID, 
-                Status: action 
+        else if (action == "blocked" && encodedToken.userID == To_User_ID) {
+            affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, { Status: action });
+        }
+        else if (action == "blocked") { // blockolasnal megforditjuk a kapcsolatot, ha akihez erkezett a request, az blokkolja
+            affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, {
+                To_User_ID,
+                User_Requested_ID: encodedToken.userID,
+                Status: action
             });
         }
 
@@ -159,7 +182,7 @@ class ConnectionsService {
 
         const updateConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
         if (!updateConnection) {
-            throw new BadRequestError("a connection user nem található");
+            throw new BadRequestError("az updatelt connection  nem található");
         }
         return updateConnection;
     }
