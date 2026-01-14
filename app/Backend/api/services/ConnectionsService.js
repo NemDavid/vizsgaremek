@@ -137,15 +137,29 @@ class ConnectionsService {
         }
         const encodedToken = authUtils.verifyToken(token);
         
-        const affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, action);
+        // elfogadas es blockolas kezelese
+        let affectedRows = 0;
+        if (action == "accepted") {
+            affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, { Status: action });
+        }
+        else { // blockolasnal megforditjuk a kapcsolatot
+            affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, { 
+                User_Requested_ID: To_User_ID, 
+                To_User_ID: User_Requested_ID, 
+                Status: action 
+            });
+        }
 
+
+        // volt e modositas
         if (!affectedRows) {
             throw new BadRequestError("connection nem található")
         }
 
+
         const updateConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
         if (!updateConnection) {
-            throw new BadRequestError("a frissitett user nem található");
+            throw new BadRequestError("a connection user nem található");
         }
         return updateConnection;
     }
