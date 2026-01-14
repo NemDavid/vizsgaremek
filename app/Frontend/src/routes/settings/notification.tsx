@@ -14,7 +14,7 @@ export const Route = createFileRoute('/settings/notification')({
 function RouteComponent() {
     return (
         <SideBar>
-          <ErtesitesSettings />
+            <ErtesitesSettings />
         </SideBar>
     )
 }
