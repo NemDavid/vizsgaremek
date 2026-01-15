@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PopOver } from '@/components/OpenMenus';
-import { EllipsisVertical, ShieldX, User, UserMinus } from 'lucide-react';
+import { EllipsisVertical, User, UserMinus } from 'lucide-react';
 import type { AuthResponse } from '@/components/axios/Types';
 import { Loader } from '@/components/Loader';
 import { UserProfileModify } from '@/components/UserProfilModify';
-import { ReqFriend } from '@/components/UserConnectionButton';
+import { BlockUser, ReqFriend } from '@/components/UserConnectionButton';
 
 
 export const Route = createFileRoute('/profil/$profilId/')({
@@ -95,7 +95,7 @@ function RouteComponent() {
             <PopOver trigger={<EllipsisVertical className='size-7' />} ButtonStyle='text-black bg-red-300 w-8 h-8 rounded-full' ContentStyle='bg-red-200 border-solid border-1 border-red-500 rounded-3xl'>
               <div className="flex flex-col gap-2">
                 <UserProfileModify id={Number(profilId)} myuserdata={profil?.data} />
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' onClick={() => nav({ to: "/friends" })}><User className='text-black' />Barátaim</Button>
+                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' onClick={() => nav({ to: "/connections" })}><User className='text-black' />Barátaim</Button>
               </div>
             </PopOver>
             :
@@ -103,7 +103,7 @@ function RouteComponent() {
               <div className="flex flex-col gap-2">
                 <ReqFriend userID={BigInt(profilId)} />
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' disabled><UserMinus className='text-black' />Barát elutasitása</Button>
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800'><ShieldX className='text-black Hove' />Tiltás</Button>
+                <BlockUser userID={BigInt(profilId)} className='bg-red-400 hover:bg-red-100 hover:text-red-800'/>
               </div>
             </PopOver>
           }

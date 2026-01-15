@@ -15,9 +15,9 @@ import { useQuery } from '@tanstack/react-query'
 import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
 import { KickButton } from '@/components/kick'
 import type { AuthResponse, UserConnection } from '@/components/axios/Types'
-import { AcceptFriend, BlockUser, DeletFriend } from '@/components/UserConnectionButton'
+import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveRequest } from '@/components/UserConnectionButton'
 
-export const Route = createFileRoute('/friends')({
+export const Route = createFileRoute('/connections')({
   component: () => (
     <AuthGuard>
       <RouteComponent />
@@ -133,13 +133,13 @@ function FriendsreqListPerEach({ item, myid }: { item: UserConnection, myid: big
       <div className='grid grid-cols-2 gap-2 w-full'>
         {item.Requested_BY == myid ?
           <>
-            <Button variant={"outline"} className='mb-2 mx-1 col-span-2'> <Trash className='size-4' />Vissza vonás</Button>
+            <RemoveRequest userID={item?.UserID} className='mb-2 mx-1 col-span-2'/>
           </>
           :
           <>  
             <AcceptFriend userID={item.Requested_BY || -1n} />
             <DeletFriend userID={item.Requested_BY || -1n} />
-            <BlockUser userID={item.Requested_BY || -1n} className="col-span-3" />
+            <BlockUserFromrequest userID={item.Requested_BY || -1n} className="col-span-3" />
           </>
         }
       </div>

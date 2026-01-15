@@ -8,7 +8,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +20,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { authStatusRequest, logoutRequest } from "./axios/axiosClient";
+import { authStatusRequest, logoutRequest } from "../../axios/axiosClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { AuthResponse } from "./axios/Types";
+import type { AuthResponse } from "../../axios/Types";
 import { useEffect, useState } from "react";
 import {
   Sheet,
@@ -32,6 +32,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Menu, Settings, User, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const components: { title: string; to: string; description: string }[] = [
   {
@@ -108,10 +109,16 @@ export default function Header({ className }: { className?: string }) {
                 {/* Barátok */}
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                    <Link to="/friends">Barátok</Link>
+                    <Link to="/connections">Kapcsolatok</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
+                {/* Search */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                    <Input type="text" placeholder="user" />
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
                 {/* Beállítások */}
                 <NavigationMenuItem>
                   {ShowSettings ?
@@ -179,7 +186,7 @@ export default function Header({ className }: { className?: string }) {
                     <User className="bg-red-200 rounded-full" />Profil
                   </Link>
                   <Link
-                    to="/friends"
+                    to="/connections"
                     className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
                   >
                     <Users className="bg-red-200 rounded-full" />Barátok

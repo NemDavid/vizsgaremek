@@ -1,3 +1,3 @@
-export { AdsFrame } from "./AdsFrame";
+export { default } from "./AdsFrame";
 
 

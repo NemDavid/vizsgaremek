@@ -16,7 +16,7 @@ export function SignUpPage({ onSwitch }: SignUpPageProps) {
             </div>
             <div className="flex flex-col gap-4 p-6 md:p-10 bg-[#e96266]">
                 <div className="flex justify-center gap-2 md:justify-start">
-                    <a href="#" className="flex items-center gap-2 font-medium">
+                    <a href="/" className="flex items-center gap-2 font-medium">
                         <div className="bg-rose-950 text-primary-foreground flex size-6 items-center justify-center rounded-md">
                             <img src="/icon-frame.png" alt="Icon" className="rounded-md" />
                         </div>

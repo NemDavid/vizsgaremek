@@ -185,8 +185,14 @@ export async function UpdateProfile(data: FormData, id: number) {
 export async function connectionMangager({ ConType, id }: { ConType?: string, id: bigint }) {
   return await ac.patch(`/api/connections/${id}${ConType ? `/${ConType}` : ""}`);
 }
+export async function PostManager({ ConType, id }: { ConType?: string, id: bigint }) {
+  return await ac.post(`/api/connections/${id}${ConType ? `/${ConType}` : ""}`);
+}
+export async function BlockUserID({id }: { id: bigint }) {
+  return await PostManager({id,ConType: "blocked"})
+}
 export async function AddFriend({ id }: { id: bigint }) {
-  return await ac.post(`/api/connections/${id}`);
+  return await PostManager({id});
 }
 export async function myFriends() {
   return await ac.get<UserConnection[]>(`/api/connections/me`);

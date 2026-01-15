@@ -1,8 +1,8 @@
-import { ShieldX, UserMinus, UserPlus } from "lucide-react"
+import { ShieldX, Trash, UserMinus, UserPlus } from "lucide-react"
 import { Button } from "./ui/button"
-import {  useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Spinner } from "./ui/spinner"
-import { AddFriend, connectionMangager, deletConnectionReqest } from "./axios/axiosClient"
+import { AddFriend, BlockUserID, connectionMangager, deletConnectionReqest } from "./axios/axiosClient"
 import type { AxiosErrorObject } from "./axios/Types"
 import { toast } from "sonner"
 
@@ -67,7 +67,7 @@ export function AcceptFriend({ className, userID }: { className?: string, userID
 export function DeletFriend({ className, userID }: { className?: string, userID: bigint }) {
     const QueryClient = useQueryClient()
     const { mutate: Delete, isPending } = useMutation({
-        mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id}),
+        mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id }),
         onError: (error: AxiosErrorObject) => {
             toast.error(error.response.data.message)
         },
@@ -88,7 +88,7 @@ export function DeletFriend({ className, userID }: { className?: string, userID:
         </Button>
     )
 }
-export function BlockUser({ className, userID }: { className?: string, userID: bigint }) {
+export function BlockUserFromrequest({ className, userID }: { className?: string, userID: bigint }) {
     const QueryClient = useQueryClient()
     const ConType = "blocked";
     const { mutate: AcceptFriend, isPending } = useMutation({
@@ -108,6 +108,53 @@ export function BlockUser({ className, userID }: { className?: string, userID: b
             {isPending ? <Spinner /> :
                 <>
                     <ShieldX className='text-black Hove' />Tiltás
+                </>
+            }
+        </Button>
+    )
+}
+export function BlockUser({ className, userID }: { className?: string, userID: bigint }) {
+    const { mutate: AcceptFriend, isPending } = useMutation({
+        mutationFn: ({ id }: { id: bigint }) => BlockUserID({ id }),
+        onError: (error: AxiosErrorObject) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Sikeresen Blockoltad a felhasználot", {
+                duration: 3000,
+            })
+        }
+    })
+    return (
+        <Button variant={'destructive'} className={`mb-2 mx-1 ${className}`} onClick={!isPending ? () => AcceptFriend({ id: userID }) : () => null}>
+            {isPending ? <Spinner /> :
+                <>
+                    <ShieldX className='text-black Hove' />Tiltás
+                </>
+            }
+        </Button>
+    )
+}
+
+export function RemoveRequest({ className, userID }: { className?: string, userID: bigint }) {
+    const QueryClient = useQueryClient()
+    const { mutate: Delete, isPending } = useMutation({
+        mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id }),
+        onError: (error: AxiosErrorObject) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Sikeresen elutasitottad barátnak", {
+                duration: 3000,
+            })
+            QueryClient.refetchQueries({ queryKey: ["friends"] })
+        }
+    })
+    return (
+        <Button variant={'destructive'} className={`mb-2 mx-1 ${className}`} onClick={!isPending ? () => Delete({ id: userID }) : () => null}>
+            {isPending ? <Spinner /> :
+                <>
+                    <Trash className={`size-4 `} />Vissza vonás
                 </>
             }
         </Button>

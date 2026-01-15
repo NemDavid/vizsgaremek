@@ -11,7 +11,7 @@ import {
 import { Users } from 'lucide-react'
 import { useQuery } from "@tanstack/react-query"
 import { GetFriends } from "./axios/axiosClient"
-import { FriendsList } from "@/routes/friends"
+import { FriendsList } from "@/routes/connections"
 
 
 export function DrawerFriends() {

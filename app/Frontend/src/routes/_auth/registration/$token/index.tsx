@@ -6,7 +6,7 @@ import { TokenStatusRequest } from '@/components/axios/axiosClient'
 import { NotFound } from '@/components/NotFound'
 import { Spinner } from '@/components/ui/spinner'
 
-export const Route = createFileRoute('/registration/$token/')({
+export const Route = createFileRoute('/_auth/registration/$token/')({
   component: RouteComponent,
 })
 

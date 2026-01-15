@@ -1,8 +1,8 @@
 
-import { AdsFrame } from "./custom/AdsFrame";
+import AdsFrame from "./custom/AdsFrame";
 import { DrawerFriends } from "./Drawer-Friends";
 import { Footer } from "./footer";
-import Header from "./Header";
+import Header from "./custom/Header/Header";
 import { Toaster } from "sonner"
 
 export function DefaultUIFrame({ children, Hirdetes, className}: { children?: React.ReactNode , Hirdetes?: boolean, className?: string}) {
