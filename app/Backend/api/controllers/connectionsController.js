@@ -84,6 +84,7 @@ exports.updateConnection = async (req, res, next) => {
     const action = req.action;
     const token = req.cookies['user_token'];
 
+
     try {
         const updatedConnection = await connectionsService.updateConnection(token, To_User_ID, action);
         res.status(200).json(updatedConnection);

@@ -120,7 +120,7 @@ class ConnectionsRepository {
         }
     }
 
-    async updateConnection(To_User_ID, User_Requested_ID, updateData) { 
+    async updateConnection(User_Requested_ID, To_User_ID, updateData) { 
         try {
             const [affectedRows] = await this.Connections.update(updateData, {
                 where: {
