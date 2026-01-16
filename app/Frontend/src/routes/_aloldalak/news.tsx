@@ -1,5 +1,5 @@
-import { AuthGuard } from '@/components/AuthGuard'
-import { DefaultUIFrame } from '@/components/DefaultUIFrame'
+import { AuthGuard } from '@/components/custom/AuthGuard/AuthGuard'
+import { DefaultUIFrame } from '@/components/custom/DefaultUIFrame/DefaultUIFrame'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { createFileRoute } from '@tanstack/react-router'

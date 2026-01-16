@@ -1,5 +1,5 @@
-import { DefaultUIFrame } from "@/components/DefaultUIFrame";
-import { PostsFrame } from "@/components/PostsFrame";
+import { DefaultUIFrame } from "@/components/custom/DefaultUIFrame/DefaultUIFrame";
+import { PostsFrame } from "@/components/PostComponents";
 import { useEffect, useState } from "react";
 
 

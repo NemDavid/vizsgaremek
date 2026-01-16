@@ -1,4 +1,4 @@
-import { AuthGuard } from '@/components/AuthGuard'
+import { AuthGuard } from '@/components/custom/AuthGuard/AuthGuard'
 import { createFileRoute } from '@tanstack/react-router'
 import { AdatvedelemSettings, SideBar } from '.'
 

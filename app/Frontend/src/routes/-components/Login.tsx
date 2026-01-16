@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/login-form"
+import { LoginForm } from "@/components/ProfilForms/login-form"
 
 type LoginPageProps = {
     onSwitch: () => void;

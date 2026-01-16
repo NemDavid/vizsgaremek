@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { DefaultUIFrame } from "@/components/DefaultUIFrame";
-import { AuthGuard } from "@/components/AuthGuard";
+import { DefaultUIFrame } from "@/components/custom/DefaultUIFrame/DefaultUIFrame";
+import { AuthGuard } from "@/components/custom/AuthGuard/AuthGuard";
 import { useQuery } from '@tanstack/react-query';
 import { authStatusRequest, GetProfil } from '@/components/axios/axiosClient';
 import {
@@ -12,12 +12,12 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { PopOver } from '@/components/OpenMenus';
+import { PopOver } from '@/components/custom/OpenMenus/OpenMenus';
 import { EllipsisVertical, User, UserMinus } from 'lucide-react';
 import type { AuthResponse } from '@/components/axios/Types';
-import { Loader } from '@/components/Loader';
-import { UserProfileModify } from '@/components/UserProfilModify';
-import { BlockUser, ReqFriend } from '@/components/UserConnectionButton';
+import { Loader } from '@/components/Loader/Loader';
+import { UserProfileModify } from '@/components/ProfilForms';
+import { BlockUser, ReqFriend } from '@/components/custom/UserConnectionButton/UserConnectionButton';
 
 
 export const Route = createFileRoute('/profil/$profilId/')({

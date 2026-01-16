@@ -1,5 +1,5 @@
-import { AuthGuard } from '@/components/AuthGuard'
-import { DefaultUIFrame } from '@/components/DefaultUIFrame'
+import { AuthGuard } from '@/components/custom/AuthGuard/AuthGuard'
+import { DefaultUIFrame } from '@/components/custom/DefaultUIFrame/DefaultUIFrame'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   Card,
@@ -7,15 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { AvatarFrame } from '@/components/AvatarFrame'
+import { AvatarFrame } from '@/components/custom/AvatarFrame/AvatarFrame'
 import { Button } from '@/components/ui/button'
-import { BadgeX, ShieldBan, ShieldQuestionMark, Trash, Users } from 'lucide-react'
+import { BadgeX, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
-import { KickButton } from '@/components/kick'
+import { KickButton } from '@/components/custom/Kick/kick'
 import type { AuthResponse, UserConnection } from '@/components/axios/Types'
-import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveRequest } from '@/components/UserConnectionButton'
+import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveRequest } from '@/components/custom/UserConnectionButton/UserConnectionButton'
 
 export const Route = createFileRoute('/connections')({
   component: () => (

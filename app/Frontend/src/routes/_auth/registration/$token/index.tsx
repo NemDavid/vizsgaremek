@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ProfilSetupForm } from "@/components/profil-setup-form"
+import { ProfilSetupForm } from "@/components/ProfilForms"
 import { Toaster } from "sonner"
 import { useQuery } from '@tanstack/react-query'
 import { TokenStatusRequest } from '@/components/axios/axiosClient'
-import { NotFound } from '@/components/NotFound'
+import { NotFound } from '@/components/custom/NotFound/NotFound'
 import { Spinner } from '@/components/ui/spinner'
 
 export const Route = createFileRoute('/_auth/registration/$token/')({

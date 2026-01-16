@@ -1,5 +1,5 @@
-import { AuthGuard } from '@/components/AuthGuard'
-import { DefaultUIFrame } from '@/components/DefaultUIFrame'
+import { AuthGuard } from '@/components/custom/AuthGuard/AuthGuard'
+import { DefaultUIFrame } from '@/components/custom/DefaultUIFrame/DefaultUIFrame'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Checkbox } from "@/components/ui/checkbox"
@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { GetSettings, SaveSettings } from '@/components/axios/axiosClient'
 import { toast } from 'sonner'
 import type { AxiosErrorObject } from '@/components/axios/Types'
-import { Loader } from '@/components/Loader'
+import { Loader } from '@/components/Loader/Loader'
 
 export const Route = createFileRoute('/settings/')({
     component: () => (

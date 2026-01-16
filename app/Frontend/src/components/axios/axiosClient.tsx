@@ -1,6 +1,6 @@
 import axios from "axios"
 import z from "zod"
-import type { LoginSchema } from "../login-form"
+import type { LoginSchema } from "../ProfilForms/login-form"
 import type { RegisterSchema } from "../signup-form"
 import type { PostFormSchema } from "../comment-according"
 import type { UserConnection, UserProfileResponse } from "./Types"

@@ -11,7 +11,7 @@ import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
 // Not found component
-import { NotFound } from './components/NotFound.tsx'
+import { NotFound } from './components/custom/NotFound/NotFound.tsx'
 
 // Create a new router instance
 
