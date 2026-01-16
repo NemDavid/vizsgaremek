@@ -102,6 +102,12 @@ class ConnectionsService {
             throw new BadRequestError("rossz paramáter action érték");
         }
 
+        // valid user-e
+        const validUser = await this.userRepository.getUser(updateData.USER_ID);
+        if (!validUser) {
+            throw new BadRequestError("nincs ilyen felhasználó");
+        }
+
 
         const encodedToken = authUtils.verifyToken(token);
         const friendlist = await this.getCurrentUserFriendlist(token);
@@ -141,6 +147,13 @@ class ConnectionsService {
             throw new BadRequestError("rossz action érték");
 
         }
+
+        // valid user-e
+        const validUser = await this.userRepository.getUser(updateData.USER_ID);
+        if (!validUser) {
+            throw new BadRequestError("nincs ilyen felhasználó");
+        }
+
         const encodedToken = authUtils.verifyToken(token);
 
         // magadat nem kezelheted
