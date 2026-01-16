@@ -101,15 +101,21 @@ class ConnectionsService {
         if (action != "pending" && action != "blocked") {
             throw new BadRequestError("rossz paramáter action érték");
         }
+        const encodedToken = authUtils.verifyToken(token);
+        
 
         // valid user-e
-        const validUser = await this.userRepository.getUser(updateData.USER_ID);
+        const validUser = await this.userRepository.getUser(To_User_ID);
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
+        
 
+        // magadat nem kezelheted
+        if (To_User_ID == encodedToken.userID) {
+            throw new BadRequestError("magadat nem tudod kezelni");
+        }
 
-        const encodedToken = authUtils.verifyToken(token);
         const friendlist = await this.getCurrentUserFriendlist(token);
         const p = await this.userRepository.getUserByID(encodedToken.userID)
         const maxFriend = p.profile.level + 50;
@@ -149,7 +155,7 @@ class ConnectionsService {
         }
 
         // valid user-e
-        const validUser = await this.userRepository.getUser(updateData.USER_ID);
+        const validUser = await this.userRepository.getUser(To_User_ID);
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }

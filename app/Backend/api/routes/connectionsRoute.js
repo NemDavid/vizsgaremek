@@ -35,9 +35,3 @@ router.patch("/:userId/:action", connectionsController.updateConnection);
 
 module.exports = router;
 
-
-// get a CSAK baratokat (accepted) adja vissza (user id kell, aki a barat akt user nem kell) 🌲
-// get adja vissza azt aki pending - el (user id kell, aki a barat akt user nem kell) 🌲
-// get adja vissza azt aki blocked - el (user id kell, aki a barat akt user nem kell) 🌲
-// get adja vissza kik azok akik accepted, blocked, pending
-// post ki addol (cooki), kit addolok id vagy username re is mukodjon
