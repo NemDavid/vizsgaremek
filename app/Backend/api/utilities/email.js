@@ -31,10 +31,19 @@ exports.sendMail = async ({ to, subject, text, html }) => {
 };
 
 // Welcome email küldése
-exports.sendWelcomeEmail = async (user) => {
-  const subject = 'Üdvözlünk a MiHirunk-on!';
-  const html = `<p>Szia ${user.username}, üdv az oldalunkon!</p>`;
-  const text = `Szia ${user.username}, üdv az oldalunkon!`;
-
-  return exports.sendMail({ to: user.email, subject, html, text });
+exports.sendSimpleNotification = async ({ to, subject, text, html }) => {
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.MAIL_FROM,
+      to,
+      subject,
+      text,
+      html
+    });
+    console.log(`Email sent to ${to}: ${info.messageId}`);
+    return info;
+  } catch (err) {
+    console.error('Email sending error:', err);
+    throw err;
+  }
 };

@@ -51,6 +51,7 @@ class KickService {
             throw new BadRequestError("hiányzó kick ID");
         }
 
+
         const deleteProcess = await this.kickRepository.deleteKick(kickId);
 
         if (deleteProcess.deleted == 0) {
@@ -66,19 +67,19 @@ class KickService {
         TO_USER_ID = parseInt(TO_USER_ID);
         const encodedToken = authUtils.verifyToken(token);
 
-        
-        
+
+
         // valid user-e
         const validUser = await this.userRepository.getUser(TO_USER_ID);
         if (!validUser) {
             throw new BadRequestError("Nincs ilyen felhasználó", { details: `TO_USER_ID: ${TO_USER_ID}` });
         }
-        
+
 
         // magadat nem rúghatod meg
         if (encodedToken.userID == TO_USER_ID) throw new BadRequestError("Magadat nem rúghatod meg");
 
-        
+
         // volt e már ilyen rúgás az adott felhasználóra, ha igen akkor töröljük
         const existingKick = await this.kickRepository.getKickByUserId(encodedToken.userID, TO_USER_ID);
         if (existingKick) {
@@ -98,6 +99,12 @@ class KickService {
         }
         if (!updateData.TO_USER_ID) {
             throw new BadRequestError("Hiányzó TO_USER_ID");
+        }
+
+        // valid user-e
+        const validUser = await this.userRepository.getUser(updateData.TO_USER_ID);
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó", { details: `TO_USER_ID: ${TO_USER_ID}` });
         }
 
         const affectedRows = await this.kickRepository.updateKick(kickId, updateData);

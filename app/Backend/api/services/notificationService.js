@@ -8,7 +8,7 @@ class NotificationService {
         this.verify_codeService = verify_codeService;
         this.userService = userService;
     }
-    async sendWelcome(user) {
+    async sendSimpleNotification(user, notificationText) {
         try {
             // Dev módban csak logoljuk, ne küldjünk emailt
             if (process.env.NODE_ENV !== 'production') {
@@ -16,7 +16,16 @@ class NotificationService {
                 return;
             }
 
-            await emailUtil.sendWelcomeEmail(user);
+            const subject = 'MiHirunk - Értesítés a fiókoddal kapcsolatban';
+            const html =
+                `
+                    <p>Szia <strong>${user.username}</strong>!</p>
+                    <p>${notificationText}</p>
+                `;
+
+            const text = `Szia ${user.username} ${notificationText}`;
+
+            await emailUtil.sendMail({ to: user.email, subject, text, html });
         } catch (err) {
             // Email hiba nem akadályozza a regisztrációt
             console.error('Hiba a welcome email küldésénél:', err);
@@ -28,7 +37,8 @@ class NotificationService {
     async sendRegistrationConfirm(user, confirmUrl) {
         try {
             const subject = 'MiHirunk - Regisztráció megerősítése';
-            const html = `
+            const html =
+                `
                     <p>Szia <strong>${user.username}</strong>!</p>
                     <p>Kérjük, erősítsd meg a regisztrációdat az alábbi linkre kattintva:</p>
                     <a href="${confirmUrl}">👉 Fiók aktiválása</a>
