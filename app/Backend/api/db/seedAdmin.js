@@ -25,6 +25,9 @@ async function seedAdminUser(db) {
         const userProfileService = new User_ProfileService(db);
         const Settings = new User_SettingsService(db);
 
+
+
+        // -------- Example admin létrehozása ---------
         const existingAdmin = await userService.getUserByUsername(ADMIN_DATA.username);
         if (!existingAdmin) {
             // létrehozod az admin usert
@@ -32,6 +35,7 @@ async function seedAdminUser(db) {
                 email: ADMIN_DATA.email,
                 password_hash: authUtils.hashPassword(ADMIN_DATA.password),
                 username: ADMIN_DATA.username,
+                role: ADMIN_DATA.role,
             });
 
 
@@ -51,6 +55,9 @@ async function seedAdminUser(db) {
             console.log("[Seed] Admin felhasználó már létezik, nem lett létrehozva újra");
         }
 
+
+
+        // -------- Example user létrehozása ---------
         const existingExampleUser = await userService.getUserByUsername(ExampleAccunt.username);
         if (!existingExampleUser) {
             // létrehozod az admin usert
@@ -58,6 +65,7 @@ async function seedAdminUser(db) {
                 email: ExampleAccunt.email,
                 password_hash: authUtils.hashPassword(ExampleAccunt.password),
                 username: ExampleAccunt.username,
+                role: ExampleAccunt.role,
             });
 
 
