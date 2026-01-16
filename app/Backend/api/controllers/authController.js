@@ -120,7 +120,9 @@ exports.login = async (req, res, next) => {
         const token = authUtils.generateUserToken(user);
         authUtils.setCookie(res, "user_token", token);
 
-        const notificationText = "Sikeresen bejelentkeztél a fiókodba.";
+        const notificationText = `Sikeresen bejelentkeztél a fiókodba.
+        Ha nem te voltál, kérjük, azonnal változtasd meg a jelszavad!
+        Vagy lépj kapcsolatba az ügyfélszolgálatunkkal.`.trim();
         await notificationService.sendSimpleNotification(user, notificationText);
 
         res.status(200).json({ token });

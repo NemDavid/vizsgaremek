@@ -16,19 +16,15 @@ class NotificationService {
                 return;
             }
 
+            const { text, html } = emailUtil.simpleNotification(user.username, notificationText);
+
             const subject = 'MiHirunk - Értesítés a fiókoddal kapcsolatban';
-            const html =
-                `
-                    <p>Szia <strong>${user.username}</strong>!</p>
-                    <p>${notificationText}</p>
-                `;
 
-            const text = `Szia ${user.username} ${notificationText}`;
 
-            await emailUtil.sendMail({ to: user.email, subject, text, html });
+            await emailUtil.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
             // Email hiba nem akadályozza a regisztrációt
-            console.error('Hiba a welcome email küldésénél:', err);
+            console.error('Hiba az értesítéssel kapcsolatban:', err);
             throw err; // vagy return false, attól függően, hogy szeretnéd kezelni
         }
     }
@@ -46,7 +42,7 @@ class NotificationService {
                 `;
             const text = `Szia ${user.username}, erősítsd meg a regisztrációd itt: ${confirmUrl}`;
 
-            await emailUtil.sendMail({ to: user.email, subject, text, html });
+            await emailUtil.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
@@ -82,7 +78,7 @@ class NotificationService {
                     <p>Megbaszlak ezzel a koddal: :) <strong>${verify_codeData.verify_code}</strong>!</p>
                 `;
 
-            await emailUtil.sendMail({ to: email, subject, html });
+            await emailUtil.sendEmail({ to: email, subject, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
