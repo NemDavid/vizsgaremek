@@ -41,7 +41,7 @@ function RouteComponent() {
     queryFn: () => GetProfil(profilId),
     retry: 0,
   })
-  const UserID:any = profil?.data.USER_ID
+  const UserID: any = profil?.data.USER_ID
   const maxFriend: Number = (profil?.data.level || 50) + 50;
   if (isLoading) {
     return <Loader />
@@ -162,16 +162,21 @@ function ProfileMenu({ isMe, profilId, profil }: any) {
               <User /> Barátaim
             </Button>
           </>
-        ) : (
-          <>
-            <ReqFriend userID={BigInt(profilId)} />
-            <Button disabled>
-              <UserMinus /> Barát elutasítása
-            </Button>
-            <BlockUser userID={BigInt(profilId)} />
-          </>
-        )}
+        ) : <NotmyProfil profilId={profilId} profil={profil} />}
       </div>
     </PopOver>
   )
 }
+
+function NotmyProfil({ profilId, profil }: {profilId:any, profil:any}) {
+  return (
+    <>
+      <ReqFriend userID={BigInt(profilId)} />
+      <Button disabled>
+        <UserMinus /> Barát elutasítása
+      </Button>
+      <BlockUser userID={BigInt(profilId)} />
+    </>
+  )
+}
+

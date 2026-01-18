@@ -117,7 +117,7 @@ export default function Header({ className }: { className?: string }) {
                 {/* Search */}
                 <NavigationMenuItem>
                   <div className="flex items-center gap-2 bg-red-900 px-3 py-2 rounded-md">
-                    <Input type="text" placeholder="user" className="h-8" value={search}
+                    <Input type="text" placeholder="Felhasználó név" className="h-8" value={search}
                       onChange={(e) => setSearch(e.target.value)} />
                     <Button type="submit" variant="link" className="h-8 bg-rose-100" onClick={() => {nav({to:"/profil/$profilId", params: {profilId: search}}) }}>
                       Keres

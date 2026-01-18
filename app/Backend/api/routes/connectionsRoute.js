@@ -12,6 +12,7 @@ router.get("/", connectionsController.getConnections);
 
 
 router.get("/me", connectionsController.getCurrentUserConnectionsAll);
+router.get("/:userId", connectionsController.getCurrentUserConnectionsWithSomeOne);
 
 // ----------
 router.get("/me/filter", (req, res, next) =>{

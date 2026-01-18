@@ -72,36 +72,41 @@ class User_ProfileRepository {
     }
 
     async getUser_Profile(userId) {
-
         try {
+            if (!userId) return null;
+
+            // Meghatározzuk a szűrést
+            const userWhere = !isNaN(Number(userId))
+                ? { id: Number(userId) }
+                : { userName: userId };
+
             const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
                 include: [
                     {
                         model: this.User,
                         as: "user",
-                        where: { [Op.or]: [{ id: userId }, { userName: userId }] },
+                        required: true,
+                        where: userWhere,
                         include: [
                             {
                                 model: this.User_Post,
                                 as: "posts",
                                 limit: 3,
-                                order: [["id", "desc"]]
-                            }
-                        ]
+                                order: [["id", "desc"]],
+                            },
+                        ],
                     },
-                ]
+                ],
             });
 
             if (!profile) return null;
 
-            const { Connections } = this;
-
-            const sentCount = await Connections.count({
-                where: { User_Requested_ID: profile.USER_ID, Status: "accepted" }
+            const sentCount = await this.Connections.count({
+                where: { User_Requested_ID: profile.USER_ID, Status: "accepted" },
             });
 
-            const receivedCount = await Connections.count({
-                where: { To_User_ID: profile.USER_ID, Status: "accepted" }
+            const receivedCount = await this.Connections.count({
+                where: { To_User_ID: profile.USER_ID, Status: "accepted" },
             });
 
             const result = profile.toJSON();
