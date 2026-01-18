@@ -15,6 +15,16 @@ class User_SettingsRepository {
         }
     }
 
+    async getUser_SettingsByToken(user_SettingsId) {
+        try {
+            return await this.User_Settings.scope("allUser_SettingsData").findOne({
+                where: { ID: user_SettingsId }
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
+        }
+    }
+
     async getUser_SettingsByID(user_SettingsId) {
         try {
             return await this.User_Settings.scope("allUser_SettingsData").findOne({
@@ -37,6 +47,19 @@ class User_SettingsRepository {
     async createUser_Settings(createData) {
         try {
             return await this.User_Settings.create(createData);
+        } catch (error) {
+            throw new DbError("Nem sikerült létrehozni a felhasználót.", {
+                details: error.message,
+                data: user_SettingsData,
+            });
+        }
+    }
+
+    async createUser_SettingsByID(createData, options) {
+        try {
+            return await this.User_Settings.create(createData, {
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a felhasználót.", {
                 details: error.message,

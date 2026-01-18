@@ -6,6 +6,11 @@ class ConnectionsService {
     constructor(db) {
         this.connectionsRepository = require("../repositories")(db).connectionsRepository;
         this.userRepository = require("../repositories")(db).userRepository;
+        this.notificationService = null;
+    }
+
+    setNotificationService(notificationService) {
+        this.notificationService = notificationService;
     }
 
     async getConnections() {
@@ -74,6 +79,24 @@ class ConnectionsService {
         return friendsWithProfile;
     }
 
+    async getUserFriendlistByID(userId) {
+        const rawFriendlist = await this.connectionsRepository.getUserFriendlistByID(userId);
+
+        const filteredFriendlist = rawFriendlist.map(friendItem => (
+            {
+                friendId: friendItem.User_Requested_ID != userId ? friendItem.User_Requested_ID : friendItem.To_User_ID
+            }
+        ));
+
+        const friendsWithProfile = await Promise.all(filteredFriendlist.map(
+            friend => this.userRepository.getUserByID(friend.friendId)
+        )
+        );
+
+
+        return friendsWithProfile;
+    }
+
     async deleteConnection(token, To_User_ID) {
         if (!token) {
             throw new BadRequestError("hiányzó token");
@@ -102,14 +125,14 @@ class ConnectionsService {
             throw new BadRequestError("rossz paramáter action érték");
         }
         const encodedToken = authUtils.verifyToken(token);
-        
+
 
         // valid user-e
         const validUser = await this.userRepository.getUser(To_User_ID);
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
-        
+
 
         // magadat nem kezelheted
         if (To_User_ID == encodedToken.userID) {
@@ -124,8 +147,14 @@ class ConnectionsService {
         }
 
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
+
+
+
         if (existingConnection && existingConnection.Status == "pending") {
             await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
+
+            await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
+
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,
                 To_User_ID,
@@ -133,6 +162,9 @@ class ConnectionsService {
             });
         }
         else if (!existingConnection) {
+
+            await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
+
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,
                 To_User_ID,

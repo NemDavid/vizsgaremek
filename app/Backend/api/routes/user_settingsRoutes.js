@@ -3,7 +3,7 @@ const router = express.Router();
 const user_settingsController = require("../controllers/user_settingsController");
 
 
-router.get("/", user_settingsController.getUser_SettingsByID);
+router.get("/", user_settingsController.getUser_SettingsByToken);
 
 
 router.delete("/", user_settingsController.deleteUser_Settings);

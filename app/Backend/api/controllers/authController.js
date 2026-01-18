@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const { userService, notificationService, verify_codeService } = require("../services")(db);
+const { userService, user_profileService, notificationService, user_SettingsService } = require("../services")(db);
 const authUtils = require("../utilities/authUtils");
 
 // --- 1. lépés: regisztráció form adatok fogadása ---
@@ -37,7 +37,7 @@ exports.registerUser = async (req, res, next) => {
 exports.confirmRegistration = async (req, res, next) => {
     const { token } = req.params;
     const { first_name, last_name, birth_date, birth_place, schools, bio } = req.body || {};
-    const { user_profileService } = require("../services")(db);
+
     try {
         const decoded = authUtils.verifyToken(token);
         if (!decoded) {
@@ -77,9 +77,12 @@ exports.confirmRegistration = async (req, res, next) => {
                 }
             );
 
+            const user_settings = await user_SettingsService.createUser_SettingsByID(newProfile.USER_ID, { transaction });
+
             return {
                 user: createdUser,
-                profile: createdUser_Profile
+                profile: createdUser_Profile,
+                settings: user_settings
             };
 
         });
@@ -97,7 +100,7 @@ exports.confirmRegistration = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
 
     try {
         if (req.cookies.user_token) {
@@ -120,10 +123,8 @@ exports.login = async (req, res, next) => {
         const token = authUtils.generateUserToken(user);
         authUtils.setCookie(res, "user_token", token);
 
-        const notificationText = `Sikeresen bejelentkeztél a fiókodba.
-        Ha nem te voltál, kérjük, azonnal változtasd meg a jelszavad!
-        Vagy lépj kapcsolatba az ügyfélszolgálatunkkal.`.trim();
-        await notificationService.sendSimpleNotification(user, notificationText);
+        
+        await notificationService.sendNotificationToUser(user, "login");
 
         res.status(200).json({ token });
 

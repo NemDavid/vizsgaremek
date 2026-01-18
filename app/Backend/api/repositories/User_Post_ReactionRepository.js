@@ -6,7 +6,7 @@ class User_Post_ReactionRepository {
         this.sequelize = db.sequelize;
     }
 
-    async getUsers_posts_reactions() {
+    async getUsers_posts_reactions(options = {}) {
         try {
             return await this.User_Post_Reaction.scope("allUserPostReactionData").findAll({
                 transaction: options.transaction
@@ -44,6 +44,8 @@ class User_Post_ReactionRepository {
     }
 
     async createUsers_posts_reaction(reactionData, options = {}) {
+        console.log(reactionData, options);
+        
         try {
             return await this.User_Post_Reaction.create(reactionData, {
                 transaction: options.transaction
@@ -51,7 +53,7 @@ class User_Post_ReactionRepository {
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a reakciót.", {
                 details: error.message,
-                data: user_post_reactionData,
+                data: reactionData,
             });
         }
     }

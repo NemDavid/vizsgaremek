@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
 
     User.hasMany(User_Post, {
         foreignKey: "USER_ID",
-        as: "post"
+        as: "posts"
     });
     User_Post.belongsTo(User, {
         foreignKey: "USER_ID",
@@ -33,6 +33,7 @@ module.exports = (sequelize) => {
     });
 
 
+    // reaction
     User.hasMany(User_Post_Reaction, {
         foreignKey: "USER_ID",
         as: "post_reactions"
@@ -53,6 +54,7 @@ module.exports = (sequelize) => {
     });
 
 
+    // comment
     User.hasMany(User_Post_Comment, {
         foreignKey: "USER_ID",
         as: "post_comments"

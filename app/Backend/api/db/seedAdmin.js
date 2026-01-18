@@ -47,7 +47,7 @@ async function seedAdminUser(db) {
                 avatar_url: "https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
             });
 
-            await Settings.createUser_Settings(newUser.ID ?? 1);
+            await Settings.createUser_SettingsByID(newUser.ID ?? 1);
 
             console.log("[Seed] Admin felhasználó sikeresen létrehozva");
         }
@@ -67,7 +67,7 @@ async function seedAdminUser(db) {
                 username: ExampleAccunt.username,
                 role: ExampleAccunt.role,
             });
-
+            
 
             // létrehozod a profilját
             await userProfileService.createUser_Profile({
@@ -77,7 +77,7 @@ async function seedAdminUser(db) {
                 avatar_url: "https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
             });
 
-            await Settings.createUser_Settings(newUser.ID ?? 2);
+            await Settings.createUser_SettingsByID(newUser.ID ?? 2);
 
             console.log("[Seed] Example felhasználó sikeresen létrehozva");
         }

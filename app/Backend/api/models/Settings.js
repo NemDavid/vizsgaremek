@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     type: DataTypes.BIGINT,
                     primaryKey: true,
-                    autoIncrement: true,
                     allowNull: false
                 },
                 Notifications: {

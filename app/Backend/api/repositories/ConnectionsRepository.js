@@ -72,14 +72,30 @@ class ConnectionsRepository {
         }
     }
 
-    async getCurrentUserFriendlist(User_Requested_ID) {
+    async getCurrentUserFriendlist(userId) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
                     Status: "accepted",
                     [Op.or]: [
-                        { User_Requested_ID },
-                        { To_User_ID: User_Requested_ID }
+                        { User_Requested_ID: userId },
+                        { To_User_ID: userId }
+                    ]
+                }
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a barátlistát.", { details: error.message });
+        }
+    }
+
+    async getUserFriendlistByID(userId) {
+        try {
+            return await this.Connections.scope("allConnectionData").findAll({
+                where: {
+                    Status: "accepted",
+                    [Op.or]: [
+                        { User_Requested_ID: userId },
+                        { To_User_ID: userId }
                     ]
                 }
             });

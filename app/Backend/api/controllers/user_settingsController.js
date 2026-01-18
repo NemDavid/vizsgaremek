@@ -9,11 +9,11 @@ exports.getUser_Settings = async (req, res, next) => {
     }
 };
 
-exports.getUser_SettingsByID = async (req, res, next) => {
+exports.getUser_SettingsByToken = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(200).json(await user_SettingsService.getUser_SettingsByID(token));
+        res.status(200).json(await user_SettingsService.getUser_SettingsByToken(token));
     } catch (error) {
         next(error);
     }

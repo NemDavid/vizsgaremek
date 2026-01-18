@@ -72,6 +72,8 @@ class User_ProfileRepository {
     }
 
     async getUser_Profile(userId) {
+        console.log(userId);
+        
         try {
             const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
                 where: { USER_ID: userId },
@@ -82,7 +84,7 @@ class User_ProfileRepository {
                         include: [
                             {
                                 model: this.User_Post,
-                                as: "post",
+                                as: "posts",
                                 limit: 3,
                                 order: [["id","desc"]]
                             }

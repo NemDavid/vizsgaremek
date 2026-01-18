@@ -10,10 +10,14 @@ class User_SettingsService {
         return await this.user_settingsRepository.getUser_Settings();
     }
 
-    async getUser_SettingsByID(token) {
+    async getUser_SettingsByToken(token) {
         const encodedToken = authUtils.verifyToken(token);
 
-        return await this.user_settingsRepository.getUser_SettingsByID(encodedToken.userID);
+        return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID);
+    }
+
+    async getUser_SettingsByID(userId) {
+        return await this.user_settingsRepository.getUser_SettingsByID(userId);
     }
 
     async deleteUser_Settings(token) {
@@ -34,12 +38,13 @@ class User_SettingsService {
 
     async createUser_Settings(token) {
         const encodedToken = authUtils.verifyToken(token);
-
+        
         return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID });
     }
-    async createUser_Settings(ID) {
 
-        return await this.user_settingsRepository.createUser_Settings({ ID });
+    async createUser_SettingsByID(ID, options = {}) {
+
+        return await this.user_settingsRepository.createUser_SettingsByID({ ID }, options);
     }
 
 

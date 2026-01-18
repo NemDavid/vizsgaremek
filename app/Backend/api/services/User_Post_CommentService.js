@@ -5,8 +5,14 @@ class User_Post_CommentService {
     constructor(db, user_profileService) {
         this.user_post_CommentRepository = require("../repositories")(db).user_post_commentRepository;
         this.user_postRepository = require("../repositories")(db).user_postRepository;
+        this.userRepository = require("../repositories")(db).userRepository;
         this.user_profileService = user_profileService;
+        this.notificationService = null;
         this.db = db; // Transaction-hoz szükséges
+    }
+
+    setNotificationService(notificationService) {
+        this.notificationService = notificationService;
     }
 
     async getUsers_posts_comments() {
@@ -31,22 +37,27 @@ class User_Post_CommentService {
     }
 
     async createUsers_posts_comment(commentData, token) {
-        const encodedToken = authUtils.verifyToken(token);
-        commentData.USER_ID = encodedToken.userID;
-
-        // Validálás
-        this._validateCommentData(commentData);
-
-        // Post létezik-e
-        const targetPost = await this.user_postRepository.getUser_Post_ByID(commentData.POST_ID);
-        if (!targetPost) {
-            throw new BadRequestError("a cel post nem található");
-        }
-
-
-        // transaction
-        //------------------------------------------------------------
         try {
+            const encodedToken = authUtils.verifyToken(token);
+            commentData.USER_ID = encodedToken.userID;
+
+            // Validálás
+            this._validateCommentData(commentData);
+
+            // Post létezik-e
+            const targetPost = await this.user_postRepository.getUser_Post_ByID(commentData.POST_ID);
+            if (!targetPost) {
+                throw new BadRequestError("a cel post nem található");
+            }
+
+            // valid use-e
+            const validUser = await this.userRepository.getUser(targetPost.USER_ID);
+            if (!validUser) {
+                throw new BadRequestError("nincs ilyen felhasználó");
+            }
+
+            // transaction
+            //------------------------------------------------------------
             const result = await this.db.sequelize.transaction(async transaction => {
 
                 // 1. Komment létrehozása transaction-ben
@@ -77,11 +88,20 @@ class User_Post_CommentService {
                 }
 
 
+
                 return {
                     comment: createdComment,
                     xpAdded: xpResult
                 };
 
+            });
+
+
+            // email az erintett user nek
+            process.nextTick(() => {
+                this.notificationService
+                    .sendNotificationToUser(validUser, "new_post_comment")
+                    .catch(console.error);
             });
 
 

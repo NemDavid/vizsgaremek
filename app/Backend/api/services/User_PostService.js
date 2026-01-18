@@ -6,7 +6,12 @@ class User_PostService {
         this.user_postRepository = require("../repositories")(db).user_postRepository;
         this.userRepository = require("../repositories")(db).userRepository;
         this.user_profileService = user_profileService;
+        this.notificationService = null;
         this.db = db;
+    }
+
+    setNotificationService(notificationService) {
+        this.notificationService = notificationService;
     }
 
     async getUser_Posts() {
@@ -43,40 +48,40 @@ class User_PostService {
     }
 
     async createUser_Post(postData) {
-        const encodedToken = authUtils.verifyToken(postData.token);
-        postData.USER_ID = encodedToken.userID;
-
-
-        // validate
-        if (!postData.USER_ID) {
-            throw new BadRequestError("hiányzó USER_ID");
-        }
-        if (!postData.title) {
-            throw new BadRequestError("hiányzó title");
-        }
-        if (!authUtils.isValidPostTittle(postData.title)) {
-            throw new BadRequestError("A cím 3 és 255 karakter között lehet");
-        }
-        if (!postData.content) {
-            throw new BadRequestError("hiányzó content");
-        }
-        if (!authUtils.isValidPostContent(postData.content)) {
-            throw new BadRequestError("A tartalom 3 és 1000 karakter között lehet");
-        }
-        if (!postData.token) {
-            throw new BadRequestError("hiányzó token");
-        }
-
-
-        const validUser = await this.userRepository.getUser(postData.USER_ID);
-        if (!validUser) {
-            throw new BadRequestError("nincs ilyen felhasználó");
-        }
-
-
-        // transaction
-        //------------------------------------------------------------
         try {
+            const encodedToken = authUtils.verifyToken(postData.token);
+            postData.USER_ID = encodedToken.userID;
+
+
+            // validate
+            if (!postData.USER_ID) {
+                throw new BadRequestError("hiányzó USER_ID");
+            }
+            if (!postData.title) {
+                throw new BadRequestError("hiányzó title");
+            }
+            if (!authUtils.isValidPostTittle(postData.title)) {
+                throw new BadRequestError("A cím 3 és 255 karakter között lehet");
+            }
+            if (!postData.content) {
+                throw new BadRequestError("hiányzó content");
+            }
+            if (!authUtils.isValidPostContent(postData.content)) {
+                throw new BadRequestError("A tartalom 3 és 1000 karakter között lehet");
+            }
+            if (!postData.token) {
+                throw new BadRequestError("hiányzó token");
+            }
+
+
+            const validUser = await this.userRepository.getUser(postData.USER_ID);
+            if (!validUser) {
+                throw new BadRequestError("nincs ilyen felhasználó");
+            }
+
+
+            // transaction
+            //------------------------------------------------------------
             const result = await this.db.sequelize.transaction(async transaction => {
                 // add xp
                 await this.user_profileService.addXPToUser(postData.USER_ID,
@@ -90,7 +95,15 @@ class User_PostService {
                     }
                 );
 
+
                 return newPost;
+            });
+
+            //  email a baratoknak transaction utan
+            process.nextTick(() => {
+                this.notificationService
+                    .sendNotificationToFriends(validUser, "new_post")
+                    .catch(console.error);
             });
 
 

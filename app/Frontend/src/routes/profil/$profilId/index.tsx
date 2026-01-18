@@ -114,7 +114,7 @@ function RouteComponent() {
             <span>Barát</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-white font-bold text-lg">{profil?.data.user.post.length}</span>
+            <span className="text-white font-bold text-lg">{profil?.data.user.posts.length}</span>
             <span>Poszt</span>
           </div>
           <div className="flex flex-col items-center">

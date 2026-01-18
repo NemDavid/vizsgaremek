@@ -1,31 +1,163 @@
-const emailUtil = require('../utilities/email');
-const authUtils = require('../utilities/authUtils');
 const bcrypt = require('bcrypt');
 const { BadRequestError } = require('../errors');
+const email = require("../utilities/email");
+const authUtils = require("../utilities/authUtils");
+const emailTemplates = require("../utilities/emailTemplates");
 
 class NotificationService {
-    constructor(verify_codeService, userService) {
+    constructor(verify_codeService, userService, user_SettingsService, connectionService) {
         this.verify_codeService = verify_codeService;
         this.userService = userService;
+        this.user_SettingsService = user_SettingsService;
+        this.connectionService = connectionService
     }
-    async sendSimpleNotification(user, notificationText) {
+
+    async sendNotificationToFriends(user, notificationType) { 
         try {
             // Dev módban csak logoljuk, ne küldjünk emailt
             if (process.env.NODE_ENV !== 'production') {
-                console.log(`[DEV] Welcome email to ${user.email}`);
+                console.log(`[DEV] Notification to ${user.email}`);
                 return;
             }
 
-            const { text, html } = emailUtil.simpleNotification(user.username, notificationText);
+            const friendlist = await this.connectionService.getUserFriendlistByID(user.ID);
+
+            await Promise.all(friendlist.map(
+                friend => this.sendUserNotification(friend.ID, notificationType)
+            )
+            );
+
+
+        } catch (err) {
+            // Email hiba nem akadályozza az értesítési folyamatot
+            console.error('Hiba az értesítéssel kapcsolatban:', err);
+            throw err;
+        }
+    }
+
+    async sendUserNotification(userId, notificationType) {
+        try {
+            const user = await this.userService.getUser(userId);
+
+            const userSettings = await this.user_SettingsService.getUser_SettingsByID(user.ID);
+            const Notifications = typeof userSettings.Notifications == "string"
+                ? JSON.parse(userSettings.Notifications)
+                : userSettings.Notifications;
 
             const subject = 'MiHirunk - Értesítés a fiókoddal kapcsolatban';
 
+            let text = "", html = "", sendEmail = false;
 
-            await emailUtil.sendEmail({ to: user.email, subject, text, html });
+
+            switch (notificationType) {
+                case "new_post":
+                    {
+                        const template = emailTemplates.newPostNotificationTemplate(user.username);
+                        text = template.text;
+                        html = template.html;
+                        sendEmail = Notifications.new_post;
+                    }
+
+                    break;
+                default:
+                    throw new BadRequestError("Ismeretlen értesítési típus");
+            }
+
+
+            if (sendEmail) {
+                await email.sendEmail({ to: user.email, subject, text, html });
+            }
+
         } catch (err) {
-            // Email hiba nem akadályozza a regisztrációt
+            // Email hiba nem akadályozza az értesítési folyamatot
             console.error('Hiba az értesítéssel kapcsolatban:', err);
-            throw err; // vagy return false, attól függően, hogy szeretnéd kezelni
+            throw err;
+        }
+    }
+
+
+
+    async sendNotificationToUser(user, notificationType) {
+        console.log(user.ID, notificationType);
+        
+        try {
+            // Dev módban csak logoljuk, ne küldjünk emailt
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`[DEV] Login notification to ${user.email}`);
+                return;
+            }
+
+            console.log(user.email, user.ID, notificationType);
+
+
+            const userSettings = await this.user_SettingsService.getUser_SettingsByID(user.ID);
+            const Notifications = typeof userSettings.Notifications == "string"
+                ? JSON.parse(userSettings.Notifications)
+                : userSettings.Notifications;
+
+            const subject = 'MiHirunk - Értesítés a fiókoddal kapcsolatban';
+
+            let text = "", html = "";
+            let sendEmail = true;
+
+            console.log(Notifications);
+
+
+            switch (notificationType) {
+                case "login":
+                    {
+                        console.log("1 ágy");
+
+                        const template = emailTemplates.loginNotificationTemplate(user.username);
+                        text = template.text;
+                        html = template.html;
+                        sendEmail = Notifications.new_login;
+                    }
+
+                    break;
+                case "new_friendrequest":
+                    {
+                        const template = emailTemplates.newFriendRequestNotificationTemplate(user.username);
+                        text = template.text;
+                        html = template.html;
+                        sendEmail = Notifications.new_friend_request;
+                    }
+
+                    break;
+                case "new_post_comment":
+                    {
+                        const template = emailTemplates.newCommentNotificationTemplate(user.username);
+                        text = template.text;
+                        html = template.html;
+                        sendEmail = Notifications.new_comment_on_post;
+                    }
+
+                    break;
+                case "new_post_reaction":
+                    {
+                        const template = emailTemplates.newReactionNotificationTemplate(user.username);
+                        text = template.text;
+                        html = template.html;
+                        sendEmail = Notifications.new_reaction_on_post;
+                    }
+
+                    break;
+                default:
+                    throw new BadRequestError("Ismeretlen értesítési típus");
+            }
+
+            console.log(sendEmail, text, html);
+
+
+            if (!sendEmail) return;
+
+            await email.sendEmail({ to: user.email, subject, text, html });
+
+
+        } catch (err) {
+            // Email hiba nem akadályozza az értesítési folyamatot
+            console.error('Hiba az értesítéssel kapcsolatban:', err);
+            throw err;
         }
     }
 
@@ -42,7 +174,7 @@ class NotificationService {
                 `;
             const text = `Szia ${user.username}, erősítsd meg a regisztrációd itt: ${confirmUrl}`;
 
-            await emailUtil.sendEmail({ to: user.email, subject, text, html });
+            await email.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
@@ -78,7 +210,7 @@ class NotificationService {
                     <p>Megbaszlak ezzel a koddal: :) <strong>${verify_codeData.verify_code}</strong>!</p>
                 `;
 
-            await emailUtil.sendEmail({ to: email, subject, html });
+            await email.sendEmail({ to: email, subject, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;

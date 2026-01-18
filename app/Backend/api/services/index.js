@@ -20,8 +20,16 @@ module.exports = (db) =>
     const connectionsService = new ConnectionsService(db);
     const user_SettingsService = new User_SettingsService(db);
     const kickService = new KickService(db);
-    const notificationService = new NotificationService(verify_codeService, userService);
+    const notificationService = new NotificationService(verify_codeService, userService, user_SettingsService, connectionsService);
 
+
+    // Lazy injection
+    connectionsService.setNotificationService(notificationService);
+    user_postService.setNotificationService(notificationService);
+    user_post_reactionService.setNotificationService(notificationService);
+    user_post_commentService.setNotificationService(notificationService);
+
+    
     return { 
         userService, 
         user_profileService, 

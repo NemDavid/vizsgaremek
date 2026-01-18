@@ -5,11 +5,16 @@ class User_Post_ReactionService {
     constructor(db, user_profileService) {
         this.user_post_reactionRepository = require("../repositories")(db).user_post_reactionRepository;
         this.user_postRepository = require("../repositories")(db).user_postRepository;
+        this.userRepository = require("../repositories")(db).userRepository;
         this.user_profileService = user_profileService;
+        this.notificationService = null;
         this.db = db; // Transaction-hoz szükséges
     }
 
-    // ========== PUBLIKUS METÓDUSOK ==========
+    setNotificationService(notificationService) {
+        this.notificationService = notificationService;
+    }
+
 
     async getUsers_posts_reactions() {
         return await this.user_post_reactionRepository.getUsers_posts_reactions();
@@ -35,22 +40,28 @@ class User_Post_ReactionService {
     }
 
     async userMakeReaction(reactionData, token) {
-        const encodedToken = authUtils.verifyToken(token);
-        reactionData.USER_ID = encodedToken.userID;
-
-        // Validálás
-        this._validateReactionData(reactionData);
-
-        // Post létezik-e
-        const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID);
-        if (!targetPost) {
-            throw new BadRequestError("a cel post nem található");
-        }
-
-
-        // transaction
-        //------------------------------------------------------------ 
         try {
+            const encodedToken = authUtils.verifyToken(token);
+            reactionData.USER_ID = encodedToken.userID;
+
+            // Validálás
+            this._validateReactionData(reactionData);
+
+            // Post létezik-e
+            const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID);
+            if (!targetPost) {
+                throw new BadRequestError("a cel post nem található");
+            }
+
+            // valid use-e
+            const validUser = await this.userRepository.getUser(targetPost.USER_ID);
+            if (!validUser) {
+                throw new BadRequestError("nincs ilyen felhasználó");
+            }
+
+
+            // transaction
+            //------------------------------------------------------------ 
             const result = await this.db.sequelize.transaction(async transaction => {
                 let result;
 
@@ -59,7 +70,7 @@ class User_Post_ReactionService {
                 const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
                     reactionData.USER_ID,
                     reactionData.POST_ID,
-                    transaction
+                    { transaction }
                 );
 
 
@@ -74,10 +85,20 @@ class User_Post_ReactionService {
                     result = await this._createdReaction(reactionData, targetPost, transaction);
                 }
 
+
+
                 return result;
             });
 
+            
+            // email az erintett usernek commit utan
+            process.nextTick(() => {
+                this.notificationService
+                    .sendNotificationToUser(validUser, "new_post_reaction")
+                    .catch(console.error);
+            });
 
+            
             return result;
 
             // If the execution reaches this line, the transaction has been committed successfully
@@ -138,7 +159,7 @@ class User_Post_ReactionService {
         const updatedPost = await this.user_postRepository.updateUser_Post(
             reactionData.POST_ID,
             updatePost,
-            transaction
+            { transaction }
         );
 
         if (!updatedPost) {
@@ -167,18 +188,19 @@ class User_Post_ReactionService {
         updatePost = this._calculatePostStats('add', reactionData.reaction, updatePost);
 
         // Reakció frissítése transaction-ben
-        const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction({
+        const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction(
+            {
             ...reactionData,
             ID: existingReaction.ID
         },
-            transaction
+            { transaction }
         );
 
         // Post frissítése transaction-ben
         const updatedPost = await this.user_postRepository.updateUser_Post(
             reactionData.POST_ID,
             updatePost,
-            transaction
+            { transaction }
         );
 
         if (!updatedReaction) {
@@ -198,14 +220,14 @@ class User_Post_ReactionService {
         // Reakció létrehozása transaction-ben
         const createdReaction = await this.user_post_reactionRepository.createUsers_posts_reaction(
             reactionData,
-            transaction
+            { transaction }
         );
 
         // Post frissítése transaction-ben
         const updatedPost = await this.user_postRepository.updateUser_Post(
             reactionData.POST_ID,
             updatePost,
-            transaction
+            { transaction }
         );
 
         if (!createdReaction) {

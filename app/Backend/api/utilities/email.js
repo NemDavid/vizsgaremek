@@ -37,12 +37,4 @@ exports.sendEmail = async ({ to, subject, text, html }) => {
 };
 
 
-// emailTemplates.js
-exports.simpleNotification = (username, message) => {
-  const text = `Szia ${username}!\n\n${message}`;
-  const html = `
-    <p>Szia <strong>${username}</strong>!</p>
-    <p>${message}</p>
-  `;
-  return { text, html };
-};
+

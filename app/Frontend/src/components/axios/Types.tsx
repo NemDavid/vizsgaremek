@@ -28,7 +28,7 @@ export interface User {
     updated_at: string;
     last_login: string;
 
-    post: UserPost[];
+    posts: UserPost[];
 }
 
 export interface UserPost {
