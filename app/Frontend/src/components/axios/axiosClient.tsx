@@ -6,8 +6,10 @@ import type { PostFormSchema } from "../comment-according"
 import type { UserConnection, UserProfileResponse } from "./Types"
 
 
+const baseURL = import.meta.env.VITE_API_URL;
+
 export const ac = axios.create({
-  baseURL: "http://localhost:6769",
+  baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -15,7 +17,7 @@ export const ac = axios.create({
 })
 
 export const FileApi = axios.create({
-  baseURL: "http://localhost:6769",
+  baseURL: baseURL,
   withCredentials: true,
 });
 

@@ -8,8 +8,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: MiHirunk_DB
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -25,8 +23,7 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: example
-    ports:
-      - "8080:80"
+      PMA_ABSOLUTE_URI: http://localhost/phpmyadmin/
     depends_on:
       - db
 
@@ -36,15 +33,15 @@ services:
       context: ./Backend
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "6769:6769" # if has proxy dont open port
     environment:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: example
       DB_NAME: MiHirunk_DB
       DB_DIALECT: mysql
-      NODE_ENV: development
+      NODE_ENV: production
+      PORT: 6769
+      HOST: 0.0.0.0
     volumes:
       - ./Backend:/app     # <--- bind mount a friss kódhoz
       - /app/node_modules  # <--- ne írja felül a node_modules-t a host
@@ -59,13 +56,24 @@ services:
       context: ./Frontend
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "3000:80"  # nginx alapból 80-as porton fut if has proxy dont open port
     depends_on:
       - backend
+    environment:
+      - VITE_API_URL=http://localhost/api
 
   #nginx or treafik reverse proxy, open port 80 or 443
-
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: mihirunk_nginx_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"   # IDE jön minden külső kérés
+    volumes:
+      - ./nginx-proxy/nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - phpmyadmin
 
 volumes:
   db_data:
