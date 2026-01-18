@@ -72,21 +72,20 @@ class User_ProfileRepository {
     }
 
     async getUser_Profile(userId) {
-        console.log(userId);
-        
+
         try {
             const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
-                where: { USER_ID: userId },
                 include: [
                     {
                         model: this.User,
                         as: "user",
+                        where: { [Op.or]: [{ id: userId }, { userName: userId }] },
                         include: [
                             {
                                 model: this.User_Post,
                                 as: "posts",
                                 limit: 3,
-                                order: [["id","desc"]]
+                                order: [["id", "desc"]]
                             }
                         ]
                     },
@@ -98,11 +97,11 @@ class User_ProfileRepository {
             const { Connections } = this;
 
             const sentCount = await Connections.count({
-                where: { User_Requested_ID: userId, Status: "accepted" }
+                where: { User_Requested_ID: profile.USER_ID, Status: "accepted" }
             });
 
             const receivedCount = await Connections.count({
-                where: { To_User_ID: userId, Status: "accepted" }
+                where: { To_User_ID: profile.USER_ID, Status: "accepted" }
             });
 
             const result = profile.toJSON();

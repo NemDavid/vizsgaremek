@@ -96,7 +96,7 @@ class Verify_codeService {
         
         updateverify_code.verify_code = updateData.verify_code;
 
-        console.log(updateverify_code);
+
         
 
         return updateverify_code;

@@ -28,7 +28,9 @@ exports.sendEmail = async ({ to, subject, text, html }) => {
       text,
       html
     });
-    console.log(`Email sent to ${to}: ${info.messageId}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Email sent to ${to}: ${info.messageId}`);
+    }
     return info;
   } catch (err) {
     console.error('Email sending error:', err);

@@ -205,7 +205,6 @@ class ConnectionsService {
             throw new BadRequestError("Nincs ilyen kapcsolat");
         }
 
-        console.log(existingConnection);
 
         // elfogadas es blockolas kezelese
         let affectedRows = 0;
@@ -213,13 +212,11 @@ class ConnectionsService {
             affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, { Status: action });
         }
         else if (action == "blocked" && encodedToken.userID == existingConnection.User_Requested_ID) {
-            console.log("2");
 
             affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, { Status: action });
         }
         // blockolasnal megforditjuk a kapcsolatot, ha akihez erkezett a request, az blokkolja
         else if (action == "blocked" && encodedToken.userID == existingConnection.To_User_ID) {
-            console.log("3");
 
             affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, {
                 To_User_ID,

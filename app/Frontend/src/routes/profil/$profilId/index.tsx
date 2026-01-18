@@ -91,22 +91,11 @@ function RouteComponent() {
       <div className="-mt-20 flex flex-col items-center text-center px-4 border-b-10 pb-5 bg-red-400 pt-40">
         <h1 className="text-2xl font-semibold">{profil?.data.first_name} {profil?.data.last_name}</h1>
         <div className={`ml-auto`}>
-          {auth?.data.userID == Number(profilId) ?
-            <PopOver trigger={<EllipsisVertical className='size-7' />} ButtonStyle='text-black bg-red-300 w-8 h-8 rounded-full' ContentStyle='bg-red-200 border-solid border-1 border-red-500 rounded-3xl'>
-              <div className="flex flex-col gap-2">
-                <UserProfileModify id={Number(profilId)} myuserdata={profil?.data} />
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' onClick={() => nav({ to: "/connections" })}><User className='text-black' />Barátaim</Button>
-              </div>
-            </PopOver>
-            :
-            <PopOver trigger={<EllipsisVertical className='size-7' />} ButtonStyle='text-black bg-red-300 w-8 h-8 rounded-full' ContentStyle='bg-red-200 border-solid border-1 border-red-500 rounded-3xl'>
-              <div className="flex flex-col gap-2">
-                <ReqFriend userID={BigInt(profilId)} />
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' disabled><UserMinus className='text-black' />Barát elutasitása</Button>
-                <BlockUser userID={BigInt(profilId)} className='bg-red-400 hover:bg-red-100 hover:text-red-800'/>
-              </div>
-            </PopOver>
-          }
+          <ProfileMenu
+            isMe={auth?.data.userID === Number(profilId)}
+            profilId={profilId}
+            profil={profil}
+          />
         </div>
         <div className="flex gap-8 mt-4 text-sm text-slate-300">
           <div className="flex flex-col items-center">
@@ -123,48 +112,65 @@ function RouteComponent() {
           </div>
         </div>
         <div className='flex flex-wrap gap-6 py-2'>
-          {profil?.data.bio !== "" ?
-            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
-              <span className='text-black font-bold'>Bio</span>
-              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.bio}</span>
-            </div>
-            :
-            ""
-          }
-          {profil?.data.schools !== "" ?
-            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
-              <span className='text-black font-bold'>Iskolák</span>
-              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.schools}</span>
-            </div>
-            :
-            ""
-          }
-          {profil?.data.birth_date !== "0000-00-00" ?
-            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
-              <span className='text-black font-bold'>Születési Dátum</span>
-              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.birth_date}</span>
-            </div>
-            :
-            ""
-          }
-          {profil?.data.birth_place !== "" ?
-            <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
-              <span className='text-black font-bold'>Születési hely</span>
-              <span className="bg-red-400 text-black w-full rounded-xl px-2">{profil?.data.birth_place}</span>
-            </div>
-            :
-            ""
-          }
+          <div className="flex flex-wrap gap-6 py-2">
+            <ProfileInfo label="Bio" value={profil?.data.bio || ""} />
+            <ProfileInfo label="Iskolák" value={profil?.data.schools || ""} />
+            <ProfileInfo label="Születési dátum" value={profil?.data.birth_date || ""} />
+            <ProfileInfo label="Születési hely" value={profil?.data.birth_place || ""} />
+          </div>
         </div>
       </div>
       <div className="mt-10 px-6">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
         <div className="space-y-4 ">
-          
+
         </div>
       </div>
 
     </DefaultUIFrame>
   )
 
+}
+
+function ProfileInfo({ label, value }: { label: string; value?: string }) {
+  if (!value || value === "" || value === "0000-00-00") return null
+
+  return (
+    <div className="flex flex-col items-center bg-rose-200 p-2 rounded-xl">
+      <span className="text-black font-bold">{label}</span>
+      <span className="bg-red-400 text-black w-full rounded-xl px-2">
+        {value}
+      </span>
+    </div>
+  )
+}
+
+function ProfileMenu({ isMe, profilId, profil }: any) {
+  const nav = useNavigate()
+  return (
+    <PopOver
+      trigger={<EllipsisVertical className="size-7" />}
+      ButtonStyle="text-black bg-red-300 w-8 h-8 rounded-full"
+      ContentStyle="bg-red-200 border border-red-500 rounded-3xl"
+    >
+      <div className="flex flex-col gap-2">
+        {isMe ? (
+          <>
+            <UserProfileModify id={Number(profilId)} myuserdata={profil?.data} />
+            <Button onClick={() => nav({ to: "/connections" })}>
+              <User /> Barátaim
+            </Button>
+          </>
+        ) : (
+          <>
+            <ReqFriend userID={BigInt(profilId)} />
+            <Button disabled>
+              <UserMinus /> Barát elutasítása
+            </Button>
+            <BlockUser userID={BigInt(profilId)} />
+          </>
+        )}
+      </div>
+    </PopOver>
+  )
 }

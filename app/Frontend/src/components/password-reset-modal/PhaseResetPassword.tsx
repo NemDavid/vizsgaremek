@@ -53,8 +53,6 @@ export function PhaseResetPassword({ onSuccess, user }: { onSuccess: () => void,
 
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("asd");
-
         UpdatePassword(values.password)
     }
     return (

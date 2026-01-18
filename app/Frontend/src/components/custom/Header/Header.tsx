@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -58,9 +58,10 @@ const components: { title: string; to: string; description: string }[] = [
 
 
 export default function Header({ className }: { className?: string }) {
-  const [ShowHamburgermanu, setShowHamburgermanu] = useState(false); //-----------------------------------!!!
-  const [ShowSettings, setShowSettings] = useState(true); //-----------------------------------!!!
-
+  const [ShowHamburgermanu, setShowHamburgermanu] = useState(false);
+  const [ShowSettings, setShowSettings] = useState(true);
+  const [search, setSearch] = useState("");
+  const nav = useNavigate()
   useEffect(() => {
     const checkSize = () => {
       setShowSettings(window.innerWidth >= 900);
@@ -115,10 +116,15 @@ export default function Header({ className }: { className?: string }) {
 
                 {/* Search */}
                 <NavigationMenuItem>
-                  <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
-                    <Input type="text" placeholder="user" />
-                  </NavigationMenuLink>
+                  <div className="flex items-center gap-2 bg-red-900 px-3 py-2 rounded-md">
+                    <Input type="text" placeholder="user" className="h-8" value={search}
+                      onChange={(e) => setSearch(e.target.value)} />
+                    <Button type="submit" variant="link" className="h-8 bg-rose-100" onClick={() => {nav({to:"/profil/$profilId", params: {profilId: search}}) }}>
+                      Keres
+                    </Button>
+                  </div>
                 </NavigationMenuItem>
+
                 {/* Beállítások */}
                 <NavigationMenuItem>
                   {ShowSettings ?

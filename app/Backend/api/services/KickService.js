@@ -108,7 +108,7 @@ class KickService {
         }
 
         const affectedRows = await this.kickRepository.updateKick(kickId, updateData);
-        console.log(affectedRows);
+
         if (!affectedRows) {
             throw new BadRequestError("Kick nem található", { details: `kickId: ${kickId}` })
         }

@@ -44,7 +44,6 @@ class User_Post_ReactionRepository {
     }
 
     async createUsers_posts_reaction(reactionData, options = {}) {
-        console.log(reactionData, options);
         
         try {
             return await this.User_Post_Reaction.create(reactionData, {

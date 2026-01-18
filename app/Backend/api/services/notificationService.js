@@ -78,7 +78,6 @@ class NotificationService {
 
 
     async sendNotificationToUser(user, notificationType) {
-        console.log(user.ID, notificationType);
         
         try {
             // Dev módban csak logoljuk, ne küldjünk emailt
@@ -87,7 +86,7 @@ class NotificationService {
                 return;
             }
 
-            console.log(user.email, user.ID, notificationType);
+
 
 
             const userSettings = await this.user_SettingsService.getUser_SettingsByID(user.ID);
@@ -100,13 +99,12 @@ class NotificationService {
             let text = "", html = "";
             let sendEmail = true;
 
-            console.log(Notifications);
+
 
 
             switch (notificationType) {
                 case "login":
                     {
-                        console.log("1 ágy");
 
                         const template = emailTemplates.loginNotificationTemplate(user.username);
                         text = template.text;
@@ -145,8 +143,6 @@ class NotificationService {
                 default:
                     throw new BadRequestError("Ismeretlen értesítési típus");
             }
-
-            console.log(sendEmail, text, html);
 
 
             if (!sendEmail) return;
