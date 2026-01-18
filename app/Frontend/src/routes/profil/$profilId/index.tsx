@@ -41,6 +41,7 @@ function RouteComponent() {
     queryFn: () => GetProfil(profilId),
     retry: 0,
   })
+  const UserID:any = profil?.data.USER_ID
   const maxFriend: Number = (profil?.data.level || 50) + 50;
   if (isLoading) {
     return <Loader />
@@ -92,8 +93,8 @@ function RouteComponent() {
         <h1 className="text-2xl font-semibold">{profil?.data.first_name} {profil?.data.last_name}</h1>
         <div className={`ml-auto`}>
           <ProfileMenu
-            isMe={auth?.data.userID === Number(profilId)}
-            profilId={profilId}
+            isMe={auth?.data.userID === UserID}
+            profilId={UserID}
             profil={profil}
           />
         </div>
