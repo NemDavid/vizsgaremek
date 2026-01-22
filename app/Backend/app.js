@@ -11,16 +11,20 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-if (process.env.NODE_ENV === "development") {
-    app.use(cors({
-        credentials: true,
-        origin: "http://localhost:3000",
-    }));
-}
-else {
+
+
+if (process.env.Docker_Active != "false") {
+    console.log(`origin "http://localhost/"`);
     app.use(cors({
         credentials: true,
         origin: "http://localhost/",
+    }));
+}
+else {  
+    console.log(`origin "http://localhost:3000"`);
+    app.use(cors({
+        credentials: true,
+        origin: "http://localhost:3000",
     }));
 }
 

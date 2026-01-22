@@ -13,14 +13,13 @@ const sequelize = new Sequelize(
     }
 );
 
-(async () => 
-{
-    try 
-    {
-        await sequelize.authenticate()
 
+
+(async () => {
+    try {
+        await sequelize.authenticate()
         console.log("Database connection succesfull");
-    } 
+    }
     catch (error) {
         console.log("Database connection failed");
     }
@@ -29,24 +28,24 @@ const sequelize = new Sequelize(
 
 const models = require("../models")(sequelize);
 
-const db = 
+const db =
 {
     sequelize,
     Sequelize,
     ...models
 };
 
-(async () =>
-{
-    try 
-    {
-        await db.sequelize.sync( {force: false } )
+(async () => {
+    try {
+        await db.sequelize.sync({ force: false })
         console.log("database sync OK");
 
         await seedAdminUser(db)
+        console.log("");
+        console.log("");
     }
     catch (error) {
-        console.log("database synk error");
+        console.log("database synk error");        
     }
 })();
 
