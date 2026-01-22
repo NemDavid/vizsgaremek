@@ -52,10 +52,10 @@ class User_SettingsService {
         const encodedToken = authUtils.verifyToken(token);
         const ID = encodedToken.userID;
 
-        if (!updateData.Notifications) {
+        if (!updateData) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
-
+        
         const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData);
         if (!affectedRows) {
             throw new BadRequestError("user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })

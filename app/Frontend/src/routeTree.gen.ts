@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as ProfilIndexRouteImport } from './routes/profil/index'
 import { Route as SettingsPrivacyRouteImport } from './routes/settings/privacy'
 import { Route as SettingsNotificationRouteImport } from './routes/settings/notification'
 import { Route as SettingsAccountRouteImport } from './routes/settings/account'
@@ -36,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilIndexRoute = ProfilIndexRouteImport.update({
+  id: '/profil/',
+  path: '/profil/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/settings/account': typeof SettingsAccountRoute
   '/settings/notification': typeof SettingsNotificationRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/profil': typeof ProfilIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/login': typeof AuthLoginIndexRoute
   '/registration': typeof AuthRegistrationIndexRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/settings/account': typeof SettingsAccountRoute
   '/settings/notification': typeof SettingsNotificationRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/profil': typeof ProfilIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/login': typeof AuthLoginIndexRoute
   '/registration': typeof AuthRegistrationIndexRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/settings/account': typeof SettingsAccountRoute
   '/settings/notification': typeof SettingsNotificationRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/profil/': typeof ProfilIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/registration/': typeof AuthRegistrationIndexRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/notification'
     | '/settings/privacy'
+    | '/profil'
     | '/settings'
     | '/login'
     | '/registration'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/notification'
     | '/settings/privacy'
+    | '/profil'
     | '/settings'
     | '/login'
     | '/registration'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/notification'
     | '/settings/privacy'
+    | '/profil/'
     | '/settings/'
     | '/_auth/login/'
     | '/_auth/registration/'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   SettingsAccountRoute: typeof SettingsAccountRoute
   SettingsNotificationRoute: typeof SettingsNotificationRoute
   SettingsPrivacyRoute: typeof SettingsPrivacyRoute
+  ProfilIndexRoute: typeof ProfilIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthRegistrationIndexRoute: typeof AuthRegistrationIndexRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profil/': {
+      id: '/profil/'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof ProfilIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/privacy': {
@@ -305,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsAccountRoute: SettingsAccountRoute,
   SettingsNotificationRoute: SettingsNotificationRoute,
   SettingsPrivacyRoute: SettingsPrivacyRoute,
+  ProfilIndexRoute: ProfilIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthRegistrationIndexRoute: AuthRegistrationIndexRoute,

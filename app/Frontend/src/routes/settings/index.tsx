@@ -106,10 +106,10 @@ export function ErtesitesSettings() {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
-            toast.success("Beálitásod ell lett mentve 🎉", {
+            toast.success("Beállításod el lett mentve 🔒", {
                 duration: 3000,
             })
-            queryclint.refetchQueries({queryKey: ["settings"]})
+            queryclint.refetchQueries({ queryKey: ["settings"] })
         }
     })
     const [terms1, setTerms1] = useState(false)
@@ -151,15 +151,17 @@ export function ErtesitesSettings() {
 
     const GetJson = () => {
         let Settings = {
-            new_post: terms1,
-            new_comment_on_post: terms2,
-            new_reaction_on_post: terms3,
-            new_login: terms4,
-            new_friend_request: terms5,
-        };
+            Notifications:
+            {
+                new_post: terms1,
+                new_comment_on_post: terms2,
+                new_reaction_on_post: terms3,
+                new_login: terms4,
+                new_friend_request: terms5,
+            }
+        }
         save(Settings)
     }
-
 
 
     if (isLoading) return <Loader />
@@ -220,7 +222,7 @@ export function ErtesitesSettings() {
                         </div>
                     </div>
                     <div>
-                        <Button variant={"outline"} onClick={() => GetJson() } disabled={!hasChanged}>Mentés</Button>
+                        <Button variant={"outline"} onClick={() => GetJson()} disabled={!hasChanged}>Mentés</Button>
                     </div>
                 </div>
             </div>
@@ -228,17 +230,80 @@ export function ErtesitesSettings() {
     )
 }
 export function AdatvedelemSettings() {
+    const queryClient = useQueryClient()
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['settings'],
+        queryFn: GetSettings,
+    })
+
+    const { mutate: save } = useMutation({
+        mutationFn: (settings:any) =>
+            SaveSettings(settings),
+        onError: (error: AxiosErrorObject) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Adatvédelmi beállítás elmentve 🔒")
+            queryClient.refetchQueries({ queryKey: ['settings'] })
+        },
+    })
+
+    const [dataUsage, setDataUsage] = useState(false)
+    const [originalDataUsage, setOriginalDataUsage] = useState(false)
+    console.log(data);
+
+    useEffect(() => {
+        if (data?.data?.DataPrivacy === undefined) return
+
+        setDataUsage(data.data.DataPrivacy)
+        setOriginalDataUsage(data.data.DataPrivacy)
+    }, [data])
+
+    const hasChanged = dataUsage !== originalDataUsage
+
+    const savePrivacy = () => {
+        let settings = {
+            DataPrivacy: dataUsage,
+        }
+        save(settings)
+    }
+
+    if (isLoading) return <Loader />
 
     return (
         <div className="flex-1 md:ml-6 bg-red-100 shadow rounded-md p-6">
-            <h1 className="text-2xl font-bold mb-6">Adat védelmi beállítások</h1>
-            <div className="space-y-4">
-                <div className="flex items-start gap-3 bg-rose-200 p-2 rounded-xl">
-                    <Checkbox id="terms-6" className="bg-red-300" />
+            <h1 className="text-2xl font-bold mb-6">
+                Adatvédelmi beállítások
+            </h1>
+
+            <div className="space-y-4 bg-rose-50 p-6 rounded-lg">
+                <div className="flex items-start gap-3 bg-rose-200 p-3 rounded-xl">
+                    <Checkbox
+                        checked={dataUsage}
+                        onCheckedChange={(checked) =>
+                            setDataUsage(checked === true)
+                        }
+                    />
                     <div className="grid gap-2">
-                        <Label htmlFor="terms-6">Engedélyezed, hogy az oldal felhasználja az adataidat az oldal javítása érdekében!</Label>
+                        <Label htmlFor="privacy">
+                            Engedélyezed, hogy az oldal felhasználja az
+                            adataidat a szolgáltatás fejlesztéséhez
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                            Az adatokat kizárólag statisztikai célokra
+                            használjuk fel.
+                        </p>
                     </div>
                 </div>
+
+                <Button
+                    variant="outline"
+                    disabled={!hasChanged}
+                    onClick={savePrivacy}
+                >
+                    Mentés
+                </Button>
             </div>
         </div>
     )
