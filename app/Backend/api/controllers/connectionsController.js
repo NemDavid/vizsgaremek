@@ -12,8 +12,6 @@ exports.getConnections = async (req, res, next) => {
 
 exports.getCurrentUserConnectionsAll = async (req, res, next) => {
     const token = req.cookies['user_token'];
-    const {userId} = req
-    console.log(userId);
     
     try {
         res.status(200).json(await connectionsService.getCurrentUserConnectionsAll(token));
