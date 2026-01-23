@@ -62,4 +62,14 @@ exports.newFriendRequestNotificationTemplate = (username) => {
     return { text, html };
 };
 
+exports.registrationConfirmTemplate = (username, confirmUrl) => {
+    const text = `Szia ${username}, erősítsd meg a regisztrációd itt: ${confirmUrl}`;
+    const html = `
+            <p>Szia <strong>${username}</strong>!</p>
+            <p>Kérjük, erősítsd meg a regisztrációdat az alábbi linkre kattintva:</p>
+            <a href="${confirmUrl}">👉 Fiók aktiválása</a>
+            <p>A link 30 percig érvényes.</p>
+        `;
 
+    return { text, html };
+}

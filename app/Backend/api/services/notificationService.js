@@ -12,12 +12,11 @@ class NotificationService {
         this.connectionService = connectionService
     }
 
-    async sendNotificationToFriends(user, notificationType) { 
+    async sendNotificationToFriends(user, notificationType) {
         try {
             // Dev módban csak logoljuk, ne küldjünk emailt
             if (process.env.NODE_ENV !== 'production') {
-                console.log(`[DEV] Notification to ${user.email}`);
-                return;
+                console.log(`[DEV] Notification to ${user.username}'s friends`);
             }
 
             const friendlist = await this.connectionService.getUserFriendlistByID(user.ID);
@@ -78,12 +77,11 @@ class NotificationService {
 
 
     async sendNotificationToUser(user, notificationType) {
-        
+
         try {
             // Dev módban csak logoljuk, ne küldjünk emailt
             if (process.env.NODE_ENV !== 'production') {
                 console.log(`[DEV] Login notification to ${user.email}`);
-                return;
             }
 
 
@@ -160,15 +158,14 @@ class NotificationService {
     // ÚJ: e-mail aktiválás
     async sendRegistrationConfirm(user, confirmUrl) {
         try {
+
+
             const subject = 'MiHirunk - Regisztráció megerősítése';
-            const html =
-                `
-                    <p>Szia <strong>${user.username}</strong>!</p>
-                    <p>Kérjük, erősítsd meg a regisztrációdat az alábbi linkre kattintva:</p>
-                    <a href="${confirmUrl}">👉 Fiók aktiválása</a>
-                    <p>A link 30 percig érvényes.</p>
-                `;
-            const text = `Szia ${user.username}, erősítsd meg a regisztrációd itt: ${confirmUrl}`;
+
+            const template = emailTemplates.registrationConfirmTemplate(user.username, confirmUrl);
+            const text = template.text;
+            const html = template.html;
+
 
             await emailUtils.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
