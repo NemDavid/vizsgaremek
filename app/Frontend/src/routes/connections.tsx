@@ -28,7 +28,7 @@ export const Route = createFileRoute('/connections')({
 
 function RouteComponent() {
   const { data: Connections } = useQuery({
-    queryKey: ["friends"],
+    queryKey: ["Friends"],
     queryFn: () => GetMyFriends()
   })
   const { data: auth } = useQuery<any>({
