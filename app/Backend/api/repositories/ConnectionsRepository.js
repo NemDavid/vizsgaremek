@@ -111,17 +111,19 @@ class ConnectionsRepository {
     }
 
     async deleteConnection(User_Requested_ID, To_User_ID) {
+        console.log(User_Requested_ID, To_User_ID);
+        
         try {
             const deletedRow = await this.Connections.destroy({
                 where: {
                     [Op.or]: [
                         {
                             User_Requested_ID: User_Requested_ID,
-                            To_User_ID: User_Requested_ID
+                            To_User_ID: To_User_ID
                         },
                         {
                             User_Requested_ID: To_User_ID,
-                            To_User_ID: To_User_ID
+                            To_User_ID: User_Requested_ID
                         }
                     ]
                 }

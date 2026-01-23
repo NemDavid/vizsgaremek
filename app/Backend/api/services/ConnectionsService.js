@@ -107,10 +107,15 @@ class ConnectionsService {
 
         const encodedToken = authUtils.verifyToken(token);
 
+        const validUser = await this.userRepository.getUser(To_User_ID);
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó");
+        }
+
         const deleteProcess = await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen felhasznalo");
+            throw new BadRequestError("Nem sikerült törölni a kapcsolatot.");
         }
         return deleteProcess;
     }
@@ -173,7 +178,7 @@ class ConnectionsService {
             });
         }
         else if (existingConnection && (existingConnection.Status == "accepted" || existingConnection.Status == "pending")) {
-            return await this.updateConnection(token, To_User_ID, action); 
+            return await this.updateConnection(token, To_User_ID, action);
         }
         else if (!existingConnection) {
             await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
@@ -217,7 +222,7 @@ class ConnectionsService {
         if (!existingConnection) {
             throw new BadRequestError("Nincs ilyen kapcsolat");
         }
-        
+
 
         // elfogadas es blockolas kezelese
         let affectedRows = 0;
@@ -237,7 +242,7 @@ class ConnectionsService {
                 Status: action
             });
         }
-        
+
 
         // volt e modositas
         if (!affectedRows) {
