@@ -2,7 +2,6 @@ import {
     Drawer,
     DrawerClose,
     DrawerContent,
-    DrawerDescription,
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
@@ -21,7 +20,7 @@ export function DrawerFriends() {
         retry: 0,
         refetchOnWindowFocus: false,
     })
-
+    const acceptedFriends =data?.data?.filter((item: any) => item.Status === "accepted") || [];
     return (
         <Drawer >
             <DrawerTrigger className="contents">
@@ -32,15 +31,13 @@ export function DrawerFriends() {
             <DrawerContent className="bg-red-900">
                 <DrawerHeader>
                     <DrawerTitle className="text-white">Friends</DrawerTitle>
-                    <DrawerDescription>
-                        <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
-                            <div className="flex gap-3 overflow-x-auto p-3">
-                                {data?.data.map((item:any) => (
-                                    <FriendsList id={item.UserID} key={item.UserID} className={"bg-rose-900"}/>
-                                ))}
-                            </div>
+                    <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
+                        <div className="flex gap-3 overflow-x-auto p-3">
+                            {acceptedFriends.map((item: any) => (
+                                <FriendsList id={item.UserID} key={item.UserID} className={"bg-rose-900"} />
+                            ))}
                         </div>
-                    </DrawerDescription>
+                    </div>
                 </DrawerHeader>
                 <DrawerFooter>
                     <DrawerClose className="flex justify-center">
