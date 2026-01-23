@@ -73,3 +73,13 @@ exports.registrationConfirmTemplate = (username, confirmUrl) => {
 
     return { text, html };
 }
+
+exports.passwordResetVerifyCodeTemplate = (verify_code) => {
+    const text = `Kérlek használd a következő kódot a jelszavad visszaállításához: ${verify_code}.`;
+    const html = `
+        <p>Kérlek, használd a következő ellenőrző kódot a jelszavad visszaállításához:</p>
+        <p><strong style="font-size: 1.2em;">${verify_code}</strong></p>
+    `;
+
+    return { text, html };
+}
