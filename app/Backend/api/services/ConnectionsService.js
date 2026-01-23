@@ -217,9 +217,6 @@ class ConnectionsService {
         if (!existingConnection) {
             throw new BadRequestError("Nincs ilyen kapcsolat");
         }
-
-        console.log(existingConnection);
-        console.log(action);
         
 
         // elfogadas es blockolas kezelese
