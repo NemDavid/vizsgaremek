@@ -138,25 +138,22 @@ class ConnectionsService {
         if (To_User_ID == encodedToken.userID) {
             throw new BadRequestError("magadat nem tudod kezelni");
         }
-
-        const friendlist = await this.getCurrentUserFriendlist(token);
-        const p = await this.userRepository.getUserByID(encodedToken.userID)
-        const maxFriend = p.profile.level + 50;
-        if (friendlist.length > maxFriend) {
-            throw new BadRequestError("Elérted a barát limited")
+        if (action == "pending") {
+            const friendlist = await this.getCurrentUserFriendlist(token);
+            const p = await this.userRepository.getUserByID(encodedToken.userID)
+            const maxFriend = p.profile.level + 50;
+            if (friendlist.length > maxFriend) {
+                throw new BadRequestError("Elérted a barát limited")
+            }
         }
 
-
-
-        
-
         console.log(encodedToken.userID, To_User_ID);
-        
+
 
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
 
         console.log(existingConnection);
-        
+
 
         if (existingConnection && existingConnection.Status == "blocked") {
             if (encodedToken.userID == existingConnection.dataValues.User_Requested_ID) {
@@ -176,9 +173,10 @@ class ConnectionsService {
                 Status: action
             });
         }
+        else if (existingConnection && (existingConnection.Status == "accepted" || existingConnection.Status == "pending")) {
+            return await this.updateConnection(token, To_User_ID, action); 
+        }
         else if (!existingConnection) {
-            console.log("asd");
-            
             await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
 
             return await this.connectionsRepository.createConnection({
@@ -241,6 +239,8 @@ class ConnectionsService {
             });
         }
 
+        console.log(existingConnection);
+
 
         // volt e modositas
         if (!affectedRows) {
@@ -252,6 +252,8 @@ class ConnectionsService {
         if (!updateConnection) {
             throw new BadRequestError("az updatelt connection  nem található");
         }
+        console.log(updateConnection);
+
         return updateConnection;
     }
 }
