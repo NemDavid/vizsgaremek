@@ -172,7 +172,7 @@ function BlackListMenu({ list, myid }: { list: any[], myid: bigint }) {
               }
               {item.Requested_BY == myid ?
                 <>
-                  <RemoveBlock userID={item?.Requested_BY || -1n} />
+                  <RemoveBlock userID={item?.UserID || -1n}  />
                 </>
                 :
                 <>
