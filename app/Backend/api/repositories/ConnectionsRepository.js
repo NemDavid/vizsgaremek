@@ -115,13 +115,17 @@ class ConnectionsRepository {
             const deletedRow = await this.Connections.destroy({
                 where: {
                     [Op.or]: [
-                        { User_Requested_ID },
-                        { To_User_ID: User_Requested_ID }
-                    ],
-                    [Op.or]: [
-                        { User_Requested_ID: To_User_ID },
-                        { To_User_ID }
+                        {
+                            User_Requested_ID: User_Requested_ID,
+                            To_User_ID: User_Requested_ID
+                        },
+                        {
+                            User_Requested_ID: To_User_ID,
+                            To_User_ID: To_User_ID
+                        }
                     ]
+
+
                 }
             });
 
