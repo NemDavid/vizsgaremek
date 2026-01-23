@@ -124,8 +124,6 @@ class ConnectionsRepository {
                             To_User_ID: To_User_ID
                         }
                     ]
-
-
                 }
             });
 
