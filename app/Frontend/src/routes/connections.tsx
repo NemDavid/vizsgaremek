@@ -170,7 +170,7 @@ function BlackListMenu({ list, myid }: { list: any[], myid: bigint }) {
                   <AvatarFrame userid={item?.Requested_BY || -1n} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
                 </>
               }
-              {item.Requested_BY != myid ?
+              {item.Requested_BY == myid ?
                 <>
                   <RemoveBlock userID={item?.Requested_BY || -1n} />
                 </>
