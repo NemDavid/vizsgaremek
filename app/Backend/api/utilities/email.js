@@ -17,7 +17,6 @@ exports.sendEmail = async ({ to, subject, text, html }) => {
     console.log(`[DEV EMAIL] to: ${to}, subject: ${subject}`);
     console.log('Text:', text);
     console.log('HTML:', html);
-    return;
   }
 
   try {

@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const { DbError } = require("../errors");
 
 class ConnectionsRepository {
@@ -18,14 +18,20 @@ class ConnectionsRepository {
     async getConnection(User_Requested_ID, To_User_ID) {
         try {
             return await this.Connections.scope("allConnectionData").findOne({
-                [Op.or]: [
-                    { User_Requested_ID },
-                    { To_User_ID: User_Requested_ID }
-                ],
-                [Op.or]: [
-                    { User_Requested_ID: To_User_ID },
-                    { To_User_ID }
-                ]
+                where: {
+                    [Op.or]: [
+                        {
+                            User_Requested_ID: User_Requested_ID,
+                            To_User_ID: To_User_ID
+                        },
+                        {
+                            User_Requested_ID: To_User_ID,
+                            To_User_ID: User_Requested_ID
+                        }
+                    ]
+                }
+
+
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a kapcsolatot.", { details: error.message });
@@ -136,7 +142,7 @@ class ConnectionsRepository {
         }
     }
 
-    async updateConnection(User_Requested_ID, To_User_ID, updateData) { 
+    async updateConnection(User_Requested_ID, To_User_ID, updateData) {
         try {
             const [affectedRows] = await this.Connections.update(updateData, {
                 where: {

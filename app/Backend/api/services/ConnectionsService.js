@@ -146,8 +146,17 @@ class ConnectionsService {
             throw new BadRequestError("Elérted a barát limited")
         }
 
+
+
+        
+
+        console.log(encodedToken.userID, To_User_ID);
+        
+
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
 
+        console.log(existingConnection);
+        
 
         if (existingConnection && existingConnection.Status == "blocked") {
             if (encodedToken.userID == existingConnection.dataValues.User_Requested_ID) {
@@ -168,7 +177,8 @@ class ConnectionsService {
             });
         }
         else if (!existingConnection) {
-
+            console.log("asd");
+            
             await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
 
             return await this.connectionsRepository.createConnection({
