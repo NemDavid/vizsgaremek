@@ -3,14 +3,13 @@ import { Button } from "../../ui/button"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Spinner } from "../../ui/spinner"
 import { AddFriend, BlockUserID, connectionMangager, deletConnectionReqest } from "../../axios/axiosClient"
-import type { AxiosErrorObject } from "../../axios/Types"
 import { toast } from "sonner"
 
 
 export function ReqFriend({ className, userID }: { className?: string, userID: bigint }) {
     const { mutate: addFriend, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => AddFriend({ id }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -34,7 +33,7 @@ export function AcceptFriend({ className, userID }: { className?: string, userID
     const ConType = "accepted";
     const { mutate: AcceptFriend, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => connectionMangager({ id, ConType }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -58,7 +57,7 @@ export function DeletFriend({ className, userID }: { className?: string, userID:
     const QueryClient = useQueryClient()
     const { mutate: Delete, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -83,7 +82,7 @@ export function BlockUserFromrequest({ className, userID }: { className?: string
     const ConType = "blocked";
     const { mutate: AcceptFriend, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => connectionMangager({ id, ConType }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -106,7 +105,7 @@ export function BlockUserFromrequest({ className, userID }: { className?: string
 export function BlockUser({ className, userID }: { className?: string, userID: bigint }) {
     const { mutate: AcceptFriend, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => BlockUserID({ id }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -130,7 +129,7 @@ export function RemoveRequest({ className, userID }: { className?: string, userI
     const QueryClient = useQueryClient()
     const { mutate: Delete, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -154,7 +153,7 @@ export function RemoveBlock({ className, userID }: { className?: string, userID:
     const QueryClient = useQueryClient()
     const { mutate: Delete, isPending } = useMutation({
         mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id }),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {

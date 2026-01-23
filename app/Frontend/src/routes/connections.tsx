@@ -9,12 +9,11 @@ import {
 } from "@/components/ui/card"
 import { AvatarFrame } from '@/components/custom/AvatarFrame/AvatarFrame'
 import { Button } from '@/components/ui/button'
-import { Annoyed, BadgeX, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
+import { Annoyed, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
 import { KickButton } from '@/components/custom/Kick/kick'
-import type { AuthResponse, UserConnection } from '@/components/axios/Types'
 import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveBlock, RemoveRequest } from '@/components/custom/UserConnectionButton/UserConnectionButton'
 
 export const Route = createFileRoute('/connections')({
@@ -32,14 +31,14 @@ function RouteComponent() {
     queryKey: ["friends"],
     queryFn: () => myFriends()
   })
-  const { data: auth } = useQuery<AuthResponse>({
+  const { data: auth } = useQuery<any>({
     queryKey: ["auth-status"],
     queryFn: authStatusRequest,
     enabled: false,
   })
-  const PendingList = Connections?.data?.filter((item) => item.Status === "pending") || [];
-  const blockedList = Connections?.data?.filter((item) => item.Status === "blocked") || [];
-  const friendsList = Connections?.data?.filter((item) => item.Status === "accepted") || [];
+  const PendingList = Connections?.data?.filter((item:any) => item.Status === "pending") || [];
+  const blockedList = Connections?.data?.filter((item:any) => item.Status === "blocked") || [];
+  const friendsList = Connections?.data?.filter((item:any) => item.Status === "accepted") || [];
 
   const [ShowMenu, setMenu] = useState("FriendsMenu");
   return (
@@ -64,7 +63,7 @@ function RouteComponent() {
   )
 }
 
-function FriendsMenu({ list }: { list: UserConnection[] }) {
+function FriendsMenu({ list }: { list: any[] }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -77,7 +76,7 @@ function FriendsMenu({ list }: { list: UserConnection[] }) {
       </CardHeader>
       <CardContent>
         <div className='flex gap-4 flex-wrap'>
-          {list?.map((item: UserConnection) => (
+          {list?.map((item: any) => (
             <FriendsList id={item.UserID} />
           ))
           }
@@ -96,7 +95,7 @@ export function FriendsList({ id, className }: { id: bigint, className?: string 
   )
 }
 
-function FriendRequestMenu({ list, myid }: { list?: UserConnection[], myid: bigint }) {
+function FriendRequestMenu({ list, myid }: { list?: any[], myid: bigint }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -109,7 +108,7 @@ function FriendRequestMenu({ list, myid }: { list?: UserConnection[], myid: bigi
       </CardHeader>
       <CardContent>
         <div className='flex gap-4 flex-wrap'>
-          {list?.map((item: UserConnection) => (
+          {list?.map((item: any) => (
             <FriendsreqListPerEach item={item} myid={myid} key={Number(item?.UserID)} />
           ))
           }
@@ -118,7 +117,7 @@ function FriendRequestMenu({ list, myid }: { list?: UserConnection[], myid: bigi
     </Card>
   )
 }
-function FriendsreqListPerEach({ item, myid }: { item: UserConnection, myid: bigint }) {
+function FriendsreqListPerEach({ item, myid }: { item: any, myid: bigint }) {
   return (
     <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
       {item.Requested_BY == myid ?
@@ -147,7 +146,7 @@ function FriendsreqListPerEach({ item, myid }: { item: UserConnection, myid: big
   )
 }
 
-function BlackListMenu({ list, myid }: { list: UserConnection[], myid: bigint }) {
+function BlackListMenu({ list, myid }: { list: any[], myid: bigint }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -160,7 +159,7 @@ function BlackListMenu({ list, myid }: { list: UserConnection[], myid: bigint })
       </CardHeader>
       <CardContent>
         <div className='flex gap-4 flex-wrap'>
-          {list?.map((item: UserConnection) => (
+          {list?.map((item: any) => (
             <div className='px-4 bg-rose-100 flex flex-col items-center rounded-xl'>
               {item.Requested_BY == myid ?
                 <>

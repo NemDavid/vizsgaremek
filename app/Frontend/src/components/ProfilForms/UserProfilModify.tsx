@@ -22,7 +22,6 @@ import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { AxiosErrorObject, UserProfileResponse } from "../axios/Types";
 import { UpdateProfile } from "../axios/axiosClient";
 import { Loader } from "../Loader";
 import { Field, FieldDescription } from "../ui/field";
@@ -44,13 +43,13 @@ const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
 };
 
-export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:UserProfileResponse} ) {
+export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any} ) {
     const [birthDayMin, setBirthDayMin] = useState("");
     const [birthDayMax, setBirthDayMax] = useState("");
     const queryClient = useQueryClient()
     const { mutate: confirm, isPending } = useMutation({
         mutationFn: ({ data }: { data: FormData }) => UpdateProfile(data, id),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {

@@ -36,7 +36,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Loader } from "../Loader"
-import type { AxiosErrorObject } from "../axios/Types"
 
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
@@ -79,7 +78,7 @@ export function SignupForm({ className, onSwitch, ...props }: SignupFormProps) {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null)
   const { mutate: register, isPending } = useMutation({
     mutationFn: ({ data }: { data: RegisterSchema }) => RegisterRequest(data),
-    onError: (error: AxiosErrorObject) => {
+    onError: (error: any) => {
       toast.error(error.response.data.message)
     },
     onSuccess: () => {
