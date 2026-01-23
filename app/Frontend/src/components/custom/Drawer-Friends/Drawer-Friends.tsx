@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/drawer"
 import { Users } from 'lucide-react'
 import { useQuery } from "@tanstack/react-query"
-import { GetFriends } from "../../axios/axiosClient"
+import { GetMyFriends } from "../../axios/axiosClient"
 import { FriendsList } from "@/routes/connections"
 
 
 export function DrawerFriends() {
     const { data } = useQuery({
-        queryFn: () => GetFriends(),
+        queryFn: () => GetMyFriends(),
         queryKey: ["Friends"],
         retry: 0,
         refetchOnWindowFocus: false,

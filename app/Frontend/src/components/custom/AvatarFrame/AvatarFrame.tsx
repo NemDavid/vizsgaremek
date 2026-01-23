@@ -18,7 +18,7 @@ export function AvatarFrame({ userid, className }: { userid: bigint, className?:
     const nav = useNavigate()
     const { data: User, isLoading } = useQuery({
         queryKey: ['avatar', userid],
-        queryFn: () => getuserByid(userid),
+        queryFn: () => getuserByid(`${userid}`),
         retry: 0,
         refetchOnWindowFocus: false,
         gcTime: 6000,
