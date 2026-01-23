@@ -45,8 +45,8 @@ export async function getPosts({ page, perPage }: { page: number, perPage: numbe
 
   return response.data
 }
-export async function getMyreJsonClienttion(POST_ID: bigint) {
-  const response = await JsonClient.get(`/api/reJsonClienttions/${POST_ID}`)
+export async function getMyreaction(POST_ID: bigint) {
+  const response = await JsonClient.get(`/api/reactions/${POST_ID}`)
 
   return response.data
 }
@@ -89,8 +89,8 @@ export async function createPost(data: FormData) {
   
   return response; 
 }
-export async function makeReJsonClienttion(data: { POST_ID: bigint; reJsonClienttion: 'like' | 'dislike' }) {
-  const response = await JsonClient.post(`/api/reJsonClienttions`, data);
+export async function makeReaction(data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) {
+  const response = await JsonClient.post(`/api/reactions`, data);
   return  response;
 }
 export async function MakeCommentForPost(comment: any) {
