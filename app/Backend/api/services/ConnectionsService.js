@@ -149,8 +149,14 @@ class ConnectionsService {
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
 
 
-
-        if (existingConnection && existingConnection.Status == "pending") {
+        if (existingConnection && existingConnection.Status == "blocked") {
+            if (encodedToken.userID == existingConnection.dataValues.User_Requested_ID) {
+                throw new BadRequestError("Ezt a felhasználót letiltottad, előbb oldd fel, mielőtt barátnak kéred!");
+            }
+            else {
+                throw new BadRequestError("Ez a felhasználó letiltott téged, ezért nem tudod barátnak kérni!");
+            }
+        } else if (existingConnection.Status == "pending") {
             await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
 
             await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");

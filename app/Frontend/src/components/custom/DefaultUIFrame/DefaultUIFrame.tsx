@@ -23,7 +23,7 @@ export function DefaultUIFrame({ children, Hirdetes, className}: { children?: Re
             </div>
             <DrawerFriends/>
             <Footer/>
-            <Toaster richColors position="top-center" />
+            <Toaster richColors position="top-center" closeButton duration={3000} />
         </div>
 
     )

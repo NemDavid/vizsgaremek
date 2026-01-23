@@ -168,13 +168,10 @@ function ProfileMenu({ isMe, profilId, profil }: any) {
   )
 }
 
-function NotmyProfil({ profilId, profil }: {profilId:any, profil:any}) {
+function NotmyProfil({ profilId }: {profilId:any, profil:any}) {
   return (
     <>
       <ReqFriend userID={BigInt(profilId)} />
-      <Button disabled>
-        <UserMinus /> Barát elutasítása
-      </Button>
       <BlockUser userID={BigInt(profilId)} />
     </>
   )

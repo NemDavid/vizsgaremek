@@ -1,4 +1,4 @@
-import { ShieldX, Trash, UserMinus, UserPlus } from "lucide-react"
+import { BadgeX, ShieldX, Trash, UserMinus, UserPlus } from "lucide-react"
 import { Button } from "../../ui/button"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Spinner } from "../../ui/spinner"
@@ -150,4 +150,31 @@ export function RemoveRequest({ className, userID }: { className?: string, userI
         </Button>
     )
 }
+export function RemoveBlock({ className, userID }: { className?: string, userID: bigint }) {
+    const QueryClient = useQueryClient()
+    const { mutate: Delete, isPending } = useMutation({
+        mutationFn: ({ id }: { id: bigint }) => deletConnectionReqest({ id }),
+        onError: (error: AxiosErrorObject) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Sikeresen elutasitottad barátnak", {
+                duration: 3000,
+            })
+            QueryClient.refetchQueries({ queryKey: ["friends"] })
+        }
+    })
+
+    return (
+        <Button variant={'destructive'} className={`mb-2 mx-1 ${className}`} onClick={!isPending ? () => Delete({ id: userID }) : () => null}>
+            {isPending ? <Spinner /> :
+                <>
+                    <BadgeX className='size-4' />Feloldás
+                </>
+            }
+        </Button>
+    )
+}
+
+
 //Post-> api/connections/connection/:USER_ID

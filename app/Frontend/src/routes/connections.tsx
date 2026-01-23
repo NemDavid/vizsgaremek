@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/card"
 import { AvatarFrame } from '@/components/custom/AvatarFrame/AvatarFrame'
 import { Button } from '@/components/ui/button'
-import { BadgeX, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
+import { Annoyed, BadgeX, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
 import { KickButton } from '@/components/custom/Kick/kick'
 import type { AuthResponse, UserConnection } from '@/components/axios/Types'
-import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveRequest } from '@/components/custom/UserConnectionButton/UserConnectionButton'
+import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveBlock, RemoveRequest } from '@/components/custom/UserConnectionButton/UserConnectionButton'
 
 export const Route = createFileRoute('/connections')({
   component: () => (
@@ -56,7 +56,7 @@ function RouteComponent() {
           </CardContent>
         </Card>
         <div className='flex-1 overflow-auto'>
-          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu list={blockedList} myid={BigInt(auth?.data.userID || 0n)}/> : <FriendRequestMenu list={PendingList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu list={friendsList}  />}
+          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu list={blockedList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendRequestMenu list={PendingList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu list={friendsList} />}
 
         </div>
       </div>
@@ -87,7 +87,7 @@ function FriendsMenu({ list }: { list: UserConnection[] }) {
   )
 }
 
-export function FriendsList({ id,className }: { id: bigint ,className?:string}) {
+export function FriendsList({ id, className }: { id: bigint, className?: string }) {
   return (
     <div className={`bg-rose-100 flex items-center rounded-xl p-2 px-4 gap-3 ${className}`}>
       <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
@@ -133,10 +133,10 @@ function FriendsreqListPerEach({ item, myid }: { item: UserConnection, myid: big
       <div className='grid grid-cols-2 gap-2 w-full'>
         {item.Requested_BY == myid ?
           <>
-            <RemoveRequest userID={item?.UserID} className='mb-2 mx-1 col-span-2'/>
+            <RemoveRequest userID={item?.UserID} className='mb-2 mx-1 col-span-2' />
           </>
           :
-          <>  
+          <>
             <AcceptFriend userID={item.Requested_BY || -1n} />
             <DeletFriend userID={item.Requested_BY || -1n} />
             <BlockUserFromrequest userID={item.Requested_BY || -1n} className="col-span-3" />
@@ -171,8 +171,15 @@ function BlackListMenu({ list, myid }: { list: UserConnection[], myid: bigint })
                   <AvatarFrame userid={item?.Requested_BY || -1n} className='max-w-max max-h-min p-0 bg-slate-200 m-4' />
                 </>
               }
-
-              <Button variant={"destructive"} className='mb-3 mx-3'> <BadgeX className='size-4' />Feloldás</Button>
+              {item.Requested_BY == myid ?
+                <>
+                  <RemoveBlock userID={item?.Requested_BY || -1n} />
+                </>
+                :
+                <>
+                  <div className='px-2 py-1 bg-rose-200 rounded-xl m-2 flex'><Annoyed className='p-1'/> Lelettél tiltva </div>
+                </>
+              }
             </div>
           ))
           }
