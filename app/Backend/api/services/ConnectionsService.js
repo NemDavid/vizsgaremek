@@ -147,15 +147,14 @@ class ConnectionsService {
             }
         }
 
-        console.log(encodedToken.userID, To_User_ID);
-
 
         const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
 
-        console.log(existingConnection);
 
-
-        if (existingConnection && existingConnection.Status == "blocked") {
+        if (existingConnection && existingConnection.Status == "accepted" && action !== "blocked") {
+            throw new BadRequestError("csak egyszer küldhetsz barátkérést egy felhasználónak!");
+        }
+        else if (existingConnection && existingConnection.Status == "blocked") {
             if (encodedToken.userID == existingConnection.dataValues.User_Requested_ID) {
                 throw new BadRequestError("Ezt a felhasználót letiltottad, előbb oldd fel, mielőtt barátnak kéred!");
             }
@@ -197,8 +196,8 @@ class ConnectionsService {
         }
         if (!(action == "accepted" || action == "blocked")) {
             throw new BadRequestError("rossz action érték");
-
         }
+
 
         // valid user-e
         const validUser = await this.userRepository.getUser(To_User_ID);
@@ -219,6 +218,9 @@ class ConnectionsService {
             throw new BadRequestError("Nincs ilyen kapcsolat");
         }
 
+        console.log(existingConnection);
+        console.log(action);
+        
 
         // elfogadas es blockolas kezelese
         let affectedRows = 0;
@@ -238,9 +240,7 @@ class ConnectionsService {
                 Status: action
             });
         }
-
-        console.log(existingConnection);
-
+        
 
         // volt e modositas
         if (!affectedRows) {
@@ -252,7 +252,6 @@ class ConnectionsService {
         if (!updateConnection) {
             throw new BadRequestError("az updatelt connection  nem található");
         }
-        console.log(updateConnection);
 
         return updateConnection;
     }
