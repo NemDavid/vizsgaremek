@@ -157,7 +157,7 @@ export function RemoveBlock({ className, userID }: { className?: string, userID:
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
-            toast.success("Sikeresen elutasitottad barátnak", {
+            toast.success("Sikeresen feloldottad a tiltást", {
                 duration: 3000,
             })
             QueryClient.refetchQueries({ queryKey: ["Friends"] })
