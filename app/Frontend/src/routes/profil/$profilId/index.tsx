@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PopOver } from '@/components/custom/OpenMenus/OpenMenus';
-import { EllipsisVertical, User, UserMinus } from 'lucide-react';
-import type { AuthResponse } from '@/components/axios/Types';
+import { EllipsisVertical, User } from 'lucide-react';
 import { Loader } from '@/components/Loader/Loader';
 import { UserProfileModify } from '@/components/ProfilForms';
 import { BlockUser, ReqFriend } from '@/components/custom/UserConnectionButton/UserConnectionButton';
@@ -31,7 +30,7 @@ export const Route = createFileRoute('/profil/$profilId/')({
 function RouteComponent() {
   const { profilId } = Route.useParams()
   const nav = useNavigate()
-  const { data: auth } = useQuery<AuthResponse>({
+  const { data: auth } = useQuery<any>({
     queryKey: ["auth-status"],
     queryFn: authStatusRequest,
     enabled: false,

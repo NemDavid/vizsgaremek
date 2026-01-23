@@ -2,9 +2,8 @@ import {
     Card,
     CardContent,
 } from "@/components/ui/card"
-import type { comment } from '../../axios/axiosClient'
 import { AvatarFrame } from "../AvatarFrame/AvatarFrame"
-export function Commentbox({ comment }: { comment?: comment }) {
+export function Commentbox({ comment }: { comment?: any }) {
     return (
         <Card className="p-1">
             <CardContent className="flex px-1">

@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { GetSettings, SaveSettings } from '@/components/axios/axiosClient'
 import { toast } from 'sonner'
-import type { AxiosErrorObject } from '@/components/axios/Types'
 import { Loader } from '@/components/Loader/Loader'
 
 export const Route = createFileRoute('/settings/')({
@@ -102,7 +101,7 @@ export function ErtesitesSettings() {
     })
     const { mutate: save } = useMutation({
         mutationFn: (Settings: any) => SaveSettings(Settings),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -240,7 +239,7 @@ export function AdatvedelemSettings() {
     const { mutate: save } = useMutation({
         mutationFn: (settings:any) =>
             SaveSettings(settings),
-        onError: (error: AxiosErrorObject) => {
+        onError: (error: any) => {
             toast.error(error.response.data.message)
         },
         onSuccess: () => {
@@ -251,8 +250,6 @@ export function AdatvedelemSettings() {
 
     const [dataUsage, setDataUsage] = useState(false)
     const [originalDataUsage, setOriginalDataUsage] = useState(false)
-    console.log(data);
-
     useEffect(() => {
         if (data?.data?.DataPrivacy === undefined) return
 

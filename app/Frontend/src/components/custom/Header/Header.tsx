@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { authStatusRequest, logoutRequest } from "../../axios/axiosClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { AuthResponse } from "../../axios/Types";
 import { useEffect, useState } from "react";
 import {
   Sheet,
@@ -78,7 +77,7 @@ export default function Header({ className }: { className?: string }) {
       window.location.reload();
     }
   })
-  const { data: auth } = useQuery<AuthResponse>({
+  const { data: auth } = useQuery({
     queryKey: ["auth-status"],
     queryFn: authStatusRequest,
     enabled: false,

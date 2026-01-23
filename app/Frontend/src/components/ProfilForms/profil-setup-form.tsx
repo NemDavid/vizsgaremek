@@ -22,7 +22,6 @@ import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Loader } from "../Loader"
-import type { AxiosErrorObject } from "../axios/Types"
 import { useEffect, useState } from "react"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
@@ -54,7 +53,7 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
   const nav = useNavigate();
   const { mutate: confirm, isPending } = useMutation({
     mutationFn: ({ data }: { data: FormData }) => RegisterConfirmRequest(data, token),
-    onError: (error: AxiosErrorObject) => {
+    onError: (error: any) => {
       toast.error(error.response.data.message)
     },
     onSuccess: () => {
