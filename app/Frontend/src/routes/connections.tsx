@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Annoyed, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { authStatusRequest, myFriends } from '@/components/axios/axiosClient'
+import { authStatusRequest,GetMyFriends } from '@/components/axios/axiosClient'
 import { KickButton } from '@/components/custom/Kick/kick'
 import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveBlock, RemoveRequest } from '@/components/custom/UserConnectionButton/UserConnectionButton'
 
@@ -29,7 +29,7 @@ export const Route = createFileRoute('/connections')({
 function RouteComponent() {
   const { data: Connections } = useQuery({
     queryKey: ["friends"],
-    queryFn: () => myFriends()
+    queryFn: () => GetMyFriends()
   })
   const { data: auth } = useQuery<any>({
     queryKey: ["auth-status"],
