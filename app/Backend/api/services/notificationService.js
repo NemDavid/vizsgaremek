@@ -199,11 +199,13 @@ class NotificationService {
             }
 
             const subject = 'MiHirunk - Jelszó visszaállítási ellenőrző kód';
-            const html = `
-                    <p>Megbaszlak ezzel a koddal: :) <strong>${verify_codeData.verify_code}</strong>!</p>
-                `;
 
-            await emailUtils.sendEmail({ to: email, subject, html });
+            const template = emailTemplates.passwordResetVerifyCodeTemplate(verify_codeData.verify_code);
+            const text = template.text;
+            const html = template.html;
+
+            
+            await emailUtils.sendEmail({ to: email, subject, text, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
