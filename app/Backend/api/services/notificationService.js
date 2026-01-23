@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { BadRequestError } = require('../errors');
-const email = require("../utilities/email");
+const emailUtils = require("../utilities/email");
 const authUtils = require("../utilities/authUtils");
 const emailTemplates = require("../utilities/emailTemplates");
 
@@ -65,7 +65,7 @@ class NotificationService {
 
 
             if (sendEmail) {
-                await email.sendEmail({ to: user.email, subject, text, html });
+                await emailUtils.sendEmail({ to: user.email, subject, text, html });
             }
 
         } catch (err) {
@@ -147,7 +147,7 @@ class NotificationService {
 
             if (!sendEmail) return;
 
-            await email.sendEmail({ to: user.email, subject, text, html });
+            await emailUtils.sendEmail({ to: user.email, subject, text, html });
 
 
         } catch (err) {
@@ -170,7 +170,7 @@ class NotificationService {
                 `;
             const text = `Szia ${user.username}, erősítsd meg a regisztrációd itt: ${confirmUrl}`;
 
-            await email.sendEmail({ to: user.email, subject, text, html });
+            await emailUtils.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
@@ -206,7 +206,7 @@ class NotificationService {
                     <p>Megbaszlak ezzel a koddal: :) <strong>${verify_codeData.verify_code}</strong>!</p>
                 `;
 
-            await email.sendEmail({ to: email, subject, html });
+            await emailUtils.sendEmail({ to: email, subject, html });
         } catch (err) {
             console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
