@@ -1,5 +1,4 @@
 const { DbError } = require("../errors");
-const models = require("../models");
 
 class User_PostRepository {
     constructor(db) {

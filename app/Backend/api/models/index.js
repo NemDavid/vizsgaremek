@@ -10,6 +10,7 @@ module.exports = (sequelize) => {
     const Connections = require("./Connections")(sequelize, DataTypes);
     const Settings = require("./Settings")(sequelize, DataTypes);
     const Kick = require("./Kick")(sequelize, DataTypes);
+    const Advertisement = require("./Advertisement")(sequelize, DataTypes);
 
 
     User.hasOne(User_Profile, {
@@ -149,6 +150,7 @@ module.exports = (sequelize) => {
         Verify_Code,
         Connections,
         Settings,
-        Kick
+        Kick,
+        Advertisement,
     };
 };

@@ -1,4 +1,4 @@
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class ConnectionsRepository {

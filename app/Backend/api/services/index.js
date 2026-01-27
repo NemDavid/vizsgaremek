@@ -7,6 +7,7 @@ const Verify_CodeService = require("./Verify_CodeService");
 const ConnectionsService = require("./ConnectionsService");
 const User_SettingsService = require("./User_SettingsService");
 const KickService = require("./KickService");
+const AdvertisementService = require("./AdvertisementService");
 const NotificationService = require("./NotificationService");
 
 module.exports = (db) =>
@@ -20,6 +21,7 @@ module.exports = (db) =>
     const connectionsService = new ConnectionsService(db);
     const user_SettingsService = new User_SettingsService(db);
     const kickService = new KickService(db);
+    const advertisementService = new AdvertisementService(db);
     const notificationService = new NotificationService(verify_codeService, userService, user_SettingsService, connectionsService);
 
 
@@ -40,6 +42,7 @@ module.exports = (db) =>
         connectionsService,
         user_SettingsService,
         kickService,
+        advertisementService,
         notificationService, 
     };
 };

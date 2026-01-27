@@ -42,6 +42,7 @@ const connectionsRoute = require("./api/routes/connectionsRoute");
 const verify_codeRoutes = require("./api/routes/verify_codeRoutes");
 const user_settingsRoutes = require("./api/routes/user_settingsRoutes");
 const kickRoutes = require("./api/routes/kickRoutes");
+const advertisementRoute = require("./api/routes/advertisementRoute");
 
 const errorHandler = require("./api/middlewares/errorHandler");
 
@@ -61,6 +62,7 @@ api.use("/users", userRoutes);
 api.use("/verify", verify_codeRoutes);
 api.use("/settings", user_settingsRoutes);
 api.use("/kicks", kickRoutes);
+api.use("/advertisement", advertisementRoute);
 
 app.use("/cloud", cloudRouter);
 app.use("/cloud", express.static("public/cloud"));

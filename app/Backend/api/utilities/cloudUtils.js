@@ -4,10 +4,12 @@ const fs = require("fs");
 const crypto = require("crypto");
 const { ValidationError } = require("../errors");
 
+// ------------------------
+// Multer storage
+// ------------------------
 exports.getStorage = () => {
   const uploadDir = path.join(__dirname, "../../public/cloud");
 
-  
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
@@ -34,4 +36,19 @@ exports.getStorage = () => {
   };
 
   return multer({ storage, fileFilter });
+};
+
+// ------------------------
+// Cloud delete helper
+// ------------------------
+exports.deleteImage = (imagePath) => {
+  // teljes út a public/cloud mappához
+  const fullPath = path.join(__dirname, "../../public", imagePath);
+
+  if (fs.existsSync(fullPath)) {
+    fs.unlinkSync(fullPath);
+    console.log(`Törölve: ${fullPath}`);
+  } else {
+    console.warn(`Nem található a fájl: ${fullPath}`);
+  }
 };

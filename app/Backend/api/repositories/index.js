@@ -7,6 +7,7 @@ const ConnectionsRepository = require("./ConnectionsRepository");
 const Verify_CodeRepository = require("./Verify_CodeRepository");
 const User_SettingsRepository = require("./User_SettingsRepository");
 const KickRepository = require("./KickRepository");
+const AdvertisementRepository = require("./AdvertisementRepository");
 
 module.exports = (db) =>
 {
@@ -19,6 +20,7 @@ module.exports = (db) =>
     const verify_codeRepository = new Verify_CodeRepository(db);
     const user_SettingsRepository = new User_SettingsRepository(db);
     const kickRepository = new KickRepository(db);
+    const advertisementRepository = new AdvertisementRepository(db);
 
     return { userRepository, 
         user_profileRepository, 
@@ -28,6 +30,7 @@ module.exports = (db) =>
         connectionsRepository, 
         verify_codeRepository,
         user_SettingsRepository,
-        kickRepository
+        kickRepository,
+        advertisementRepository
     };
 };

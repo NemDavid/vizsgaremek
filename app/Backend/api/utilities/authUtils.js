@@ -10,6 +10,15 @@ exports.generateUserToken = (user) => {
     });
 }
 
+exports.verifyToken = (token) => {
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET);
+    }
+    catch (error) {
+        return null;
+    }
+}
+
 // Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót
 exports.generateRegistrationToken = (userData) => {
     const password_hash = bcrypt.hashSync(userData.password, salt);
@@ -30,14 +39,6 @@ exports.setCookie = (res, cookieName, value) => {
         });
 }
 
-exports.verifyToken = (token) => {
-    try {
-        return jwt.verify(token, process.env.JWT_SECRET);
-    }
-    catch (error) {
-        return null;
-    }
-}
 
 exports.hashPassword = (password) => {
     return bcrypt.hashSync(password, salt);
