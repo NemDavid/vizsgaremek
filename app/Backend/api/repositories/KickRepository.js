@@ -86,9 +86,6 @@ class KickRepository {
 
     async updateKick(kickId) {
         try {
-            console.log(kickId);
-            console.log(updateData);
-
             const [affectedRows] = await this.Kick.update(
                 {
                     updated_at: new Date(),
