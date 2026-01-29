@@ -83,7 +83,7 @@ class KickService {
         // volt e már ilyen rúgás az adott felhasználóra, ha igen akkor töröljük
         const existingKick = await this.kickRepository.getKickByUserId(encodedToken.userID, TO_USER_ID);
         if (existingKick) {
-            const updateKick = await this.kickRepository.updateKick(existingKick.ID);
+            await this.kickRepository.updateKick(existingKick.ID);
 
             return {updated: true};
         }
