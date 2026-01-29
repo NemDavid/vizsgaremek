@@ -10,6 +10,16 @@ exports.getKicks = async (req, res, next) => {
     }
 };
 
+exports.getMyKicks = async (req, res, next) => {
+    const token = req.cookies["user_token"];
+
+    try {
+        res.status(200).json(await kickService.getMyKicks(token));
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.getKickByUserId = async (req, res, next) => {
     const userId = req.userId;
     const token = req.cookies["user_token"];
@@ -34,7 +44,7 @@ exports.getKicksSentByUser = async (req, res, next) => {
 // ki rúgott engem
 exports.getKicksRecievedByUser = async (req, res, next) => {
     const token = req.cookies["user_token"];
-    
+
     try {
         res.status(200).json(await kickService.getKicksRecievedByUser(token));
     } catch (error) {
@@ -65,7 +75,7 @@ exports.doKick = async (req, res, next) => {
     const token = req.cookies["user_token"];
 
     try {
-        
+
         res.status(200).json(await kickService.doKick(token, userId));
 
     } catch (error) {

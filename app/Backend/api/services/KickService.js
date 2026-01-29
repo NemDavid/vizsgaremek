@@ -13,12 +13,26 @@ class KickService {
     }
 
 
+    async getMyKicks(token) {
+        if (!token) throw new BadRequestError("hiányzó token");
+        const encodedToken = authUtils.verifyToken(token);
+        
+        return await this.kickRepository.getMyKicks(encodedToken.userID);
+    }
+
     async getKickByUserId(token, TO_USER_ID) {
         if (!token) throw new BadRequestError("hiányzó token");
         const encodedToken = authUtils.verifyToken(token);
         if (!TO_USER_ID) throw new BadRequestError("hiányzó TO_USER_ID");
 
-        return await this.kickRepository.getKickByUserId(encodedToken.userId, TO_USER_ID);
+        const allKicks = await this.kickRepository.getKickByUserId(encodedToken.userID, TO_USER_ID);
+
+
+        
+
+
+
+        return 
     }
 
     // én kiket rúgtam
