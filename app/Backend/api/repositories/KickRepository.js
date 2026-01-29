@@ -18,7 +18,7 @@ class KickRepository {
     async getKickByUserId(FROM_USER_ID, TO_USER_ID) {
         try {
             return await this.Kick.scope("allKickData").findOne({
-                where: { 
+                where: {
                     FROM_USER_ID: FROM_USER_ID,
                     TO_USER_ID: TO_USER_ID
                 },
@@ -84,14 +84,19 @@ class KickRepository {
         }
     }
 
-    async updateKick(kickId, updateData) {
+    async updateKick(kickId) {
         try {
             console.log(kickId);
             console.log(updateData);
-            
-            const [affectedRows] = await this.Kick.update(updateData, {
-                where: { ID: kickId },
-            });
+
+            const [affectedRows] = await this.Kick.update(
+                {
+                    updated_at: new Date(),
+                },
+
+                {
+                    where: { ID: kickId },
+                });
             return affectedRows;
         } catch (error) {
             throw new DbError("A rúgást frissítése sikertelen.", { details: error.message });

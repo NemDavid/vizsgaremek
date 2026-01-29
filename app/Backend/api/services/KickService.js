@@ -83,11 +83,14 @@ class KickService {
         // volt e már ilyen rúgás az adott felhasználóra, ha igen akkor töröljük
         const existingKick = await this.kickRepository.getKickByUserId(encodedToken.userID, TO_USER_ID);
         if (existingKick) {
-            const deleteProcess = await this.deleteKick(existingKick.ID);
-            if (deleteProcess.deleted == 0) throw new BadRequestError("Rúgás törlése sikertelen");
+            const updateKick = await this.kickRepository.updateKick(existingKick.ID);
+
+            return {updated: true};
+        }
+        else {
+            return await this.kickRepository.createKick({ FROM_USER_ID: encodedToken.userID, TO_USER_ID });
         }
 
-        return await this.kickRepository.createKick({ FROM_USER_ID: encodedToken.userID, TO_USER_ID });
     }
 
 
