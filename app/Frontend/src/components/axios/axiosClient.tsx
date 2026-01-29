@@ -124,7 +124,7 @@ export async function AddFriend({ id }: { id: bigint }) {
   return response;
 }
 export async function postKick(userId: bigint) {
-  const response = await JsonClient.post(`/api/kicks/kick/${userId}`);
+  const response = await JsonClient.post(`/api/kicks/${userId}`);
   return response;
 }
 // #endregion

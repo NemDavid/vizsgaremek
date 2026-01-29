@@ -1,14 +1,26 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../../ui/button";
-import { postKick } from "../../axios/axiosClient";
+import { JsonClient, postKick } from "../../axios/axiosClient";
+import { Loader } from "lucide-react";
 
 const Kick = (userId: bigint) => {
     return postKick(userId);
 }
 
+async function GetKick() {
+  const response = await JsonClient.get("/api/kicks/all")
+  
+  return response;
+}
+
 export function KickButton({ id }: { id: bigint }) {
     const queryclient = useQueryClient();
-
+    const {data} = useQuery({
+        queryKey: ["Rugas",id],
+        queryFn: () => GetKick()
+    })
+    //console.log(data);
+    
     const { mutate: doKick, isPending } = useMutation({
         mutationFn: (userId : bigint) => Kick(userId),
         onSuccess: () => {
@@ -20,7 +32,7 @@ export function KickButton({ id }: { id: bigint }) {
 
 
     if (isPending) {
-        return <p>töltés...</p>
+        return <Loader/>
     }
 
     return (
