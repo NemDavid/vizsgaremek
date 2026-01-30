@@ -65,6 +65,11 @@ export async function GetSettings() {
   
   return response;
 }
+export async function GetAds() {
+  const response = await JsonClient.get("api/advertisement/random")
+  
+  return response;
+}
 // #endregion
 
 //-------------------------------------------------------------------------------------
