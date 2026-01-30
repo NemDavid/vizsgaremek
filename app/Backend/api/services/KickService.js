@@ -108,7 +108,6 @@ class KickService {
     }
 
 
-
     async updateKick(kickId, updateData) {
         if (!kickId) throw new BadRequestError("Hiányzó Kick ID");
         if (!updateData.FROM_USER_ID) {
@@ -137,7 +136,6 @@ class KickService {
         }
         return updateKick;
     }
-
 }
 
 module.exports = KickService;
