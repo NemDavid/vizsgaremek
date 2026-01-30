@@ -1,6 +1,5 @@
 const db = require("../db");
 const { connectionsService } = require("../services")(db);
-const authUtils = require("../utilities/authUtils");
 
 exports.getConnections = async (req, res, next) => {
     try {
@@ -65,7 +64,7 @@ exports.deleteConnection = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(200).json(await connectionsService.deleteConnection(token, To_User_ID));
+        res.status(204).json(await connectionsService.deleteConnection(token, To_User_ID));
     } catch (error) {
         next(error);
     }
@@ -79,7 +78,7 @@ exports.createConnection = async (req, res, next) => {
     try {
         const newConnection = await connectionsService.createConnection(token, To_User_ID, action);
         
-        res.status(200).json({
+        res.status(201).json({
             user: newConnection,
             token
         });

@@ -21,7 +21,7 @@ exports.getUsers_posts_comment = async (req, res, next) => {
 
 exports.deleteUsers_posts_comment = async (req, res, next) => {
     try {
-        res.status(200).json(await user_post_commentService.deleteUsers_posts_comment(req.itemId));
+        res.status(204).json(await user_post_commentService.deleteUsers_posts_comment(req.itemId));
     } catch (error) {
         next(error);
     }
@@ -39,7 +39,7 @@ exports.createUsers_posts_comment = async (req, res, next) => {
             token
         );
 
-        res.status(200).json(createdUser_Post_comment);
+        res.status(201).json(createdUser_Post_comment);
     } catch (error) {
         next(error);
     }

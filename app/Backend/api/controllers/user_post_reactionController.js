@@ -23,7 +23,7 @@ exports.getUsers_posts_reaction = async (req, res, next) => {
 
 exports.deleteUsers_posts_reaction = async (req, res, next) => {
     try {
-        res.status(200).json(await user_post_reactionService.deleteUsers_posts_reaction(req.itemId));
+        res.status(204).json(await user_post_reactionService.deleteUsers_posts_reaction(req.itemId));
     } catch (error) {
         next(error);
     }

@@ -1,6 +1,5 @@
 const db = require("../db");
 const { kickService } = require("../services")(db);
-const authUtils = require("../utilities/authUtils");
 
 exports.getKicks = async (req, res, next) => {
     try {
@@ -64,7 +63,7 @@ exports.getKicksByPage = async (req, res, next) => {
 exports.deleteKick = async (req, res, next) => {
 
     try {
-        res.status(200).json(await kickService.deleteKick(req.kickId));
+        res.status(204).json(await kickService.deleteKick(req.kickId));
     } catch (error) {
         next(error);
     }

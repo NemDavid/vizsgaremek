@@ -29,7 +29,7 @@ exports.getUser_ProfilesByPage = async (req, res, next) => {
 
 exports.deleteUser_Profile = async (req, res, next) => {
     try {
-        res.status(200).json(await user_profileService.deleteUser_Profile(req.userId));
+        res.status(204).json(await user_profileService.deleteUser_Profile(req.userId));
     } catch (error) {
         next(error);
     }
@@ -38,7 +38,7 @@ exports.deleteUser_Profile = async (req, res, next) => {
 exports.createUser_Profile = async (req, res, next) => {
     const { USER_ID, first_name, last_name, birth_date, birth_place, schools, bio, avatar_url } = req.body || {};
     try {
-        res.status(200).json(await user_profileService.createUser_Profile({
+        res.status(201).json(await user_profileService.createUser_Profile({
             USER_ID,
             first_name,
             last_name,

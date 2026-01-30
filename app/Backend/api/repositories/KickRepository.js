@@ -16,21 +16,6 @@ class KickRepository {
         }
     }
 
-    async getMyKicks(userId) {
-        try {
-            return await this.Kick.scope("allKickData").findAll({
-                where: {
-                    [Op.or]: [
-                        {FROM_USER_ID: userId},
-                        {TO_USER_ID: userId}
-                    ],
-                },
-            });
-        } catch (error) {
-            throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
-        }
-    }
-
     async getKickByUserId(FROM_USER_ID, TO_USER_ID) {
         try {
             return await this.Kick.scope("allKickData").findOne({

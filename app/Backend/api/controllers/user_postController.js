@@ -38,7 +38,7 @@ exports.getUser_Post_ByID = async (req, res, next) => {
 
 exports.deleteUser_Post = async (req, res, next) => {
     try {
-        res.status(200).json(await user_postService.deleteUser_Post(req.postId));
+        res.status(204).json(await user_postService.deleteUser_Post(req.postId));
     } catch (error) {
         next(error);
     }
@@ -50,7 +50,7 @@ exports.createUser_Post = async (req, res, next) => {
     
 
     try {
-        res.status(200).json(await user_postService.createUser_Post({
+        res.status(201).json(await user_postService.createUser_Post({
             token, 
             title, 
             content,  

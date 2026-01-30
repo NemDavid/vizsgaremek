@@ -50,7 +50,7 @@ exports.getUsersByPage = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        res.status(200).json(await userService.deleteUser(req.userId));
+        res.status(204).json(await userService.deleteUser(req.userId));
     } catch (error) {
         next(error);
     }
@@ -67,7 +67,7 @@ exports.createUser = async (req, res, next) => {
 
         const token = authUtils.generateUserToken(newUser);
 
-        res.status(200).json({
+        res.status(201).json({
             user: newUser,
             token
         });

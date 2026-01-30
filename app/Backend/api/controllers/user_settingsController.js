@@ -23,7 +23,7 @@ exports.deleteUser_Settings = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(200).json(await user_SettingsService.deleteUser_Settings(token));
+        res.status(204).json(await user_SettingsService.deleteUser_Settings(token));
     } catch (error) {
         next(error);
     }
@@ -35,7 +35,7 @@ exports.createUser_Settings = async (req, res, next) => {
     try {
         const newUser_Settings = await user_SettingsService.createUser_Settings(token);
 
-        res.status(200).json({
+        res.status(201).json({
             user_Settings: newUser_Settings,
             token
         });
