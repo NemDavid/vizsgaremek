@@ -1,10 +1,10 @@
-const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class ConnectionsRepository {
     constructor(db) {
         this.Connections = db.Connections;
         this.sequelize = db.sequelize;
+        this.Op = this.sequelize.Op;
     }
 
     async getConnections() {

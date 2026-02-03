@@ -47,20 +47,3 @@ exports.userMakeReaction = async (req, res, next) => {
     }
 };
 
-exports.updateUsers_posts_reaction = async (req, res, next) => {
-    const { POST_ID, reaction } = req.body || {};
-    const token = req.cookies['user_token'];
-
-    try {
-        const updatedUser_Post_Reaction = await user_post_reactionService.updateUsers_posts_reaction({
-            POST_ID,
-            reaction,
-        },
-            token
-    );
-        
-        res.status(200).json(updatedUser_Post_Reaction);
-    } catch (error) {
-        next(error);
-    }
-};

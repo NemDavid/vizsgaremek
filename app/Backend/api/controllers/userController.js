@@ -12,14 +12,19 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
     try {
-        res.status(200).json(await userService.getUser(req.userId));
+        const user = await userService.getUser(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user);
     } catch (error) {
         next(error);
     }
 };
 exports.getUserByUsernameOrUserId = async (req, res, next) => {
     const uniqIdentifier = req.uniqIdentifier;
-    
+
     let user = null;
     try {
         // próbáljuk számként értelmezni
@@ -31,6 +36,9 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
             user = await userService.getUserByUsername(uniqIdentifier);
         }
 
+        if (!user) {
+            return res.status(404).json({ message: "User nincs megtalálva" });
+        }
 
         res.status(200).json(user);
     } catch (error) {
@@ -50,7 +58,13 @@ exports.getUsersByPage = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        res.status(204).json(await userService.deleteUser(req.userId));
+        const deleteResault = await userService.deleteUser(req.userId);
+
+        if (deleteResault.deleted == 0) {
+            return res.status(404).json({ message: "User nincs megtalálva" });
+        }
+
+        res.status(204).json(deleteResault);
     } catch (error) {
         next(error);
     }
@@ -72,6 +86,12 @@ exports.createUser = async (req, res, next) => {
             token
         });
     } catch (error) {
+        // Ha a felhasználónév már foglalt
+        if (error.name === "SequelizeUniqueConstraintError") {
+            return res.status(400).json({ message: "Username mát létezik" });
+        }
+
+        // Ha valami más hiba van
         next(error);
     }
 };

@@ -48,7 +48,9 @@ const errorHandler = require("./api/middlewares/errorHandler");
 
 
 
-require("./api/db/");
+if (process.env.NODE_ENV !== "test") {
+  require("./api/db/");
+}
 
 app.use("/api", api);
 

@@ -1,4 +1,3 @@
-const { parse } = require("dotenv");
 const { BadRequestError } = require("../errors");
 const authUtils = require("../utilities/authUtils");
 

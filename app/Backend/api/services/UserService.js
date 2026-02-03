@@ -1,4 +1,5 @@
 const { BadRequestError } = require("../errors");
+const NotFoundError = require("../errors/NotFoundError");
 const authUtils = require("../utilities/authUtils");
 const bcrypt = require("bcrypt");
 const salt = 14;
@@ -59,14 +60,19 @@ class UserService
         const deleteProcess = await this.userRepository.deleteUser(userId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen felhasznalo");
+            throw new NotFoundError("Nincs ilyen felhasznalo");
         }
         return deleteProcess;
     }
 
     async createUser(userData, options = {})
     {
-        // userData.password_hash = authUtils.hashPassword(userData.password_hash);
+        // van e már ilyen felhasználó ezzel a névvel
+        const existingUser = await this.userRepository.getUserByUsername(userData.username);
+        if (existingUser) {
+            throw new BadRequestError("");
+        }
+
         return await this.userRepository.createUser(userData, options);
     }
 

@@ -1,11 +1,10 @@
 
-const { sequelize } = require("../db");
 const { DbError } = require("../errors");
 
 class AdvertisementRepository {
     constructor(db) {
         this.Advertisement = db.Advertisement;
-
+        this.sequelize = db.sequelize;
     }
 
     async getAdvertisements() {
@@ -29,7 +28,7 @@ class AdvertisementRepository {
     async getRandomAdvertisement() {
         try {
             return await this.Advertisement.scope("allAdvertisementData").findOne({
-                order: sequelize.random(),
+                order: this.sequelize.random(),
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a hirdetést.", { details: error.message });
