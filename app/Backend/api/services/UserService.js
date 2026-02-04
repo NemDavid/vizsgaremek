@@ -70,7 +70,7 @@ class UserService
         // van e már ilyen felhasználó ezzel a névvel
         const existingUser = await this.userRepository.getUserByUsername(userData.username);
         if (existingUser) {
-            throw new BadRequestError("");
+            throw new BadRequestError("ez a felhasználó név már létezik");
         }
 
         return await this.userRepository.createUser(userData, options);
