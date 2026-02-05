@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">14.28% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>1/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">58.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">14.28% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>1/7</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -87,36 +87,36 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">class AppError extends Error
 {
-    constructor(message = <span class="branch-0 cbranch-no" title="branch not covered" >"Internal Server Error", </span>
-    { statusCode = 500, isOperational = true, details = undefined, data = undefined } = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span> )
+<span class="fstat-no" title="function not covered" >    co</span>nstructor(message = <span class="branch-0 cbranch-no" title="branch not covered" >"Internal Server Error", </span>
+    { statusCode = <span class="branch-0 cbranch-no" title="branch not covered" >500,</span> isOperational = <span class="branch-0 cbranch-no" title="branch not covered" >true,</span> details = <span class="branch-0 cbranch-no" title="branch not covered" >undefined,</span> data = <span class="branch-0 cbranch-no" title="branch not covered" >undefined </span>} = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span> )
     {
-        super(message);
+<span class="cstat-no" title="statement not covered" >        super(message);</span>
 &nbsp;
-        this.statusCode = statusCode;
+<span class="cstat-no" title="statement not covered" >        this.statusCode = statusCode;</span>
 &nbsp;
-        this.isOperational = isOperational;
+<span class="cstat-no" title="statement not covered" >        this.isOperational = isOperational;</span>
 &nbsp;
-        this.details = process.env.NODE_ENV !== "production" ? details : <span class="branch-1 cbranch-no" title="branch not covered" >undefined;</span>
+<span class="cstat-no" title="statement not covered" >        this.details = process.env.NODE_ENV !== "production" ? details : undefined;</span>
 &nbsp;
-        this.data = process.env.NODE_ENV !== "production" ? data : <span class="branch-1 cbranch-no" title="branch not covered" >undefined;</span>
+<span class="cstat-no" title="statement not covered" >        this.data = process.env.NODE_ENV !== "production" ? data : undefined;</span>
 &nbsp;
-        process.env.NODE_ENV !== "production" ? Error.captureStackTrace(this, this.constructor) : <span class="branch-1 cbranch-no" title="branch not covered" >undefined;</span>
+<span class="cstat-no" title="statement not covered" >        process.env.NODE_ENV !== "production" ? Error.captureStackTrace(this, this.constructor) : undefined;</span>
     }
 }
 &nbsp;
@@ -127,7 +127,7 @@ module.exports = AppError;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-04T21:08:37.406Z
+                at 2026-02-05T17:00:08.565Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

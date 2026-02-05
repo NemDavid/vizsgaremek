@@ -134,7 +134,7 @@ describe("user_profile_Controller", () => {
             });
         });
 
-        describe("UPDATE - TODO", () => {
+        describe("UPDATE", () => {
             test("should update profile from db", async () => {
                 const inputID = 1;
 
@@ -154,7 +154,9 @@ describe("user_profile_Controller", () => {
                         },
                     });
 
-                expect(foundProfile).toBeNull();
+                expect(foundProfile).toBeDefined();
+                expect(foundProfile.first_name).toEqual(updateUser.first_name);
+                expect(foundProfile.last_name).toEqual(updateUser.last_name);
             });
         });
     });
