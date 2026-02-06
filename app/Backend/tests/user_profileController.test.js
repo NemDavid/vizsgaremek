@@ -9,6 +9,7 @@ jest.mock("../api/db");
 const db = require("../api/db");
 
 const authUtils = require("../api/utilities/authUtils");
+const { raw } = require("express");
 
 
 describe("user_profile_Controller", () => {
@@ -62,103 +63,161 @@ describe("user_profile_Controller", () => {
 
     describe("/api/profiles", () => {
         describe("GET", () => {
-            test("should return the test dataset", async () => {
-                const res = await request(app).get("/api/profiles/all").set("Accept", "application/json");
+            describe("GET /api/profiles/all", () => {
+                test("should return the test dataset", async () => {
+                    const res = await request(app).get("/api/profiles/all").set("Accept", "application/json");
 
-                expect(res.status).toBe(200);
+                    expect(res.status).toBe(200);
 
-                expect(res.body).toEqual(
-                    expect.arrayContaining(
-                        rawProfiles.map(profile => expect.objectContaining({
-                            USER_ID: profile.USER_ID,
-                            first_name: profile.first_name,
-                            last_name: profile.last_name,
-                            birth_date: profile.birth_date,
-                            bio: profile.bio,
-                            avatar_url: profile.avatar_url
-                        })))
-                );
-            });
-        });
+                    expect(res.body).toEqual(
+                        expect.arrayContaining(
+                            rawProfiles.map(profile => expect.objectContaining({
+                                USER_ID: profile.USER_ID,
+                                first_name: profile.first_name,
+                                last_name: profile.last_name,
+                                birth_date: profile.birth_date,
+                                bio: profile.bio,
+                                avatar_url: profile.avatar_url
+                            })))
+                    );
+                });
 
-        describe("POST", () => {
-            test("should create a new profile", async () => {
-                const profile = {
-                    USER_ID: 3,
-                    first_name: "Anna",
-                    last_name: "Kiss",
-                    birth_date: "1992-07-15",
-                    bio: "Admin2 profil",
-                    avatar_url: "/admin2.png"
-                }
+                describe("GET /api/profiles/:userId", () => {
+                    test("should return the correct profile", async () => {
+                        const inputID = 1;
 
-                await request(app).post("/api/profiles").send(profile).expect(201);
+                        const res = await request(app).get(`/api/profiles/${inputID}`).set("Accept", "application/json");
 
 
-                const foundProfile = await db.User_Profile.findOne(
-                    {
-                        where:
-                        {
-                            USER_ID: profile.USER_ID,
-                        },
+
+                        expect(res.status).toBe(200);
+                        expect(res).toBeDefined();
+                        expect(res.body).toEqual(expect.objectContaining(
+                            {
+                                USER_ID: rawProfiles[0].USER_ID,
+                                first_name: rawProfiles[0].first_name,
+                                last_name: rawProfiles[0].last_name,
+                                birth_date: rawProfiles[0].birth_date,
+                                bio: rawProfiles[0].bio,
+                                avatar_url: rawProfiles[0].avatar_url
+                            }
+                        ));
                     });
 
-                expect(foundProfile).toBeDefined();
+                //     test("should throw erreor on missing param", async () => {
+                //         const inputID = undefined;
 
-                expect(foundProfile.first_name).toEqual(profile.first_name);
-                expect(foundProfile.last_name).toEqual(profile.last_name);
-                expect(foundProfile.bio).toEqual(profile.bio);
-                expect(foundProfile.avatar_url).toEqual(profile.avatar_url);
-
-                expect(foundProfile.birth_date).toBe(profile.birth_date);
+                //         const res = await request(app).get(`/api/profiles/`).set("Accept", "application/json");
 
 
-            });
-        });
 
-        describe("DELETE", () => {
-            test("should delete profile from db", async () => {
-                const inputID = 2;
+                //         expect(res.status).toBe(400);
+                //         expect(res).not.toBeDefined();
+                //     });
+                });
 
-                await request(app).delete(`/api/profiles/${inputID}`).expect(204);
+                describe("GET /api/profiles/pages/:paramPage", () => {
+                    test("should return the correct profiles", async () => {
+                        const paramPage = 1;
 
-                const foundProfile = await db.User_Profile.findOne(
-                    {
-                        where:
-                        {
-                            USER_ID: inputID,
-                        },
+                        const res = await request(app).get(`/api/profiles/pages/${paramPage}`).set("Accept", "application/json");
+
+                        expect(res.status).toBe(200);
+                        expect(res).toBeDefined();
+                        expect(res.body.length).toBeLessThanOrEqual(25);
                     });
 
-                expect(foundProfile).toBeNull();
-            });
-        });
+                    test("should return empty array on empty page", async () => {
+                        const paramPage = 100;
 
-        describe("UPDATE", () => {
-            test("should update profile from db", async () => {
-                const inputID = 1;
+                        const res = await request(app).get(`/api/profiles/pages/${paramPage}`).set("Accept", "application/json");
 
-
-                const updateUser = {
-                    first_name: "update_Gergő",
-                    last_name: "update_Kovács",
-                };
-
-                await request(app).patch(`/api/profiles/${inputID}`).send(updateUser).expect(200);
-
-                const foundProfile = await db.User_Profile.findOne(
-                    {
-                        where:
-                        {
-                            USER_ID: inputID,
-                        },
+                        expect(res.status).toBe(200);
+                        expect(res).toBeDefined();
+                        expect(res.body.length).toBe(0);
                     });
+                });
 
-                expect(foundProfile).toBeDefined();
-                expect(foundProfile.first_name).toEqual(updateUser.first_name);
-                expect(foundProfile.last_name).toEqual(updateUser.last_name);
+            });
+
+            describe("POST", () => {
+                test("should create a new profile", async () => {
+                    const profile = {
+                        USER_ID: 3,
+                        first_name: "Anna",
+                        last_name: "Kiss",
+                        birth_date: "1992-07-15",
+                        bio: "Admin2 profil",
+                        avatar_url: "/admin2.png"
+                    }
+
+                    await request(app).post("/api/profiles").send(profile).expect(201);
+
+
+                    const foundProfile = await db.User_Profile.findOne(
+                        {
+                            where:
+                            {
+                                USER_ID: profile.USER_ID,
+                            },
+                        });
+
+                    expect(foundProfile).toBeDefined();
+
+                    expect(foundProfile.first_name).toEqual(profile.first_name);
+                    expect(foundProfile.last_name).toEqual(profile.last_name);
+                    expect(foundProfile.bio).toEqual(profile.bio);
+                    expect(foundProfile.avatar_url).toEqual(profile.avatar_url);
+
+                    expect(foundProfile.birth_date).toBe(profile.birth_date);
+
+
+                });
+            });
+
+            describe("DELETE", () => {
+                test("should delete profile from db", async () => {
+                    const inputID = 2;
+
+                    await request(app).delete(`/api/profiles/${inputID}`).expect(204);
+
+                    const foundProfile = await db.User_Profile.findOne(
+                        {
+                            where:
+                            {
+                                USER_ID: inputID,
+                            },
+                        });
+
+                    expect(foundProfile).toBeNull();
+                });
+            });
+
+            describe("UPDATE", () => {
+                test("should update profile from db", async () => {
+                    const inputID = 1;
+
+
+                    const updateUser = {
+                        first_name: "update_Gergő",
+                        last_name: "update_Kovács",
+                    };
+
+                    await request(app).patch(`/api/profiles/${inputID}`).send(updateUser).expect(200);
+
+                    const foundProfile = await db.User_Profile.findOne(
+                        {
+                            where:
+                            {
+                                USER_ID: inputID,
+                            },
+                        });
+
+                    expect(foundProfile).toBeDefined();
+                    expect(foundProfile.first_name).toEqual(updateUser.first_name);
+                    expect(foundProfile.last_name).toEqual(updateUser.last_name);
+                });
             });
         });
     });
 });
-

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1770310808727" clover="3.2.0">
-  <project timestamp="1770310808728" name="All files">
-    <metrics statements="2108" coveredstatements="709" conditionals="676" coveredconditionals="56" methods="347" coveredmethods="66" elements="3131" coveredelements="831" complexity="0" loc="2108" ncloc="2108" packages="9" files="74" classes="74"/>
+<coverage generated="1770366727580" clover="3.2.0">
+  <project timestamp="1770366727580" name="All files">
+    <metrics statements="2108" coveredstatements="724" conditionals="676" coveredconditionals="58" methods="347" coveredmethods="72" elements="3131" coveredelements="854" complexity="0" loc="2108" ncloc="2108" packages="9" files="74" classes="74"/>
     <package name="Backend">
       <metrics statements="45" coveredstatements="42" conditionals="4" coveredconditionals="2" methods="0" coveredmethods="0"/>
-      <file name="app.js" path="C:\--iskola\vizsgaremek\app\Backend\app.js">
+      <file name="app.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\app.js">
         <metrics statements="45" coveredstatements="42" conditionals="4" coveredconditionals="2" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -54,8 +54,8 @@
       </file>
     </package>
     <package name="Backend.api.controllers">
-      <metrics statements="437" coveredstatements="113" conditionals="60" coveredconditionals="2" methods="76" coveredmethods="4"/>
-      <file name="advertisementController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\advertisementController.js">
+      <metrics statements="437" coveredstatements="118" conditionals="60" coveredconditionals="2" methods="76" coveredmethods="6"/>
+      <file name="advertisementController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\advertisementController.js">
         <metrics statements="26" coveredstatements="7" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -84,7 +84,7 @@
         <line num="50" count="0" type="stmt"/>
         <line num="52" count="0" type="stmt"/>
       </file>
-      <file name="authController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\authController.js">
+      <file name="authController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\authController.js">
         <metrics statements="73" coveredstatements="13" conditionals="22" coveredconditionals="0" methods="10" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -160,12 +160,12 @@
         <line num="186" count="0" type="stmt"/>
         <line num="191" count="0" type="stmt"/>
       </file>
-      <file name="cloudController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\cloudController.js">
+      <file name="cloudController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\cloudController.js">
         <metrics statements="2" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="0" type="stmt"/>
       </file>
-      <file name="connectionsController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\connectionsController.js">
+      <file name="connectionsController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\connectionsController.js">
         <metrics statements="53" coveredstatements="11" conditionals="2" coveredconditionals="0" methods="9" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -221,7 +221,7 @@
         <line num="98" count="0" type="stmt"/>
         <line num="100" count="0" type="stmt"/>
       </file>
-      <file name="kickController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\kickController.js">
+      <file name="kickController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\kickController.js">
         <metrics statements="41" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -265,7 +265,7 @@
         <line num="78" count="0" type="stmt"/>
         <line num="81" count="0" type="stmt"/>
       </file>
-      <file name="userController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\userController.js">
+      <file name="userController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\userController.js">
         <metrics statements="56" coveredstatements="11" conditionals="14" coveredconditionals="0" methods="8" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -324,7 +324,7 @@
         <line num="112" count="0" type="stmt"/>
         <line num="114" count="0" type="stmt"/>
       </file>
-      <file name="user_postController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\user_postController.js">
+      <file name="user_postController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\user_postController.js">
         <metrics statements="35" coveredstatements="9" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -362,7 +362,7 @@
         <line num="67" count="0" type="stmt"/>
         <line num="69" count="0" type="stmt"/>
       </file>
-      <file name="user_post_commentController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\user_post_commentController.js">
+      <file name="user_post_commentController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\user_post_commentController.js">
         <metrics statements="28" coveredstatements="7" conditionals="4" coveredconditionals="0" methods="5" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -393,7 +393,7 @@
         <line num="61" count="0" type="stmt"/>
         <line num="63" count="0" type="stmt"/>
       </file>
-      <file name="user_post_reactionController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\user_post_reactionController.js">
+      <file name="user_post_reactionController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\user_post_reactionController.js">
         <metrics statements="22" coveredstatements="6" conditionals="2" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -418,8 +418,8 @@
         <line num="44" count="0" type="stmt"/>
         <line num="46" count="0" type="stmt"/>
       </file>
-      <file name="user_profileController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\user_profileController.js">
-        <metrics statements="33" coveredstatements="21" conditionals="4" coveredconditionals="2" methods="6" coveredmethods="4"/>
+      <file name="user_profileController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\user_profileController.js">
+        <metrics statements="33" coveredstatements="26" conditionals="4" coveredconditionals="2" methods="6" coveredmethods="6"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
@@ -427,13 +427,13 @@
         <line num="7" count="1" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
         <line num="22" count="1" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
         <line num="26" count="0" type="stmt"/>
         <line num="30" count="1" type="stmt"/>
         <line num="31" count="1" type="stmt"/>
@@ -454,7 +454,7 @@
         <line num="73" count="1" type="stmt"/>
         <line num="75" count="0" type="stmt"/>
       </file>
-      <file name="user_settingsController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\user_settingsController.js">
+      <file name="user_settingsController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\user_settingsController.js">
         <metrics statements="28" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -485,7 +485,7 @@
         <line num="52" count="0" type="stmt"/>
         <line num="54" count="0" type="stmt"/>
       </file>
-      <file name="verify_codeController.js" path="C:\--iskola\vizsgaremek\app\Backend\api\controllers\verify_codeController.js">
+      <file name="verify_codeController.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\controllers\verify_codeController.js">
         <metrics statements="40" coveredstatements="10" conditionals="6" coveredconditionals="0" methods="8" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -531,7 +531,7 @@
     </package>
     <package name="Backend.api.errors">
       <metrics statements="23" coveredstatements="12" conditionals="22" coveredconditionals="0" methods="6" coveredmethods="0"/>
-      <file name="AppError.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\AppError.js">
+      <file name="AppError.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\AppError.js">
         <metrics statements="7" coveredstatements="1" conditionals="12" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="6" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
@@ -541,44 +541,44 @@
         <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="20" count="1" type="stmt"/>
       </file>
-      <file name="BadRequestError.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\BadRequestError.js">
+      <file name="BadRequestError.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\BadRequestError.js">
         <metrics statements="3" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
       </file>
-      <file name="DbError.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\DbError.js">
+      <file name="DbError.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\DbError.js">
         <metrics statements="3" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
       </file>
-      <file name="NotFoundError.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\NotFoundError.js">
+      <file name="NotFoundError.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\NotFoundError.js">
         <metrics statements="3" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
       </file>
-      <file name="UnauthorizedError.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\UnauthorizedError.js">
+      <file name="UnauthorizedError.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\UnauthorizedError.js">
         <metrics statements="3" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
       </file>
-      <file name="ValidationError.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\ValidationError.js">
+      <file name="ValidationError.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\ValidationError.js">
         <metrics statements="3" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
       </file>
-      <file name="index.js" path="C:\--iskola\vizsgaremek\app\Backend\api\errors\index.js">
+      <file name="index.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\errors\index.js">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
       </file>
     </package>
     <package name="Backend.api.middlewares">
-      <metrics statements="40" coveredstatements="11" conditionals="20" coveredconditionals="0" methods="12" coveredmethods="1"/>
-      <file name="authMiddleware.js" path="C:\--iskola\vizsgaremek\app\Backend\api\middlewares\authMiddleware.js">
+      <metrics statements="40" coveredstatements="13" conditionals="20" coveredconditionals="0" methods="12" coveredmethods="2"/>
+      <file name="authMiddleware.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\middlewares\authMiddleware.js">
         <metrics statements="12" coveredstatements="4" conditionals="8" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -593,7 +593,7 @@
         <line num="25" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="27" count="0" type="stmt"/>
       </file>
-      <file name="errorHandler.js" path="C:\--iskola\vizsgaremek\app\Backend\api\middlewares\errorHandler.js">
+      <file name="errorHandler.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\middlewares\errorHandler.js">
         <metrics statements="8" coveredstatements="2" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
@@ -604,12 +604,12 @@
         <line num="24" count="0" type="stmt"/>
         <line num="31" count="1" type="stmt"/>
       </file>
-      <file name="paramHandler.js" path="C:\--iskola\vizsgaremek\app\Backend\api\middlewares\paramHandler.js">
-        <metrics statements="15" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="1"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
+      <file name="paramHandler.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\middlewares\paramHandler.js">
+        <metrics statements="15" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="2"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
@@ -622,7 +622,7 @@
         <line num="33" count="0" type="stmt"/>
         <line num="38" count="1" type="stmt"/>
       </file>
-      <file name="uploadMiddleware.js" path="C:\--iskola\vizsgaremek\app\Backend\api\middlewares\uploadMiddleware.js">
+      <file name="uploadMiddleware.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\middlewares\uploadMiddleware.js">
         <metrics statements="5" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -633,65 +633,65 @@
     </package>
     <package name="Backend.api.models">
       <metrics statements="126" coveredstatements="84" conditionals="41" coveredconditionals="8" methods="19" coveredmethods="14"/>
-      <file name="Advertisement.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\Advertisement.js">
+      <file name="Advertisement.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\Advertisement.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="60" count="1" type="stmt"/>
       </file>
-      <file name="Connections.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\Connections.js">
+      <file name="Connections.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\Connections.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="53" count="1" type="stmt"/>
       </file>
-      <file name="Kick.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\Kick.js">
+      <file name="Kick.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\Kick.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="59" count="1" type="stmt"/>
       </file>
-      <file name="Settings.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\Settings.js">
+      <file name="Settings.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\Settings.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="7" count="1" type="stmt"/>
         <line num="48" count="1" type="stmt"/>
       </file>
-      <file name="User.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\User.js">
+      <file name="User.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\User.js">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
-        <line num="31" count="2" type="stmt"/>
-        <line num="36" count="12" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="36" count="21" type="stmt"/>
         <line num="96" count="1" type="stmt"/>
       </file>
-      <file name="User_Post.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\User_Post.js">
+      <file name="User_Post.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\User_Post.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="91" count="1" type="stmt"/>
       </file>
-      <file name="User_Post_Comment.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\User_Post_Comment.js">
+      <file name="User_Post_Comment.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\User_Post_Comment.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="65" count="1" type="stmt"/>
       </file>
-      <file name="User_Post_Reaction.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\User_Post_Reaction.js">
+      <file name="User_Post_Reaction.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\User_Post_Reaction.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="65" count="1" type="stmt"/>
       </file>
-      <file name="User_Profile.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\User_Profile.js">
+      <file name="User_Profile.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\User_Profile.js">
         <metrics statements="54" coveredstatements="13" conditionals="41" coveredconditionals="8" methods="6" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -748,7 +748,7 @@
         <line num="229" count="1" type="stmt"/>
         <line num="248" count="1" type="stmt"/>
       </file>
-      <file name="Verify_Code.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\Verify_Code.js">
+      <file name="Verify_Code.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\Verify_Code.js">
         <metrics statements="5" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -756,7 +756,7 @@
         <line num="43" count="0" type="stmt"/>
         <line num="69" count="1" type="stmt"/>
       </file>
-      <file name="index.js" path="C:\--iskola\vizsgaremek\app\Backend\api\models\index.js">
+      <file name="index.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\models\index.js">
         <metrics statements="33" coveredstatements="33" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -794,8 +794,8 @@
       </file>
     </package>
     <package name="Backend.api.repositories">
-      <metrics statements="336" coveredstatements="94" conditionals="23" coveredconditionals="4" methods="84" coveredmethods="17"/>
-      <file name="AdvertisementRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\AdvertisementRepository.js">
+      <metrics statements="336" coveredstatements="98" conditionals="23" coveredconditionals="4" methods="84" coveredmethods="18"/>
+      <file name="AdvertisementRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\AdvertisementRepository.js">
         <metrics statements="20" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="1"/>
         <line num="2" count="1" type="stmt"/>
         <line num="6" count="198" type="stmt"/>
@@ -818,7 +818,7 @@
         <line num="51" count="0" type="stmt"/>
         <line num="60" count="1" type="stmt"/>
       </file>
-      <file name="ConnectionsRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\ConnectionsRepository.js">
+      <file name="ConnectionsRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\ConnectionsRepository.js">
         <metrics statements="38" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="11" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -859,7 +859,7 @@
         <line num="160" count="0" type="stmt"/>
         <line num="165" count="1" type="stmt"/>
       </file>
-      <file name="KickRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\KickRepository.js">
+      <file name="KickRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\KickRepository.js">
         <metrics statements="33" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="9" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -895,7 +895,7 @@
         <line num="99" count="0" type="stmt"/>
         <line num="104" count="1" type="stmt"/>
       </file>
-      <file name="UserRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\UserRepository.js">
+      <file name="UserRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\UserRepository.js">
         <metrics statements="44" coveredstatements="8" conditionals="2" coveredconditionals="0" methods="12" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -942,7 +942,7 @@
         <line num="153" count="0" type="stmt"/>
         <line num="158" count="1" type="stmt"/>
       </file>
-      <file name="User_PostRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\User_PostRepository.js">
+      <file name="User_PostRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\User_PostRepository.js">
         <metrics statements="39" coveredstatements="6" conditionals="4" coveredconditionals="0" methods="9" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -984,7 +984,7 @@
         <line num="132" count="0" type="stmt"/>
         <line num="137" count="1" type="stmt"/>
       </file>
-      <file name="User_Post_CommentRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\User_Post_CommentRepository.js">
+      <file name="User_Post_CommentRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\User_Post_CommentRepository.js">
         <metrics statements="21" coveredstatements="4" conditionals="3" coveredconditionals="0" methods="6" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -1008,7 +1008,7 @@
         <line num="62" count="0" type="stmt"/>
         <line num="68" count="1" type="stmt"/>
       </file>
-      <file name="User_Post_ReactionRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\User_Post_ReactionRepository.js">
+      <file name="User_Post_ReactionRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\User_Post_ReactionRepository.js">
         <metrics statements="21" coveredstatements="4" conditionals="5" coveredconditionals="0" methods="6" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -1032,8 +1032,8 @@
         <line num="72" count="0" type="stmt"/>
         <line num="77" count="1" type="stmt"/>
       </file>
-      <file name="User_ProfileRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\User_ProfileRepository.js">
-        <metrics statements="39" coveredstatements="28" conditionals="9" coveredconditionals="4" methods="7" coveredmethods="6"/>
+      <file name="User_ProfileRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\User_ProfileRepository.js">
+        <metrics statements="39" coveredstatements="32" conditionals="9" coveredconditionals="4" methods="7" coveredmethods="7"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
         <line num="6" count="198" type="stmt"/>
@@ -1056,25 +1056,25 @@
         <line num="51" count="0" type="stmt"/>
         <line num="54" count="1" type="stmt"/>
         <line num="56" count="0" type="stmt"/>
-        <line num="61" count="0" type="stmt"/>
-        <line num="62" count="0" type="stmt"/>
-        <line num="63" count="0" type="stmt"/>
-        <line num="64" count="0" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
         <line num="70" count="0" type="stmt"/>
-        <line num="75" count="1" type="stmt"/>
-        <line num="76" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="79" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="83" count="1" type="stmt"/>
-        <line num="102" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="104" count="1" type="stmt"/>
-        <line num="108" count="1" type="stmt"/>
-        <line num="112" count="1" type="stmt"/>
-        <line num="113" count="1" type="stmt"/>
-        <line num="115" count="1" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="76" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="79" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="83" count="2" type="stmt"/>
+        <line num="102" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="108" count="2" type="stmt"/>
+        <line num="112" count="2" type="stmt"/>
+        <line num="113" count="2" type="stmt"/>
+        <line num="115" count="2" type="stmt"/>
         <line num="117" count="0" type="stmt"/>
         <line num="122" count="1" type="stmt"/>
       </file>
-      <file name="User_SettingsRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\User_SettingsRepository.js">
+      <file name="User_SettingsRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\User_SettingsRepository.js">
         <metrics statements="27" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -1104,7 +1104,7 @@
         <line num="78" count="0" type="stmt"/>
         <line num="84" count="1" type="stmt"/>
       </file>
-      <file name="Verify_CodeRepository.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\Verify_CodeRepository.js">
+      <file name="Verify_CodeRepository.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\Verify_CodeRepository.js">
         <metrics statements="32" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="9" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="5" count="198" type="stmt"/>
@@ -1139,7 +1139,7 @@
         <line num="92" count="0" type="stmt"/>
         <line num="97" count="1" type="stmt"/>
       </file>
-      <file name="index.js" path="C:\--iskola\vizsgaremek\app\Backend\api\repositories\index.js">
+      <file name="index.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\repositories\index.js">
         <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1167,7 +1167,7 @@
     </package>
     <package name="Backend.api.routes">
       <metrics statements="160" coveredstatements="158" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-      <file name="advertisementRoute.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\advertisementRoute.js">
+      <file name="advertisementRoute.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\advertisementRoute.js">
         <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1184,7 +1184,7 @@
         <line num="24" count="1" type="stmt"/>
         <line num="28" count="1" type="stmt"/>
       </file>
-      <file name="authRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\authRoutes.js">
+      <file name="authRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\authRoutes.js">
         <metrics statements="17" coveredstatements="17" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1204,7 +1204,7 @@
         <line num="27" count="1" type="stmt"/>
         <line num="35" count="1" type="stmt"/>
       </file>
-      <file name="cloudRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\cloudRoutes.js">
+      <file name="cloudRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\cloudRoutes.js">
         <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1214,7 +1214,7 @@
         <line num="9" count="1" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
       </file>
-      <file name="connectionsRoute.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\connectionsRoute.js">
+      <file name="connectionsRoute.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\connectionsRoute.js">
         <metrics statements="19" coveredstatements="17" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1236,7 +1236,7 @@
         <line num="34" count="1" type="stmt"/>
         <line num="37" count="1" type="stmt"/>
       </file>
-      <file name="kickRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\kickRoutes.js">
+      <file name="kickRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\kickRoutes.js">
         <metrics statements="13" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1252,7 +1252,7 @@
         <line num="19" count="1" type="stmt"/>
         <line num="22" count="1" type="stmt"/>
       </file>
-      <file name="userRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\userRoutes.js">
+      <file name="userRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\userRoutes.js">
         <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1269,7 +1269,7 @@
         <line num="25" count="1" type="stmt"/>
         <line num="29" count="1" type="stmt"/>
       </file>
-      <file name="user_postRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\user_postRoutes.js">
+      <file name="user_postRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\user_postRoutes.js">
         <metrics statements="16" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1288,7 +1288,7 @@
         <line num="26" count="1" type="stmt"/>
         <line num="28" count="1" type="stmt"/>
       </file>
-      <file name="user_post_commentRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\user_post_commentRoutes.js">
+      <file name="user_post_commentRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\user_post_commentRoutes.js">
         <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1302,7 +1302,7 @@
         <line num="19" count="1" type="stmt"/>
         <line num="21" count="1" type="stmt"/>
       </file>
-      <file name="user_post_reactionRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\user_post_reactionRoutes.js">
+      <file name="user_post_reactionRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\user_post_reactionRoutes.js">
         <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1315,7 +1315,7 @@
         <line num="17" count="1" type="stmt"/>
         <line num="20" count="1" type="stmt"/>
       </file>
-      <file name="user_profileRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\user_profileRoutes.js">
+      <file name="user_profileRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\user_profileRoutes.js">
         <metrics statements="16" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1334,7 +1334,7 @@
         <line num="25" count="1" type="stmt"/>
         <line num="28" count="1" type="stmt"/>
       </file>
-      <file name="user_settingsRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\user_settingsRoutes.js">
+      <file name="user_settingsRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\user_settingsRoutes.js">
         <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1345,7 +1345,7 @@
         <line num="13" count="1" type="stmt"/>
         <line num="16" count="1" type="stmt"/>
       </file>
-      <file name="verify_codeRoutes.js" path="C:\--iskola\vizsgaremek\app\Backend\api\routes\verify_codeRoutes.js">
+      <file name="verify_codeRoutes.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\routes\verify_codeRoutes.js">
         <metrics statements="15" coveredstatements="15" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1365,8 +1365,8 @@
       </file>
     </package>
     <package name="Backend.api.services">
-      <metrics statements="805" coveredstatements="129" conditionals="454" coveredconditionals="19" methods="116" coveredmethods="20"/>
-      <file name="AdvertisementService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\AdvertisementService.js">
+      <metrics statements="805" coveredstatements="133" conditionals="454" coveredconditionals="21" methods="116" coveredmethods="22"/>
+      <file name="AdvertisementService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\AdvertisementService.js">
         <metrics statements="30" coveredstatements="4" conditionals="16" coveredconditionals="0" methods="6" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1399,7 +1399,7 @@
         <line num="71" count="0" type="stmt"/>
         <line num="75" count="1" type="stmt"/>
       </file>
-      <file name="ConnectionsService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\ConnectionsService.js">
+      <file name="ConnectionsService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\ConnectionsService.js">
         <metrics statements="112" coveredstatements="7" conditionals="86" coveredconditionals="0" methods="16" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1514,7 +1514,7 @@
         <line num="258" count="0" type="stmt"/>
         <line num="262" count="1" type="stmt"/>
       </file>
-      <file name="KickService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\KickService.js">
+      <file name="KickService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\KickService.js">
         <metrics statements="57" coveredstatements="5" conditionals="38" coveredconditionals="0" methods="10" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1574,7 +1574,7 @@
         <line num="136" count="0" type="stmt"/>
         <line num="140" count="1" type="stmt"/>
       </file>
-      <file name="NotificationService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\NotificationService.js">
+      <file name="NotificationService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\NotificationService.js">
         <metrics statements="125" coveredstatements="10" conditionals="47" coveredconditionals="0" methods="10" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1702,7 +1702,7 @@
         <line num="287" count="0" type="stmt"/>
         <line num="291" count="1" type="stmt"/>
       </file>
-      <file name="UserService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\UserService.js">
+      <file name="UserService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\UserService.js">
         <metrics statements="82" coveredstatements="7" conditionals="55" coveredconditionals="0" methods="14" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1787,7 +1787,7 @@
         <line num="181" count="0" type="stmt"/>
         <line num="187" count="1" type="stmt"/>
       </file>
-      <file name="User_PostService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\User_PostService.js">
+      <file name="User_PostService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\User_PostService.js">
         <metrics statements="71" coveredstatements="9" conditionals="42" coveredconditionals="0" methods="11" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1861,7 +1861,7 @@
         <line num="161" count="0" type="stmt"/>
         <line num="166" count="1" type="stmt"/>
       </file>
-      <file name="User_Post_CommentService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\User_Post_CommentService.js">
+      <file name="User_Post_CommentService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\User_Post_CommentService.js">
         <metrics statements="69" coveredstatements="10" conditionals="32" coveredconditionals="0" methods="10" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -1933,7 +1933,7 @@
         <line num="172" count="0" type="stmt"/>
         <line num="177" count="1" type="stmt"/>
       </file>
-      <file name="User_Post_ReactionService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\User_Post_ReactionService.js">
+      <file name="User_Post_ReactionService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\User_Post_ReactionService.js">
         <metrics statements="85" coveredstatements="10" conditionals="40" coveredconditionals="0" methods="13" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -2021,19 +2021,19 @@
         <line num="248" count="0" type="stmt"/>
         <line num="253" count="1" type="stmt"/>
       </file>
-      <file name="User_ProfileService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\User_ProfileService.js">
-        <metrics statements="69" coveredstatements="31" conditionals="57" coveredconditionals="19" methods="8" coveredmethods="5"/>
+      <file name="User_ProfileService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\User_ProfileService.js">
+        <metrics statements="69" coveredstatements="35" conditionals="57" coveredconditionals="21" methods="8" coveredmethods="7"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="6" count="11" type="stmt"/>
         <line num="7" count="11" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
-        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="16" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="22" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="23" count="0" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
         <line num="30" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="31" count="0" type="stmt"/>
         <line num="34" count="1" type="stmt"/>
@@ -2093,7 +2093,7 @@
         <line num="138" count="0" type="stmt"/>
         <line num="144" count="1" type="stmt"/>
       </file>
-      <file name="User_SettingsService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\User_SettingsService.js">
+      <file name="User_SettingsService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\User_SettingsService.js">
         <metrics statements="30" coveredstatements="4" conditionals="11" coveredconditionals="0" methods="8" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -2126,7 +2126,7 @@
         <line num="69" count="0" type="stmt"/>
         <line num="73" count="1" type="stmt"/>
       </file>
-      <file name="Verify_CodeService.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\Verify_CodeService.js">
+      <file name="Verify_CodeService.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\Verify_CodeService.js">
         <metrics statements="47" coveredstatements="4" conditionals="30" coveredconditionals="0" methods="9" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -2176,7 +2176,7 @@
         <line num="102" count="0" type="stmt"/>
         <line num="107" count="1" type="stmt"/>
       </file>
-      <file name="index.js" path="C:\--iskola\vizsgaremek\app\Backend\api\services\index.js">
+      <file name="index.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\services\index.js">
         <metrics statements="28" coveredstatements="28" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -2210,7 +2210,7 @@
     </package>
     <package name="Backend.api.utilities">
       <metrics statements="136" coveredstatements="66" conditionals="52" coveredconditionals="21" methods="33" coveredmethods="10"/>
-      <file name="authUtils.js" path="C:\--iskola\vizsgaremek\app\Backend\api\utilities\authUtils.js">
+      <file name="authUtils.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\utilities\authUtils.js">
         <metrics statements="63" coveredstatements="43" conditionals="40" coveredconditionals="19" methods="20" coveredmethods="9"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -2227,7 +2227,7 @@
         <line num="32" count="1" type="stmt"/>
         <line num="33" count="0" type="stmt"/>
         <line num="43" count="1" type="stmt"/>
-        <line num="44" count="12" type="stmt"/>
+        <line num="44" count="21" type="stmt"/>
         <line num="47" count="1" type="stmt"/>
         <line num="48" count="0" type="stmt"/>
         <line num="51" count="1" type="stmt"/>
@@ -2276,7 +2276,7 @@
         <line num="124" count="1" type="stmt"/>
         <line num="125" count="0" type="cond" truecount="0" falsecount="3"/>
       </file>
-      <file name="cloudUtils.js" path="C:\--iskola\vizsgaremek\app\Backend\api\utilities\cloudUtils.js">
+      <file name="cloudUtils.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\utilities\cloudUtils.js">
         <metrics statements="25" coveredstatements="12" conditionals="6" coveredconditionals="1" methods="5" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -2304,7 +2304,7 @@
         <line num="50" count="0" type="stmt"/>
         <line num="52" count="0" type="stmt"/>
       </file>
-      <file name="email.js" path="C:\--iskola\vizsgaremek\app\Backend\api\utilities\email.js">
+      <file name="email.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\utilities\email.js">
         <metrics statements="15" coveredstatements="4" conditionals="6" coveredconditionals="1" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
@@ -2322,7 +2322,7 @@
         <line num="35" count="0" type="stmt"/>
         <line num="36" count="0" type="stmt"/>
       </file>
-      <file name="emailTemplates.js" path="C:\--iskola\vizsgaremek\app\Backend\api\utilities\emailTemplates.js">
+      <file name="emailTemplates.js" path="C:\Users\murar.balint\Desktop\vizsgaremek\app\Backend\api\utilities\emailTemplates.js">
         <metrics statements="33" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="0" type="stmt"/>

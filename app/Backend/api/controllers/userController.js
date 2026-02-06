@@ -88,7 +88,7 @@ exports.createUser = async (req, res, next) => {
     } catch (error) {
         // Ha a felhasználónév már foglalt
         if (error.name === "SequelizeUniqueConstraintError") {
-            return res.status(400).json({ message: "Username mát létezik" });
+            return res.status(400).json({ message: "Username már létezik" });
         }
 
         // Ha valami más hiba van

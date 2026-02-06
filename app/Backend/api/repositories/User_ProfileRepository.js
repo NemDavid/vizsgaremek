@@ -77,8 +77,8 @@ class User_ProfileRepository {
 
             // Meghatározzuk a szűrést
             const userWhere = !isNaN(Number(userId))
-                ? { id: Number(userId) }
-                : { userName: userId };
+                ? { ID: Number(userId) }
+                : { username: userId };
 
             const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
                 include: [
