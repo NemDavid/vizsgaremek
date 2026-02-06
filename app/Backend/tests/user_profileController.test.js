@@ -9,7 +9,6 @@ jest.mock("../api/db");
 const db = require("../api/db");
 
 const authUtils = require("../api/utilities/authUtils");
-const { raw } = require("express");
 
 
 describe("user_profile_Controller", () => {
@@ -103,17 +102,6 @@ describe("user_profile_Controller", () => {
                             }
                         ));
                     });
-
-                //     test("should throw erreor on missing param", async () => {
-                //         const inputID = undefined;
-
-                //         const res = await request(app).get(`/api/profiles/`).set("Accept", "application/json");
-
-
-
-                //         expect(res.status).toBe(400);
-                //         expect(res).not.toBeDefined();
-                //     });
                 });
 
                 describe("GET /api/profiles/pages/:paramPage", () => {
