@@ -19,7 +19,7 @@ export function KickButton({ id }: { id: bigint }) {
         queryKey: ["Rugas",id],
         queryFn: () => GetKick()
     })
-    //console.log(data);
+    console.log(data);
     
     const { mutate: doKick, isPending } = useMutation({
         mutationFn: (userId : bigint) => Kick(userId),

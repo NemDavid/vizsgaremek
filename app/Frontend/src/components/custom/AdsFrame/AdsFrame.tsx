@@ -6,8 +6,9 @@ export default function AdsFrame({ className,id}: { className?: string, id:numbe
     const { data, isLoading, isError } = useQuery({
         queryKey: ["ads",id ],
         queryFn: () => GetAds(),
-        gcTime:0
-        
+        gcTime:0,
+        retry: 0,
+        refetchOnMount:false,
     })
 
     if (isLoading) {

@@ -19,17 +19,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { MakeCommentForPost } from './axios/axiosClient'
-import type { comment } from './axios/axiosClient'
+
 
 const formSchema = z.object({
     comment: z.string().min(3, { message: "Túl rövid" }).max(500, { message: "Túl Hosszú" }),
     POST_ID: z.bigint().optional(),
 })
 
-
 export type PostFormSchema = z.infer<typeof formSchema>
 
-export function CommentsAccord({ postID, commentsList }: { postID: bigint, commentsList?: comment[] }) {
+export function CommentsAccord({ postID, commentsList }: { postID: bigint, commentsList?: any[] }) {
     const queryclinet = useQueryClient();
     const { mutate: createComment } = useMutation({
         mutationFn: async (comment: PostFormSchema) => MakeCommentForPost(comment),
@@ -71,7 +70,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
             </Form>
             <AccordionTrigger>
                 <div className='border-b w-full text-ml font-semibold pb-2'>
-                    Kommentek:
+                    Kommentek: (<span className='text-red-500'> {commentsList?.length === 0 ? "nincs" : `${commentsList?.length} darab`} megjegyzés</span>)
                 </div>
             </AccordionTrigger>
 

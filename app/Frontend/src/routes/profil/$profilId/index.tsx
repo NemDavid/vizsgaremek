@@ -17,6 +17,7 @@ import { EllipsisVertical, User } from 'lucide-react';
 import { Loader } from '@/components/Loader/Loader';
 import { UserProfileModify } from '@/components/ProfilForms';
 import { BlockUser, ReqFriend } from '@/components/custom/UserConnectionButton/UserConnectionButton';
+import { PostAccord } from '@/components/PostComponents';
 
 
 export const Route = createFileRoute('/profil/$profilId/')({
@@ -122,15 +123,32 @@ function RouteComponent() {
       </div>
       <div className="mt-10 px-6">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
-        <div className="space-y-4 ">
-
-        </div>
+        <LastActivity posts={profil?.data.user.posts} />
       </div>
 
     </DefaultUIFrame>
   )
 
 }
+
+function LastActivity({ posts }: { posts?: any[] }) {
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="text-sm text-slate-200">
+        Nincs még aktivitás.
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-red-950 flex flex-wrap gap-4">
+      {posts.map((p) => (
+        <PostAccord key={p.id} post={p} className="overflow-y-auto max-h-48 rounded-none!" ></PostAccord>
+      ))}
+    </div>
+  )
+}
+
 
 function ProfileInfo({ label, value }: { label: string; value?: string }) {
   if (!value || value === "" || value === "0000-00-00") return null
@@ -167,7 +185,7 @@ function ProfileMenu({ isMe, profilId, profil }: any) {
   )
 }
 
-function NotmyProfil({ profilId }: {profilId:any, profil:any}) {
+function NotmyProfil({ profilId }: { profilId: any, profil: any }) {
   return (
     <>
       <ReqFriend userID={BigInt(profilId)} />
