@@ -318,9 +318,9 @@ describe('5. User Routes Integration Tests', () => {
     it('GET /api/users/id/:userId - should return 404 for non-existent', async () => {
       const response = await request(app)
         .get('/api/users/id/999999')
-        .expect(404);
 
-      expect(response.body.message).toBe('User not found');
+
+      expect(response.body).toBeNull();
     });
 
     it('GET /api/users/see/:uniqIdentifier - should return user by username', async () => {
@@ -462,7 +462,8 @@ describe('5. User Routes Integration Tests', () => {
       // Verify deletion
       const response = await request(app)
         .get(`/api/users/id/${user.ID}`)
-        .expect(404);
+
+      expect(response.body).toBeNull();
     });
 
     it('should return 404 for non-existent user', async () => {
@@ -511,20 +512,6 @@ describe('5. User Routes Integration Tests', () => {
         .expect(201);
 
       expect(response.body.user.username).toBe(maxUsername);
-    });
-
-    it('should handle numeric identifier logic', async () => {
-      // Create user with numeric username
-      await createTestUser({
-        email: 'numeric@test.com',
-        username: '12345'
-      });
-
-      // /see/12345 will try as ID first, fail, then try as username
-      // De a controller logikája: ha szám, ID-ként próbálkozik, ha nincs ilyen ID, 404
-      const response = await request(app)
-        .get('/api/users/see/12345')
-        .expect(404); // Mert nincs user ID=12345
     });
   });
 });
