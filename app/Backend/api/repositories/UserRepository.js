@@ -41,7 +41,7 @@ class UserRepository {
         }
     }
 
-    async getUserByID(userId) {
+    async getUserByID(userId, options = {}) {
         try {
             return await this.User.scope("allUserData").findOne({
                 where: { ID: userId },
@@ -51,7 +51,8 @@ class UserRepository {
                         as: "profile",
                         scope: "allUser_ProfileData"
                     },
-                ]
+                ],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });

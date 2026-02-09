@@ -230,20 +230,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    // nem is kelll :(
-    // Static helper method - TRANSACTION SUPPORT ADDED
-    // User_Profiles.addXPToUser = async function (userId, amount, transaction = null) {
-    //     const profile = await this.findOne({ 
-    //         where: { USER_ID: userId },
-    //         transaction: transaction // Ha van transaction, használjuk
-    //     });
-        
-    //     if (!profile) {
-    //         throw new Error(`User profile not found: ${userId}`);
-    //     }
-        
-    //     return await profile.addXP(amount, transaction);
-    // };
-
     return User_Profiles;
 };

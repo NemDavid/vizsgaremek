@@ -47,10 +47,6 @@ class User_ProfileRepository {
         try {
             const deletedRow = await this.User_Profile.destroy({ where: { USER_ID: userId } });
 
-            if (deletedRow === 0) {
-                throw new DbError("A felhasználói profil nem található.", { details: `userId: ${userId}` });
-            }
-
             return { success: true, deleted: deletedRow };
         } catch (error) {
             throw new DbError("A felhasználói profil törlése sikertelen.", { details: error.message });
@@ -71,7 +67,7 @@ class User_ProfileRepository {
         }
     }
 
-    async getUser_Profile(userId) {
+    async getUser_Profile(userId, options = {}) {
         try {
             if (!userId) return null;
 
@@ -97,16 +93,19 @@ class User_ProfileRepository {
                         ],
                     },
                 ],
+                transaction: options.transaction
             });
 
             if (!profile) return null;
 
             const sentCount = await this.Connections.count({
                 where: { User_Requested_ID: profile.USER_ID, Status: "accepted" },
+                transaction: options.transaction,
             });
 
             const receivedCount = await this.Connections.count({
                 where: { To_User_ID: profile.USER_ID, Status: "accepted" },
+                transaction: options.transaction,
             });
 
             const result = profile.toJSON();

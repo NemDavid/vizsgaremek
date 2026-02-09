@@ -8,8 +8,9 @@ jest.mock("../api/db");
 
 const db = require("../api/db");
 
+const { user_profileService } = require("../api/services")(db);
 const authUtils = require("../api/utilities/authUtils");
-const { raw } = require("mysql2");
+
 
 
 describe("user_profile_Controller", () => {
@@ -160,6 +161,53 @@ describe("user_profile_Controller", () => {
 
                 expect(foundProfile.birth_date).toBe(profile.birth_date);
             });
+
+            test("should throw error on invalid user id", async () => {
+                const profile = {
+                    USER_ID: 9999,
+                    first_name: "Anna",
+                    last_name: "Kiss",
+                    birth_date: "1992-07-15",
+                    bio: "Admin2 profil",
+                    avatar_url: "/admin2.png"
+                }
+
+                const res = await request(app).post("/api/profiles").send(profile).expect(400);
+
+                expect(res.body.message).toBe("Nincs ilyen felhasználó");
+            });
+
+            test.each([
+                [{
+                    USER_ID: 3,
+                    first_name: undefined,
+                    last_name: "Kiss",
+                }, "Hiányzó first_name"],
+                [{
+                    USER_ID: 3,
+                    first_name: "Anna",
+                    last_name: undefined,
+                }, "Hiányzó last_name"],
+            ])("should throw error on missing name", async (payload, expectedMessage) => {
+
+                const res = await request(app).post("/api/profiles").send(payload).expect(400);
+
+                expect(res.body.message).toBe(expectedMessage);
+            });
+
+            test.each([
+                [{ USER_ID: 3, first_name: 1, last_name: "Kiss" }, "Érvénytelen first_name"],
+                [{ USER_ID: 3, first_name: "Anna", last_name: 2, }, "Érvénytelen last_name"],
+                [{ USER_ID: 3, first_name: "Anna", last_name: "Kiss", schools: 3 }, "Érvénytelen schools mező"],
+                [{ USER_ID: 3, first_name: "Anna", last_name: "Kiss", birth_date: new Date() }, "Érvénytelen birth_date mező"],
+                [{ USER_ID: 3, first_name: "Anna", last_name: "Kiss", birth_place: 4 }, "Érvénytelen birth_place mező"],
+                [{ USER_ID: 3, first_name: "Anna", last_name: "Kiss", bio: 5 }, "Érvénytelen bio"],
+            ])("should throw error on invalid attributes", async (payload, expectedMessage) => {
+
+                const res = await request(app).post("/api/profiles").send(payload).expect(403);
+
+                expect(res.body.message).toBe(expectedMessage);
+            });
         });
 
         describe("DELETE", () => {
@@ -177,6 +225,14 @@ describe("user_profile_Controller", () => {
                     });
 
                 expect(foundProfile).toBeNull();
+            });
+
+            test("should throw error on invalid id", async () => {
+                const inputID = 9999;
+
+                const res = await request(app).delete(`/api/profiles/${inputID}`).expect(400);
+
+                expect(res.body.message).toBe("Nincs ilyen felhasználói profil");
             });
         });
 
@@ -217,13 +273,13 @@ describe("user_profile_Controller", () => {
 
                 const res = await request(app).patch(`/api/profiles/${inputID}`).send(updateUser);
 
-                
+
 
                 expect(res.body.first_name).toEqual(rawProfiles[0].first_name);
                 expect(res.body.last_name).toEqual(rawProfiles[0].last_name);
             });
 
-            test("should return error on invalid user_id", async () => {
+            test("should return error on invalid id", async () => {
                 const inputID = 9999;
 
                 const updateUser = {
@@ -239,7 +295,7 @@ describe("user_profile_Controller", () => {
             test.each([
                 [{ first_name: undefined, last_name: "update_Kovács", }, "Hiányzó first_name"],
                 [{ first_name: "update_Gergő", last_name: undefined }, "Hiányzó last_name"],
-            ])("should throw error on missing first_name", async (payload, expectedMessage) => {
+            ])("should throw error on missing name", async (payload, expectedMessage) => {
                 const inputID = 1;
 
 
@@ -249,17 +305,39 @@ describe("user_profile_Controller", () => {
             });
 
             test.each([
-                [{ first_name: "update_Gergő", last_name: "update_Kovács", schools: 1 }, "Érvénytelen schools mező"],
+                [{ first_name: 1, last_name: "update_Kovács" }, "Érvénytelen first_name"],
+                [{ first_name: "update_Gergő", last_name: 2 }, "Érvénytelen last_name"],
+                [{ first_name: "update_Gergő", last_name: "update_Kovács", schools: 3 }, "Érvénytelen schools mező"],
                 [{ first_name: "update_Gergő", last_name: "update_Kovács", birth_date: new Date() }, "Érvénytelen birth_date mező"],
-                [{ first_name: "update_Gergő", last_name: "update_Kovács", birth_place: 3 }, "Érvénytelen birth_place mező"],
-                [{ first_name: "update_Gergő", last_name: "update_Kovács", bio: 4 }, "Érvénytelen bio"],
+                [{ first_name: "update_Gergő", last_name: "update_Kovács", birth_place: 4 }, "Érvénytelen birth_place mező"],
+                [{ first_name: "update_Gergő", last_name: "update_Kovács", bio: 5 }, "Érvénytelen bio"],
             ])("should throw error on invalid attributes", async (payload, expectedMessage) => {
                 const inputID = 1;
 
-
-                const res = await request(app).patch(`/api/profiles/${inputID}`).send(payload).expect(400);
+                const res = await request(app).patch(`/api/profiles/${inputID}`).send(payload).expect(403);
 
                 expect(res.body.message).toBe(expectedMessage);
+            });
+        });
+
+        describe("XP function tests", () => {
+
+            test("should add xp to profile", async () => {
+                const inputID = 1;
+                const XPAmount = 50;
+
+                await db.sequelize.transaction(async (transaction) => {
+                    // 1️⃣ Hívd a service-t, ami kezeli a profilt és az addXP-t
+                    const result = await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+
+                    // 2️⃣ Ellenőrzés
+                    expect(result.success).toBe(true);
+                    expect(result.xpAdded).toBe(XPAmount);
+                });
+
+                // 3️⃣ DB-ből ellenőrzés
+                const { profile: updatedProfile } = await user_profileService.getUser_Profile(inputID);
+                expect(updatedProfile.XP).toBe(XPAmount);
             });
         });
     });
