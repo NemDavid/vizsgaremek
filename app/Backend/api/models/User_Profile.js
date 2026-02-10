@@ -1,4 +1,5 @@
 const { Model } = require("sequelize");
+const { ValidationError } = require("../errors");
 
 module.exports = (sequelize, DataTypes) => {
     class User_Profiles extends Model {
@@ -6,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         // XP hozzáadása a felhasználóhoz
         async addXP(amount, transaction = null) {
             if (amount == null || isNaN(amount)) {
-                throw new Error(`Érvénytelen XP érték: ${amount}`);
+                throw new ValidationError(`Érvénytelen XP érték: ${amount}`);
             }
 
             const shouldCommit = !transaction; // Ha nem kapunk transaction-t, itt hozzuk létre
@@ -69,34 +70,6 @@ module.exports = (sequelize, DataTypes) => {
                 }
                 throw err;
             }
-        }
-
-        /**
-         * Get total XP (all levels)
-         */
-        getTotalXP() {
-            const XP_PER_LEVEL = 1000;
-            const currentXP = Number(this.XP) || 0;
-            const currentLevel = Number(this.level) || 1;
-            return (currentLevel - 1) * XP_PER_LEVEL + currentXP;
-        }
-
-        /**
-         * XP progress percentage
-         */
-        getXPProgress() {
-            const XP_PER_LEVEL = 1000;
-            const currentXP = Number(this.XP) || 0;
-            return Math.min(100, Math.round((currentXP / XP_PER_LEVEL) * 100));
-        }
-
-        /**
-         * XP needed for next level
-         */
-        getXPNeededForNextLevel() {
-            const XP_PER_LEVEL = 1000;
-            const currentXP = Number(this.XP) || 0;
-            return XP_PER_LEVEL - currentXP;
         }
     }
 

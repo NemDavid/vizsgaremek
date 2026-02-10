@@ -10,6 +10,7 @@ const db = require("../api/db");
 
 const { user_profileService } = require("../api/services")(db);
 const authUtils = require("../api/utilities/authUtils");
+const { BadRequestError, ValidationError } = require("../api/errors");
 
 
 
@@ -336,6 +337,111 @@ describe("user_profile_Controller", () => {
                 });
 
                 // 3️⃣ DB-ből ellenőrzés
+                const { profile: updatedProfile } = await user_profileService.getUser_Profile(inputID);
+                expect(updatedProfile.XP).toBe(XPAmount);
+            });
+
+            test("should throw error on missing user id", async () => {
+                const inputID = undefined;
+                const XPAmount = 50;
+
+                try {
+                    await db.sequelize.transaction(async (transaction) => {
+                        await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+                    });
+                }
+                catch (error) {
+                    expect(error.message).toBe("Hiányzó user ID")
+                    expect(error).toBeInstanceOf(BadRequestError);
+                }
+            });
+
+            test("should throw error on missint xp", async () => {
+                const inputID = 1;
+                const XPAmount = undefined;
+
+                try {
+                    await db.sequelize.transaction(async (transaction) => {
+                        await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+                    });
+                }
+                catch (error) {
+                    expect(error.message).toBe("Hiányzó xp érték")
+                    expect(error).toBeInstanceOf(BadRequestError);
+                }
+            });
+
+            test("should throw error on invalid xp", async () => {
+                const inputID = 1;
+                const XPAmount = "50";
+
+                try {
+                    await db.sequelize.transaction(async (transaction) => {
+                        await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+                    });
+                }
+                catch (error) {
+                    expect(error.message).toBe("Érvénytelen XP érték")
+                    expect(error).toBeInstanceOf(ValidationError);
+                }
+            });
+
+            test("should throw error on invalid user", async () => {
+                const inputID = 9999;
+                const XPAmount = 50;
+
+                try {
+                    await db.sequelize.transaction(async (transaction) => {
+                        await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+                    });
+                }
+                catch (error) {
+                    expect(error.message).toBe("User nem található")
+                    expect(error).toBeInstanceOf(BadRequestError);
+                }
+            });
+
+            test("should throw error on missing user profile", async () => {
+                const inputID = 3;
+                const XPAmount = 50;
+
+                try {
+                    await db.sequelize.transaction(async (transaction) => {
+                        await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+                    });
+                }
+                catch (error) {
+                    expect(error.message).toBe("Profil nem található")
+                    expect(error).toBeInstanceOf(BadRequestError);
+                }
+            });
+
+            test("should throw error ValidationError in model on invalid xp", async () => {
+                const inputID = 1;
+                const XPAmount = 50;
+
+                try {
+                    await db.sequelize.transaction(async (transaction) => {
+                        const { profile } = await user_profileService.getUser_Profile(inputID);
+
+                        await profile.addXP(XPAmount, transaction);
+                    });
+                }
+                catch (error) {
+                    expect(error.message).toBe(`Érvénytelen XP érték: ${xpAmount}`)
+                    expect(error).toBeInstanceOf(ValidationError);
+                }
+            });
+
+            test("should run own transaction on missing transaction", async () => {
+                const inputID = 1;
+                const XPAmount = 50;
+
+                const { profile } = await user_profileService.getUser_Profile(inputID);
+
+                await profile.addXP(XPAmount);
+
+
                 const { profile: updatedProfile } = await user_profileService.getUser_Profile(inputID);
                 expect(updatedProfile.XP).toBe(XPAmount);
             });

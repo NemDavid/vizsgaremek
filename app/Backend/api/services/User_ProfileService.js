@@ -135,8 +135,9 @@ class User_ProfileService {
     // add xp to user
     async addXPToUser(userId, XP, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
+        if (!XP) throw new BadRequestError("Hiányzó xp érték");
         if (XP == null || isNaN(XP)) {
-            throw new BadRequestError("Érvénytelen XP érték");
+            throw new ValidationError("Érvénytelen XP érték");
         }
 
         // User lekérése
@@ -146,10 +147,12 @@ class User_ProfileService {
         }
 
         // Profil lekérése
-        const { profile: userProfile } = await this.getUser_Profile(userId, { transaction });
-        if (!userProfile) {
+        const getProfile = await this.getUser_Profile(userId, { transaction });
+        if (!getProfile) {
             throw new BadRequestError("Profil nem található");
         }
+        
+        const userProfile = getProfile.profile;
 
         // Ha invalid adat, NE próbáljuk meg javítani, dobjunk hibát
         if (userProfile.XP === undefined || userProfile.XP === null) {
