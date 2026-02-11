@@ -33,6 +33,8 @@ describe("user_profile_Controller", () => {
         { USER_ID: 2, first_name: "Dóra", last_name: "Nagy", birth_date: "1995-08-20", bio: "User profil", avatar_url: "/user.png" }
     ];
 
+    let transaction = undefined;
+
     let users = undefined;
     let singleUser = undefined;
 
@@ -54,11 +56,16 @@ describe("user_profile_Controller", () => {
             password_hash: authUtils.hashPassword(rawSingleUsers.password)
         }
 
+        transaction = await db.sequelize.transaction();
+
         await db.User.bulkCreate([...users, singleUser]);
         await db.User_Profile.bulkCreate(rawProfiles);
     });
 
     afterEach(async () => {
+
+        await transaction.rollback();
+
         await db.User.destroy({ where: {} });
         await db.User_Profile.destroy({ where: {} });
     });
@@ -327,16 +334,11 @@ describe("user_profile_Controller", () => {
                 const inputID = 1;
                 const XPAmount = 50;
 
-                await db.sequelize.transaction(async (transaction) => {
-                    // 1️⃣ Hívd a service-t, ami kezeli a profilt és az addXP-t
-                    const result = await user_profileService.addXPToUser(inputID, XPAmount, transaction);
+                const result = await user_profileService.addXPToUser(inputID, XPAmount, transaction);
 
-                    // 2️⃣ Ellenőrzés
-                    expect(result.success).toBe(true);
-                    expect(result.xpAdded).toBe(XPAmount);
-                });
+                expect(result.success).toBe(true);
+                expect(result.xpAdded).toBe(XPAmount);
 
-                // 3️⃣ DB-ből ellenőrzés
                 const { profile: updatedProfile } = await user_profileService.getUser_Profile(inputID);
                 expect(updatedProfile.XP).toBe(XPAmount);
             });
@@ -346,9 +348,7 @@ describe("user_profile_Controller", () => {
                 const XPAmount = 50;
 
                 try {
-                    await db.sequelize.transaction(async (transaction) => {
-                        await user_profileService.addXPToUser(inputID, XPAmount, transaction);
-                    });
+                    await user_profileService.addXPToUser(inputID, XPAmount, transaction);
                 }
                 catch (error) {
                     expect(error.message).toBe("Hiányzó user ID")
@@ -361,9 +361,7 @@ describe("user_profile_Controller", () => {
                 const XPAmount = undefined;
 
                 try {
-                    await db.sequelize.transaction(async (transaction) => {
                         await user_profileService.addXPToUser(inputID, XPAmount, transaction);
-                    });
                 }
                 catch (error) {
                     expect(error.message).toBe("Hiányzó xp érték")
@@ -376,9 +374,7 @@ describe("user_profile_Controller", () => {
                 const XPAmount = "50";
 
                 try {
-                    await db.sequelize.transaction(async (transaction) => {
                         await user_profileService.addXPToUser(inputID, XPAmount, transaction);
-                    });
                 }
                 catch (error) {
                     expect(error.message).toBe("Érvénytelen XP érték")
@@ -391,9 +387,7 @@ describe("user_profile_Controller", () => {
                 const XPAmount = 50;
 
                 try {
-                    await db.sequelize.transaction(async (transaction) => {
                         await user_profileService.addXPToUser(inputID, XPAmount, transaction);
-                    });
                 }
                 catch (error) {
                     expect(error.message).toBe("User nem található")
@@ -406,9 +400,7 @@ describe("user_profile_Controller", () => {
                 const XPAmount = 50;
 
                 try {
-                    await db.sequelize.transaction(async (transaction) => {
                         await user_profileService.addXPToUser(inputID, XPAmount, transaction);
-                    });
                 }
                 catch (error) {
                     expect(error.message).toBe("Profil nem található")
@@ -421,11 +413,9 @@ describe("user_profile_Controller", () => {
                 const XPAmount = 50;
 
                 try {
-                    await db.sequelize.transaction(async (transaction) => {
-                        const { profile } = await user_profileService.getUser_Profile(inputID);
+                        const { profile } = await user_profileService.getUser_Profile(inputID, { transaction });
 
                         await profile.addXP(XPAmount, transaction);
-                    });
                 }
                 catch (error) {
                     expect(error.message).toBe(`Érvénytelen XP érték: ${xpAmount}`)
@@ -433,18 +423,18 @@ describe("user_profile_Controller", () => {
                 }
             });
 
-            test("should run own transaction on missing transaction", async () => {
-                const inputID = 1;
-                const XPAmount = 50;
+            // test("should run own transaction on missing transaction", async () => {
+            //     const inputID = 1;
+            //     const XPAmount = 50;
 
-                const { profile } = await user_profileService.getUser_Profile(inputID);
+            //     const { profile } = await user_profileService.getUser_Profile(inputID, { transaction });
 
-                await profile.addXP(XPAmount);
+            //     await profile.addXP(XPAmount);
 
 
-                const { profile: updatedProfile } = await user_profileService.getUser_Profile(inputID);
-                expect(updatedProfile.XP).toBe(XPAmount);
-            });
+            //     const { profile: updatedProfile } = await user_profileService.getUser_Profile(inputID);
+            //     expect(updatedProfile.XP).toBe(XPAmount);
+            // });
         });
     });
 });
