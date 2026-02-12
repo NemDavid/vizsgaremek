@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const db = require("../db");
 const { userService, user_profileService, notificationService, user_SettingsService } = require("../services")(db);
 const authUtils = require("../utilities/authUtils");
+const { BadRequestError } = require("../errors");
 
 // --- 1. lépés: regisztráció form adatok fogadása ---
 exports.registerUser = async (req, res, next) => {
@@ -103,6 +104,14 @@ exports.login = async (req, res, next) => {
     const { username, password } = req.body;
 
     try {
+        if (!username) {
+            throw new BadRequestError("Hiányzó username");
+        }
+        if (!password) {
+            throw new BadRequestError("Hiányzó password");
+        }
+
+
         if (req.cookies.user_token) {
             return res.status(403).json({
                 message: "Már van bejelentkezett felhasználó ezen a gépen."
@@ -113,6 +122,7 @@ exports.login = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ message: "Nincs ilyen felhasználó" });
         }
+        
 
         if (!bcrypt.compareSync(password, user.password_hash)) {
             return res.status(401).json({ message: "Hibás jelszó" });
@@ -123,7 +133,7 @@ exports.login = async (req, res, next) => {
         const token = authUtils.generateUserToken(user);
         authUtils.setCookie(res, "user_token", token);
 
-        
+
         await notificationService.sendNotificationToUser(user, "login");
 
         res.status(200).json({ token });
@@ -139,18 +149,22 @@ exports.status = (req, res, next) => {
 
 exports.logout = (req, res, next) => {
     res.clearCookie("user_token");
-
-    res.sendStatus(200);
+    res.status(200).json({ message: "OK" });
 }
 
 exports.getActiveTokenDetails = (req, res, next) => {
-    const active = authUtils.verifyToken(req.params.token);
+    try {
+        const active = authUtils.verifyToken(req.params.token);
 
-    if (active == null) {
-        res.sendStatus(404);
+        if (active == null) {
+            res.status(401).json({ message: "Érvénytelen vagy lejárt token." });
+        }
+        else {
+            res.status(200).json(active);
+        }
     }
-    else {
-        res.status(200).json(active);
+    catch (error) {
+        next(error);
     }
 }
 

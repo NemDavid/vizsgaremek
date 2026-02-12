@@ -42,8 +42,6 @@ describe("user_profile_Controller", () => {
         await db.sequelize.sync();
     });
 
-
-
     beforeEach(async () => {
 
         users = rawUsers.map(user => ({
