@@ -1,6 +1,11 @@
-// tests/userRoutes.test.js
+require("dotenv").config({ quiet: true });
+
+jest.mock("../api/db");
+
+const db = require("../api/db");
+
+
 const UserService = require("../api/services/UserService");
-const db = require("../api/db/_mocks_");
 const bcrypt = require("bcrypt");
 const { BadRequestError, NotFoundError } = require("../api/errors");
 const authUtils = require("../api/utilities/authUtils");

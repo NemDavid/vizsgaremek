@@ -299,6 +299,7 @@ describe("authController", () => {
                     expect(res.body.message).toEqual("Érvénytelen vagy lejárt token.");
                 })
             });
+
             describe("POST /api/reset/send-code", () => {
                 test("should generate a verify code", async () => {
                     const data = {
@@ -306,6 +307,26 @@ describe("authController", () => {
                     }
 
                     await request(app).post("/api/auth/reset/send-code").send(data).expect(201);
+                })
+
+                test("should throw error on missing email", async () => {
+                    const data = {
+                        email: undefined
+                    }
+
+                    const res = await request(app).post("/api/auth/reset/send-code").send(data).expect(400);
+                
+                    expect(res.body.message).toEqual("Hiányzó email");
+                })
+
+                test("should throw error on invalid email", async () => {
+                    const data = {
+                        email: "admin_invalid@example.com"
+                    }
+
+                    const res = await request(app).post("/api/auth/reset/send-code").send(data).expect(400);
+                
+                    expect(res.body.message).toEqual("Ehez az emailhez nincs felhasználói fiók");
                 })
             });
         });

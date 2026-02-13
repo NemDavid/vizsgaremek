@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">13.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/30</span>
+                <span class='fraction'>4/30</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.5% </span>
+                <span class="strong">12.5% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/8</span>
+                <span class='fraction'>1/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">13.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/30</span>
+                <span class='fraction'>4/30</span>
             </div>
         
             
@@ -140,7 +140,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -154,7 +154,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -168,20 +168,20 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -225,8 +225,8 @@ class User_SettingsService {
 <span class="cstat-no" title="statement not covered" >        return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID);</span>
     }
 &nbsp;
-    async getUser_SettingsByID(userId) {
-        return await this.user_settingsRepository.getUser_SettingsByID(userId);
+<span class="fstat-no" title="function not covered" >    as</span>ync getUser_SettingsByID(userId) {
+<span class="cstat-no" title="statement not covered" >        return await this.user_settingsRepository.getUser_SettingsByID(userId);</span>
     }
 &nbsp;
 <span class="fstat-no" title="function not covered" >    as</span>ync deleteUser_Settings(token) {
@@ -251,9 +251,9 @@ class User_SettingsService {
 <span class="cstat-no" title="statement not covered" >        return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID });</span>
     }
 &nbsp;
-    async createUser_SettingsByID(ID, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
+<span class="fstat-no" title="function not covered" >    as</span>ync createUser_SettingsByID(ID, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
 &nbsp;
-        return await this.user_settingsRepository.createUser_SettingsByID({ ID }, options);
+<span class="cstat-no" title="statement not covered" >        return await this.user_settingsRepository.createUser_SettingsByID({ ID }, options);</span>
     }
 &nbsp;
 &nbsp;
@@ -286,7 +286,7 @@ module.exports = User_SettingsService;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-13T08:27:43.386Z
+                at 2026-02-13T09:21:56.676Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -2,25 +2,7 @@
 // TELJESEN JAVÍTVA, MINDEN TESZT MŰKÖDIK
 
 // 1. MOCK THE DB FIRST - Ez a legfontosabb!
-jest.mock('../api/db', () => {
-  const { Sequelize } = require("sequelize");
-  
-  const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: ':memory:',
-    logging: false
-  });
-
-  const models = require("../api/models")(sequelize);
-
-  const db = {
-    sequelize,
-    Sequelize,
-    ...models,
-  };
-
-  return db;
-});
+jest.mock('../api/db');
 
 // 2. Most importálhatjuk
 const request = require('supertest');
@@ -239,7 +221,7 @@ describe('4. UserService Tests', () => {
 
     await expect(userService.registerUser(invalidData))
       .rejects
-      .toThrow('érvényytelen email');
+      .toThrow('Érvényytelen email');
   });
 
   it('should check for existing username', async () => {

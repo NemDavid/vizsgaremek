@@ -178,12 +178,12 @@ class NotificationService {
     async sendVerifyCode(email) {
         try {
             if (!email) {
-                throw new BadRequestError("hiányzó email");
+                throw new BadRequestError("Hiányzó email");
             }
 
             const existingProfiles = await this.userService.getUserByEmail(email); // letezik e ilyen emailhez user
             if (existingProfiles.length == 0) {
-                throw new BadRequestError("ehez az emailhez nincs felhasználói fiók");
+                throw new BadRequestError("Ehez az emailhez nincs felhasználói fiók");
             }
 
             const verify_code = authUtils.generateVerifyCode();
@@ -215,16 +215,16 @@ class NotificationService {
     // verify the code and return the profiles
     async verifyTheCode(verifyData) {
         if (!verifyData.email) {
-            throw new BadRequestError("hiányzó email");
+            throw new BadRequestError("Hiányzó email");
         }
         if (!verifyData.verify_code) {
-            throw new BadRequestError("hiányzó verify_code");
+            throw new BadRequestError("Hiányzó verify_code");
         }
 
         // van e ilyen emailhez code
         const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(verifyData.email);  // van e ilyen emailhez code
         if (!existing_verify_code) {
-            throw new BadRequestError("ehez az emailhoz nem lett code generálva");
+            throw new BadRequestError("Ehez az emailhoz nem lett code generálva");
         }
 
 
