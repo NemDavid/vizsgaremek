@@ -305,7 +305,7 @@ describe("authController", () => {
                         email: "admin@example.com"
                     }
 
-                    const res = await request(app).post("/api/auth/reset/send-code").send(data).expect(201);
+                    await request(app).post("/api/auth/reset/send-code").send(data).expect(201);
                 })
             });
         });
