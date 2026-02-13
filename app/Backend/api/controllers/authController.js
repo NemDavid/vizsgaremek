@@ -27,6 +27,7 @@ exports.registerUser = async (req, res, next) => {
         // Welcome / aktiváló email küldése
         await notificationService.sendRegistrationConfirm(pendingUser, confirmUrl);
 
+
         res.status(201).json({ message: "Regisztráció sikeres, ellenőrizd az email fiókodat az aktiváláshoz." });
 
     } catch (error) {
@@ -122,7 +123,7 @@ exports.login = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ message: "Nincs ilyen felhasználó" });
         }
-        
+
 
         if (!bcrypt.compareSync(password, user.password_hash)) {
             return res.status(401).json({ message: "Hibás jelszó" });
@@ -173,7 +174,7 @@ exports.sendVerifyCode = async (req, res, next) => {
     const { email } = req.body || {};
 
     try {
-        res.status(200).json(await notificationService.sendVerifyCode(email));
+        res.status(201).json(await notificationService.sendVerifyCode(email));
     } catch (error) {
         next(error);
     }

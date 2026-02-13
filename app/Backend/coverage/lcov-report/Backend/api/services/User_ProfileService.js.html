@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">5.61% </span>
+                <span class="strong">19.1% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/89</span>
+                <span class='fraction'>17/89</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">13.15% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/76</span>
+                <span class='fraction'>10/76</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.5% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/8</span>
+                <span class='fraction'>2/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">5.81% </span>
+                <span class="strong">19.76% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/86</span>
+                <span class='fraction'>17/86</span>
             </div>
         
             
@@ -278,42 +278,42 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -450,43 +450,43 @@ class User_ProfileService {
 <span class="cstat-no" title="statement not covered" >        return deleteProcess;</span>
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    as</span>ync createUser_Profile(userData, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-        const validUser = <span class="cstat-no" title="statement not covered" >await this.userRepository.getUser(userData.USER_ID, options);</span>
+    async createUser_Profile(userData, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
+        const validUser = await this.userRepository.getUser(userData.USER_ID, options);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        if (!validUser) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!validUser) {
 <span class="cstat-no" title="statement not covered" >            throw new BadRequestError("Nincs ilyen felhasználó");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!userData.first_name) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!userData.first_name) {
 <span class="cstat-no" title="statement not covered" >            throw new BadRequestError("Hiányzó first_name");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidFirstName(userData.first_name)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidFirstName(userData.first_name)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen first_name");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!userData.last_name) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!userData.last_name) {
 <span class="cstat-no" title="statement not covered" >            throw new BadRequestError("Hiányzó last_name");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidLastName(userData.last_name)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidLastName(userData.last_name)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen last_name");</span>
         }
 &nbsp;
         // opcionalisak
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidSchools(userData.schools)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidSchools(userData.schools)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen schools mező");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidBirthDate(userData.birth_date)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidBirthDate(userData.birth_date)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen birth_date mező");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidBirthPlace(userData.birth_place)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidBirthPlace(userData.birth_place)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen birth_place mező");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidAvatar(userData.avatar)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidAvatar(userData.avatar)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen avatar");</span>
         }
-<span class="cstat-no" title="statement not covered" >        if (!authUtils.isValidBio(userData.bio)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!authUtils.isValidBio(userData.bio)) {
 <span class="cstat-no" title="statement not covered" >            throw new ValidationError("Érvénytelen bio");</span>
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        return await this.user_profileRepository.createUser_Profile(userData, options);</span>
+        return await this.user_profileRepository.createUser_Profile(userData, options);
     }
 &nbsp;
 <span class="fstat-no" title="function not covered" >    as</span>ync updateUser_Profile(userId, updateData) {
@@ -589,7 +589,7 @@ module.exports = User_ProfileService;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-12T15:24:04.401Z
+                at 2026-02-13T08:27:43.386Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

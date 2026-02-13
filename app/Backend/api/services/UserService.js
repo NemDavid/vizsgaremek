@@ -1,4 +1,4 @@
-const { BadRequestError } = require("../errors");
+const { BadRequestError, ValidationError } = require("../errors");
 const NotFoundError = require("../errors/NotFoundError");
 const authUtils = require("../utilities/authUtils");
 const bcrypt = require("bcrypt");
@@ -78,37 +78,36 @@ class UserService
 
     async registerUser(userData)
     {
-        
         if (!userData.email) {
-            throw new BadRequestError("hiányzó email");
+            throw new BadRequestError("Hiányzó email");
         }
         if (!authUtils.isValidEmail(userData.email)) {
-            throw new BadRequestError("érvényytelen email");
+            throw new ValidationError("Érvényytelen email");
         }
         if (!userData.username) {
-            throw new BadRequestError("hiányzó username");
+            throw new BadRequestError("Hiányzó username");
         }
         if (!authUtils.isValidUsername(userData.username)) {
-            throw new BadRequestError("érvénytelen username");
+            throw new ValidationError("Érvénytelen username");
         }
         const FindName = await this.userRepository.getUserByUsername(userData.username)
         if(FindName !== null){
             throw new BadRequestError("Ez a felhasználó név már létezik");
         }
         if (!userData.password) {
-            throw new BadRequestError("hiányzó password");
+            throw new BadRequestError("Hiányzó password");
         }
         if (!authUtils.isValidPassword(userData.password)) {
-            throw new BadRequestError("a jelszó nem felel meg a követelményeknek");
+            throw new ValidationError("A jelszó nem felel meg a követelményeknek");
         }
         if (!userData.confirm_password) {
-            throw new BadRequestError("hiányzó confirm_password");
+            throw new BadRequestError("Hiányzó confirm_password");
         }
         if (!authUtils.isValidPassword(userData.confirm_password)) {
-            throw new BadRequestError("a jelszó nem felel meg a követelményeknek");
+            throw new ValidationError("A jelszó nem felel meg a követelményeknek");
         }
         if (userData.password !== userData.confirm_password) {
-            throw new BadRequestError("a jelszavak nem egyeznek");
+            throw new BadRequestError("A jelszavak nem egyeznek");
         }
 
         return userData;

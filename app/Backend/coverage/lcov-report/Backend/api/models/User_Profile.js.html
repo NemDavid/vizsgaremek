@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">13.33% </span>
+                <span class="strong">31.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/45</span>
+                <span class='fraction'>14/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">24.24% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/33</span>
+                <span class='fraction'>8/33</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/3</span>
+                <span class='fraction'>2/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">13.33% </span>
+                <span class="strong">31.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/45</span>
+                <span class='fraction'>14/45</span>
             </div>
         
             
@@ -453,24 +453,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -657,26 +657,26 @@ module.exports = (sequelize, DataTypes) =&gt; {
     /**
      * Safety hook - only validate, don't throw
      */
-    User_Profiles.beforeSave(<span class="fstat-no" title="function not covered" >(u</span>ser) =&gt; {
+    User_Profiles.beforeSave((user) =&gt; {
         // Safely convert and validate
-        const xp = <span class="cstat-no" title="statement not covered" >Number(user.XP);</span>
-        const level = <span class="cstat-no" title="statement not covered" >Number(user.level);</span>
+        const xp = Number(user.XP);
+        const level = Number(user.level);
 &nbsp;
         // Fix if invalid
-<span class="cstat-no" title="statement not covered" >        if (isNaN(xp) || xp &lt; 0) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (isNaN(xp) || xp &lt; 0) {
 <span class="cstat-no" title="statement not covered" >            user.XP = 0;</span>
-        } else <span class="cstat-no" title="statement not covered" >if (xp &gt; 999) {</span>
+        } else <span class="missing-if-branch" title="if path not taken" >I</span>if (xp &gt; 999) {
 <span class="cstat-no" title="statement not covered" >            user.XP = 999;</span>
         } else {
-<span class="cstat-no" title="statement not covered" >            user.XP = xp;</span>
+            user.XP = xp;
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        if (isNaN(level) || level &lt; 1) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (isNaN(level) || level &lt; 1) {
 <span class="cstat-no" title="statement not covered" >            user.level = 1;</span>
-        } else <span class="cstat-no" title="statement not covered" >if (level &gt; 50) {</span>
+        } else <span class="missing-if-branch" title="if path not taken" >I</span>if (level &gt; 50) {
 <span class="cstat-no" title="statement not covered" >            user.level = 50;</span>
         } else {
-<span class="cstat-no" title="statement not covered" >            user.level = level;</span>
+            user.level = level;
         }
     });
 &nbsp;
@@ -688,7 +688,7 @@ module.exports = (sequelize, DataTypes) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-12T15:24:04.401Z
+                at 2026-02-13T08:27:43.386Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
