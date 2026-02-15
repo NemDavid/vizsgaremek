@@ -34,7 +34,7 @@ export type comment = {
 }
 
 
-export function PostAccord({ post }: { post: Post }) {
+export function PostAccord({ post,className }: { post: Post, className?:string }) {
     const queryclinet = useQueryClient();
     const { mutate: doReaction } = useMutation({
         mutationFn: async (data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) => makeReaction(data),
@@ -60,13 +60,13 @@ export function PostAccord({ post }: { post: Post }) {
     }
 
     return (
-        <Card className="rounded-2xl border shadow-md gap-0 py-0 bg-red-50">
+        <Card className={`rounded-2xl! border shadow-md gap-0 py-0 bg-red-50 ${className}`}>
             <CardContent className="p-0">
                 <Accordion type="single" collapsible>
                     <AccordionItem value="item-1">
-                        <AccordionTrigger className="flex items-center justify-between gap-2 px-0 py-0 bg-gray-50 ">
-                            <div className="flex items-center gap-3 bg-red-50 w-full">
-                                <AvatarFrame userid={userid} className="bg-red-50 rounded-l-none rounded-tl-lg" />
+                        <AccordionTrigger className="flex items-center justify-between gap-2 p-0 bg-gray-50 rounded-full!">
+                            <div className="flex items-center gap-3 bg-red-50 w-full rounded-full!">
+                                <AvatarFrame userid={userid} className="bg-red-100 rounded-2xl" />
                                 <h2 className="text-xl font-semibold tracking-tight">
                                     {post.title}
                                 </h2>
@@ -95,7 +95,7 @@ export function PostAccord({ post }: { post: Post }) {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="border-t bg-red-50 py-3 px-4 w-full">
+                    <AccordionItem value="item-2" className="border-t bg-red-50 py-3 px-4 w-full rounded-b-3xl">
                         <CommentsAccord postID={post.ID} commentsList={post.comments}/>
                     </AccordionItem>
                 </Accordion>

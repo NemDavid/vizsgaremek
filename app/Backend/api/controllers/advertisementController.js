@@ -38,7 +38,7 @@ exports.deleteAdvertisement = async (req, res, next) => {
 
 exports.createAdvertisement = async (req, res, next) => {
     const { title, subject } = req.body || {};
-    const imagePath = `/cloud/${req.file.filename}`;
+    const imagePath = `http://localhost:6769/cloud/${req.file.filename}`;
     
     try {
         const newAdvertisement = await advertisementService.createAdvertisement({
