@@ -6,9 +6,44 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from '@/components/ui/button'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { GetSettings, SaveSettings } from '@/components/axios/axiosClient'
+import { GetSettings, PasswordChange, SaveSettings } from '@/components/axios/axiosClient'
 import { toast } from 'sonner'
 import { Loader } from '@/components/Loader/Loader'
+import { cn } from "@/lib/utils"
+
+import {
+    Field,
+    FieldDescription,
+    FieldLabel,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import ReCAPTCHA from "react-google-recaptcha"
+import { Eye, EyeClosed, InfoIcon } from "lucide-react"
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+} from "@/components/ui/input-group"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+
 
 export const Route = createFileRoute('/settings/')({
     component: () => (
@@ -81,18 +116,183 @@ export function SideBar({ children }: { children?: React.ReactNode }) {
         </DefaultUIFrame>
     )
 }
+export const registerSchema = z.object({
+    old_password:z.string()
+        .max(21, { message: "A jelszó legfeljebb 21 karakter hosszú." }),
+    new_password: z
+        .string()
+        .min(8, { message: "A jelszónak legalább 8 karakter hosszúnak kell lennie." })
+        .max(21, { message: "A jelszó legfeljebb 21 karakter hosszú lehet." })
+        .regex(/[a-z]/, { message: "A jelszónak tartalmaznia kell legalább egy kisbetűt." })
+        .regex(/[A-Z]/, { message: "A jelszónak tartalmaznia kell legalább egy nagybetűt." })
+        .regex(/\d/, { message: "A jelszónak tartalmaznia kell legalább egy számot." })
+        .regex(/[@$!%*?&#+-]/, { message: "A jelszónak tartalmaznia kell legalább egy speciális karaktert (@$!%*?&#)." }),
+    confirm_password: z
+        .string()
+        .min(8, { message: "A jelszónak legalább 8 karakter hosszúnak kell lennie." })
+        .max(21, { message: "A jelszó legfeljebb 21 karakter hosszú lehet." }),
+})
+    .refine((data) => data.new_password === data.confirm_password, {
+        message: "A jelszavaknak egyezniük kell.",
+        path: ["confirm_password"],
+    });
+
+type RegisterSchema = z.infer<typeof registerSchema>
 
 
 export function FiokSettings() {
     return (
         <div className="flex-1 md:ml-6 bg-red-100 shadow rounded-md p-6">
             <h1 className="text-2xl font-bold mb-6">Fiók beállítások</h1>
-            <div className="space-y-4">
-
+            <div className="space-y-4 bg-rose-50 rounded-xl p-5">
+                <PasswordReseter></PasswordReseter>
             </div>
         </div>
     )
 }
+
+function PasswordReseter() {
+    const [newPasswordShown, setnewPasswordShown] = useState<boolean>(false)
+    const [oldPasswordShown, setoldPasswordShown] = useState<boolean>(false)
+    const { mutate: reset, isPending } = useMutation({
+        mutationFn: ({ data }: { data: RegisterSchema }) => PasswordChange(data),
+        onError: (error: any) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Fiók jelszava megváltoztattva", {
+                description: "Jelszava változott",
+                duration: 30000,
+            })
+            form.reset()
+        }
+    })
+
+    const form = useForm<RegisterSchema>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            old_password: "",
+            new_password: "",
+            confirm_password: "",
+        },
+        mode: "onChange",
+    })
+    function onSubmit(values: RegisterSchema) {
+        console.log(values);
+        
+        reset({data:values})
+
+    }
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6")}>
+                <div className="flex flex-col items-center gap-1 text-center">
+                    <h1 className="text-2xl font-bold">Jelszó változtatás</h1>
+                </div>
+
+                <FormField
+                    control={form.control}
+                    name="old_password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="flex items-center">
+                                <FieldLabel htmlFor="new_password">Régi jelszavad</FieldLabel>
+                            </div>
+                            <FormControl>
+                                <InputGroup>
+                                    <InputGroupInput placeholder="Add meg az régi jelszavad" type={oldPasswordShown ? "text" : "password"}{...field} required id="old_password"/>
+                                    <InputGroupAddon align="inline-end">
+                                        <InputGroupButton
+                                            variant="ghost"
+                                            aria-label="Info"
+                                            size="icon-xs"
+                                            onClick={() => setoldPasswordShown(!oldPasswordShown)}
+                                        >
+                                            {oldPasswordShown ? <Eye /> : <EyeClosed />}
+                                        </InputGroupButton>
+                                    </InputGroupAddon>
+                                </InputGroup>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="new_password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="flex items-center">
+                                <FieldLabel htmlFor="new_password">Új jelszó</FieldLabel>
+                            </div>
+                            <FormControl>
+                                <InputGroup>
+                                    <InputGroupInput placeholder="Add meg az új jelszavad" type={newPasswordShown ? "text" : "password"}{...field} required id="new_password"/>
+                                    <InputGroupAddon align="inline-end">
+                                        <InputGroupButton
+                                            variant="ghost"
+                                            aria-label="Info"
+                                            size="icon-xs"
+                                            onClick={() => setnewPasswordShown(!newPasswordShown)}
+                                        >
+                                            {newPasswordShown ? <Eye /> : <EyeClosed />}
+                                        </InputGroupButton>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <InputGroupButton
+                                                    variant="ghost"
+                                                    aria-label="Info"
+                                                    size="icon-xs"
+                                                >
+                                                    <InfoIcon />
+                                                </InputGroupButton>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>A jelszónak a következő feltételeknek kell megfelelnie:</p>
+                                                <ul>
+                                                    <li>Legalább 8 karakter hosszú, maximum 21 karakter.</li>
+                                                    <li>Tartalmaznia kell legalább egy <strong>kisbetűt</strong>.</li>
+                                                    <li>Tartalmaznia kell legalább egy <strong>nagybetűt</strong>.</li>
+                                                    <li>Tartalmaznia kell legalább egy <strong>számot</strong>.</li>
+                                                    <li>Tartalmaznia kell legalább egy <strong>speciális karaktert</strong> (@$!%*?&#+-).</li>
+                                                </ul>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </InputGroupAddon>
+                                </InputGroup>
+
+                            </FormControl>
+
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="confirm_password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="flex items-center">
+                                <FieldLabel htmlFor="confirm_password">Új jelszó megerősítése</FieldLabel>
+                            </div>
+                            <FormControl>
+                                <Input onFocus={() => { setnewPasswordShown(false) }} id="confirm_password" type="password" {...field} required placeholder="********" />
+                            </FormControl>
+                            <FormDescription>
+                                Kérjük, erősítsd meg a jelszavadat.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                {isPending ? <Loader /> : ""}
+                <Button type="submit">Jelszavad változtatása</Button>
+            </form>
+        </Form>
+    )
+}
+
+
 export function ErtesitesSettings() {
     const queryclint = useQueryClient()
     const { data, isLoading } = useQuery({
@@ -237,7 +437,7 @@ export function AdatvedelemSettings() {
     })
 
     const { mutate: save } = useMutation({
-        mutationFn: (settings:any) =>
+        mutationFn: (settings: any) =>
             SaveSettings(settings),
         onError: (error: any) => {
             toast.error(error.response.data.message)

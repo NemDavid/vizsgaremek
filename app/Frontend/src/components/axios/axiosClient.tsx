@@ -163,6 +163,12 @@ export async function SaveSettings(Settings: any) {
 
   return response;
 }
+export async function PasswordChange(data: any) {
+  const response = await JsonClient.patch(`/api/users/password/change`, { data });
+
+  return response;
+}
+
 // #endregion
 
 

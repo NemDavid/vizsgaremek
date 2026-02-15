@@ -70,7 +70,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
             </Form>
             <AccordionTrigger>
                 <div className='border-b w-full text-ml font-semibold pb-2'>
-                    Kommentek: (<span className='text-red-500'> {commentsList?.length === 0 ? "nincs" : `${commentsList?.length} darab`} megjegyzés</span>)
+                    Kommentek: (<span className='text-red-500'>{commentsList?.length === 0 ? "nincs" : `${commentsList?.length} darab`} megjegyzés</span>)
                 </div>
             </AccordionTrigger>
 

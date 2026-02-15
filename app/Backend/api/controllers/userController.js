@@ -37,7 +37,15 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
     }
 };
 
-
+exports.updatePassword = async (req, res, next) => {
+    try {
+        const { old_password, new_password, confirm_password } = req.body.data || {};
+        const token = req.cookies["user_token"]
+        res.status(200).json(await userService.updatePassword({ old_password, new_password, confirm_password }, token));
+    } catch (error) {
+        next(error);
+    }
+}
 
 exports.getUsersByPage = async (req, res, next) => {
     try {

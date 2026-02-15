@@ -128,7 +128,6 @@ function RouteComponent() {
 
     </DefaultUIFrame>
   )
-
 }
 
 function LastActivity({ posts }: { posts?: any[] }) {

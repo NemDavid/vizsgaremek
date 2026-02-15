@@ -10,6 +10,7 @@ const app = require('../app');
 const db = require('../api/db');
 const bcrypt = require('bcrypt');
 const { BadRequestError } = require('../api/errors');
+const authUtils = require('../api/utilities/authUtils');
 
 // 3. CRITICAL: JWT secret beállítás - ez hiányzott!
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-integration-tests';
@@ -19,7 +20,7 @@ process.env.Docker_Active = "false";
 // 4. Helper function - használjuk a mockolt db-t
 const createTestUser = async (userData) => {
   const hashedPassword = await bcrypt.hash(userData.password || 'Test123!@#', 14);
-  
+
   const user = await db.User.create({
     email: userData.email,
     password_hash: hashedPassword,
@@ -46,16 +47,16 @@ const createTestUser = async (userData) => {
 // ==================== TESZT 1: ERROR CLASSES ====================
 describe('1. Error Classes - Unit Tests', () => {
   // Nincs beforeAll/afterAll - nincs DB szükség
-  
+
   it('should create AppError correctly', () => {
     const AppError = require('../api/errors/AppError');
-    
+
     const error = new AppError('Test message', {
       statusCode: 400,
       isOperational: false,
       details: 'Some details'
     });
-    
+
     expect(error.message).toBe('Test message');
     expect(error.statusCode).toBe(400);
     expect(error.isOperational).toBe(false);
@@ -64,7 +65,7 @@ describe('1. Error Classes - Unit Tests', () => {
 
   it('should create BadRequestError', () => {
     const BadRequestError = require('../api/errors/BadRequestError');
-    
+
     const error = new BadRequestError('Bad request');
     expect(error.message).toBe('Bad request');
     expect(error.statusCode).toBe(400);
@@ -72,7 +73,7 @@ describe('1. Error Classes - Unit Tests', () => {
 
   it('should create NotFoundError', () => {
     const NotFoundError = require('../api/errors/NotFoundError');
-    
+
     const error = new NotFoundError('Not found');
     expect(error.message).toBe('Not found');
     expect(error.statusCode).toBe(404);
@@ -80,7 +81,7 @@ describe('1. Error Classes - Unit Tests', () => {
 
   it('should export all errors', () => {
     const errors = require('../api/errors');
-    
+
     expect(errors.AppError).toBeDefined();
     expect(errors.BadRequestError).toBeDefined();
     expect(errors.NotFoundError).toBeDefined();
@@ -92,14 +93,14 @@ describe('1. Error Classes - Unit Tests', () => {
 describe('2. Auth Utilities - Unit Tests', () => {
   it('should validate email format', () => {
     const authUtils = require('../api/utilities/authUtils');
-    
+
     expect(authUtils.isValidEmail('test@test.com')).toBe(true);
     expect(authUtils.isValidEmail('not-an-email')).toBe(false);
   });
 
   it('should validate username format', () => {
     const authUtils = require('../api/utilities/authUtils');
-    
+
     expect(authUtils.isValidUsername('validuser')).toBe(true);
     expect(authUtils.isValidUsername('user123')).toBe(true);
     expect(authUtils.isValidUsername('user name')).toBe(false);
@@ -107,14 +108,14 @@ describe('2. Auth Utilities - Unit Tests', () => {
 
   it('should validate password strength', () => {
     const authUtils = require('../api/utilities/authUtils');
-    
+
     expect(authUtils.isValidPassword('Test123!@#')).toBe(true);
     expect(authUtils.isValidPassword('weak')).toBe(false);
   });
 
   it('should hash password', () => {
     const authUtils = require('../api/utilities/authUtils');
-    
+
     const hash = authUtils.hashPassword('password123');
     expect(typeof hash).toBe('string');
     expect(hash.length).toBeGreaterThan(0);
@@ -122,26 +123,26 @@ describe('2. Auth Utilities - Unit Tests', () => {
 
   it('should generate and verify JWT tokens', () => {
     const authUtils = require('../api/utilities/authUtils');
-    
+
     const mockUser = {
       ID: 1,
       username: 'testuser',
       email: 'test@test.com',
       role: 'user'
     };
-    
+
     const token = authUtils.generateUserToken(mockUser);
     expect(typeof token).toBe('string');
-    
+
     // A verifyToken CSAK production-ben ellenőriz, developmentben null-t ad vissza
     // vagy mockoljuk
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
-    
+
     // Ez most null-t fog adni, mert a token nem a megfelelő secret-tel készült
     const decoded = authUtils.verifyToken(token);
     // Csak ellenőrizzük, hogy nem dob hibát
-    
+
     process.env.NODE_ENV = originalEnv;
   });
 });
@@ -150,21 +151,21 @@ describe('2. Auth Utilities - Unit Tests', () => {
 describe('3. Middleware Tests', () => {
   it('should test paramHandler functions', () => {
     const paramHandler = require('../api/middlewares/paramHandler');
-    
+
     const req = {};
     const res = {};
     const next = jest.fn();
-    
+
     // A paramHandler STRING-ként tárolja! NE számítsuk át!
     paramHandler.paramUserId(req, res, next, '123');
     expect(req.userId).toBe('123'); // STRING marad!
     expect(next).toHaveBeenCalled();
-    
+
     // paramPage
     req.paramPage = undefined;
     paramHandler.paramPage(req, res, next, '2');
     expect(req.paramPage).toBe('2'); // STRING marad!
-    
+
     // paramEmail
     req.email = undefined;
     paramHandler.paramEmail(req, res, next, 'test@test.com');
@@ -174,11 +175,11 @@ describe('3. Middleware Tests', () => {
   it('should test authMiddleware error cases', () => {
     const authMiddleware = require('../api/middlewares/authMiddleware');
     const { UnauthorizedError } = require('../api/errors');
-    
+
     const req = { cookies: {} };
     const res = {};
     const next = jest.fn();
-    
+
     // No token
     authMiddleware.userIsLoggedIn(req, res, next);
     expect(next).toHaveBeenCalledWith(expect.any(UnauthorizedError));
@@ -496,6 +497,134 @@ describe('5. User Routes Integration Tests', () => {
       expect(response.body.user.username).toBe(maxUsername);
     });
   });
+
+  describe('PATCH /api/users/password/change - cases', () => {
+  const oldPass = "Tadzom12+";
+  const newPass = "Tadzom12++";
+
+  const makeCookieForUser = (user) => {
+    const token = authUtils.generateUserToken(user); // user.ID-t olvas
+    return `user_token=${token}`;
+  };
+
+  beforeEach(async () => {
+    await db.sequelize.sync({ force: true });
+    jest.restoreAllMocks();
+  });
+
+  const cases = [
+    {
+      name: "400: no cookie token -> Hiányzó user token",
+      setup: async () => ({ cookie: null }),
+      payload: { data: { old_password: oldPass, new_password: newPass, confirm_password: newPass } },
+      expectedStatus: 400,
+      assert: (res) => expect(res.body?.message || "").toBeTruthy(),
+    },
+    {
+      name: "400: missing data wrapper -> hiányzó adatt",
+      setup: async () => {
+        const user = await createTestUser({ email: "a@a.hu", username: "u1", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user) };
+      },
+      payload: { old_password: oldPass, new_password: newPass, confirm_password: newPass }, // direkt rossz shape
+      expectedStatus: 400,
+      assert: (res) => expect(res.body.message).toBeTruthy(),
+    },
+    {
+      name: "400: missing field -> hiányzó adatt",
+      setup: async () => {
+        const user = await createTestUser({ email: "b@b.hu", username: "u2", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user) };
+      },
+      payload: { data: { old_password: oldPass, new_password: newPass } }, // confirm hiányzik
+      expectedStatus: 400,
+      assert: (res) => expect((res.body.message || "").toLowerCase()).toContain("hiányzó"),
+    },
+    {
+      name: "400: new != confirm",
+      setup: async () => {
+        const user = await createTestUser({ email: "c@c.hu", username: "u3", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user) };
+      },
+      payload: { data: { old_password: oldPass, new_password: newPass, confirm_password: newPass + "X" } },
+      expectedStatus: 400,
+      assert: (res) => expect(res.body.message).toBeTruthy(),
+    },
+    {
+      name: "400: weak password (isValidPassword fail)",
+      setup: async () => {
+        const user = await createTestUser({ email: "d@d.hu", username: "u4", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user) };
+      },
+      payload: { data: { old_password: oldPass, new_password: "weak", confirm_password: "weak" } },
+      expectedStatus: 400,
+      assert: (res) => expect(res.body.message).toBeTruthy(),
+    },
+    {
+      name: "404: token userID not in DB",
+      setup: async () => {
+        // olyan token, ami nem létező userID-ra mutat
+        const token = authUtils.generateUserToken({
+          ID: 999999,
+          username: "ghost",
+          email: "ghost@x.hu",
+          role: "user",
+        });
+        return { cookie: `user_token=${token}` };
+      },
+      payload: { data: { old_password: oldPass, new_password: newPass, confirm_password: newPass } },
+      expectedStatus: 404,
+      assert: (res) => expect(res.body.message).toBeTruthy(),
+    },
+    {
+      name: "403: wrong old password",
+      setup: async () => {
+        const user = await createTestUser({ email: "e@e.hu", username: "u5", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user) };
+      },
+      payload: { data: { old_password: oldPass + "X", new_password: newPass, confirm_password: newPass } },
+      expectedStatus: 403,
+      assert: (res) => expect(res.body.message).toBeTruthy(),
+    },
+    {
+      name: "403: same old and new password",
+      setup: async () => {
+        const user = await createTestUser({ email: "f@f.hu", username: "u6", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user) };
+      },
+      payload: { data: { old_password: oldPass, new_password: oldPass, confirm_password: oldPass } },
+      expectedStatus: 403,
+      assert: (res) => expect(res.body.message).toBeTruthy(),
+    },
+    {
+      name: "200: success + password hash updated",
+      setup: async () => {
+        const user = await createTestUser({ email: "g@g.hu", username: "u7", password: oldPass, role: "admin" });
+        return { cookie: makeCookieForUser(user), user };
+      },
+      payload: { data: { old_password: oldPass, new_password: newPass, confirm_password: newPass } },
+      expectedStatus: 200,
+      assert: async (res, ctx) => {
+        expect(res.body).toEqual({ message: "OK" });
+
+        const updated = await db.User.findOne({ where: { ID: ctx.user.ID } });
+        expect(updated).toBeTruthy();
+        expect(bcrypt.compareSync(newPass, updated.password_hash)).toBe(true);
+      },
+    },
+  ];
+
+  test.each(cases)("$name", async ({ setup, payload, expectedStatus, assert }) => {
+    const ctx = await setup();
+
+    const req = request(app).patch("/api/users/password/change").send(payload);
+    if (ctx.cookie) req.set("Cookie", [ctx.cookie]);
+
+    const res = await req.expect(expectedStatus);
+    await assert(res, ctx);
+  });
+});
+
 });
 
 // ==================== VÉGE ====================

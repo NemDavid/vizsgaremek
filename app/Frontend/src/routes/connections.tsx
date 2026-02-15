@@ -55,7 +55,7 @@ function RouteComponent() {
           </CardContent>
         </Card>
         <div className='flex-1 overflow-auto'>
-          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu list={blockedList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendRequestMenu list={PendingList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu list={friendsList} />}
+          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu list={blockedList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendRequestMenu list={PendingList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu list={friendsList} myid={BigInt(auth?.data.userID || 0n)} />}
 
         </div>
       </div>
@@ -63,7 +63,7 @@ function RouteComponent() {
   )
 }
 
-function FriendsMenu({ list }: { list: any[] }) {
+function FriendsMenu({ list, myid }: { list: any[],myid: bigint, }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -77,7 +77,7 @@ function FriendsMenu({ list }: { list: any[] }) {
       <CardContent>
         <div className='flex gap-4 flex-wrap'>
           {list?.map((item: any) => (
-            <FriendsList id={item.UserID} />
+            <FriendsList id={item.UserID} myid={myid}/>
           ))
           }
         </div>
@@ -86,11 +86,11 @@ function FriendsMenu({ list }: { list: any[] }) {
   )
 }
 
-export function FriendsList({ id, className }: { id: bigint, className?: string }) {
+export function FriendsList({ id, className,myid }: { id: bigint, myid: bigint, className?: string }) {
   return (
     <div className={`bg-rose-100 flex items-center rounded-xl p-2 px-4 gap-3 ${className}`}>
       <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
-      <KickButton id={id} />
+      <KickButton id={id} myid={myid}/>
     </div>
   )
 }
