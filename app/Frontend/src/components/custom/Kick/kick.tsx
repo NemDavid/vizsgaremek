@@ -2,14 +2,15 @@ import { useMemo } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Button } from "../../ui/button"
 import { JsonClient, postKick } from "../../axios/axiosClient"
-import { Loader2 } from "lucide-react"
+import { Loader2, Check } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 type KickRow = {
     ID: number
     FROM_USER_ID: number
     TO_USER_ID: number
-    created_at: string // "2026-02-15" (YYYY-MM-DD)
-    updated_at: string
+    created_at: string // YYYY-MM-DD
+    updated_at: string // YYYY-MM-DD
 }
 
 async function GetKick() {
@@ -19,73 +20,73 @@ async function GetKick() {
 const Kick = (userId: bigint) => postKick(userId)
 
 const DAY_MS = 24 * 60 * 60 * 1000
-
-function daysSince(dateYMD: string) {
-    const [y, m, d] = dateYMD.split("-").map(Number)
-    const t = Date.UTC(y, m - 1, d)
-    const now = Date.now()
-    return Math.floor((now - t) / DAY_MS)
+function utcDayStamp(ymd: string) {
+    const [y, m, d] = ymd.split("-").map(Number)
+    return Date.UTC(y, m - 1, d)
+}
+function daysSince(ymd: string) {
+    return Math.floor((Date.now() - utcDayStamp(ymd)) / DAY_MS)
 }
 
 export function KickButton({ id, myid }: { id: bigint; myid: bigint }) {
-    const queryclient = useQueryClient()
+    const qc = useQueryClient()
+
     const { data, isLoading } = useQuery({
         queryKey: ["Rugas", String(id), String(myid)],
         queryFn: GetKick,
+        enabled: myid != null && id != null,
     })
+
     const kicks = data?.data ?? []
 
-    // Megkeressük azt a kick-et, amit TE küldtél NEKI (ha van)
-    const myKickToHim = useMemo(() => {
-        const myIdStr = String(myid)
-        const idStr = String(id)
-
-        return kicks.find((k) =>
-            String(k.FROM_USER_ID) === myIdStr &&
-            String(k.TO_USER_ID) === idStr
+    // AB = én -> ő
+    const AB = useMemo(() => {
+        const me = String(myid)
+        const other = String(id)
+        return kicks.find(
+            (k) => String(k.FROM_USER_ID) === me && String(k.TO_USER_ID) === other
         )
     }, [kicks, id, myid])
 
-    const withinTwoWeeks = myKickToHim ? daysSince(myKickToHim.updated_at) < 14 : false
-    const olderThanTwoWeeks = myKickToHim ? daysSince(myKickToHim.updated_at) >= 14 : false
+    const ageDays = AB ? daysSince(AB.updated_at) : null
+
+    const isFresh = ageDays !== null && ageDays < 14
+    const isOld = ageDays !== null && ageDays >= 14
+
+    // A oldal: friss -> disabled, régi -> nem disabled de “pipa + más szín”, nincs -> normál
+    const disabled = isFresh
 
     const { mutate: doKick, isPending } = useMutation({
         mutationFn: (userId: bigint) => Kick(userId),
-        onSuccess: () => {
-            // ez jobb mint refetchQueries üres kulccsal
-            queryclient.invalidateQueries({ queryKey: ["Rugas"] })
+        onSuccess: async () => {
+            await qc.invalidateQueries({ queryKey: ["Rugas", String(id), String(myid)] })
         },
     })
 
-    const disabled = withinTwoWeeks || isPending
-
-    if (isLoading) return <Loader2 className="animate-spin" />
-    if (isPending) return <Loader2 className="animate-spin" />
+    if (isLoading || isPending) return <Loader2 className="animate-spin" />
 
     return (
         <Button
             variant="outline"
             disabled={disabled}
             onClick={() => doKick(id)}
-            className={
-                olderThanTwoWeeks
-                    ? "border-amber-500 bg-amber-50 text-amber-900 hover:bg-amber-100"
-                    : ""
-            }
+            className={cn(
+                // Régi kick van, nincs vissza -> kiemelt állapot
+                isOld && "border-amber-500 bg-amber-50 text-amber-900 hover:bg-amber-100",
+                // Friss kick van -> disabled is legyen láthatóbb
+                isFresh && "bg-slate-200 text-slate-600 opacity-100"
+            )}
             title={
-                withinTwoWeeks
-                    ? "Már rúgtad az elmúlt 2 hétben."
-                    : olderThanTwoWeeks
-                        ? "Volt már rugás, de 2 hétnél régebbi."
+                isFresh
+                    ? "Már kickelted az elmúlt 2 hétben."
+                    : isOld
+                        ? "Már kickelted régebben – frissítheted."
                         : undefined
             }
         >
-            <img
-                src="/kicking.png"
-                alt="Kick"
-                className="size-6 bg-slate-200 rounded-full"
-            />
+            <img src="/kicking.png" alt="Kick" className="size-6 bg-slate-200 rounded-full" />
             Rugás
+            {isOld && <Check className="ml-2 size-4" />}
         </Button>
     )
 }

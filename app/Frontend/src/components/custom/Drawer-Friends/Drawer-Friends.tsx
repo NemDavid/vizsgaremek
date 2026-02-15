@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/drawer"
 import { Users } from 'lucide-react'
 import { useQuery } from "@tanstack/react-query"
-import { GetMyFriends } from "../../axios/axiosClient"
+import { authStatusRequest, GetMyFriends } from "../../axios/axiosClient"
 import { FriendsList } from "@/routes/connections"
 
 
@@ -20,7 +20,12 @@ export function DrawerFriends() {
         retry: 0,
         refetchOnWindowFocus: false,
     })
-    const acceptedFriends =data?.data?.filter((item: any) => item.Status === "accepted") || [];
+    const { data: auth } = useQuery<any>({
+        queryKey: ["auth-status"],
+        queryFn: authStatusRequest,
+        enabled: false,
+    })
+    const acceptedFriends = data?.data?.filter((item: any) => item.Status === "accepted") || [];
     return (
         <Drawer >
             <DrawerTrigger className="contents">
@@ -34,7 +39,7 @@ export function DrawerFriends() {
                     <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
                         <div className="flex gap-3 overflow-x-auto p-3">
                             {acceptedFriends.map((item: any) => (
-                                <FriendsList id={item.UserID} key={item.UserID} className={"bg-rose-900"} />
+                                <FriendsList id={item.UserID} key={item.UserID} className={"bg-rose-900"} myid={BigInt(auth?.data.userID || 0n)}/>
                             ))}
                         </div>
                     </div>

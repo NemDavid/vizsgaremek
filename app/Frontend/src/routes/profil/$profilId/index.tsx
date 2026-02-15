@@ -140,12 +140,15 @@ function LastActivity({ posts }: { posts?: any[] }) {
   }
 
   return (
-    <div className="bg-red-950 flex flex-wrap gap-4">
+    <div className="bg-red-950 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((p) => (
-        <PostAccord key={p.id} post={p} className="overflow-y-auto max-h-48 rounded-none!" ></PostAccord>
+        <div className="max-h-48 overflow-y-auto pr-2 activity-scroll">
+          <PostAccord post={p} />
+        </div>
       ))}
     </div>
   )
+
 }
 
 
