@@ -19,7 +19,7 @@ exports.getUser = async (req, res, next) => {
 };
 exports.getUserByUsernameOrUserId = async (req, res, next) => {
     const uniqIdentifier = req.uniqIdentifier;
-    
+
     let user = null;
     try {
         // próbáljuk számként értelmezni
@@ -30,7 +30,6 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
         } else {
             user = await userService.getUserByUsername(uniqIdentifier);
         }
-
 
         res.status(200).json(user);
     } catch (error) {
@@ -50,7 +49,9 @@ exports.getUsersByPage = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        res.status(200).json(await userService.deleteUser(req.userId));
+        const deleteResault = await userService.deleteUser(req.userId);
+
+        res.status(204).json(deleteResault);
     } catch (error) {
         next(error);
     }
@@ -67,7 +68,7 @@ exports.createUser = async (req, res, next) => {
 
         const token = authUtils.generateUserToken(newUser);
 
-        res.status(200).json({
+        res.status(201).json({
             user: newUser,
             token
         });

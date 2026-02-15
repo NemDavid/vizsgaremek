@@ -29,7 +29,7 @@ exports.getVerify_codeByEmail = async (req, res, next) => {
 
 exports.deleteVerify_code = async (req, res, next) => {
     try {
-        res.status(200).json(await verify_codeService.deleteVerify_code(req.itemId));
+        res.status(204).json(await verify_codeService.deleteVerify_code(req.itemId));
     } catch (error) {
         next(error);
     }
@@ -38,7 +38,7 @@ exports.deleteVerify_code = async (req, res, next) => {
 exports.deleteVerify_codesByEmail = async (req, res, next) => {
     const { email } = req.body || {};
     try {
-        res.status(200).json(await verify_codeService.deleteVerify_codesByEmail(email));
+        res.status(204).json(await verify_codeService.deleteVerify_codesByEmail(email));
     } catch (error) {
         next(error);
     }
@@ -51,7 +51,7 @@ exports.createVerify_code = async (req, res, next) => {
             email
         });
 
-        res.status(200).json({ Verify_code: newVerify_code });
+        res.status(201).json({ Verify_code: newVerify_code });
     } catch (error) {
         next(error);
     }

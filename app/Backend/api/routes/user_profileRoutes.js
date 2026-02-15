@@ -13,7 +13,7 @@ router.param("userId", paramHandler.paramUserId)
 
 router.get("/all", user_profileController.getUser_Profiles);
 
-router.get("/pages/:paramPage", user_profileController.getUser_ProfilesByPage); // todo
+router.get("/pages/:paramPage", user_profileController.getUser_ProfilesByPage);
 
 router.get("/:userId", user_profileController.getUser_Profile);
 

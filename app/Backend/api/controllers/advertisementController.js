@@ -30,7 +30,7 @@ exports.getRandomAdvertisement = async (req, res, next) => {
 
 exports.deleteAdvertisement = async (req, res, next) => {
     try {
-        res.status(200).json(await advertisementService.deleteAdvertisement(req.itemId));
+        res.status(204).json(await advertisementService.deleteAdvertisement(req.itemId));
     } catch (error) {
         next(error);
     }
@@ -47,7 +47,7 @@ exports.createAdvertisement = async (req, res, next) => {
             imagePath
         });
 
-        res.status(200).json(newAdvertisement);
+        res.status(201).json(newAdvertisement);
     } catch (error) {
         next(error);
     }

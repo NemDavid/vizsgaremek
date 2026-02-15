@@ -47,10 +47,6 @@ class User_ProfileRepository {
         try {
             const deletedRow = await this.User_Profile.destroy({ where: { USER_ID: userId } });
 
-            if (deletedRow === 0) {
-                throw new DbError("A felhasználói profil nem található.", { details: `userId: ${userId}` });
-            }
-
             return { success: true, deleted: deletedRow };
         } catch (error) {
             throw new DbError("A felhasználói profil törlése sikertelen.", { details: error.message });
@@ -71,14 +67,14 @@ class User_ProfileRepository {
         }
     }
 
-    async getUser_Profile(userId) {
+    async getUser_Profile(userId, options = {}) {
         try {
             if (!userId) return null;
 
             // Meghatározzuk a szűrést
             const userWhere = !isNaN(Number(userId))
-                ? { id: Number(userId) }
-                : { userName: userId };
+                ? { ID: Number(userId) }
+                : { username: userId };
 
             const profile = await this.User_Profile.scope("allUser_ProfileData").findOne({
                 include: [
@@ -97,16 +93,19 @@ class User_ProfileRepository {
                         ],
                     },
                 ],
+                transaction: options.transaction
             });
 
             if (!profile) return null;
 
             const sentCount = await this.Connections.count({
                 where: { User_Requested_ID: profile.USER_ID, Status: "accepted" },
+                transaction: options.transaction,
             });
 
             const receivedCount = await this.Connections.count({
                 where: { To_User_ID: profile.USER_ID, Status: "accepted" },
+                transaction: options.transaction,
             });
 
             const result = profile.toJSON();

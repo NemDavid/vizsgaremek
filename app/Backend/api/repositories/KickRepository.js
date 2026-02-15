@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class KickRepository {
@@ -11,21 +10,6 @@ class KickRepository {
     async getKicks() {
         try {
             return await this.Kick.scope("allKickData").findAll();
-        } catch (error) {
-            throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
-        }
-    }
-
-    async getMyKicks(userId) {
-        try {
-            return await this.Kick.scope("allKickData").findAll({
-                where: {
-                    [Op.or]: [
-                        {FROM_USER_ID: userId},
-                        {TO_USER_ID: userId}
-                    ],
-                },
-            });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
         }

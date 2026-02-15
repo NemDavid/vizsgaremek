@@ -6,7 +6,7 @@ exports.userIsLoggedIn = (req, res, next) =>
 {
     const { user_token } = req.cookies || {};
 
-    if(!user_token) return next(new UnauthorizedError());
+    if(!user_token) return next(new UnauthorizedError("Usrer token is missing"));
 
     try
     {

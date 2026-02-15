@@ -1,4 +1,4 @@
-const { BadRequestError } = require("../errors");
+const { BadRequestError, ValidationError } = require("../errors");
 const authUtils = require("../utilities/authUtils");
 
 class User_ProfileService {
@@ -11,11 +11,11 @@ class User_ProfileService {
         return await this.user_profileRepository.getUser_Profiles();
     }
 
-    async getUser_Profile(userId) {
+    async getUser_Profile(userId, options = {}) {
         if (!userId) {
             throw new BadRequestError("hiányzó user ID");
         }
-        return await this.user_profileRepository.getUser_Profile(userId);
+        return await this.user_profileRepository.getUser_Profile(userId, options);
     }
 
     async getUser_ProfilesByPage(page) {
@@ -34,7 +34,7 @@ class User_ProfileService {
         const deleteProcess = await this.user_profileRepository.deleteUser_Profile(userId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen felhasznalo");
+            throw new BadRequestError("Nincs ilyen felhasználói profil");
         }
         return deleteProcess;
     }
@@ -43,36 +43,36 @@ class User_ProfileService {
         const validUser = await this.userRepository.getUser(userData.USER_ID, options);
 
         if (!validUser) {
-            throw new BadRequestError("nincs ilyen felhasználó");
+            throw new BadRequestError("Nincs ilyen felhasználó");
         }
         if (!userData.first_name) {
-            throw new BadRequestError("hiányzó first_name");
+            throw new BadRequestError("Hiányzó first_name");
         }
         if (!authUtils.isValidFirstName(userData.first_name)) {
-            throw new BadRequestError("Hiányzó vagy érvénytelen first_name");
+            throw new ValidationError("Érvénytelen first_name");
         }
         if (!userData.last_name) {
-            throw new BadRequestError("hiányzó last_name");
+            throw new BadRequestError("Hiányzó last_name");
         }
         if (!authUtils.isValidLastName(userData.last_name)) {
-            throw new BadRequestError("Hiányzó vagy érvénytelen last_name");
+            throw new ValidationError("Érvénytelen last_name");
         }
 
         // opcionalisak
         if (!authUtils.isValidSchools(userData.schools)) {
-            throw new BadRequestError("Érvénytelen schools mező");
+            throw new ValidationError("Érvénytelen schools mező");
         }
         if (!authUtils.isValidBirthDate(userData.birth_date)) {
-            throw new BadRequestError("Érvénytelen birth_date mező");
+            throw new ValidationError("Érvénytelen birth_date mező");
         }
         if (!authUtils.isValidBirthPlace(userData.birth_place)) {
-            throw new BadRequestError("Érvénytelen birth_place mező");
+            throw new ValidationError("Érvénytelen birth_place mező");
         }
         if (!authUtils.isValidAvatar(userData.avatar)) {
-            throw new BadRequestError("Érvénytelen avatar");
+            throw new ValidationError("Érvénytelen avatar");
         }
         if (!authUtils.isValidBio(userData.bio)) {
-            throw new BadRequestError("Érvénytelen bio");
+            throw new ValidationError("Érvénytelen bio");
         }
 
         return await this.user_profileRepository.createUser_Profile(userData, options);
@@ -80,26 +80,53 @@ class User_ProfileService {
 
     async updateUser_Profile(userId, updateData) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
+        const validUser = await this.userRepository.getUser(userId);
+
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó");
+        }
         if (!updateData.first_name) {
             throw new BadRequestError("Hiányzó first_name");
+        }
+        if (!authUtils.isValidFirstName(updateData.first_name)) {
+            throw new ValidationError("Érvénytelen first_name");
         }
         if (!updateData.last_name) {
             throw new BadRequestError("Hiányzó last_name");
         }
-        if(updateData.birth_date === "0000-00-00"){
-            updateData.birth_date = ""
+        if (!authUtils.isValidLastName(updateData.last_name)) {
+            throw new ValidationError("Érvénytelen last_name");
         }
-        
+
+
+        // opcionalisak
+        if (!authUtils.isValidSchools(updateData.schools)) {
+            throw new ValidationError("Érvénytelen schools mező");
+        }
+        if (updateData.birth_date !== "0000-00-00" && !authUtils.isValidBirthDate(updateData.birth_date)) {
+            throw new ValidationError("Érvénytelen birth_date mező");
+        }
+        if (!authUtils.isValidBirthPlace(updateData.birth_place)) {
+            throw new ValidationError("Érvénytelen birth_place mező");
+        }
+        if (!authUtils.isValidAvatar(updateData.avatar)) {
+            throw new ValidationError("Érvénytelen avatar");
+        }
+        if (!authUtils.isValidBio(updateData.bio)) {
+            throw new ValidationError("Érvénytelen bio");
+        }
+
         const affectedRows = await this.user_profileRepository.updateUser_Profile(userId, updateData);
-        
+
+
         if (!affectedRows) {
-            throw new BadRequestError("user profile nem található", { details: `userId: ${userId}` })
+            throw new BadRequestError("User profile nem lett frissítve", { details: `userId: ${userId}` })
         }
-        
-        const {profile:updateUser_Profile} = await this.user_profileRepository.getUser_Profile(userId);
+
+        const { profile: updateUser_Profile } = await this.user_profileRepository.getUser_Profile(userId);
 
         if (!updateUser_Profile) {
-            throw new BadRequestError("a frissitett user profile nem található", { details: `userId: ${userId}` });
+            throw new BadRequestError("A frissitett user profile nem található", { details: `userId: ${userId}` });
         }
         return updateUser_Profile;
     }
@@ -108,21 +135,24 @@ class User_ProfileService {
     // add xp to user
     async addXPToUser(userId, XP, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
+        if (!XP) throw new BadRequestError("Hiányzó xp érték");
         if (XP == null || isNaN(XP)) {
-            throw new BadRequestError("Érvénytelen XP érték");
+            throw new ValidationError("Érvénytelen XP érték");
         }
 
         // User lekérése
-        const validUser = await this.userRepository.getUserByID(userId);
+        const validUser = await this.userRepository.getUserByID(userId, { transaction });
         if (!validUser) {
             throw new BadRequestError("User nem található");
         }
 
         // Profil lekérése
-        const {profile:userProfile} = await this.getUser_Profile(userId);
-        if (!userProfile) {
+        const getProfile = await this.getUser_Profile(userId, { transaction });
+        if (!getProfile) {
             throw new BadRequestError("Profil nem található");
         }
+        
+        const userProfile = getProfile.profile;
 
         // Ha invalid adat, NE próbáljuk meg javítani, dobjunk hibát
         if (userProfile.XP === undefined || userProfile.XP === null) {

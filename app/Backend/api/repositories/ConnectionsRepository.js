@@ -1,10 +1,10 @@
-const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class ConnectionsRepository {
     constructor(db) {
         this.Connections = db.Connections;
         this.sequelize = db.sequelize;
+        this.Op = db.Sequelize.Op;
     }
 
     async getConnections() {
@@ -19,7 +19,7 @@ class ConnectionsRepository {
         try {
             return await this.Connections.scope("allConnectionData").findOne({
                 where: {
-                    [Op.or]: [
+                    [this.Op.or]: [
                         {
                             User_Requested_ID: User_Requested_ID,
                             To_User_ID: To_User_ID
@@ -42,7 +42,7 @@ class ConnectionsRepository {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
-                    [Op.or]: [
+                    [this.Op.or]: [
                         { User_Requested_ID },
                         { To_User_ID: User_Requested_ID }
                     ]
@@ -83,7 +83,7 @@ class ConnectionsRepository {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
                     Status: "accepted",
-                    [Op.or]: [
+                    [this.Op.or]: [
                         { User_Requested_ID: userId },
                         { To_User_ID: userId }
                     ]
@@ -99,7 +99,7 @@ class ConnectionsRepository {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
                     Status: "accepted",
-                    [Op.or]: [
+                    [this.Op.or]: [
                         { User_Requested_ID: userId },
                         { To_User_ID: userId }
                     ]
@@ -116,7 +116,7 @@ class ConnectionsRepository {
         try {
             const deletedRow = await this.Connections.destroy({
                 where: {
-                    [Op.or]: [
+                    [this.Op.or]: [
                         {
                             User_Requested_ID: User_Requested_ID,
                             To_User_ID: To_User_ID
