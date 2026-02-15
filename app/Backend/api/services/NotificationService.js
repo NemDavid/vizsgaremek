@@ -158,14 +158,12 @@ class NotificationService {
     // ÚJ: e-mail aktiválás
     async sendRegistrationConfirm(user, confirmUrl) {
         try {
-
-
             const subject = 'MiHirunk - Regisztráció megerősítése';
 
             const template = emailTemplates.registrationConfirmTemplate(user.username, confirmUrl);
             const text = template.text;
             const html = template.html;
-
+            
 
             await emailUtils.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
@@ -263,17 +261,17 @@ class NotificationService {
     // new password set
     async setNewPassword(newPasswordData) {
         if (!newPasswordData.userId) {
-            throw new BadRequestError("hiányzó userId");
+            throw new BadRequestError("Hiányzó userId");
         }
         if (!newPasswordData.password) {
-            throw new BadRequestError("hiányzó password");
+            throw new BadRequestError("Hiányzó password");
         }
 
 
-        // létezik e ilyen emailhez user
+        // létezik e ilyen id-hez user
         const existingUser = await this.userService.getUserByID(newPasswordData.userId); // letezik e ilyen emailhez user
         if (!existingUser) {
-            throw new BadRequestError("nincs ilyen id-vel user");
+            throw new BadRequestError("Nincs ilyen id-vel user");
         }
 
 
@@ -281,17 +279,17 @@ class NotificationService {
         // update user password
         const updatedUser = await this.userService.updateUser_Password(newPasswordData.userId, { password_hash: authUtils.hashPassword(newPasswordData.password) });
         if (!updatedUser) {
-            throw new BadRequestError("a user jelszava nem lett frissítve");
+            throw new BadRequestError("A user jelszava nem lett frissítve");
         }
 
         // töröljük a használt codeokat
         const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(existingUser.email); // töröljük a használt codeokat
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("nem sikerült törölni a használt verify_codeokat");
+            throw new BadRequestError("Nem sikerült törölni a használt verify_codeokat");
         }
 
 
-        return { message: "jelszó sikeresen frissítve" };
+        return { message: "Jelszó sikeresen frissítve" };
     }
 }
 

@@ -1,4 +1,5 @@
 const request = require("supertest");
+const bcrypt = require("bcrypt");
 
 require("dotenv").config({ quiet: true });
 
@@ -452,6 +453,68 @@ describe("authController", () => {
                 })
 
 
+            });
+
+            describe("POST /api/auth/reset/new_password", () => {
+                test("should set new password", async () => {
+                    const verifyData = {
+                        email: "admin@example.com",
+                        verify_code: "123456"
+                    };
+
+                    // létrehozunk verify_code-ot a teszt elején
+                    await verify_codeService.createVerify_code({
+                        email: verifyData.email,
+                        verify_code: verifyData.verify_code
+                    });
+
+
+                    const data = {
+                        userId: 1,
+                        password: "new_Password123#",
+                    }
+                    const res = await request(app).post("/api/auth/reset/new_password").send(data).expect(200);
+
+                    const updatedUser = await db.User.findOne({
+                        where: {
+                            ID: data.userId,
+                        }
+                    })
+
+                    expect(res.body.message).toBe("Jelszó sikeresen frissítve");
+                    expect(bcrypt.compareSync(data.password, updatedUser.password_hash)).toBeTruthy();
+                })
+
+                test.each([
+                    [{ userId: undefined, password: "new_Password123#" }, "Hiányzó userId"],
+                    [{ userId: 1, password: undefined }, "Hiányzó password"],
+                ])("should throw error on missing attributes", async (payload, expectedMessage) => {
+                    const res = await request(app).post("/api/auth/reset/new_password").send(payload).expect(400);
+
+                    expect(res.body.message).toBe(expectedMessage);
+                })
+
+                test("should throw error on wrong id", async () => {
+                    const data = {
+                        userId: 9999,
+                        password: "new_Password123#",
+                    }
+
+                    const res = await request(app).post("/api/auth/reset/new_password").send(data).expect(400);
+
+                    expect(res.body.message).toBe("Nincs ilyen id-vel user");
+                })
+                
+                test("should throw error on wrong id", async () => {
+                    const data = {
+                        userId: 9999,
+                        password: "new_Password123#",
+                    }
+
+                    const res = await request(app).post("/api/auth/reset/new_password").send(data).expect(400);
+
+                    expect(res.body.message).toBe("Nincs ilyen id-vel user");
+                })
             });
         });
 
