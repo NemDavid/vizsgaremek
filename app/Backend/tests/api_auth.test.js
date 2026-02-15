@@ -8,7 +8,8 @@ jest.mock("../api/db");
 
 const db = require("../api/db");
 
-const { userService, user_profileService, notificationService, user_SettingsService } = require("../api/services")(db);
+const { userService, user_profileService, notificationService, user_SettingsService, verify_codeService } = require("../api/services")(db);
+const { verify_codeRepository } = require("../api/repositories")(db);
 const authUtils = require("../api/utilities/authUtils");
 const { BadRequestError, ValidationError } = require("../api/errors");
 
@@ -61,6 +62,8 @@ describe("authController", () => {
 
         await db.User.destroy({ where: {} });
         await db.User_Profile.destroy({ where: {} });
+        await db.Settings.destroy({ where: {} });
+        await db.Verify_Code.destroy({ where: {} });
     });
 
     describe("/api/auth", () => {
@@ -243,7 +246,7 @@ describe("authController", () => {
                 });
             });
 
-            describe("POST /api/register/confirm/:token", () => {
+            describe("POST /api/auth/register/confirm/:token", () => {
                 test("should comfirm registration", async () => {
                     const user = {
                         email: "example@example.com",
@@ -300,13 +303,40 @@ describe("authController", () => {
                 })
             });
 
-            describe("POST /api/reset/send-code", () => {
+            describe("POST /api/auth/reset/send-code", () => {
                 test("should generate a verify code", async () => {
                     const data = {
                         email: "admin@example.com"
                     }
 
                     await request(app).post("/api/auth/reset/send-code").send(data).expect(201);
+
+                    const codes = await db.Verify_Code.findAll({
+                        where: {
+                            email: data.email
+                        }
+                    })
+
+
+                    expect(codes.length).toBe(1);
+                })
+
+                test("should generate one verify code on two call", async () => {
+                    const data = {
+                        email: "admin@example.com"
+                    }
+
+                    await request(app).post("/api/auth/reset/send-code").send(data).expect(201);
+                    await request(app).post("/api/auth/reset/send-code").send(data).expect(201);
+
+                    const codes = await db.Verify_Code.findAll({
+                        where: {
+                            email: data.email
+                        }
+                    })
+
+
+                    expect(codes.length).toBe(1);
                 })
 
                 test("should throw error on missing email", async () => {
@@ -315,7 +345,7 @@ describe("authController", () => {
                     }
 
                     const res = await request(app).post("/api/auth/reset/send-code").send(data).expect(400);
-                
+
                     expect(res.body.message).toEqual("Hiányzó email");
                 })
 
@@ -325,9 +355,103 @@ describe("authController", () => {
                     }
 
                     const res = await request(app).post("/api/auth/reset/send-code").send(data).expect(400);
-                
-                    expect(res.body.message).toEqual("Ehez az emailhez nincs felhasználói fiók");
+
+                    expect(res.body.message).toEqual("Ehez az emailhez nincsen felhasználói fiók");
                 })
+            });
+
+            describe("POST /api/reset/verify-code", () => {
+                test("should return users on valid code", async () => {
+                    const data = {
+                        email: "admin@example.com",
+                        verify_code: "" + authUtils.generateVerifyCode(),
+                    }
+
+                    await verify_codeService.createVerify_code(data);
+
+                    const res = await request(app).post("/api/auth/reset/verify-code").send(data).expect(200);
+
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body).toEqual(
+                        expect.arrayContaining(
+                            rawUsers.map(user => expect.objectContaining({
+                                email: user.email,
+                            })))
+                    );
+                })
+
+                test("should throw error on missing email", async () => {
+                    let data = {
+                        email: "admin@example.com",
+                        verify_code: "" + authUtils.generateVerifyCode(),
+                    }
+
+                    await verify_codeService.createVerify_code(data);
+
+                    data.email = undefined;
+
+                    const res = await request(app).post("/api/auth/reset/verify-code").send(data).expect(400);
+
+
+                    expect(res.body.message).toBe("Hiányzó email");
+                })
+
+                test("should throw error on missing verify code", async () => {
+                    const data = {
+                        email: "admin@example.com",
+                        verify_code: undefined,
+                    }
+
+                    const res = await request(app).post("/api/auth/reset/verify-code").send(data).expect(400);
+
+
+                    expect(res.body.message).toBe("Hiányzó verify_code");
+                })
+
+                test("should throw error on invalid email", async () => {
+                    const data = {
+                        email: "admin@example.com",
+                        verify_code: "" + authUtils.generateVerifyCode(),
+                    }
+
+                    const res = await request(app).post("/api/auth/reset/verify-code").send(data).expect(400);
+
+
+                    expect(res.body.message).toBe("Ehez az emailhoz nem lett code generálva");
+                })
+
+                test("should throw error on missing or expired generated code", async () => {
+                    const data = {
+                        email: "admin@example.com",
+                        verify_code: "" + authUtils.generateVerifyCode(),
+                    }
+
+
+                    await verify_codeRepository.createVerify_code({
+                        email: data.email,
+                        verify_code_hash: authUtils.hashCode(data.verify_code),
+                        expire_at: new Date(Date.now() - 10 * 60 * 1000), // 10 percel korabban hoztuk lerte es onnan 5 perc
+                    });
+
+                    const res = await request(app).post("/api/auth/reset/verify-code").send(data).expect(400);
+
+                    expect(res.body.message).toBe("Nincs érvényes verify_code ehhez az emailhez");
+                })
+
+                test("should throw error on invalid email", async () => {
+                    const data = {
+                        email: "admin_invalid@example.com",
+                        verify_code: "" + authUtils.generateVerifyCode(),
+                    }
+
+
+                    const res = await request(app).post("/api/auth/reset/verify-code").send(data).expect(400);
+
+                    expect(res.body.message).toBe("Ehez az emailhez nincsen felhasználói fiók");
+                })
+
+
             });
         });
 

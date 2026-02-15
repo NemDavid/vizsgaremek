@@ -138,9 +138,6 @@ module.exports = (sequelize) => {
 
 
 
-
-
-
     return {
         User,
         User_Profile,

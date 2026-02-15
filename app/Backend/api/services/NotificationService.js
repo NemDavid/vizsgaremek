@@ -183,19 +183,22 @@ class NotificationService {
 
             const existingProfiles = await this.userService.getUserByEmail(email); // letezik e ilyen emailhez user
             if (existingProfiles.length == 0) {
-                throw new BadRequestError("Ehez az emailhez nincs felhasználói fiók");
+                throw new BadRequestError("Ehez az emailhez nincsen felhasználói fiók");
             }
 
             const verify_code = authUtils.generateVerifyCode();
 
             const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(email);
 
+            const expire_at = new Date(Date.now() + 5 * 60 * 1000) // 5 perc;
+            const created_at = new Date();
+
             let verify_codeData = null;
             if (!existing_verify_code) {
-                verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code });
+                verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code, expire_at, created_at });
             }
             else {
-                verify_codeData = await this.verify_codeService.updateVerify_codeByEmail(email, { verify_code });
+                verify_codeData = await this.verify_codeService.updateVerify_codeByEmail(email, { verify_code, expire_at, created_at });
             }
 
             const subject = 'MiHirunk - Jelszó visszaállítási ellenőrző kód';
@@ -203,7 +206,7 @@ class NotificationService {
             const template = emailTemplates.passwordResetVerifyCodeTemplate(verify_codeData.verify_code);
             const text = template.text;
             const html = template.html;
-
+            
             
             await emailUtils.sendEmail({ to: email, subject, text, html });
         } catch (err) {
@@ -211,12 +214,19 @@ class NotificationService {
             throw err;
         }
     }
-
+    
     // verify the code and return the profiles
     async verifyTheCode(verifyData) {
         if (!verifyData.email) {
             throw new BadRequestError("Hiányzó email");
         }
+
+        // létezik e ilyen emailhez user
+        const existingUsers = await this.userService.getUserByEmail(verifyData.email); // letezik e ilyen emailhez user
+        if (existingUsers.length == 0) {
+            throw new BadRequestError("Ehez az emailhez nincsen felhasználói fiók");
+        }
+        
         if (!verifyData.verify_code) {
             throw new BadRequestError("Hiányzó verify_code");
         }
@@ -226,22 +236,19 @@ class NotificationService {
         if (!existing_verify_code) {
             throw new BadRequestError("Ehez az emailhoz nem lett code generálva");
         }
-
+        
 
         // van e érvényes code  és lejárt e már
-        const has_valid_code = bcrypt.compareSync(verifyData.verify_code, existing_verify_code.verify_code_hash) &&
-            existing_verify_code.created_at.getTime() < existing_verify_code.expire_at.getTime();
+        const has_valid_code = bcrypt.compareSync(""+verifyData.verify_code, existing_verify_code.verify_code_hash) &&
+            Date.now() < existing_verify_code.expire_at.getTime();
+            
         if (!has_valid_code) {
-            throw new BadRequestError("nincs érvényes verify_code ehhez az emailhez");
+            throw new BadRequestError("Nincs érvényes verify_code ehhez az emailhez");
         }
 
 
-        // létezik e ilyen emailhez user
-        const existingUsers = await this.userService.getUserByEmail(verifyData.email); // letezik e ilyen emailhez user
-        if (!existingUsers) {
-            throw new BadRequestError("ehez az emailhez nincs felhasználói fiók");
-        }
 
+        // userek visszaadasa az adott emailhez
         const filteredUsers = existingUsers.map(user => ({
             ID: user.ID,
             email: user.email,

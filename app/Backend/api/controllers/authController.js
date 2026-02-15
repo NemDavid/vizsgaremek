@@ -182,7 +182,7 @@ exports.sendVerifyCode = async (req, res, next) => {
 
 exports.verifyTheCode = async (req, res, next) => {
     const { email, verify_code } = req.body || {};
-
+    
     try {
         res.status(200).json(await notificationService.verifyTheCode({
             email,
