@@ -23,7 +23,8 @@ exports.deleteUser_Settings = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(204).json(await user_SettingsService.deleteUser_Settings(token));
+        await user_SettingsService.deleteUser_Settings(token);
+        res.sendStatus(204);
     } catch (error) {
         next(error);
     }

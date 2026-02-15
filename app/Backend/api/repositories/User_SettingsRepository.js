@@ -15,7 +15,7 @@ class User_SettingsRepository {
         }
     }
 
-    async getUser_SettingsByToken(user_SettingsId) {
+    async getUser_SettingsByToken(user_SettingsId) {  
         try {
             return await this.User_Settings.scope("allUser_SettingsData").findOne({
                 where: { ID: user_SettingsId }
