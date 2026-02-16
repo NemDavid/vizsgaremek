@@ -19,7 +19,7 @@ router.get("/:itemId", advertisementController.getAdvertisement);
 
 
 
-router.delete("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin],advertisementController.deleteAdvertisement);
+router.delete("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], advertisementController.deleteAdvertisement);
 
 router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin, upload.single("image")], advertisementController.createAdvertisement);
 

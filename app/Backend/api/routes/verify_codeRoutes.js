@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verify_codeController = require("../controllers/verify_codeController");
+const authMiddleware = require("../middlewares/authMiddleware");
 const paramHandler = require("../middlewares/paramHandler")
 
 
@@ -11,9 +12,9 @@ router.param("email", paramHandler.paramEmail);
 
 router.get("/", verify_codeController.getVerify_codes);
 
-router.get("/:itemId", verify_codeController.getVerify_code);
+router.get("/Email", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], verify_codeController.getVerify_codeByEmail);
 
-router.get("/Email", verify_codeController.getVerify_codeByEmail);
+router.get("/:itemId", verify_codeController.getVerify_code);
 
 
 router.delete("/:itemId", verify_codeController.deleteVerify_code);
@@ -21,8 +22,6 @@ router.delete("/:itemId", verify_codeController.deleteVerify_code);
 router.delete("/", verify_codeController.deleteVerify_codesByEmail);
 
 router.post("/", verify_codeController.createVerify_code);
-
-router.patch("/:itemId", verify_codeController.updateVerify_code);
 
 router.patch("/email/:email", verify_codeController.updateVerify_codeByEmail);
 

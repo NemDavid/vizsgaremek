@@ -69,18 +69,6 @@ class Verify_CodeRepository {
         }
     }
 
-    async updateVerify_code(itemId, updateData) {
-        try {
-            const [affectedRows] = await this.Verify_Code.update(updateData, {
-                where: { ID: itemId },
-            });
-
-            return affectedRows;
-        } catch (error) {
-            throw new DbError("Sikertelen frissítés", { details: error.message });
-        }
-    }
-
     async updateVerify_codeByEmail(email, updateData) {
         try {
             const [affectedRows] = await this.Verify_Code.update(updateData, {

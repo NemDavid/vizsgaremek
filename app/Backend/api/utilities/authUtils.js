@@ -45,7 +45,7 @@ exports.hashPassword = (password) => {
 }
 
 exports.hashCode = (verify_code) => {
-    return bcrypt.hashSync(verify_code, salt);
+    return bcrypt.hashSync(""+verify_code, salt);
 }
 
 exports.generateVerifyCode = () => {
