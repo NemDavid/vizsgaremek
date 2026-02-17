@@ -52,8 +52,6 @@ class User_SettingsService {
         const encodedToken = authUtils.verifyToken(token);
         const ID = encodedToken.userID;
 
-        console.log(updateData);
-        
 
         if (!updateData) {
             throw new BadRequestError("Hiányzik JSON Fálj");
