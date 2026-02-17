@@ -212,7 +212,7 @@ describe('4. UserService Tests', () => {
             .toThrow('hiányzó page paraméter');
     });
 
-    it('should validate email in registerUser', async () => {
+    it('should validate email in validateUser', async () => {
         const invalidData = {
             email: 'invalid-email',
             username: 'testuser',
@@ -220,7 +220,7 @@ describe('4. UserService Tests', () => {
             confirm_password: 'Test123!@#'
         };
 
-        await expect(userService.registerUser(invalidData))
+        await expect(userService.validateUser(invalidData))
             .rejects
             .toThrow('Érvényytelen email');
     });
@@ -238,7 +238,7 @@ describe('4. UserService Tests', () => {
             confirm_password: 'Test123!@#'
         };
 
-        await expect(userService.registerUser(duplicateData))
+        await expect(userService.validateUser(duplicateData))
             .rejects
             .toThrow('Ez a felhasználó név már létezik');
     });

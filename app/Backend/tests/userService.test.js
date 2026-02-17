@@ -267,7 +267,7 @@ describe("UserService Integration (Repository included)", () => {
     });
 
     // ========== REGISTER USER ==========
-    describe("registerUser", () => {
+    describe("validateUser", () => {
         beforeEach(() => {
             authUtils.isValidEmail.mockReturnValue(true);
             authUtils.isValidUsername.mockReturnValue(true);
@@ -282,7 +282,7 @@ describe("UserService Integration (Repository included)", () => {
                 confirm_password: "ValidPass123!"
             };
 
-            const result = await userService.registerUser(userData);
+            const result = await userService.validateUser(userData);
             expect(result.username).toBe("newregister");
             expect(result.email).toBe("newregister@test.com");
         });
@@ -295,7 +295,7 @@ describe("UserService Integration (Repository included)", () => {
                 confirm_password: "ValidPass123!"
             };
 
-            await expect(userService.registerUser(userData))
+            await expect(userService.validateUser(userData))
                 .rejects.toThrow(BadRequestError);
         });
 
@@ -307,7 +307,7 @@ describe("UserService Integration (Repository included)", () => {
                 confirm_password: "Different123!"
             };
 
-            await expect(userService.registerUser(userData))
+            await expect(userService.validateUser(userData))
                 .rejects.toThrow(BadRequestError);
         });
     });

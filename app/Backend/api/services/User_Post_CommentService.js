@@ -25,7 +25,7 @@ class User_Post_CommentService {
 
     async deleteUsers_posts_comment(itemId) {
         if (!itemId) {
-            throw new BadRequestError("hiányzó item ID");
+            throw new BadRequestError("Hiányzó item ID");
         }
 
         const deleteProcess = await this.user_post_CommentRepository.deleteUsers_posts_comment(itemId);
@@ -47,13 +47,13 @@ class User_Post_CommentService {
             // Post létezik-e
             const targetPost = await this.user_postRepository.getUser_Post_ByID(commentData.POST_ID);
             if (!targetPost) {
-                throw new BadRequestError("a cel post nem található");
+                throw new BadRequestError("A cél post nem található");
             }
 
             // valid use-e
             const validUser = await this.userRepository.getUser(targetPost.USER_ID);
             if (!validUser) {
-                throw new BadRequestError("nincs ilyen felhasználó");
+                throw new BadRequestError("Nincs ilyen felhasználó");
             }
 
             // transaction
@@ -67,7 +67,7 @@ class User_Post_CommentService {
                 );
 
                 if (!createdComment) {
-                    throw new BadRequestError("a létrehozott user post comment nem található");
+                    throw new BadRequestError("A létrehozott user post comment nem található");
                 }
 
                 // 2. XP hozzáadása UGYANABBA a transaction-be
@@ -136,7 +136,7 @@ class User_Post_CommentService {
         // Ellenőrizzük, hogy a user a saját kommentjét frissíti-e
         const existingComment = await this.user_post_CommentRepository.getUsers_posts_comment(commentData.ID);
         if (!existingComment) {
-            throw new BadRequestError("a frissítendő comment nem található");
+            throw new BadRequestError("A frissítendő comment nem található");
         }
 
         if (existingComment.USER_ID !== commentData.USER_ID) {
@@ -145,7 +145,7 @@ class User_Post_CommentService {
 
         const updatedComment = await this.user_post_CommentRepository.updateUsers_posts_comment(commentData);
         if (!updatedComment) {
-            throw new BadRequestError("a frissített comment nem található");
+            throw new BadRequestError("A frissített comment nem található");
         }
 
         return updatedComment;

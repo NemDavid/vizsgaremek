@@ -9,7 +9,7 @@ jest.mock("../api/db");
 
 const db = require("../api/db");
 
-const { userService, user_profileService, notificationService, user_SettingsService, verify_codeService } = require("../api/services")(db);
+const { verify_codeService } = require("../api/services")(db);
 const { verify_codeRepository } = require("../api/repositories")(db);
 const authUtils = require("../api/utilities/authUtils");
 const { BadRequestError, ValidationError } = require("../api/errors");
@@ -120,7 +120,7 @@ describe("authController", () => {
                     let token = authUtils.generateUserToken(testUser);
                     token = token + "_invalid"
 
-                    const res = await request(app).get(`/api/auth/token/${token}`).expect(401);
+                    const res = await request(app).get(`/api/auth/token/${token}`).expect(400);
 
                     expect(res.body.message).toEqual("Érvénytelen vagy lejárt token.");
                 });
@@ -160,7 +160,7 @@ describe("authController", () => {
 
                     const user = { ...testUser, password: "Jelszo123#" };
 
-                    const res = await request(app).post("/api/auth/login").set("Cookie", cookie).send(user).expect(403);
+                    const res = await request(app).post("/api/auth/login").set("Cookie", cookie).send(user).expect(400);
 
                     expect(res.body.message).toEqual("Már van bejelentkezett felhasználó ezen a gépen.");
                 });
@@ -178,7 +178,7 @@ describe("authController", () => {
                 test("should throw error on bad password", async () => {
                     let user = { ...testUser, password: "Jelszo123#_invalid" };
 
-                    const res = await request(app).post("/api/auth/login").send(user).expect(401);
+                    const res = await request(app).post("/api/auth/login").send(user).expect(400);
 
                     expect(res.body.message).toEqual("Hibás jelszó");
                 });

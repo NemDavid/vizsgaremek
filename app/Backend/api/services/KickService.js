@@ -13,16 +13,16 @@ class KickService {
 
 
     async getMyKicks(token) {
-        if (!token) throw new BadRequestError("hiányzó token");
+        if (!token) throw new BadRequestError("Hiányzó token");
         const encodedToken = authUtils.verifyToken(token);
 
         return await this.kickRepository.getMyKicks(encodedToken.userID);
     }
 
     async getKickByUserId(token, TO_USER_ID) {
-        if (!token) throw new BadRequestError("hiányzó token");
+        if (!token) throw new BadRequestError("Hiányzó token");
         const encodedToken = authUtils.verifyToken(token);
-        if (!TO_USER_ID) throw new BadRequestError("hiányzó TO_USER_ID");
+        if (!TO_USER_ID) throw new BadRequestError("Hiányzó TO_USER_ID");
 
 
         const filteredKicks =
@@ -36,7 +36,7 @@ class KickService {
 
     // én kiket rúgtam
     async getKicksSentByUser(token) {
-        if (!token) throw new BadRequestError("hiányzó token");
+        if (!token) throw new BadRequestError("Hiányzó token");
         const encodedToken = authUtils.verifyToken(token);
 
         return await this.kickRepository.getKicksSentByUser(encodedToken.userID);
@@ -44,7 +44,7 @@ class KickService {
 
     // ki rúgott engem
     async getKicksRecievedByUser(token) {
-        if (!token) throw new BadRequestError("hiányzó token");
+        if (!token) throw new BadRequestError("Hiányzó token");
         const encodedToken = authUtils.verifyToken(token);
 
         return await this.kickRepository.getKicksRecievedByUser(encodedToken.userID);
@@ -53,7 +53,7 @@ class KickService {
 
     async getKicksByPage(page) {
         if (!page) {
-            throw new BadRequestError("hiányzó page paraméter");
+            throw new BadRequestError("Hiányzó page paraméter");
         }
 
         return await this.kickRepository.getKicksByPage(page);
@@ -61,7 +61,7 @@ class KickService {
 
     async deleteKick(kickId) {
         if (!kickId) {
-            throw new BadRequestError("hiányzó kick ID");
+            throw new BadRequestError("Hiányzó kick ID");
         }
 
 
@@ -74,8 +74,8 @@ class KickService {
     }
 
     async doKick(token, TO_USER_ID) {
-        if (!token) throw new BadRequestError("hiányzó token");
-        if (!TO_USER_ID) throw new BadRequestError("hianyzó TO_USER_ID");
+        if (!token) throw new BadRequestError("Hiányzó token");
+        if (!TO_USER_ID) throw new BadRequestError("Hianyzó TO_USER_ID");
 
         TO_USER_ID = parseInt(TO_USER_ID);
         const encodedToken = authUtils.verifyToken(token);
@@ -129,7 +129,7 @@ class KickService {
         const updateKick = await this.kickRepository.getKickByID(updateData.FROM_USER_ID, updateData.TO_USER_ID);
 
         if (!updateKick) {
-            throw new BadRequestError("a frissitett Kick nem található", { details: `kickId: ${kickId}` });
+            throw new BadRequestError("A frissitett Kick nem található", { details: `kickId: ${kickId}` });
         }
         return updateKick;
     }

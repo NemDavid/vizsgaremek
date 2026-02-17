@@ -76,7 +76,7 @@ class UserService {
         return await this.userRepository.createUser(userData, options);
     }
 
-    async registerUser(userData) {
+    async validateUser(userData) {
         if (!userData.email) {
             throw new BadRequestError("Hiányzó email");
         }

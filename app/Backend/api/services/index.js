@@ -8,6 +8,7 @@ const ConnectionsService = require("./ConnectionsService");
 const User_SettingsService = require("./User_SettingsService");
 const KickService = require("./KickService");
 const AdvertisementService = require("./AdvertisementService");
+const AuthService = require("./AuthService");
 const NotificationService = require("./NotificationService");
 
 module.exports = (db) =>
@@ -22,6 +23,7 @@ module.exports = (db) =>
     const user_SettingsService = new User_SettingsService(db);
     const kickService = new KickService(db);
     const advertisementService = new AdvertisementService(db);
+    const authService = new AuthService(db, userService, user_profileService, user_SettingsService);
     const notificationService = new NotificationService(verify_codeService, userService, user_SettingsService, connectionsService);
 
 
@@ -30,7 +32,7 @@ module.exports = (db) =>
     user_postService.setNotificationService(notificationService);
     user_post_reactionService.setNotificationService(notificationService);
     user_post_commentService.setNotificationService(notificationService);
-
+    authService.setNotificationService(notificationService);
     
     return { 
         userService, 
@@ -43,6 +45,7 @@ module.exports = (db) =>
         user_SettingsService,
         kickService,
         advertisementService,
+        authService,
         notificationService, 
     };
 };
