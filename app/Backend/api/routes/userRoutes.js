@@ -13,9 +13,11 @@ router.get("/all", userController.getUsers);
 
 router.get("/id/:userId", userController.getUser);
 
-//router.get("/page/:paramPage", userController.getUsersByPage); //todo
+router.get("/page/:paramPage", userController.getUsersByPage); 
 
 router.get("/see/:uniqIdentifier", userController.getUserByUsernameOrUserId);
+
+router.get("/search/:uniqIdentifier", userController.searchUserByUsernameOrUserId);
 
 
 router.delete("/:userId", userController.deleteUser);
@@ -24,6 +26,6 @@ router.post("/", userController.createUser);
 
 router.patch("/:userId", userController.updateUser);
 
-//router.get("/get_existing_user/:token", userController.getExistingUserByToken);
+// router.get("/get_existing_user/:token", userController.getExistingUserByToken);
 
 module.exports = router;

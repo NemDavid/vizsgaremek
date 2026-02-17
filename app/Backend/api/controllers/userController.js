@@ -17,6 +17,7 @@ exports.getUser = async (req, res, next) => {
         next(error);
     }
 };
+
 exports.getUserByUsernameOrUserId = async (req, res, next) => {
     const uniqIdentifier = req.uniqIdentifier;
 
@@ -29,6 +30,26 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
             user = await userService.getUserByID(asNumber);
         } else {
             user = await userService.getUserByUsername(uniqIdentifier);
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.searchUserByUsernameOrUserId = async (req, res, next) => {
+    const uniqIdentifier = req.uniqIdentifier;
+
+    let user = null;
+    try {
+        // próbáljuk számként értelmezni
+        const asNumber = parseInt(uniqIdentifier, 10);
+
+        if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
+            user = [ await userService.getUserByID(asNumber) ];
+        } else {
+            user = await userService.getUserByContainingUI(uniqIdentifier);
         }
 
         res.status(200).json(user);

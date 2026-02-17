@@ -30,6 +30,11 @@ class UserService
     {
         return await this.userRepository.getUserByUsername(username);
     }
+
+    async getUserByContainingUI(username)
+    {
+        return await this.userRepository.getUserByContainingUI(username);
+    }
     
     async getUserByEmail(email)
     {

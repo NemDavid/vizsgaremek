@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class UserRepository {
@@ -28,6 +29,27 @@ class UserRepository {
         try {
             return await this.User.scope("allUserData").findOne({
                 where: { username },
+                include: [
+                    {
+                        model: this.User_Profile,
+                        as: "profile",
+                        scope: "allUser_ProfileData"
+                    },
+                ]
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
+        }
+    }
+
+    async getUserByContainingUI(username) {
+        try {
+            return await this.User.scope("allUserData").findAll({
+                where: {
+                    username: {
+                        [Op.like]: `%${username}%`,
+                    }
+                },
                 include: [
                     {
                         model: this.User_Profile,
