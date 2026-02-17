@@ -29,6 +29,4 @@ router.patch("/:userId", userController.updateUser);
 // router.get("/get_existing_user/:token", userController.getExistingUserByToken);
 router.patch("/password/change",userController.updatePassword)
 
-//router.get("/get_existing_user/:token", userController.getExistingUserByToken);
-
 module.exports = router;

@@ -401,17 +401,17 @@ describe("user_profile_Controller", () => {
                 }
             });
 
-            test("should throw error ValidationError in model on invalid xp", async () => {
-                const inputID = 1;
-                const XPAmount = 50;
-
+            test.each([
+                [null, 1],
+                ["50", 1],
+            ])("should throw ValidationError error in model on invalid xp", async (XPAmount, inputID) => {
                 try {
                         const { profile } = await user_profileService.getUser_Profile(inputID);
 
                         await profile.addXP(XPAmount);
                 }
                 catch (error) {
-                    expect(error.message).toBe(`Érvénytelen XP érték: ${xpAmount}`)
+                    expect(error.message).toBe(`Érvénytelen XP érték: ${XPAmount}`)
                     expect(error).toBeInstanceOf(ValidationError);
                 }
             });
