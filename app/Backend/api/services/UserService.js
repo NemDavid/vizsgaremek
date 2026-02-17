@@ -1,33 +1,27 @@
-const { BadRequestError, ValidationError } = require("../errors");
+const { BadRequestError, ValidationError, DbError } = require("../errors");
 const NotFoundError = require("../errors/NotFoundError");
 const authUtils = require("../utilities/authUtils");
 const bcrypt = require("bcrypt");
 const salt = 14;
 
-class UserService
-{
-    constructor(db)
-    {
+class UserService {
+    constructor(db) {
         this.userRepository = require("../repositories")(db).userRepository;
     }
 
-    async getUsers()
-    {
+    async getUsers() {
         return await this.userRepository.getUsers();
     }
 
-    async getUser(userId)
-    {
+    async getUser(userId) {
         return await this.userRepository.getUser(userId);
     }
 
-    async getUserByID(userId)
-    {
+    async getUserByID(userId) {
         return await this.userRepository.getUserByID(userId);
     }
 
-    async getUserByUsername(username)
-    {
+    async getUserByUsername(username) {
         return await this.userRepository.getUserByUsername(username);
     }
 
@@ -41,8 +35,7 @@ class UserService
         return await this.userRepository.getUserByEmail(email);
     }
 
-    async getUsersByPage(page)
-    {
+    async getUsersByPage(page) {
         if (!page) {
             throw new BadRequestError("hiányzó page paraméter");
         }
@@ -50,14 +43,12 @@ class UserService
         return await this.userRepository.getUsersByPage(page);
     }
 
-    async updateLastLogin(userId, date) 
-    {
+    async updateLastLogin(userId, date) {
         const user = await this.userRepository.updateUser(userId, date);
         return user;
     }
 
-    async deleteUser(userId)
-    {
+    async deleteUser(userId) {
         if (!userId) {
             throw new BadRequestError("hiányzó user ID");
         }
@@ -70,8 +61,7 @@ class UserService
         return deleteProcess;
     }
 
-    async createUser(userData, options = {})
-    {
+    async createUser(userData, options = {}) {
         // van e már ilyen felhasználó ezzel a névvel
         const existingUser = await this.userRepository.getUserByUsername(userData.username);
         if (existingUser) {
@@ -81,8 +71,7 @@ class UserService
         return await this.userRepository.createUser(userData, options);
     }
 
-    async registerUser(userData)
-    {
+    async registerUser(userData) {
         if (!userData.email) {
             throw new BadRequestError("Hiányzó email");
         }
@@ -96,7 +85,7 @@ class UserService
             throw new ValidationError("Érvénytelen username");
         }
         const FindName = await this.userRepository.getUserByUsername(userData.username)
-        if(FindName !== null){
+        if (FindName !== null) {
             throw new BadRequestError("Ez a felhasználó név már létezik");
         }
         if (!userData.password) {
@@ -118,8 +107,7 @@ class UserService
         return userData;
     }
 
-    async updateUser(userId, updateData) 
-    {   
+    async updateUser(userId, updateData) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (!updateData.email) {
             throw new BadRequestError("Hiányzó email");
@@ -134,19 +122,18 @@ class UserService
 
         const affectedRows = await this.userRepository.updateUser(userId, updateData);
         if (!affectedRows) {
-            throw new BadRequestError("user nem található", {details: `userId: ${userId}`})
+            throw new BadRequestError("user nem található", { details: `userId: ${userId}` })
         }
 
         const updateUser = await this.userRepository.getUser(userId);
 
         if (!updateUser) {
-            throw new BadRequestError("a frissitett user nem található", {details: `userId: ${userId}`});
+            throw new BadRequestError("a frissitett user nem található", { details: `userId: ${userId}` });
         }
-        return updateUser; 
+        return updateUser;
     }
 
-    async updateUser_Password(userId, updateData) 
-    {   
+    async updateUser_Password(userId, updateData) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (!updateData.password_hash) {
             throw new BadRequestError("Hiányzó password_hash");
@@ -155,27 +142,26 @@ class UserService
         const affectedRows = await this.userRepository.updateUser_Password(userId, updateData);
 
         if (!affectedRows) {
-            throw new BadRequestError("user nem található", {details: `userId: ${userId}`})
+            throw new BadRequestError("user nem található", { details: `userId: ${userId}` })
         }
 
         const updateUser = await this.userRepository.getUser(userId);
 
         if (!updateUser) {
-            throw new BadRequestError("a frissitett user nem található", {details: `userId: ${userId}`});
+            throw new BadRequestError("a frissitett user nem található", { details: `userId: ${userId}` });
         }
-        return updateUser; 
+        return updateUser;
     }
 
-    
 
-    async getExistingUserByToken(token) 
-    {   
+
+    async getExistingUserByToken(token) {
         if (!token) throw new BadRequestError("Hiányzó user token");
         const decoded = authUtils.verifyToken(token);
         if (!decoded) {
             throw new BadRequestError("Érvénytelen vagy lejárt token");
         }
-        
+
         const existingUser = await this.userRepository.getExistingUserByToken(decoded.username);
 
         if (existingUser) {
@@ -185,7 +171,34 @@ class UserService
         return existingUser;
     }
 
+    // Autista csinálta
+    async updatePassword(updateData, token) {
 
+        if (!token) throw new BadRequestError("Hiányzó user token");
+        const decoded = authUtils.verifyToken(token);
+        if (!decoded) {
+            throw new BadRequestError("Érvénytelen vagy lejárt token");
+        }
+
+        if (!updateData.old_password || !updateData.new_password || !updateData.confirm_password) throw new BadRequestError("Hiányzó adatt");
+
+        if (updateData.new_password !== updateData.confirm_password) throw new BadRequestError("Nem megfelelő adat");
+
+        if (!authUtils.isValidPassword(updateData.new_password)) throw new BadRequestError("Nem megfelelő adat")
+
+        const user = await this.userRepository.getUserByID(decoded.userID);
+        if (!user) throw new NotFoundError("Nincs ilyen felhasználó");
+        
+        if (!bcrypt.compareSync(updateData.old_password, user.password_hash)) throw new ValidationError("Nem megfelelő adat");
+
+        if (updateData.old_password === updateData.new_password) throw new ValidationError("Megegyező jelszavak");
+
+        const hp = authUtils.hashPassword(updateData.new_password)
+
+        const affectedraw = await this.userRepository.updatePassword(hp, decoded.userID);
+        if (affectedraw == 0) throw new BadRequestError("Hiba frissités sorrán")
+        return { message: "OK" };
+    }
 }
 
 module.exports = UserService;

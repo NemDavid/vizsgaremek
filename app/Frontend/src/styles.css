@@ -184,3 +184,17 @@ code {
   0% { transform: rotate(0deg) }
   100% { transform: rotate(360deg)}
 } 
+
+.activity-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-scroll::-webkit-scrollbar-thumb {
+  background: #7f1d1d;
+  border-radius: 9999px;
+}
+
+.activity-scroll::-webkit-scrollbar-track {
+  background: #ad7979; /* kb red-900 */
+  border-radius: 9999px;
+}

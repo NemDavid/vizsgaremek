@@ -44,51 +44,56 @@ export function PostsFrame() {
         }
     };
 
-    if (status === 'error') return (
-        <Card className='bg-red-200  rounded-none '>
-            <CardHeader>
-                <CardTitle>Hiba</CardTitle>
-            </CardHeader>
-            <CardContent className='flex gap-4 flex-wrap'>
-                <p className="flex justify-center">Hiba történt! Töltsd újra az oldalt, vagy próbáld később.</p>
-                <Button onClick={() => Ujra()}>Oldal újra Töltése</Button>
-            </CardContent>
-        </Card>
-    );
-
 
     return (
-        <ScrollArea className="w-full h-full">
-            <main className="flex-1 h-[calc(100vh-90px)] overflow-y-auto flex justify-center"
-                ref={scrollRef}
-                onScroll={handleScroll}
-            >
-                <div className="w-full max-w-xl flex flex-col gap-8 py-6">
-                    <PostCreate />
-                    {!posts ? (
-                        <>
-                            <GhostPost />
-                            <GhostPost />
-                            <GhostPost />
-                        </>
-                    ) : (
-                        /* 2️⃣ posztok renderelése */
-                        posts.pages.map((page, i) => (
-                            <React.Fragment key={i}>
-                                {page.data.map((post: any) => (
-                                    <PostAccord key={post.ID} post={post} />
-                                ))}
-                            </React.Fragment>
-                        ))
-                    )}
+        <ScrollArea className="m-1! max-w-full h-full bg-white rounded-3xl ">
+            {status === "error" ?
+                <>
+                    <Card className='bg-red-200  rounded-xl p-4 m-20'>
+                        <CardHeader>
+                            <CardTitle>Hiba</CardTitle>
+                        </CardHeader>
+                        <CardContent className='flex gap-4 flex-wrap'>
+                            <p className="flex justify-center">Hiba történt! Töltsd újra az oldalt, vagy próbáld később.</p>
+                            <Button onClick={() => Ujra()}>Oldal újra Töltése</Button>
+                        </CardContent>
+                    </Card>
+                </>
+                :
+                <>
+                    <main className="flex-1 h-[calc(100vh-90px)] overflow-y-auto flex justify-center"
+                        ref={scrollRef}
+                        onScroll={handleScroll}
+                    >
+                        <div className="w-full max-w-xl flex flex-col gap-8 py-6">
+                            <PostCreate />
+                            {!posts ? (
+                                <>
+                                    <GhostPost />
+                                    <GhostPost />
+                                    <GhostPost />
+                                </>
+                            ) : (
+                                /* 2️⃣ posztok renderelése */
+                                posts.pages.map((page, i) => (
+                                    <React.Fragment key={i}>
+                                        {page.data.map((post: any) => (
+                                            <PostAccord key={post.ID} post={post} />
+                                        ))}
+                                    </React.Fragment>
+                                ))
+                            )}
 
-                    {hasNextPage && <>
-                        <GhostPost />
-                        <GhostPost />
-                        <GhostPost />
-                    </>}
-                </div>
-            </main>
+                            {hasNextPage && <>
+                                <GhostPost />
+                                <GhostPost />
+                                <GhostPost />
+                            </>}
+                        </div>
+                    </main>
+                </>
+
+            }
         </ScrollArea>
     );
 }

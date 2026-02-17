@@ -80,8 +80,6 @@ class KickService {
         TO_USER_ID = parseInt(TO_USER_ID);
         const encodedToken = authUtils.verifyToken(token);
 
-
-
         // valid user-e
         const validUser = await this.userRepository.getUser(TO_USER_ID);
         if (!validUser) {
@@ -93,11 +91,11 @@ class KickService {
         if (encodedToken.userID == TO_USER_ID) throw new BadRequestError("Magadat nem rúghatod meg");
 
 
-        // volt e már ilyen rúgás az adott felhasználóra, ha igen akkor töröljük
+        
         const existingKick = await this.kickRepository.getKickByUserId(encodedToken.userID, TO_USER_ID);
         if (existingKick) {
-            await this.kickRepository.updateKick(existingKick.ID);
-
+            await this.kickRepository.updateKick(existingKick.dataValues.ID);
+            
             return { updated: true };
         }
         else {

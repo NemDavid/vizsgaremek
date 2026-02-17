@@ -1,6 +1,5 @@
 import { AuthGuard } from '@/components/custom/AuthGuard'
 import { DefaultUIFrame } from '@/components/custom/DefaultUIFrame'
-import UserSearchPage from '@/components/custom/UserSearchPage'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
