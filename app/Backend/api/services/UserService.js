@@ -50,9 +50,17 @@ class UserService
         return await this.userRepository.getUsersByPage(page);
     }
 
-    async updateLastLogin(userId, date) 
+    async updateLastLogin(userId, data) 
     {
-        const user = await this.userRepository.updateUser(userId, date);
+        const user = await this.userRepository.updateUser(userId, data);
+        return user;
+    }
+
+    async updateLastLogout(token) 
+    {
+        const decoded = authUtils.verifyToken(token);
+
+        const user = await this.userRepository.updateUser(decoded.userID, { is_loggedIn: false });
         return user;
     }
 

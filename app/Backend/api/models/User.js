@@ -51,11 +51,11 @@ module.exports = (sequelize, DataTypes) =>
                 defaultValue: "user"
             },
 
-            is_active:
+            is_loggedIn:
             {
-                type: DataTypes.TINYINT,
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: 1
+                defaultValue: false
             },
 
             last_login:
@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) =>
             updatedAt: "updated_at", 
             scopes: {
                 allUserData:{
-                    attributes: ["ID", "email", "password_hash", "username", "role", "is_active", "created_at", "updated_at","last_login"],
+                    attributes: ["ID", "email", "password_hash", "username", "role", "is_loggedIn", "created_at", "updated_at","last_login"],
                 }
             },
         }

@@ -129,7 +129,7 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({ message: "Hibás jelszó" });
         }
 
-        await userService.updateLastLogin(user.ID, { last_login: new Date() });
+        await userService.updateLastLogin(user.ID, { is_loggedIn: true, last_login: new Date() });
 
         const token = authUtils.generateUserToken(user);
         authUtils.setCookie(res, "user_token", token);
@@ -144,16 +144,24 @@ exports.login = async (req, res, next) => {
     }
 }
 
-exports.status = (req, res, next) => {
+exports.logout = async (req, res, next) => {
+    const token = req.cookies['user_token'];
+    try {
+        await userService.updateLastLogout(token);
+
+        res.clearCookie("user_token");
+        res.status(200).json({ message: "OK" });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+exports.status = async (req, res, next) => {
     res.status(200).json(req.user);
 }
 
-exports.logout = (req, res, next) => {
-    res.clearCookie("user_token");
-    res.status(200).json({ message: "OK" });
-}
-
-exports.getActiveTokenDetails = (req, res, next) => {
+exports.getActiveTokenDetails = async (req, res, next) => {
     try {
         const active = authUtils.verifyToken(req.params.token);
 
@@ -182,7 +190,7 @@ exports.sendVerifyCode = async (req, res, next) => {
 
 exports.verifyTheCode = async (req, res, next) => {
     const { email, verify_code } = req.body || {};
-    
+
     try {
         res.status(200).json(await notificationService.verifyTheCode({
             email,

@@ -8,14 +8,14 @@ const ADMIN_DATA = {
     username: "admin",
     password: "12345678",
     role: "admin",
-    is_active: 1,
+    is_loggedId: false,
 };
 const ExampleAccunt = {
     email: "ad@ad.ad",
     username: "user",
     password: "12345678",
     role: "user",
-    is_active: 1,
+    is_loggedId: false,
 };
 
 async function seedAdminUser(db) {
