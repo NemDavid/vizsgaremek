@@ -526,6 +526,11 @@ describe("authController", () => {
 
                     const res = await request(app).delete("/api/auth/logout").set("Cookie", [cookie]).expect(200);
 
+                    const foundUser = await db.User.findOne({
+                        where: {
+                            ID: testUser.ID,
+                        }
+                    })
 
                     expect(res.body.message).toBe("OK");
                     expect(res.headers['set-cookie']).toEqual(
@@ -533,6 +538,7 @@ describe("authController", () => {
                             expect.stringContaining('user_token=;')  // a clearCookie által üresre állított cookie
                         ])
                     );
+                    expect(foundUser.is_loggedIn).toBeFalsy();
                 });
             });
         });
