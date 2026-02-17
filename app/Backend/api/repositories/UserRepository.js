@@ -176,6 +176,17 @@ class UserRepository {
             throw new DbError("Nem sikerült ellenőrizni a felhasználót token alapján.", { details: error.message });
         }
     }
+    async updatePassword(password_hash,ID){
+        try {
+            const [affectedraw] =  await this.User.scope("allUserData").update({password_hash},{
+                where: { ID }
+            });
+
+            return affectedraw;
+        } catch (error) {
+            throw new DbError("A jelszó frissítése sikertelen.", { details: error.message });
+        }
+    }
 }
 
 module.exports = UserRepository;

@@ -27,5 +27,6 @@ router.post("/", userController.createUser);
 router.patch("/:userId", userController.updateUser);
 
 // router.get("/get_existing_user/:token", userController.getExistingUserByToken);
+router.patch("/password/change",userController.updatePassword)
 
 module.exports = router;

@@ -79,24 +79,24 @@ class KickRepository {
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a rúgást.", {
                 details: error.message,
-                data: KickData,
+                data: kickData,
             });
         }
     }
 
-    async updateKick(kickId) {
+    async updateKick(ID) {
         try {
-            const [affectedRows] = await this.Kick.update(
-                {
-                    updated_at: new Date(),
-                },
+            const row = await this.Kick.findOne({ where: { ID: Number(ID) } })
+            if (!row) return 0
 
-                {
-                    where: { ID: kickId },
-                });
-            return affectedRows;
+            const today = new Date().toISOString().slice(0, 10) // DATEONLY-hoz
+            row.updated_at = today
+            row.changed("updated_at", true)
+            await row.save()
+
+            return 1
         } catch (error) {
-            throw new DbError("A rúgást frissítése sikertelen.", { details: error.message });
+            throw new DbError("A rúgást frissítése sikertelen.", { details: error.message })
         }
     }
 }

@@ -1,5 +1,5 @@
 const { Model } = require("sequelize");
-const { ValidationError } = require("../errors");
+const { ValidationError, BadRequestError } = require("../errors");
 
 module.exports = (sequelize, DataTypes) => {
     class User_Profiles extends Model {
