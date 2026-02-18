@@ -43,15 +43,7 @@ exports.searchUserByUsernameOrUserId = async (req, res, next) => {
 
     let user = null;
     try {
-        // próbáljuk számként értelmezni
-        const asNumber = parseInt(uniqIdentifier, 10);
-
-        if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
-            user = [ await userService.getUserByID(asNumber) ];
-        } else {
-            user = await userService.getUserByContainingUI(uniqIdentifier);
-        }
-
+        user = await userService.getUserByContainingUI(uniqIdentifier);
         res.status(200).json(user);
     } catch (error) {
         next(error);

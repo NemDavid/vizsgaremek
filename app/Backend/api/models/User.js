@@ -88,6 +88,9 @@ module.exports = (sequelize, DataTypes) =>
             scopes: {
                 allUserData:{
                     attributes: ["ID", "email", "password_hash", "username", "role", "is_loggedIn", "created_at", "updated_at","last_login"],
+                },
+                Profil:{
+                    attributes: ["ID", "email","username",],
                 }
             },
         }

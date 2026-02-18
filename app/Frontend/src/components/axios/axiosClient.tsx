@@ -70,6 +70,12 @@ export async function GetAds() {
 
   return response;
 }
+export async function GetusersByname(name: string) {
+  const response = await JsonClient.get(`api/users/search/${name}`)
+
+  return response;
+}
+
 // #endregion
 
 //-------------------------------------------------------------------------------------

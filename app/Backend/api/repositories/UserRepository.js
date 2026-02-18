@@ -44,28 +44,21 @@ class UserRepository {
 
     async getUserByContainingUI(username) {
         try {
-            return await this.User.scope("allUserData").findAll({
+            return await this.User.scope("Profil").findAll({
                 where: {
                     username: {
                         [Op.like]: `%${username}%`,
                     }
-                },
-                include: [
-                    {
-                        model: this.User_Profile,
-                        as: "profile",
-                        scope: "allUser_ProfileData"
-                    },
-                ]
+                }
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
         }
     }
 
-    async getUserByID(userId, options = {}) {
+    async getUserByID(userId, options = {}, scope = "allUserData") {
         try {
-            return await this.User.scope("allUserData").findOne({
+            return await this.User.scope(scope).findOne({
                 where: { ID: userId },
                 include: [
                     {
@@ -176,9 +169,9 @@ class UserRepository {
             throw new DbError("Nem sikerült ellenőrizni a felhasználót token alapján.", { details: error.message });
         }
     }
-    async updatePassword(password_hash,ID){
+    async updatePassword(password_hash, ID) {
         try {
-            const [affectedraw] =  await this.User.scope("allUserData").update({password_hash},{
+            const [affectedraw] = await this.User.scope("allUserData").update({ password_hash }, {
                 where: { ID }
             });
 
