@@ -74,7 +74,7 @@ export async function GetusersByname(params: { q: string; page: number; pageSize
   return JsonClient.get("api/users/search", { params })
 }
 export async function GetComents(postid: string) {
-  const response = await JsonClient.get(`/api/comments/${postid}`);
+  const response = await JsonClient.get(`/api/comments/postComments/${postid}`);
 
   return response;
 }
