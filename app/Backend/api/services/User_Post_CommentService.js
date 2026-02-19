@@ -33,7 +33,7 @@ class User_Post_CommentService {
             throw new BadRequestError("Ez a post nem létezik");
         }
 
-        const postComments = await this.user_post_CommentRepository.getCommentsForPostyPostId();
+        const postComments = await this.user_post_CommentRepository.getCommentsForPostyPostId(postId);
         return postComments
     }
 
