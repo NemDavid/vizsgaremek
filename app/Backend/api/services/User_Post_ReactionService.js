@@ -20,9 +20,14 @@ class User_Post_ReactionService {
         return await this.user_post_reactionRepository.getUsers_posts_reactions();
     }
 
-    async getUsers_posts_reaction(token, itemId) {
+    async getUsers_posts_reaction(token, postId) {
         const encodedToken = authUtils.verifyToken(token);
-        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, itemId);
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+            
+        }
+
+        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, postId);
     }
 
     async deleteUsers_posts_reaction(itemId) {
@@ -33,7 +38,7 @@ class User_Post_ReactionService {
         const deleteProcess = await this.user_post_reactionRepository.deleteUsers_posts_reaction(itemId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen user post reakcio");
+            throw new BadRequestError("Nincs ilyen user post reakció.");
         }
 
         return deleteProcess;

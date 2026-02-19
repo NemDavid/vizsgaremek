@@ -25,7 +25,7 @@ class User_SettingsService {
         const user_SettingsId = encodedToken.userID;
 
         if (!user_SettingsId) {
-            throw new BadRequestError("hiányzó user_Settings ID");
+            throw new BadRequestError("Hiányzó user_Settings ID");
         }
 
         const deleteProcess = await this.user_settingsRepository.deleteUser_Settings(user_SettingsId);
