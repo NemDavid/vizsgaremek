@@ -120,6 +120,21 @@ describe("user_settings_Controller", () => {
 
                     await request(app).delete("/api/settings").set("Cookie", [cookie]).expect(204);
                 })
+
+                test("should throw error if user hasn't settings", async () => {
+                    const testUser = {
+                        ID: rawUsers[1].ID,
+                        username: rawUsers[1].username,
+                        email: rawUsers[1].email,
+                        role: rawUsers[1].role,
+                    }
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const res = await request(app).delete("/api/settings").set("Cookie", [cookie]).expect(400);
+
+                    expect(res.body.message).toBe("Nincs ilyen settings");
+                })
             })
         });
 
@@ -158,6 +173,61 @@ describe("user_settings_Controller", () => {
                             new_friend_request: Notifications.new_friend_request,
                         }
                     ));
+                })
+
+                test("shouldn't update if no changes", async () => {
+                    const testUser = {
+                        ID: rawUsers[0].ID,
+                        username: rawUsers[0].username,
+                        email: rawUsers[0].email,
+                        role: rawUsers[0].role,
+                    }
+
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+
+                    const Notifications = {
+                        new_post: false,
+                        new_comment_on_post: false,
+                        new_reaction_on_post: false,
+                        new_login: false,
+                        new_friend_request: false,
+                    }
+
+                    const res = await request(app).patch("/api/settings").send({Notifications, DataPrivacy: false}).set("Cookie", [cookie]).expect(200);
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body.Notifications).toEqual(expect.objectContaining(
+                        {
+                            new_post: Notifications.new_post,
+                            new_comment_on_post: Notifications.new_comment_on_post,
+                            new_reaction_on_post: Notifications.new_reaction_on_post,
+                            new_login: Notifications.new_login,
+                            new_friend_request: Notifications.new_friend_request,
+                        }
+                    ));
+                })
+
+                test("shouldn throw error on missing json file", async () => {
+                    const testUser = {
+                        ID: rawUsers[0].ID,
+                        username: rawUsers[0].username,
+                        email: rawUsers[0].email,
+                        role: rawUsers[0].role,
+                    }
+
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+
+                    const Notifications = undefined
+
+                    const res = await request(app).patch("/api/settings").send({Notifications, DataPrivacy: undefined}).set("Cookie", [cookie]).expect(400);
+
+
+                    expect(res.body.message).toBe("Hiányzik JSON Fálj");
+
                 })
             })
         });

@@ -6,10 +6,6 @@ class User_SettingsService {
         this.user_settingsRepository = require("../repositories")(db).user_SettingsRepository;
     }
 
-    async getUser_Settings() {
-        return await this.user_settingsRepository.getUser_Settings();
-    }
-
     async getUser_SettingsByToken(token) {
         const encodedToken = authUtils.verifyToken(token);
 
@@ -31,7 +27,7 @@ class User_SettingsService {
         const deleteProcess = await this.user_settingsRepository.deleteUser_Settings(user_SettingsId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen felhasznalo");
+            throw new BadRequestError("Nincs ilyen settings");
         }
         return deleteProcess;
     }
@@ -52,20 +48,19 @@ class User_SettingsService {
         const encodedToken = authUtils.verifyToken(token);
         const ID = encodedToken.userID;
 
-
-        if (!updateData) {
+        if (!updateData.Notifications || updateData.DataPrivacy == null) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
         
         const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData);
         if (!affectedRows) {
-            throw new BadRequestError("user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })
+            throw new BadRequestError("User_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })
         }
 
         const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(ID);
 
         if (!updateUser_Settings) {
-            throw new BadRequestError("a frissitett user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` });
+            throw new BadRequestError("A frissitett user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` });
         }
         return updateUser_Settings;
     }

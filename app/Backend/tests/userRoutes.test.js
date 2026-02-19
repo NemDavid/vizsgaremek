@@ -624,7 +624,8 @@ describe('5. User Routes Integration Tests', () => {
             await assert(res, ctx);
         });
     });
-    describe("GET /api/users/search/:uniqIdentifier", () => {
+
+    describe("GET /api/users/search", () => {
         const testUser = {
             email: 'existing@test.com',
             username: 'existinguser',
@@ -638,28 +639,107 @@ describe('5. User Routes Integration Tests', () => {
             });
         });
 
-        it("should return user if identifier is is number", async () => {
-            const uniqIdentifier = 1;
+        it("should return user for exact username", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'existinguser', page: 1, pageSize: 10 })
+                .expect(200);
 
-            const res = await request(app).get(`/api/users/search/${uniqIdentifier}`).expect(200);
+            expect(Array.isArray(res.body.items)).toBe(true);
+            expect(res.body.items.length).toBeGreaterThan(0);
 
-
-            expect(res.body[0].email).toBe(testUser.email);
-            expect(res.body[0].username).toBe(testUser.username);
-        })
+            const user = res.body.items[0];
+            expect(user.email).toBe(testUser.email);
+            expect(user.username).toBe(testUser.username);
+        });
 
         it.each([
-            ["existinguser"],
-            ["existing"],
-            ["user"],
-        ])("should return user if identifier is is number", async (uniqIdentifier) => {
-            const res = await request(app).get(`/api/users/search/${uniqIdentifier}`).expect(200);
+            "existinguser",
+            "existing",
+            "user",
+        ])("should return user for partial match query '%s'", async (queryStr) => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: queryStr, page: 1, pageSize: 10 })
+                .expect(200);
+
+            expect(Array.isArray(res.body.items)).toBe(true);
+            expect(res.body.items.length).toBeGreaterThan(0);
+
+            const user = res.body.items[0];
+            expect(user.email).toBe(testUser.email);
+            expect(user.username).toBe(testUser.username);
+        });
+
+        it("should return empty array for no match", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'nomatch', page: 1, pageSize: 10 })
+                .expect(200);
+
+            expect(Array.isArray(res.body.items)).toBe(true);
+            expect(res.body.items.length).toBe(0);
+        });
+
+        it("should throw 400 if query is less than 3 characters", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'ab', page: 1, pageSize: 10 })
+                .expect(400);
+
+            expect(res.body.message).toBe("Legalább 3 karakter szükséges a kereséshez");
+        });
+
+        it("should throw 400 if query parameter is missing", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .expect(400);
+
+            expect(res.body.message).toBe("Legalább 3 karakter szükséges a kereséshez");
+        });
+
+        it("should default page and pageSize if missing", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'existinguser' })
+                .expect(200);
+
+            expect(res.body.page).toBe(1);
+            expect(res.body.pageSize).toBeGreaterThan(0);
+            expect(Array.isArray(res.body.items)).toBe(true);
+        });
+
+        it("should limit pageSize to max 50 even if higher provided", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'existinguser', page: 1, pageSize: 100 })
+                .expect(200);
+
+            expect(res.body.pageSize).toBeLessThanOrEqual(50);
+            expect(Array.isArray(res.body.items)).toBe(true);
+        });
+
+        it("should correct negative or zero page number to 1", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'existinguser', page: -5, pageSize: 10 })
+                .expect(200);
+
+            expect(res.body.page).toBe(1);
+        });
+
+        it("should throw 400 if pageSize is invalid (non-numeric)", async () => {
+            const res = await request(app)
+                .get(`/api/users/search`)
+                .query({ q: 'existinguser', page: 1, pageSize: 'abc' })
+                .expect(200); // A controller normalizálja számra, így 20 lesz alapértelmezett
+
+            expect(res.body.pageSize).toBe(20);
+        });
+    });
 
 
-            expect(res.body[0].email).toBe(testUser.email);
-            expect(res.body[0].username).toBe(testUser.username);
-        })
-    })
+
 });
 
 // ==================== VÉGE ====================
