@@ -17,7 +17,7 @@ router.get("/page/:paramPage", userController.getUsersByPage);
 
 router.get("/see/:uniqIdentifier", userController.getUserByUsernameOrUserId);
 
-router.get("/search/:uniqIdentifier", userController.searchUserByUsernameOrUserId);
+router.get("/search", userController.searchUserByUsernameOrUserId);
 
 
 router.delete("/:userId", userController.deleteUser);

@@ -42,7 +42,6 @@ const db =
 
         await seedAdminUser(db)
         console.log("");
-        console.log("");
     }
     catch (error) {
         console.log("database synk error");        

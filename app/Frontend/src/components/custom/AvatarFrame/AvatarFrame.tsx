@@ -21,7 +21,7 @@ export function AvatarFrame({ userid, className }: { userid: bigint, className?:
         queryFn: () => getuserByid(`${userid}`),
         retry: 0,
         refetchOnWindowFocus: false,
-        gcTime: 6000,
+        gcTime: 3000,
     })
     if (isLoading) {
         return <Spinner />

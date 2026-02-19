@@ -17,7 +17,7 @@ exports.getAdvertisement = async (req, res, next) => {
     }
 };
 
-exports.getRandomAdvertisement = async (req, res, next) => {
+exports.getRandomAdvertisement = async (req, res, next) => {   
     try {
         res.status(200).json(await advertisementService.getRandomAdvertisement());
     } catch (error) {

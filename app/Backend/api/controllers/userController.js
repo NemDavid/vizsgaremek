@@ -39,23 +39,16 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
 };
 
 exports.searchUserByUsernameOrUserId = async (req, res, next) => {
-    const uniqIdentifier = req.uniqIdentifier;
+  try {
+    const q = String(req.query.q ?? "").trim();
+    const page = Number(req.query.page ?? 1) || 1;
+    const pageSize = Number(req.query.pageSize ?? 20) || 20;
 
-    let user = null;
-    try {
-        // próbáljuk számként értelmezni
-        const asNumber = parseInt(uniqIdentifier, 10);
-
-        if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
-            user = [ await userService.getUserByID(asNumber) ];
-        } else {
-            user = await userService.getUserByContainingUI(uniqIdentifier);
-        }
-
-        res.status(200).json(user);
-    } catch (error) {
-        next(error);
-    }
+    const result = await userService.getUserByContainingUI({ q, page, pageSize });
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 
