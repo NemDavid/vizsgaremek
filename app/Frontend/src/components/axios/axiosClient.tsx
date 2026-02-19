@@ -70,10 +70,8 @@ export async function GetAds() {
 
   return response;
 }
-export async function GetusersByname(name: string) {
-  const response = await JsonClient.get(`api/users/search/${name}`)
-
-  return response;
+export async function GetusersByname(params: { q: string; page: number; pageSize: number }) {
+  return JsonClient.get("api/users/search", { params })
 }
 
 // #endregion

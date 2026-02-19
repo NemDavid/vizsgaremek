@@ -18,15 +18,37 @@ class UserService {
     }
 
     async getUserByID(userId) {
-        return await this.userRepository.getUserByID(userId,_,"Profil",false);
+        return await this.userRepository.getUserByID(userId, _, "Profil", false);
     }
 
     async getUserByUsername(username) {
         return await this.userRepository.getUserByUsername(username);
     }
 
-    async getUserByContainingUI(username) {
-        return await this.userRepository.getUserByContainingUI(username);
+    async getUserByContainingUI(data) {
+        if (!data) throw new BadRequestError("Hiányzó adat");
+
+        const search = String(data.q ?? "").trim();
+        if (search.length < 3) {
+            throw new BadRequestError("Legalább 3 karakter szükséges a kereséshez");
+        }
+
+        const currentPage = Math.max(1, Number(data.page ?? 1) || 1);
+        const limit = Math.min(50, Math.max(1, Number(data.pageSize ?? 20) || 20));
+        const offset = (currentPage - 1) * limit;
+
+        const { items, total } = await this.userRepository.getUserByContainingUI({
+            search,
+            limit,
+            offset,
+        });
+
+        return {
+            items,
+            total,
+            page: currentPage,
+            pageSize: limit,
+        };
     }
 
     async getUserByEmail(email) {

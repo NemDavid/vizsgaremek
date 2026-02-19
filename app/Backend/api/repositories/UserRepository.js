@@ -42,17 +42,24 @@ class UserRepository {
         }
     }
 
-    async getUserByContainingUI(username) {
+    async getUserByContainingUI({ search, limit, offset }) {
         try {
-            return await this.User.scope("Profil").findAll({
+            const { rows, count } = await this.User.scope("Profil").findAndCountAll({
                 where: {
                     username: {
-                        [Op.like]: `%${username}%`,
-                    }
-                }
+                        [Op.like]: `%${search}%`,
+                    },
+                },
+                order: [["username", "ASC"]],
+                limit,
+                offset,
             });
+
+            return { items: rows, total: count };
         } catch (error) {
-            throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a felhasználót.", {
+                details: error.message,
+            });
         }
     }
 
