@@ -227,6 +227,33 @@ describe("user_settings_Controller", () => {
                     expect(res.body.removedReaction).toBeTruthy();
                     expect(foundReaction).toBeNull();
                 })
+
+                test("should throw error on invalid token", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}_invalid`;
+
+                    const reactionData = {
+                        POST_ID: rawPosts[2].ID,
+                        reaction: "like",
+                    }
+
+                    const res = await request(app).post("/api/reactions").send(reactionData).set("Cookie", [cookie]).expect(400);
+
+                    expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+                })
+
+                test.each([
+                    [{ POST_ID: undefined, reaction: "like", }, "Hiányzó post id"],
+                    [{ POST_ID: rawPosts[2].ID, reaction: undefined, }, "Hiányzó reaction"],
+                    [{ POST_ID: 9999, reaction: "like", }, "A cel post nem található"],
+                ])("should throw error on missing attributes", async (payload, expextedMessage) => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const res = await request(app).post("/api/reactions").send(payload).set("Cookie", [cookie]).expect(400);
+
+                    expect(res.body.message).toBe(expextedMessage);
+                })
             })
         });
 
@@ -244,7 +271,7 @@ describe("user_settings_Controller", () => {
                     expect(foundReaction).toBeNull();
                 })
 
-                test("should ", async () => {
+                test("should throw error on invalid id", async () => {
                     const itemId = 9999;
 
                     const res = await request(app).delete(`/api/reactions/${itemId}`).expect(400);

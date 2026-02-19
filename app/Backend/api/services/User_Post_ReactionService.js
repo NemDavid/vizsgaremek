@@ -47,6 +47,10 @@ class User_Post_ReactionService {
     async userMakeReaction(reactionData, token) {
         try {
             const encodedToken = authUtils.verifyToken(token);
+            if (encodedToken == null) {
+                throw new BadRequestError("Hiányzó vagy lejárt token.");
+            }
+
             reactionData.USER_ID = encodedToken.userID;
 
             // Validálás
@@ -55,13 +59,13 @@ class User_Post_ReactionService {
             // Post létezik-e
             const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID);
             if (!targetPost) {
-                throw new BadRequestError("a cel post nem található");
+                throw new BadRequestError("A cel post nem található");
             }
 
             // valid use-e
             const validUser = await this.userRepository.getUser(targetPost.USER_ID);
             if (!validUser) {
-                throw new BadRequestError("nincs ilyen felhasználó");
+                throw new BadRequestError("Nincs ilyen felhasználó");
             }
 
 
