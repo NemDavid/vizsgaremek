@@ -11,7 +11,6 @@ const db = require("../api/db");
 const { } = require("../api/services")(db);
 const authUtils = require("../api/utilities/authUtils");
 const { BadRequestError, ValidationError } = require("../api/errors");
-const { where } = require("sequelize");
 
 
 
@@ -23,12 +22,13 @@ describe("user_settings_Controller", () => {
 
     const rawProfiles = [
         { USER_ID: 1, first_name: "Gergő", last_name: "Kovács", birth_date: "1990-05-10", bio: "Admin profil", avatar_url: "/admin.png" },
-        { USER_ID: 2, first_name: "John", last_name: "Doe", birth_date: "1999-07-05", bio: "User profil", avatar_url: "/user.png" }
+        { USER_ID: 2, first_name: "John", last_name: "Doe", birth_date: "1999-07-05", bio: "User profil", avatar_url: "/user.png" },
     ];
 
     const settings = [
         {
-            ID: 1, Notifications:
+            ID: 1,
+            Notifications:
             {
                 new_post: false,
                 new_comment_on_post: false,
@@ -39,7 +39,8 @@ describe("user_settings_Controller", () => {
             DataPrivacy: false,
         },
         {
-            ID: 2, Notifications:
+            ID: 2,
+            Notifications:
             {
                 new_post: false,
                 new_comment_on_post: false,
@@ -54,6 +55,7 @@ describe("user_settings_Controller", () => {
     const rawPosts = [
         { ID: 1, USER_ID: 1, content: "(1) test post content", title: "(1) test post title" },
         { ID: 2, USER_ID: 2, content: "(2) test post content", title: "(2) test post title" },
+        { ID: 3, USER_ID: 2, content: "(3) test post content", title: "(3) test post title" },
     ];
 
     const rawPostsReactions = [
@@ -160,7 +162,71 @@ describe("user_settings_Controller", () => {
 
         describe("POST", () => {
             describe("POST /api/reactions", () => {
+                test("should create new reaction", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
 
+                    const reactionData = {
+                        POST_ID: rawPosts[2].ID,
+                        reaction: "like",
+                    }
+
+                    const res = await request(app).post("/api/reactions").send(reactionData).set("Cookie", [cookie]).expect(200);
+
+
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body.createdReaction).toEqual(
+                        expect.objectContaining({
+                            POST_ID: reactionData.POST_ID,
+                            reaction: reactionData.reaction,
+                        }));
+                })
+
+                test("should update existing raction", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const reactionData = {
+                        POST_ID: rawPosts[1].ID,
+                        reaction: "like",
+                    }
+
+                    const res = await request(app).post("/api/reactions").send(reactionData).set("Cookie", [cookie]).expect(200);
+
+
+                    const foundReaction = await db.User_Post_Reaction.findOne({
+                        where: { POST_ID: reactionData.POST_ID }
+                    })
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body.updatedReaction).toBe(1);
+                    expect(foundReaction).toEqual(
+                        expect.objectContaining({
+                            reaction: reactionData.reaction,
+                        }));
+                })
+
+                test("should remove reaction", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const reactionData = {
+                        POST_ID: rawPosts[1].ID,
+                        reaction: "dislike",
+                    }
+
+                    const res = await request(app).post("/api/reactions").send(reactionData).set("Cookie", [cookie]).expect(200);
+
+
+                    const foundReaction = await db.User_Post_Reaction.findOne({
+                        where: { POST_ID: reactionData.POST_ID, USER_ID: testUser.ID }
+                    })
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body.removedReaction).toBeTruthy();
+                    expect(foundReaction).toBeNull();
+                })
             })
         });
 
