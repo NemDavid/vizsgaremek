@@ -24,6 +24,16 @@ async getUsers_posts_comment(itemId) {
     }
 }
 
+async getCommentsForPostyPostId(postId) {
+    try {
+        return await this.User_Post_Comment.scope("allUserPostCommentData").findAll({ 
+            where: { POST_ID: postId }
+        });
+    } catch (error) {
+        throw new DbError("Nem sikerült lekérni a hozzászólást.", { details: error.message });
+    }
+}
+
 async deleteUsers_posts_comment(itemId, options = {}) {
     try {
         const deletedRow = await this.User_Post_Comment.destroy({ 
