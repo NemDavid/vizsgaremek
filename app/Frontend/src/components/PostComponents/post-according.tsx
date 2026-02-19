@@ -9,8 +9,8 @@ import { AvatarFrame } from '@/components/custom/AvatarFrame/AvatarFrame'
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getMyreaction, makeReaction } from '../axios/axiosClient'
-import { CommentsAccord } from '../comment-according' 
+import { GetComents, getMyreaction, makeReaction } from '../axios/axiosClient'
+import { CommentsAccord } from '../comment-according'
 
 
 export type Post = {
@@ -34,13 +34,14 @@ export type comment = {
 }
 
 
-export function PostAccord({ post,className }: { post: Post, className?:string }) {
+export function PostAccord({ post, className }: { post: Post, className?: string }) {
     const queryclinet = useQueryClient();
     const { mutate: doReaction } = useMutation({
         mutationFn: async (data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) => makeReaction(data),
         onSuccess() {
             queryclinet.refetchQueries({ queryKey: ["Posts"] });
             queryclinet.refetchQueries({ queryKey: ["reaction", post.ID] });
+            queryclinet.refetchQueries({ queryKey: ["profil"] });
         }
     })
     const { data: react } = useQuery({
@@ -48,7 +49,10 @@ export function PostAccord({ post,className }: { post: Post, className?:string }
         queryFn: () => getMyreaction(post.ID),
         retry: 0,
     })
-
+    const { data: comments } = useQuery({
+        queryKey: ["Comments", post.ID],
+        queryFn: () => GetComents(`${post.ID}`)
+    })
     const userid = post.USER_ID
     const like = {
         POST_ID: post.ID,
@@ -96,7 +100,7 @@ export function PostAccord({ post,className }: { post: Post, className?:string }
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2" className="border-t bg-red-50 py-3 px-4 w-full rounded-b-3xl">
-                        <CommentsAccord postID={post.ID} commentsList={post.comments}/>
+                        <CommentsAccord postID={post.ID} commentsList={post.comments == undefined ? comments?.data : post.comments} />
                     </AccordionItem>
                 </Accordion>
             </CardContent>

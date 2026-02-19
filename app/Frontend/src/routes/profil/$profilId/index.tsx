@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { DefaultUIFrame } from "@/components/custom/DefaultUIFrame/DefaultUIFrame";
 import { AuthGuard } from "@/components/custom/AuthGuard/AuthGuard";
-import { useQuery } from '@tanstack/react-query';
-import { authStatusRequest, GetProfil } from '@/components/axios/axiosClient';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { authStatusRequest, deletpost, GetProfil } from '@/components/axios/axiosClient';
 import {
   Card,
   CardHeader,
@@ -13,11 +13,19 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PopOver } from '@/components/custom/OpenMenus/OpenMenus';
-import { EllipsisVertical, User } from 'lucide-react';
+import { EllipsisVertical, TrashIcon, User } from 'lucide-react';
 import { Loader } from '@/components/Loader/Loader';
 import { UserProfileModify } from '@/components/ProfilForms';
 import { BlockUser, ReqFriend } from '@/components/custom/UserConnectionButton/UserConnectionButton';
 import { PostAccord } from '@/components/PostComponents';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { AvatarFrame } from '@/components/custom/AvatarFrame';
 
 
 export const Route = createFileRoute('/profil/$profilId/')({
@@ -41,6 +49,8 @@ function RouteComponent() {
     queryFn: () => GetProfil(profilId),
     retry: 0,
   })
+
+
   const UserID: any = profil?.data.USER_ID
   const maxFriend: Number = (profil?.data.level || 50) + 50;
   if (isLoading) {
@@ -123,14 +133,17 @@ function RouteComponent() {
       </div>
       <div className="mt-10 px-6">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
-        <LastActivity posts={profil?.data.user.posts} />
+        <LastActivity posts={profil?.data.user.posts} myid={Number(profilId)} mypost={auth?.data.userID === UserID} />
       </div>
 
     </DefaultUIFrame>
   )
 }
 
-function LastActivity({ posts }: { posts?: any[] }) {
+function LastActivity({ posts, myid, mypost }: { posts?: any[], myid: any, mypost: boolean }) {
+  const { mutate: deletePost } = useMutation({
+    mutationFn: ({ id }: { id: bigint }) => deletpost({ id }),
+  })
   if (!posts || posts.length === 0) {
     return (
       <div className="text-sm text-slate-200">
@@ -138,13 +151,40 @@ function LastActivity({ posts }: { posts?: any[] }) {
       </div>
     )
   }
-
   return (
     <div className="bg-red-950 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((p) => (
-        <div className="max-h-48 overflow-y-auto pr-2 activity-scroll">
-          <PostAccord post={p} />
-        </div>
+        <Dialog key={p.ID}>
+          <DialogTrigger>
+            <div className="max-h-48 overflow-y-auto pr-2 activity-scroll bg-red-200 rounded-xl text-black p-2 text-xl">
+              <div className="flex items-center gap-3 bg-red-50 w-full rounded-full!">
+                <AvatarFrame userid={myid} className="bg-red-100 rounded-2xl" />
+                <h2 className="text-xl font-semibold tracking-tight">
+                  {p.title}
+                </h2>
+              </div>
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle></DialogTitle>
+            </DialogHeader>
+            {mypost && (
+              <div className="bg-red-100 p-2 rounded-xl flex items-center justify-center gap-2">
+                <Button variant="destructive" size="icon" className='hover:bg-red-400'
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    deletePost({ id: BigInt(String(p.ID)) })
+                  }}>
+                  <TrashIcon />
+                </Button>
+                <p>Törlés</p>
+              </div>
+            )}
+            <PostAccord post={p} />
+          </DialogContent>
+        </Dialog>
       ))}
     </div>
   )
