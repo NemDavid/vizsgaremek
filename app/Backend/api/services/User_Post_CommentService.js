@@ -23,6 +23,20 @@ class User_Post_CommentService {
         return await this.user_post_CommentRepository.getUsers_posts_comment(itemId);
     }
 
+    async getCommentsForPostyPostId(postId) {
+        if (!postId) {
+            throw new BadRequestError("Hiányzó postId");
+        }
+
+        const existingPost = await this.user_postRepository.getUser_Post_ByID(postId);
+        if (existingPost == null) {
+            throw new BadRequestError("Ez a post nem létezik");
+        }
+
+        const postComments = await this.user_post_CommentRepository.getCommentsForPostyPostId(postId);
+        return postComments
+    }
+
     async deleteUsers_posts_comment(itemId) {
         if (!itemId) {
             throw new BadRequestError("Hiányzó item ID");

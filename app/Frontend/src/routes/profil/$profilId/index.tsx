@@ -188,8 +188,9 @@ function LastActivity({ posts, myid, mypost }: { posts?: any[], myid: any, mypos
       ))}
     </div>
   )
-
 }
+
+
 
 
 function ProfileInfo({ label, value }: { label: string; value?: string }) {

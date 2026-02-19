@@ -12,6 +12,8 @@ router.get("/", user_post_commentController.getUsers_posts_comments);
 
 router.get("/:itemId", user_post_commentController.getUsers_posts_comment);
 
+router.get("/postComments/:itemId", user_post_commentController.getCommentsForPostyPostId);
+
 router.delete("/:itemId", user_post_commentController.deleteUsers_posts_comment);
 
 router.post("/", user_post_commentController.createUsers_posts_comment);

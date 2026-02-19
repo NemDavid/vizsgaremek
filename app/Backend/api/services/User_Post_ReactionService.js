@@ -20,9 +20,14 @@ class User_Post_ReactionService {
         return await this.user_post_reactionRepository.getUsers_posts_reactions();
     }
 
-    async getUsers_posts_reaction(token, itemId) {
+    async getUsers_posts_reaction(token, postId) {
         const encodedToken = authUtils.verifyToken(token);
-        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, itemId);
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+            
+        }
+
+        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, postId);
     }
 
     async deleteUsers_posts_reaction(itemId) {
@@ -33,7 +38,7 @@ class User_Post_ReactionService {
         const deleteProcess = await this.user_post_reactionRepository.deleteUsers_posts_reaction(itemId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen user post reakcio");
+            throw new BadRequestError("Nincs ilyen user post reakció.");
         }
 
         return deleteProcess;
@@ -162,7 +167,7 @@ class User_Post_ReactionService {
             { transaction }
         );
 
-        if (!updatedPost) {
+        if (updatedPost == 0) {
             throw new BadRequestError("a frissitett user post nem található");
         }
 
@@ -203,11 +208,11 @@ class User_Post_ReactionService {
             { transaction }
         );
 
-        if (!updatedReaction) {
-            throw new BadRequestError("a frissitett user post reakcio nem található");
+        if (updatedReaction == 0) {
+            throw new BadRequestError("A frissitett user post reakcio nem található");
         }
         if (!updatedPost) {
-            throw new BadRequestError("a frissitett user post nem található");
+            throw new BadRequestError("A frissitett user post nem található");
         }
 
         return { updatedReaction, updatedPost };
@@ -231,10 +236,10 @@ class User_Post_ReactionService {
         );
 
         if (!createdReaction) {
-            throw new BadRequestError("a létrehozott user post reakcio nem található");
+            throw new BadRequestError("A létrehozott user post reakcio nem található");
         }
         if (!updatedPost) {
-            throw new BadRequestError("a frissitett user post nem található");
+            throw new BadRequestError("A frissitett user post nem található");
         }
 
         // XP hozzáadása transaction-ben - MOST MÁR UGYANAZT A TRANSACTION-T HASZNÁLJUK

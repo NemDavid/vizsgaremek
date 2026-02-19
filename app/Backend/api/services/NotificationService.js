@@ -84,9 +84,7 @@ class NotificationService {
                 console.log(`[DEV] Login notification to ${user.email}`);
             }
 
-
-
-
+            
             const userSettings = await this.user_SettingsService.getUser_SettingsByID(user.ID);
             const Notifications = typeof userSettings.Notifications == "string"
                 ? JSON.parse(userSettings.Notifications)

@@ -18,6 +18,13 @@ exports.getUsers_posts_comment = async (req, res, next) => {
     }
 };
 
+exports.getCommentsForPostyPostId = async (req, res, next) => {
+    try {
+        res.status(200).json(await user_post_commentService.getCommentsForPostyPostId( req.itemId));
+    } catch (error) {
+        next(error);
+    }
+};
 
 exports.deleteUsers_posts_comment = async (req, res, next) => {
     try {
