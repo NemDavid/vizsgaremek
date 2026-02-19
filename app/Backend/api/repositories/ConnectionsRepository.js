@@ -111,8 +111,6 @@ class ConnectionsRepository {
     }
 
     async deleteConnection(User_Requested_ID, To_User_ID) {
-        console.log(User_Requested_ID, To_User_ID);
-        
         try {
             const deletedRow = await this.Connections.destroy({
                 where: {
