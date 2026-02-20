@@ -93,8 +93,9 @@ class KickService {
 
         
         const existingKick = await this.kickRepository.getKickByUserId(encodedToken.userID, TO_USER_ID);
+    
         if (existingKick) {
-            await this.kickRepository.updateKick(existingKick.dataValues.ID);
+            await this.kickRepository.updateKick(existingKick.dataValues.ID,{FROM_USER_ID: encodedToken.userID, TO_USER_ID: TO_USER_ID, updated_at: new Date().toISOString().slice(0, 10)});
             
             return { updated: true };
         }
