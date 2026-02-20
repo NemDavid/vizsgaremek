@@ -10,7 +10,7 @@ import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { GetComents, getMyreaction, makeReaction } from '../axios/axiosClient'
-import { CommentsAccord } from '../comment-according'
+import { CommentsAccord } from './comment-according'
 
 
 export type Post = {

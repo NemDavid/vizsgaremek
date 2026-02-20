@@ -3,9 +3,9 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Commentbox } from './custom/CommentBox/comment-Box'
+import { Commentbox } from '../custom/CommentBox/comment-Box'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,7 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { MakeCommentForPost } from './axios/axiosClient'
+import { MakeCommentForPost } from '../axios/axiosClient'
 
 
 const formSchema = z.object({
@@ -34,6 +34,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
         mutationFn: async (comment: PostFormSchema) => MakeCommentForPost(comment),
         onSuccess() {
             queryclinet.refetchQueries({ queryKey: ["Posts"] });
+            queryclinet.refetchQueries({ queryKey: ["profil"] });
             form.resetField("comment")
         }
     })
