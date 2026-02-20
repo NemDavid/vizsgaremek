@@ -73,7 +73,11 @@ export async function GetAds() {
 export async function GetusersByname(params: { q: string; page: number; pageSize: number }) {
   return JsonClient.get("api/users/search", { params })
 }
+export async function GetComents(postid: string) {
+  const response = await JsonClient.get(`/api/comments/postComments/${postid}`);
 
+  return response;
+}
 // #endregion
 
 //-------------------------------------------------------------------------------------
@@ -187,6 +191,11 @@ export async function logoutRequest() {
 }
 export async function deletConnectionReqest({ id }: { id: bigint }) {
   const response = await JsonClient.delete(`/api/connections/${id}`);
+
+  return response;
+}
+export async function deletpost({ id }: { id: bigint }) {
+  const response = await JsonClient.delete(`/api/posts/${id}`);
 
   return response;
 }
