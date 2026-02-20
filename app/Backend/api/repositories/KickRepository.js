@@ -1,3 +1,4 @@
+const { Op, where } = require("sequelize")
 const { DbError } = require("../errors");
 
 class KickRepository {
@@ -14,13 +15,34 @@ class KickRepository {
             throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
         }
     }
-
+    async getMyKicks(userId) {
+        try {
+            return await this.Kick.scope("allKickData").findAll({
+                where: {
+                    [Op.or]: [
+                        { FROM_USER_ID: userId },
+                        { TO_USER_ID: userId }
+                    ],
+                },
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
+        }
+    }
     async getKickByUserId(FROM_USER_ID, TO_USER_ID) {
         try {
             return await this.Kick.scope("allKickData").findOne({
                 where: {
-                    FROM_USER_ID: FROM_USER_ID,
-                    TO_USER_ID: TO_USER_ID
+                    [Op.or]: [
+                        {
+                            FROM_USER_ID: FROM_USER_ID,
+                            TO_USER_ID: TO_USER_ID,
+                        },
+                        {
+                            FROM_USER_ID: TO_USER_ID,
+                            TO_USER_ID: FROM_USER_ID,
+                        },
+                    ],
                 },
             });
         } catch (error) {
@@ -84,21 +106,30 @@ class KickRepository {
         }
     }
 
-    async updateKick(ID) {
+    async updateKick(ID, updatedata) {
         try {
-            const row = await this.Kick.findOne({ where: { ID: Number(ID) } })
-            if (!row) return 0
+            // const row = await this.Kick.findOne({ where: { ID: Number(ID) } })
+            // if (!row) return 0
 
-            const today = new Date().toISOString().slice(0, 10) // DATEONLY-hoz
-            row.updated_at = today
-            row.changed("updated_at", true)
-            await row.save()
+            // // Frissítendő mezők beállítása
+            // row.set(updatedata)
 
-            return 1
-        } catch (error) {
-            throw new DbError("A rúgást frissítése sikertelen.", { details: error.message })
-        }
+            // // updated_at kézi frissítés (ha nem automatic timestamps)
+            // const today = new Date().toISOString().slice(0, 10)
+            // row.updated_at = today
+
+            // await row.save()
+
+            const [affectedRows] = await this.Kick.update(updatedata,{
+                where : {ID}
+
+            })
+
+        return affectedRows
+    } catch(error) {
+        throw new DbError("A rúgást frissítése sikertelen.", { details: error.message })
     }
+}
 }
 
 module.exports = KickRepository;
