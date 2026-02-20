@@ -18,7 +18,7 @@ class UserService {
     }
 
     async getUserByID(userId) {
-        return await this.userRepository.getUserByID(userId, _, "Profil", false);
+        return await this.userRepository.getUserByID(userId, {}, "Profil");
     }
 
     async getUserByUsername(username) {

@@ -1,13 +1,6 @@
 const db = require("../db");
 const { user_SettingsService } = require("../services")(db);
 
-exports.getUser_Settings = async (req, res, next) => {
-    try {
-        res.status(200).json(await user_SettingsService.getUser_Settings());
-    } catch (error) {
-        next(error);
-    }
-};
 
 exports.getUser_SettingsByToken = async (req, res, next) => {
     const token = req.cookies['user_token'];

@@ -265,21 +265,21 @@ class NotificationService {
             throw new BadRequestError("Hiányzó password");
         }
 
-
+        
+        
         // létezik e ilyen id-hez user
         const existingUser = await this.userService.getUserByID(newPasswordData.userId); // letezik e ilyen emailhez user
         if (!existingUser) {
             throw new BadRequestError("Nincs ilyen id-vel user");
         }
-
-
-
+        
+        
         // update user password
         const updatedUser = await this.userService.updateUser_Password(newPasswordData.userId, { password_hash: authUtils.hashPassword(newPasswordData.password) });
         if (!updatedUser) {
             throw new BadRequestError("A user jelszava nem lett frissítve");
         }
-
+        
         // töröljük a használt codeokat
         const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(existingUser.email); // töröljük a használt codeokat
         if (deleteProcess.deleted == 0) {

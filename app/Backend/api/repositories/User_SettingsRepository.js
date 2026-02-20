@@ -6,15 +6,6 @@ class User_SettingsRepository {
         this.sequelize = db.sequelize;
     }
 
-
-    async getUser_Settings() {
-        try {
-            return await this.User_Settings.scope("allUser_SettingsData").findAll();
-        } catch (error) {
-            throw new DbError("Nem sikerült lekérni a felhasználókat.", { details: error.message });
-        }
-    }
-
     async getUser_SettingsByToken(user_SettingsId) {  
         try {
             return await this.User_Settings.scope("allUser_SettingsData").findOne({

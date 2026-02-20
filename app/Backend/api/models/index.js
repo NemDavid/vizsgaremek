@@ -13,129 +13,142 @@ module.exports = (sequelize) => {
     const Advertisement = require("./Advertisement")(sequelize, DataTypes);
 
 
+    // USER → PROFILE
     User.hasOne(User_Profile, {
         foreignKey: "USER_ID",
-        as: "profile"
+        as: "profile",
+        onDelete: "CASCADE"
     });
     User_Profile.belongsTo(User, {
         foreignKey: "USER_ID",
-        as: "user"
+        as: "user",
+        onDelete: "CASCADE"
     });
 
 
-
+    // USER → POSTS
     User.hasMany(User_Post, {
         foreignKey: "USER_ID",
-        as: "posts"
+        as: "posts",
+        onDelete: "CASCADE"
     });
     User_Post.belongsTo(User, {
         foreignKey: "USER_ID",
-        as: "user"
+        as: "user",
+        onDelete: "CASCADE"
     });
 
 
-    // reaction
+    // USER → POST REACTIONS
     User.hasMany(User_Post_Reaction, {
         foreignKey: "USER_ID",
-        as: "post_reactions"
+        as: "post_reactions",
+        onDelete: "CASCADE"
     });
     User_Post_Reaction.belongsTo(User, {
         foreignKey: "USER_ID",
-        as: "user"
+        as: "user",
+        onDelete: "CASCADE"
     });
 
 
+    // POST → REACTIONS
     User_Post.hasMany(User_Post_Reaction, {
         foreignKey: "POST_ID",
-        as: "reactions"
+        as: "reactions",
+        onDelete: "CASCADE"
     });
     User_Post_Reaction.belongsTo(User_Post, {
         foreignKey: "POST_ID",
-        as: "post"
+        as: "post",
+        onDelete: "CASCADE"
     });
 
 
-    // comment
+    // USER → COMMENTS
     User.hasMany(User_Post_Comment, {
         foreignKey: "USER_ID",
-        as: "post_comments"
+        as: "post_comments",
+        onDelete: "CASCADE"
     });
     User_Post_Comment.belongsTo(User, {
         foreignKey: "USER_ID",
-        as: "user"
+        as: "user",
+        onDelete: "CASCADE"
     });
 
 
+    // POST → COMMENTS
     User_Post.hasMany(User_Post_Comment, {
         foreignKey: "POST_ID",
-        as: "comments"
+        as: "comments",
+        onDelete: "CASCADE"
     });
     User_Post_Comment.belongsTo(User_Post, {
         foreignKey: "POST_ID",
-        as: "post"
+        as: "post",
+        onDelete: "CASCADE"
     });
 
 
-
-
-
+    // CONNECTIONS
     User.hasMany(Connections, {
         foreignKey: "User_Requested_ID",
-        as: "sentConnections" // Ő küldte a kérést
+        as: "sentConnections",
+        onDelete: "CASCADE"
     });
 
     User.hasMany(Connections, {
         foreignKey: "To_User_ID",
-        as: "receivedConnections" // Ő kapta a kérést
+        as: "receivedConnections",
+        onDelete: "CASCADE"
     });
 
     Connections.belongsTo(User, {
         foreignKey: "User_Requested_ID",
-        as: "requester" // aki küldte
+        as: "requester",
+        onDelete: "CASCADE"
     });
 
     Connections.belongsTo(User, {
         foreignKey: "To_User_ID",
-        as: "receiver" // aki kapta
+        as: "receiver",
+        onDelete: "CASCADE"
     });
 
 
-
-    // User_Profile ↔ Settings 1–1 kapcsolat USER_ID alapján
+    // PROFILE → SETTINGS
     User_Profile.hasOne(Settings, {
-        foreignKey: "ID",  // Settings.ID mutat User_Profile.USER_ID-re
+        foreignKey: "ID",
         sourceKey: "USER_ID",
-        as: "settings"
+        as: "settings",
+        onDelete: "CASCADE"
     });
 
     Settings.belongsTo(User_Profile, {
-        foreignKey: "ID",  // Settings.ID mutat User_Profile.USER_ID-re
+        foreignKey: "ID",
         targetKey: "USER_ID",
-        as: "profile"
+        as: "profile",
+        onDelete: "CASCADE"
     });
 
 
-
-
-    // User → User (Kick mint kapcsolótábla)
-
-    // User → akiket megrúgott
+    // KICK (many-to-many)
     User.belongsToMany(User, {
         through: Kick,
         foreignKey: "FROM_USER_ID",
         otherKey: "TO_USER_ID",
-        as: "kickedUsers"
+        as: "kickedUsers",
+        onDelete: "CASCADE"
     });
 
-    // User → akik őt rúgták meg
     User.belongsToMany(User, {
         through: Kick,
         foreignKey: "TO_USER_ID",
         otherKey: "FROM_USER_ID",
-        as: "kickedByUsers"
+        as: "kickedByUsers",
+        onDelete: "CASCADE"
     });
-
-
 
 
     return {
