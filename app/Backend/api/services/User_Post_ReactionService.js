@@ -23,8 +23,7 @@ class User_Post_ReactionService {
     async getUsers_posts_reaction(token, postId) {
         const encodedToken = authUtils.verifyToken(token);
         if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-            
+            throw new BadRequestError("Hiányzó vagy lejárt token."); 
         }
 
         return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, postId);
