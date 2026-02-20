@@ -34,6 +34,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
         mutationFn: async (comment: PostFormSchema) => MakeCommentForPost(comment),
         onSuccess() {
             queryclinet.refetchQueries({ queryKey: ["Posts"] });
+            queryclinet.refetchQueries({ queryKey: ["Comments", postID] });
             queryclinet.refetchQueries({ queryKey: ["profil"] });
             form.resetField("comment")
         }
@@ -48,7 +49,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
     function onSubmit(values: PostFormSchema) {
         values.POST_ID = postID
         createComment(values)
-        form.setValue("comment"," ");
+        form.setValue("comment", " ");
     }
 
     return (
@@ -58,7 +59,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
                     <FormField
                         control={form.control}
                         name="comment"
-                        render= {({ field }) => (
+                        render={({ field }) => (
                             <FormItem className='w-full px-3 m-0 px-2'>
                                 <FormControl>
                                     <Input placeholder="Írj egy kommentet..." {...field} type="text" className="w-full rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 m-3" />
@@ -81,7 +82,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
                     <ScrollArea className="max-h-[300px] h-fit overflow-auto w-full rounded-md p-0">
                         <div className="flex flex-col gap-2 p-2">
                             {commentsList.map((com) => (
-                            <Commentbox key={com.ID} comment={com}/>
+                                <Commentbox key={com.ID} comment={com} />
                             ))}
                         </div>
                     </ScrollArea>
