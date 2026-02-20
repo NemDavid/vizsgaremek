@@ -1,5 +1,4 @@
-const { Op, where } = require("sequelize")
-const { Op, where } = require("sequelize")
+const { Op } = require("sequelize")
 const { DbError } = require("../errors");
 
 class KickRepository {
@@ -48,16 +47,6 @@ class KickRepository {
         try {
             return await this.Kick.scope("allKickData").findOne({
                 where: {
-                    [Op.or]: [
-                        {
-                            FROM_USER_ID: FROM_USER_ID,
-                            TO_USER_ID: TO_USER_ID,
-                        },
-                        {
-                            FROM_USER_ID: TO_USER_ID,
-                            TO_USER_ID: FROM_USER_ID,
-                        },
-                    ],
                     [Op.or]: [
                         {
                             FROM_USER_ID: FROM_USER_ID,
