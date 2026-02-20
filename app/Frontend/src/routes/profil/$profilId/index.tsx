@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { DefaultUIFrame } from "@/components/custom/DefaultUIFrame/DefaultUIFrame";
 import { AuthGuard } from "@/components/custom/AuthGuard/AuthGuard";
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authStatusRequest, deletpost, GetProfil } from '@/components/axios/axiosClient';
 import {
   Card,
@@ -26,6 +26,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { AvatarFrame } from '@/components/custom/AvatarFrame';
+import { toast } from 'sonner';
 
 
 export const Route = createFileRoute('/profil/$profilId/')({
@@ -141,8 +142,18 @@ function RouteComponent() {
 }
 
 function LastActivity({ posts, myid, mypost }: { posts?: any[], myid: any, mypost: boolean }) {
+  const qc = useQueryClient();
   const { mutate: deletePost } = useMutation({
     mutationFn: ({ id }: { id: bigint }) => deletpost({ id }),
+    onError: (error: any) => {
+      toast.error(error.response.data.message)
+    },
+    onSuccess: () => {
+      toast.success("Sikeresen tőrőlted a posztod", {
+        duration: 3000,
+      })
+      qc.refetchQueries({queryKey: ["profil"]})
+    }
   })
   if (!posts || posts.length === 0) {
     return (

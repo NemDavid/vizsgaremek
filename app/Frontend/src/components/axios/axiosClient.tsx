@@ -195,7 +195,7 @@ export async function deletConnectionReqest({ id }: { id: bigint }) {
   return response;
 }
 export async function deletpost({ id }: { id: bigint }) {
-  const response = await JsonClient.delete(`/api/connections/${id}`);
+  const response = await JsonClient.delete(`/api/posts/${id}`);
 
   return response;
 }
