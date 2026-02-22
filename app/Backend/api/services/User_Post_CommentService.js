@@ -34,25 +34,44 @@ class User_Post_CommentService {
         }
 
         const postComments = await this.user_post_CommentRepository.getCommentsForPostyPostId(postId);
-        return postComments
+        return postComments;
     }
 
-    async deleteUsers_posts_comment(itemId) {
+    async deleteUsers_posts_comment(token, itemId) {
+        const encodedToken = authUtils.verifyToken(token);
         if (!itemId) {
             throw new BadRequestError("Hiányzó item ID");
         }
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+        }
+
+
+        const targetComment = await this.user_post_CommentRepository.getUsers_posts_comment(itemId);
+        if (targetComment == null) {
+            throw new BadRequestError("A cél comment nem található");
+        }
+        if (targetComment.dataValues.USER_ID != encodedToken.userID) {
+            throw new BadRequestError("Ez nem a te commmented");
+        }
+
 
         const deleteProcess = await this.user_post_CommentRepository.deleteUsers_posts_comment(itemId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen user post comment");
+            throw new BadRequestError("Nincs törölve user post comment");
         }
+
         return deleteProcess;
     }
 
     async createUsers_posts_comment(commentData, token) {
         try {
             const encodedToken = authUtils.verifyToken(token);
+            if (encodedToken == null) {
+                throw new BadRequestError("Hiányzó vagy lejárt token.");
+            }
+
             commentData.USER_ID = encodedToken.userID;
 
             // Validálás
@@ -114,7 +133,7 @@ class User_Post_CommentService {
             // email az erintett user nek
             process.nextTick(() => {
                 this.notificationService
-                    .sendNotificationToUser(validUser, "new_post_comment")
+                    .sendNotificationToUser({validUser}, "new_post_comment")
                     .catch(console.error);
             });
 
@@ -133,38 +152,6 @@ class User_Post_CommentService {
 
     }
 
-    async updateUsers_posts_comment(commentData, token) {
-        const encodedToken = authUtils.verifyToken(token);
-        commentData.USER_ID = encodedToken.userID;
-
-        if (!commentData.USER_ID) {
-            throw new BadRequestError("Hiányzó user id");
-        }
-        if (!commentData.ID) {
-            throw new BadRequestError("Hiányzó item id");
-        }
-        if (!commentData.comment) {
-            throw new BadRequestError("Hiányzó user comment");
-        }
-
-        // Ellenőrizzük, hogy a user a saját kommentjét frissíti-e
-        const existingComment = await this.user_post_CommentRepository.getUsers_posts_comment(commentData.ID);
-        if (!existingComment) {
-            throw new BadRequestError("A frissítendő comment nem található");
-        }
-
-        if (existingComment.USER_ID !== commentData.USER_ID) {
-            throw new BadRequestError("Csak a saját kommentedet módosíthatod");
-        }
-
-        const updatedComment = await this.user_post_CommentRepository.updateUsers_posts_comment(commentData);
-        if (!updatedComment) {
-            throw new BadRequestError("A frissített comment nem található");
-        }
-
-        return updatedComment;
-    }
-
     // ========== PRIVÁT HELPER METÓDUSOK ==========
 
     _validateCommentData(commentData) {
@@ -174,16 +161,12 @@ class User_Post_CommentService {
         if (!commentData.POST_ID) {
             throw new BadRequestError("Hiányzó post id");
         }
-        if (!commentData.comment) {
-            throw new BadRequestError("Hiányzó user comment");
+        if (!commentData.comment?.trim()) {
+            throw new BadRequestError("A komment nem lehet üres");
         }
 
-        // Opcionális: komment hossz validálása
         if (commentData.comment.length > 500) {
             throw new BadRequestError("A komment túl hosszú (max 500 karakter)");
-        }
-        if (commentData.comment.trim().length === 0) {
-            throw new BadRequestError("A komment nem lehet üres");
         }
     }
 }

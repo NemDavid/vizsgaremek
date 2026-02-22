@@ -18,6 +18,4 @@ router.delete("/:itemId", user_post_commentController.deleteUsers_posts_comment)
 
 router.post("/", user_post_commentController.createUsers_posts_comment);
 
-router.patch("/", user_post_commentController.updateUsers_posts_comment);
-
 module.exports = router;

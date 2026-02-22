@@ -12,7 +12,7 @@ exports.getUsers_posts_comments = async (req, res, next) => {
 
 exports.getUsers_posts_comment = async (req, res, next) => {
     try {
-        res.status(200).json(await user_post_commentService.getUsers_posts_comment( req.itemId));
+        res.status(200).json(await user_post_commentService.getUsers_posts_comment(req.itemId));
     } catch (error) {
         next(error);
     }
@@ -20,15 +20,17 @@ exports.getUsers_posts_comment = async (req, res, next) => {
 
 exports.getCommentsForPostyPostId = async (req, res, next) => {
     try {
-        res.status(200).json(await user_post_commentService.getCommentsForPostyPostId( req.itemId));
+        res.status(200).json(await user_post_commentService.getCommentsForPostyPostId(req.itemId));
     } catch (error) {
         next(error);
     }
 };
 
 exports.deleteUsers_posts_comment = async (req, res, next) => {
+    const token = req.cookies['user_token'];
+
     try {
-        res.status(204).json(await user_post_commentService.deleteUsers_posts_comment(req.itemId));
+        res.status(204).json(await user_post_commentService.deleteUsers_posts_comment(token, req.itemId));
     } catch (error) {
         next(error);
     }
@@ -47,25 +49,6 @@ exports.createUsers_posts_comment = async (req, res, next) => {
         );
 
         res.status(201).json(createdUser_Post_comment);
-    } catch (error) {
-        next(error);
-    }
-};
-
-
-exports.updateUsers_posts_comment = async (req, res, next) => {
-    const { ID, comment } = req.body || {};
-    const token = req.cookies['user_token'];
-
-    try {
-        const updatedUser_Post_comment = await user_post_commentService.updateUsers_posts_comment({
-            ID,
-            comment,
-        },
-            token
-    );
-        
-        res.status(200).json(updatedUser_Post_comment);
     } catch (error) {
         next(error);
     }

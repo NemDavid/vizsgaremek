@@ -58,7 +58,7 @@ class User_Post_ReactionService {
             // Post létezik-e
             const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID);
             if (!targetPost) {
-                throw new BadRequestError("A cel post nem található");
+                throw new BadRequestError("A cél post nem található");
             }
 
             // valid use-e

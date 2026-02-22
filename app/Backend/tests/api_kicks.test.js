@@ -8,7 +8,6 @@ jest.mock("../api/db");
 
 const db = require("../api/db");
 
-const { } = require("../api/services")(db);
 const authUtils = require("../api/utilities/authUtils");
 const { BadRequestError, ValidationError } = require("../api/errors");
 const { Op } = require("sequelize");
@@ -45,6 +44,18 @@ describe("user_settings_Controller", () => {
         },
         {
             ID: 2,
+            Notifications:
+            {
+                new_post: false,
+                new_comment_on_post: false,
+                new_reaction_on_post: false,
+                new_login: false,
+                new_friend_request: false,
+            },
+            DataPrivacy: false,
+        },
+        {
+            ID: 3,
             Notifications:
             {
                 new_post: false,

@@ -93,7 +93,7 @@ describe("authController", () => {
 
                     const res = await request(app).get("/api/auth/status").set("Cookie", [cookie]).expect(401);
 
-                    expect(res.body.message).toEqual("Usrer token is missing");
+                    expect(res.body.message).toEqual("Hiányzó user token");
                 });
             });
 
