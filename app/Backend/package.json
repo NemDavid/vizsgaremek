@@ -21,7 +21,9 @@
     "mysql2": "^3.15.0",
     "nodemailer": "^7.0.10",
     "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "dotenv": "^17.2.2",

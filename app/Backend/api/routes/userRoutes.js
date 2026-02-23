@@ -9,6 +9,19 @@ router.param("paramPage", paramHandler.paramPage);
 router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
 
 
+/**
+ * @swagger
+ * /api/users/all:
+ *   get:
+ *     summary: Get all users
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: Successful response
+ */
+
+
 router.get("/all", userController.getUsers);
 
 router.get("/id/:userId", userController.getUser);
