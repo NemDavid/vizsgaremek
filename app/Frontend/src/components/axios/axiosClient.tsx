@@ -199,12 +199,12 @@ export async function deletpost({ id }: { id: bigint }) {
 
   return response;
 }
+export async function deletcomment({ id }: { id: string }) {
+  const response = await JsonClient.delete(`/api/comments/${id}`);
+
+  return response;
+}
 // #endregion
 
 
 
-/**
- * TODO:
- * Nevek egységesítése:
- *    - CamelCase a JS/TS konvenció szerint: pl. `getProfile`, `tokenStatusRequest`, `sendOTPToPasswordReset`.
- */

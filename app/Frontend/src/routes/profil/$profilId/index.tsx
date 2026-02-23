@@ -152,7 +152,7 @@ function LastActivity({ posts, myid, mypost }: { posts?: any[], myid: any, mypos
       toast.success("Sikeresen tőrőlted a posztod", {
         duration: 3000,
       })
-      qc.refetchQueries({queryKey: ["profil"]})
+      qc.refetchQueries({ queryKey: ["profil"] })
     }
   })
   if (!posts || posts.length === 0) {
