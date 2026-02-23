@@ -11,26 +11,26 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-const sweggerUI = require("swagger-ui-express");
-const swaggerDoc = require("swagger-jsdoc")
+// const sweggerUI = require("swagger-ui-express");
+// const swaggerDoc = require("swagger-jsdoc")
 
-const options = swaggerDoc(
-    {
-        definition:
-        {
-            openapi: "3.0.0",
+// const options = swaggerDoc(
+//     {
+//         definition:
+//         {
+//             openapi: "3.0.0",
 
-            info:
-            {
-                title: "mihirünk dokumentáció",
-                version: "1.0.0",
-                description: "# Üdv a mihirünk API dokumentációjában."
-            }
-        },
+//             info:
+//             {
+//                 title: "mihirünk dokumentáció",
+//                 version: "1.0.0",
+//                 description: "# Üdv a mihirünk API dokumentációjában."
+//             }
+//         },
 
-        apis: ["./api/routes/*.js"],
-    }   
-)
+//         apis: ["./api/routes/*.js"],
+//     }   
+// )
 
 
 
@@ -90,7 +90,7 @@ app.use("/cloud", cloudRouter);
 app.use("/cloud", express.static("public/cloud"));
 
 
-api.use("/docs", sweggerUI.serve, sweggerUI.setup(options))
+//api.use("/docs", sweggerUI.serve, sweggerUI.setup(options))
 api.use(errorHandler.notFound);
 app.use(errorHandler.showError);
 

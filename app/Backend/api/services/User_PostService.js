@@ -1,9 +1,10 @@
-const { BadRequestError } = require("../errors");
+const { BadRequestError, ValidationError } = require("../errors");
 const authUtils = require("../utilities/authUtils");
 
 class User_PostService {
     constructor(db, user_profileService) {
-        this.user_postRepository = require("../repositories")(db).user_postRepository;
+        this.user_postRepository =
+            require("../repositories")(db).user_postRepository;
         this.userRepository = require("../repositories")(db).userRepository;
         this.user_profileService = user_profileService;
         this.notificationService = null;
@@ -19,14 +20,20 @@ class User_PostService {
     }
 
     async getUser_PostsByLimit(page, perpage) {
-        if (page === undefined || perpage === undefined) {
-            throw new BadRequestError("hiányzó Adatok");
+        if (!Number.isInteger(page) || !Number.isInteger(perpage)) {
+            throw new BadRequestError("Hiányzó Adatok");
         }
-
+        if (page < 1 || perpage < 1) {
+            throw new ValidationError("Rossz adatok");
+        }
         return await this.user_postRepository.getUser_PostsByLimit(page, perpage);
     }
 
     async getUser_Posts_ByuserId(userId) {
+        const validUser = await this.userRepository.getUser(userId);
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó");
+        }
         return await this.user_postRepository.getUser_Posts_ByuserId(userId);
     }
 
@@ -34,70 +41,82 @@ class User_PostService {
         return await this.user_postRepository.getUser_Post_ByID(postId);
     }
 
-    async deleteUser_Post(postId) {
+    async deleteUser_Post(token, postId) {
+        const encodedToken = authUtils.verifyToken(token);
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+        }
+
         if (!postId) {
-            throw new BadRequestError("hiányzó post ID");
+            throw new BadRequestError("Hiányzó post ID");
+        }
+
+        const existingPost = await this.user_postRepository.getUser_Post_ByID(postId);
+        if (!existingPost) {
+            throw new BadRequestError("Nincs ilyen post");
+        }
+        if (existingPost.USER_ID != encodedToken.userID) {
+            throw new BadRequestError("Ez nem a te posztod");
         }
 
         const deleteProcess = await this.user_postRepository.deleteUser_Post(postId);
 
         if (deleteProcess.deleted == 0) {
-            throw new BadRequestError("Nincs ilyen id-vel post");
+            throw new BadRequestError("Sikertelen törlés");
         }
+
         return deleteProcess;
     }
 
     async createUser_Post(postData) {
         try {
             const encodedToken = authUtils.verifyToken(postData.token);
+            if (encodedToken == null) {
+                throw new BadRequestError("Hiányzó vagy lejárt token.");
+            }
+
             postData.USER_ID = encodedToken.userID;
 
-
             // validate
-            if (!postData.USER_ID) {
-                throw new BadRequestError("hiányzó USER_ID");
-            }
             if (!postData.title) {
-                throw new BadRequestError("hiányzó title");
+                throw new BadRequestError("Hiányzó cim");
             }
             if (!authUtils.isValidPostTittle(postData.title)) {
-                throw new BadRequestError("A cím 3 és 255 karakter között lehet");
+                throw new ValidationError("A cím 3 és 255 karakter között lehet");
             }
             if (!postData.content) {
                 throw new BadRequestError("hiányzó content");
             }
             if (!authUtils.isValidPostContent(postData.content)) {
-                throw new BadRequestError("A tartalom 3 és 1000 karakter között lehet");
+                throw new ValidationError("A tartalom 3 és 1000 karakter között lehet");
             }
-            if (!postData.token) {
-                throw new BadRequestError("hiányzó token");
-            }
-
 
             const validUser = await this.userRepository.getUser(postData.USER_ID);
             if (!validUser) {
-                throw new BadRequestError("nincs ilyen felhasználó");
+                throw new ValidationError("Nincs ilyen felhasználó");
             }
-
 
             // transaction
             //------------------------------------------------------------
-            const result = await this.db.sequelize.transaction(async transaction => {
-                // add xp
-                await this.user_profileService.addXPToUser(postData.USER_ID,
-                    100,
-                    transaction
-                );
+            const result = await this.db.sequelize.transaction(
+                async (transaction) => {
+                    // add xp
+                    await this.user_profileService.addXPToUser(
+                        postData.USER_ID,
+                        100,
+                        transaction,
+                    );
 
-                const newPost = await this.user_postRepository.createUser_Post(postData,
-                    {
-                        transaction
-                    }
-                );
+                    const newPost = await this.user_postRepository.createUser_Post(
+                        postData,
+                        {
+                            transaction,
+                        },
+                    );
 
-
-                return newPost;
-            });
+                    return newPost;
+                },
+            );
 
             //  email a baratoknak transaction utan
             process.nextTick(() => {
@@ -105,7 +124,6 @@ class User_PostService {
                     .sendNotificationToFriends(validUser, "new_post")
                     .catch(console.error);
             });
-
 
             return result;
 
@@ -119,48 +137,97 @@ class User_PostService {
         }
         //------------------------------------------------------------
     }
+    async updatePost(token, postId, newdata) {
+        const encodedToken = authUtils.verifyToken(token);
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+        }
 
+        const validUser = await this.userRepository.getUser(encodedToken.userID);
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó");
+        }
+        if (!postId) throw new BadRequestError("Hiányzó post ID");
+        
+        const existingPost = await this.user_postRepository.getUser_Post_ByID(postId);
+        if (!existingPost) {
+            throw new BadRequestError("Nincs ilyen post");
+        }
+        if (existingPost.USER_ID != encodedToken.userID) {
+            throw new BadRequestError("Ez nem a te posztod");
+        }
+        
+        if (!newdata.content && !newdata.title) {
+            throw new BadRequestError("Hiányzó adat");
+        }
+
+        const affectedRows = await this.user_postRepository.updateUser_Post(
+            postId,
+            newdata,
+        );
+        if (!affectedRows) {
+            throw new BadRequestError("Post nem található", {
+                details: `postId: ${postId}`,
+            });
+        }
+
+        const updateUser_Post = await this.user_postRepository.getUser_Post_ByID(postId);
+
+        if (!updateUser_Post) {
+            throw new BadRequestError("A frissitett post nem található", {
+                details: `postId: ${postId}`,
+            });
+        }
+        return updateUser_Post;
+    }
+    
     async updateUser_Post(postId, updateData) {
         if (!postId) throw new BadRequestError("Hiányzó post ID");
         if (!updateData.USER_ID) {
-            throw new BadRequestError("hiányzó USER_ID");
+            throw new BadRequestError("Hiányzó USER_ID");
         }
         if (!updateData.like) {
-            throw new BadRequestError("hiányzó like");
+            throw new BadRequestError("Hiányzó like");
         }
         if (!updateData.dislike) {
-            throw new BadRequestError("hiányzó dislike");
+            throw new BadRequestError("Hiányzó dislike");
         }
         if (!updateData.content) {
-            throw new BadRequestError("hiányzó content");
+            throw new BadRequestError("Hiányzó content");
         }
         if (!updateData.media_url) {
-            throw new BadRequestError("hiányzó media_url");
+            throw new BadRequestError("Hiányzó media_url");
         }
         if (!updateData.visibility) {
-            throw new BadRequestError("hiányzó visibility");
+            throw new BadRequestError("Hiányzó visibility");
         }
-
 
         const validUser = await this.userRepository.getUser(updateData.USER_ID);
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
 
-        const affectedRows = await this.user_postRepository.updateUser_Post(postId, updateData);
+        const affectedRows = await this.user_postRepository.updateUser_Post(
+            postId,
+            updateData,
+        );
 
         if (!affectedRows) {
-            throw new BadRequestError("post nem található", { details: `postId: ${postId}` })
+            throw new BadRequestError("post nem található", {
+                details: `postId: ${postId}`,
+            });
         }
 
-        const updateUser_Post = await this.user_postRepository.getUser_Post_ByID(postId);
+        const updateUser_Post =
+            await this.user_postRepository.getUser_Post_ByID(postId);
 
         if (!updateUser_Post) {
-            throw new BadRequestError("a frissitett post nem található", { details: `postId: ${postId}` });
+            throw new BadRequestError("a frissitett post nem található", {
+                details: `postId: ${postId}`,
+            });
         }
         return updateUser_Post;
     }
-
 }
 
 module.exports = User_PostService;

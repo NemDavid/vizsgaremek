@@ -13,8 +13,9 @@ exports.getUser_PostsByLimit = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page);
         const perPage = parseInt(req.query.perPage);
-        
-        res.status(200).json(await user_postService.getUser_PostsByLimit(page,perPage));
+
+
+        res.status(200).json(await user_postService.getUser_PostsByLimit(page, perPage));
     } catch (error) {
         next(error);
     }
@@ -37,23 +38,25 @@ exports.getUser_Post_ByID = async (req, res, next) => {
 };
 
 exports.deleteUser_Post = async (req, res, next) => {
+    const token = req.cookies['user_token'];
+
     try {
-        res.status(204).json(await user_postService.deleteUser_Post(req.postId));
+        res.status(204).json(await user_postService.deleteUser_Post(token, req.postId));
     } catch (error) {
         next(error);
     }
 };
 
 exports.createUser_Post = async (req, res, next) => {
-    const { title, content} = req.body || {};
+    const { title, content } = req.body || {};
     const token = req.cookies['user_token'];
-    
+
 
     try {
         res.status(201).json(await user_postService.createUser_Post({
-            token, 
-            title, 
-            content,  
+            token,
+            title,
+            content,
             media_url: req.file ? `http://localhost:6769/cloud/${req.file.filename}` : undefined
         }));
     } catch (error) {
@@ -63,7 +66,11 @@ exports.createUser_Post = async (req, res, next) => {
 
 exports.updateUser_Post = async (req, res, next) => {
     try {
-        const updatedUser_Post = await user_postService.updateUser_Post(req.postId, req.body);
+        const { title, content } = req.body || {};
+        const postId = req.postId;
+        const token = req.cookies['user_token'];
+
+        const updatedUser_Post = await user_postService.updatePost(token, postId, { title, content });
         res.status(200).json(updatedUser_Post);
     } catch (error) {
         next(error);
