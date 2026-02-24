@@ -78,7 +78,7 @@ exports.updateUser_Post = async (req, res, next) => {
                 ? `http://localhost:6769/cloud/${req.file.filename}`
                 : undefined;
 
-        if (mediaDeleted) media_url = null;
+        if (mediaDeleted) media_url = "";
 
         const updatedUser_Post = await user_postService.updatePost(
             token,
