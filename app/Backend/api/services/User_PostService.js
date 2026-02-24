@@ -109,12 +109,14 @@ class User_PostService {
         );
 
         //  email a baratoknak transaction utan
-        req.afterCommit?.push(() =>
-            this.notificationService
-                .sendNotificationToFriends(validUser, "new_post")
-                .catch(err => console.error("Email error:", err))
-        );
-
+        if (req.afterCommit && this.notificationService) {
+            req.afterCommit.push(async () => {
+                await this.notificationService
+                    .sendNotificationToFriends(validUser, "new_post")
+                    .catch(console.error);
+            });
+        }
+        
         return newPost;
 
     }

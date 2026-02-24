@@ -53,15 +53,10 @@ class User_Post_ReactionService {
         // Validálás
         this._validateReactionData(reactionData);
 
-        console.log("asd");
+
 
         // Post létezik-e
-        console.log("DB QUERY START");
-
         const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID, { transaction });
-        console.log("DB QUERY END", targetPost);
-        console.log(targetPost);
-
         if (!targetPost) {
             throw new BadRequestError("A cél post nem található");
         }
@@ -93,13 +88,13 @@ class User_Post_ReactionService {
 
 
         // email az erintett usernek commit utan
-        req.afterCommit?.push(() =>
-            this.notificationService
-                .sendNotificationToUser(validUser, "new_post_reaction")
-                .catch(err => console.error("Email error:", err))
-        );
-
-
+        if (req.afterCommit && this.notificationService) {
+            req.afterCommit.push(async () => {
+                await this.notificationService
+                    .sendNotificationToUser(validUser, "new_post_reaction")
+                    .catch(console.error);
+            });
+        }
 
         return result;
     }

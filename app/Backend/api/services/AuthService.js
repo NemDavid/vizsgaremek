@@ -106,11 +106,13 @@ class AuthService {
         token = authUtils.generateUserToken(user);
 
         // email az erintett user nek
-        req.afterCommit?.push(() =>
-            this.notificationService
-                .sendNotificationToUser(user, "login")
-                .catch(err => console.error("Email error:", err))
-        );
+        if (req.afterCommit && this.notificationService) {
+            req.afterCommit.push(async () => {
+                await this.notificationService
+                    .sendNotificationToUser(user, "login")
+                    .catch(console.error);
+            });
+        }
 
         return { token };
     }

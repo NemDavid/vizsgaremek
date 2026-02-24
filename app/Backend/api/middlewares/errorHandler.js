@@ -7,7 +7,6 @@ function notFound(req, res, next)
 
 function showError(error, req, res, next)
 {
-    console.log(error);
     if(!(error instanceof AppError))
     {
         

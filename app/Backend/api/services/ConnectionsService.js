@@ -170,15 +170,14 @@ class ConnectionsService {
             await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID, { transaction });
 
 
-
-
             // email az erintett user nek
-            req.afterCommit?.push(() =>
-                this.notificationService
-                    .sendNotificationToUser(validUser, "new_friendrequest")
-                    .catch(err => console.error("Email error:", err))
-            );
-
+            if (req.afterCommit && this.notificationService) {
+                req.afterCommit.push(async () => {
+                    await this.notificationService
+                        .sendNotificationToUser(validUser, "new_friendrequest")
+                        .catch(console.error);
+                });
+            }
 
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,
@@ -192,7 +191,14 @@ class ConnectionsService {
             return await this.updateConnection(token, To_User_ID, action, { transaction });
         }
         else if (!existingConnection) {
-            await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
+            // email az erintett user nek
+            if (req.afterCommit && this.notificationService) {
+                req.afterCommit.push(async () => {
+                    await this.notificationService
+                        .sendNotificationToUser(validUser, "new_friendrequest")
+                        .catch(console.error);
+                });
+            }
 
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,

@@ -39,9 +39,7 @@ exports.userMakeReaction = async (req, res, next) => {
             reaction,
         },
             token,
-            {
-                transaction: req.transaction,
-            },
+            req.transaction,
             req,
         );
 

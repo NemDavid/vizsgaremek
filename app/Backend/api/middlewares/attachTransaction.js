@@ -16,7 +16,6 @@ const attachTransaction = (db) => {
                     await transaction.rollback();
                 } else {
                     await transaction.commit();
-                    console.log("TRANSACTION COMMIT");
                     if (req.afterCommit?.length > 0) {
                         Promise.allSettled(req.afterCommit.map(fn => fn()))
                             .catch(err => console.error("AfterCommit error:", err));
