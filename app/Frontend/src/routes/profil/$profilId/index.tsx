@@ -20,7 +20,10 @@ import { BlockUser, ReqFriend } from '@/components/custom/UserConnectionButton/U
 import { PostAccord } from '@/components/PostComponents';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -134,7 +137,7 @@ function RouteComponent() {
       </div>
       <div className="mt-10 px-6">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
-        <LastActivity posts={profil?.data.user.posts} myid={Number(profilId)} mypost={auth?.data.userID === UserID} />
+        <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} />
       </div>
 
     </DefaultUIFrame>

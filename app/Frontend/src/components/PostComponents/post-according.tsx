@@ -6,12 +6,23 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import { AvatarFrame } from '@/components/custom/AvatarFrame/AvatarFrame'
-import { ThumbsDown, ThumbsUp } from 'lucide-react'
+import { ThumbsDown, ThumbsUp, TrashIcon } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { GetComents, getMyreaction, makeReaction } from '../axios/axiosClient'
+import { authStatusRequest, deletpost, GetComents, getMyreaction, makeReaction } from '../axios/axiosClient'
 import { CommentsAccord } from './comment-according'
-
+import { Button } from '../ui/button'
+import { toast } from 'sonner'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { DialogClose } from '@radix-ui/react-dialog'
 
 export type Post = {
     ID: bigint,
@@ -44,6 +55,12 @@ export function PostAccord({ post, className }: { post: Post, className?: string
             queryclinet.refetchQueries({ queryKey: ["profil"] });
         }
     })
+
+    const { data: auth } = useQuery<any>({
+        queryKey: ["auth-status"],
+        queryFn: authStatusRequest,
+        enabled: false,
+    })
     const { data: react } = useQuery({
         queryKey: ["reaction", post.ID],
         queryFn: () => getMyreaction(post.ID),
@@ -67,13 +84,20 @@ export function PostAccord({ post, className }: { post: Post, className?: string
         <Card className={`rounded-2xl! border shadow-md gap-0 py-0 bg-red-50 ${className}`}>
             <CardContent className="p-0">
                 <Accordion type="single" collapsible>
-                    <AccordionItem value="item-1">
+                    <AccordionItem value={`item-${post.ID}`}>
                         <AccordionTrigger className="flex items-center justify-between gap-2 p-0 bg-gray-50 rounded-full!">
                             <div className="flex items-center gap-3 bg-red-50 w-full rounded-full!">
                                 <AvatarFrame userid={userid} className="bg-red-100 rounded-2xl" />
                                 <h2 className="text-xl font-semibold tracking-tight">
                                     {post.title}
                                 </h2>
+                            </div>
+                            <div
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onClick={(e) => e.stopPropagation()}
+                                className="mr-2"
+                            >
+                                <PostDeletion mypost={auth?.data.userID === post.USER_ID} ID={`${post.ID}`} className="m-0" />
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className='bg-red-100'>
@@ -108,3 +132,58 @@ export function PostAccord({ post, className }: { post: Post, className?: string
     )
 }
 
+export function PostDeletion({ mypost, ID, className }: { mypost: boolean, className?: string, ID: string }) {
+    const queryclinet = useQueryClient()
+    const { mutate: deletePost } = useMutation({
+        mutationFn: ({ id }: { id: any }) => deletpost({ id }),
+        onError: (error: any) => {
+            toast.error(error.response.data.message)
+        },
+        onSuccess: () => {
+            toast.success("Sikeresen tőrőlted a posztod", {
+                duration: 3000,
+            })
+            queryclinet.refetchQueries({ queryKey: ["Posts"] });
+            queryclinet.refetchQueries({ queryKey: ["reaction", ID] });
+            queryclinet.refetchQueries({ queryKey: ["profil"] });
+        }
+    })
+    if (!mypost) return;
+    return (
+    <Dialog>
+        <DialogTrigger asChild>
+            <Button
+                variant="destructive"
+                size="icon"
+                className={`hover:bg-red-400 ${className} m-2`}
+            >
+                <TrashIcon />
+            </Button>
+        </DialogTrigger>
+
+        <DialogContent className="bg-rose-100">
+            <DialogHeader>
+                <DialogTitle>Biztosan törölni szeretnéd a posztot?</DialogTitle>
+                <DialogDescription>
+                    Ez a művelet nem vonható vissza. A poszt véglegesen törlésre kerül.
+                </DialogDescription>
+            </DialogHeader>
+
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button variant="outline">Mégse</Button>
+                </DialogClose>
+
+                <DialogClose asChild>
+                    <Button
+                        variant="destructive"
+                        onClick={() => deletePost({ id: ID })}
+                    >
+                        Törlés
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+)
+}
