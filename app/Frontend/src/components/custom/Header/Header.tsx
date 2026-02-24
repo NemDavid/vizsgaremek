@@ -59,12 +59,14 @@ const components: { title: string; to: string; description: string }[] = [
 export default function Header({ className }: { className?: string }) {
   const [ShowHamburgermanu, setShowHamburgermanu] = useState(false);
   const [ShowSettings, setShowSettings] = useState(true);
+  const [ShowSearchBar, setShowSearchBar] = useState(true);
   const [search, setSearch] = useState("");
   const nav = useNavigate()
   useEffect(() => {
     const checkSize = () => {
-      setShowSettings(window.innerWidth >= 900);
-      setShowHamburgermanu(window.innerWidth >= 777);
+      setShowSettings(window.innerWidth >= 960);
+      setShowHamburgermanu(window.innerWidth >= 960);
+      setShowSearchBar(window.innerWidth <= 1130);
     };
 
     checkSize();
@@ -112,16 +114,23 @@ export default function Header({ className }: { className?: string }) {
                     <Link to="/connections">Kapcsolatok</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
-
                 {/* Search */}
                 <NavigationMenuItem>
-                  <div className="flex items-center gap-2 bg-red-900 px-3 py-2 rounded-md">
-                    <Input type="text" placeholder="Felhasználó név" className="h-8" value={search}
-                      onChange={(e) => setSearch(e.target.value)} />
-                    <Button type="submit" variant="link" className="h-8 bg-rose-100" onClick={() => {nav({to:"/profil/$profilId", params: {profilId: search}}) }}>
-                      Keres
-                    </Button>
-                  </div>
+                  {!ShowSearchBar ? (
+                    <div className="flex items-center gap-2 bg-red-900 px-3 py-2 rounded-md">
+                      <Input type="text" placeholder="Felhasználó név" className="h-8" value={search}
+                        onChange={(e) => setSearch(e.target.value)} />
+                      <Button type="submit" variant="link" className="h-8 bg-rose-100" onClick={() => { nav({ to: "/profil/$profilId", params: { profilId: search } }) }}>
+                        Keres
+                      </Button>
+                    </div>
+                  ) :
+                    (
+                      <NavigationMenuLink asChild className={`${navigationMenuTriggerStyle()} text-white bg-red-900`}>
+                        <Link to="/profil" search={{ page: 1, q: "", pageSize: 12 }} >Keres fiókot</Link>
+                      </NavigationMenuLink>
+                    )}
+
                 </NavigationMenuItem>
 
                 {/* Beállítások */}
@@ -195,6 +204,13 @@ export default function Header({ className }: { className?: string }) {
                     className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
                   >
                     <Users className="bg-red-200 rounded-full" />Barátok
+                  </Link>
+                  <Link
+                    to="/profil"
+                    className="px-4 py-2 rounded hover:bg-red-100 bg-red-300"
+                    search={{ page: 1, q: "", pageSize: 12 }}
+                  >
+                    <Users className="bg-red-200 rounded-full" />Fiók keresés
                   </Link>
                   <Link
                     to="/settings"

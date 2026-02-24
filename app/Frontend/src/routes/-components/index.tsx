@@ -18,7 +18,7 @@ export function MainPage() {
         return () => window.removeEventListener("resize", checkSize);
     }, []);
     return (
-        <DefaultUIFrame Hirdetes={showAd}>
+        <DefaultUIFrame Hirdetes={true} Kicsi={!showAd}>
             <PostsFrame />
 
         </DefaultUIFrame>

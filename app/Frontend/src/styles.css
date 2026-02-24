@@ -200,6 +200,12 @@ code {
 }
 
 html {
-  scrollbar-gutter: stable; /* foglal helyet akkor is, ha épp nincs scrollbar */
   background: rgb(121, 36, 36);
+}
+
+/* Csak 1000px felett legyen scrollbar-gutter */
+@media (min-width: 1000px) {
+  html {
+    scrollbar-gutter: stable;
+  }
 }
