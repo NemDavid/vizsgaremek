@@ -9,7 +9,6 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../api/db');
 const bcrypt = require('bcrypt');
-const { BadRequestError } = require('../api/errors');
 const authUtils = require('../api/utilities/authUtils');
 
 // 3. CRITICAL: JWT secret beállítás - ez hiányzott!

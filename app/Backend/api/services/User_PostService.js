@@ -132,7 +132,7 @@ class User_PostService {
         } catch (error) {
             // If the execution reaches this line, an error occurred.
             // The transaction has already been rolled back automatically by Sequelize!
-            console.error("Reaction transaction error:", error);
+            //console.error("Reaction transaction error:", error);
             throw error;
         }
         //------------------------------------------------------------

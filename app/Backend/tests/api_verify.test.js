@@ -10,7 +10,7 @@ jest.mock("../api/db");
 const db = require("../api/db");
 
 const authUtils = require("../api/utilities/authUtils");
-const { BadRequestError } = require("../api/errors");
+
 
 
 

@@ -2,15 +2,12 @@ const { BadRequestError } = require("../errors");
 const cloudUtils = require("../utilities/cloudUtils");
 
 
-class AdvertisementService
-{
-    constructor(db)
-    {
+class AdvertisementService {
+    constructor(db) {
         this.advertisementRepository = require("../repositories")(db).advertisementRepository;
     }
 
-    async getAdvertisements()
-    {
+    async getAdvertisements() {
         return await this.advertisementRepository.getAdvertisements();
     }
 
@@ -35,8 +32,7 @@ class AdvertisementService
         return randomAdvertisement;
     }
 
-    async deleteAdvertisement(advertisementId)
-    {
+    async deleteAdvertisement(advertisementId) {
         if (!advertisementId) {
             throw new BadRequestError("hiányzó advertisement ID");
         }
@@ -58,8 +54,7 @@ class AdvertisementService
         return deleteProcess;
     }
 
-    async createAdvertisement(advertisementData)
-    {
+    async createAdvertisement(advertisementData) {
         if (!advertisementData) {
             throw new BadRequestError("Hiányzik a data");
         }
