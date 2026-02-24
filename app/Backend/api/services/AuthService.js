@@ -89,7 +89,7 @@ class AuthService {
 
             return result;
         } catch (error) {
-            console.error("Registration transaction error:", error);
+            //console.error("Registration transaction error:", error);
             throw error;
 
         }

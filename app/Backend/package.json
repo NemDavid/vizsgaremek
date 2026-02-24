@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "jest --runInBand --detectOpenHandles",
-    "test:coverage": "jest --coverage",
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage",
     "start": "nodemon ."
   },
   "keywords": [],
@@ -26,6 +26,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "dotenv": "^17.2.2",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",

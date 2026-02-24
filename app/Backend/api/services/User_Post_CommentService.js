@@ -114,7 +114,7 @@ class User_Post_CommentService {
                     );
                 } catch (xpErr) {
                     // Ha az XP hozzáadás hibázik, de nem akarjuk megszakítani a comment létrehozást
-                    console.warn("XP hozzáadás sikertelen:", xpErr.message);
+                    //console.warn("XP hozzáadás sikertelen:", xpErr.message);
                     // Itt döntés kérdése: ha kritikus az XP hozzáadás, akkor dobjuk tovább a hibát
                     // Ha nem kritikus, csak logoljuk és folytatjuk
                     // Most úgy döntök, hogy nem dobom tovább, mert a komment létrehozása fontosabb
@@ -145,7 +145,7 @@ class User_Post_CommentService {
         } catch (error) {
             // If the execution reaches this line, an error occurred.
             // The transaction has already been rolled back automatically by Sequelize!
-            console.error("Comment creation transaction error:", error);
+            //console.error("Comment creation transaction error:", error);
             throw error;
         }
         //------------------------------------------------------------

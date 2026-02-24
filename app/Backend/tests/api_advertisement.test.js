@@ -5,22 +5,6 @@ require("dotenv").config({ quiet: true });
 const app = require("../app");
 
 jest.mock("../api/db");
-jest.mock("../api/utilities/cloudUtils", () => ({
-  getStorage: () => ({
-    single: () => (req, res, next) => {
-      req.file = {
-        filename: "mocked_image.jpg",
-        originalname: "mocked_image.jpg",
-        mimetype: "image/jpeg",
-        size: 1024,
-      };
-      next();
-    },
-  }),
-
-  deleteImage: jest.fn(), // <<< EZ KELL a DELETE-hez
-}));
-
 
 const db = require("../api/db");
 
@@ -171,29 +155,76 @@ describe("advertismentController", () => {
                     const token = authUtils.generateUserToken(testUser);
                     const cookie = `user_token=${token}`;
 
-                    const ad_data = {
-                        title: "post_title",
-                        subject: "post_subject",
-                    }
-
+                    const ad_data = { title: "post_title", subject: "post_subject" };
                     const path = require("path");
-
                     const filePath = path.join(__dirname, "fixtures", "test_advertisment.jpg");
 
                     const res = await request(app)
                         .post("/api/advertisement")
                         .field("title", ad_data.title)
                         .field("subject", ad_data.subject)
-                        .attach("file", filePath)
+                        .attach("image", filePath)
                         .set("Cookie", [cookie])
                         .expect(201);
 
+                    // response ellenőrzés (ami ténylegesen jön)
+                    expect(res.body.ID).toBeDefined();
+                    expect(res.body.imagePath).toContain("/cloud/");
+                    expect(res.body.imagePath).toMatch(/^http:\/\/localhost:6769\/cloud\//);
+                    expect(res.body.imagePath).toMatch(/\.(jpg|jpeg|png|webp)$/i);
+                    expect(res.body.created_at).toBeDefined();
+
+                    // DB ellenőrzés (title/subject tényleg mentve van-e)
+                    const created = await db.Advertisement.findOne({ where: { ID: res.body.ID } });
+                    expect(created).not.toBeNull();
+                    expect(created.title).toBe(ad_data.title);
+                    expect(created.subject).toBe(ad_data.subject);
+                })
+                test("should return 400 if image is missing", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const res = await request(app)
+                        .post("/api/advertisement")
+                        .field("title", "post_title")
+                        .field("subject", "post_subject")
+                        // nincs attach("image", ...)
+                        .set("Cookie", [cookie])
+                        .expect(400);
+
+                    // controllered: "Hiányzó kép fájl (file)." üzenet :contentReference[oaicite:2]{index=2}
+                    expect(res.body).toBeDefined();
+                    expect(res.body.message).toBe("Hiányzó kép fájl (file).");
+                });
+
+                test("should return 403 if file type is not allowed", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const path = require("path");
+                    // csinálj egy nem-kép fixture-t: tests/fixtures/not_image.txt
+                    const badFile = path.join(__dirname, "fixtures", "not_image.txt");
+
+                    const res = await request(app)
+                        .post("/api/advertisement")
+                        .field("title", "post_title")
+                        .field("subject", "post_subject")
+                        .attach("image", badFile)
+                        .set("Cookie", [cookie])
+                        .expect(403);
 
                     expect(res.body).toBeDefined();
-                    expect(res.body.title).toBe(ad_data.title);
-                    expect(res.body.subject).toBe(ad_data.subject);
-                    expect(res.body.imagePath).toBe("mocked_image.jpg");
-                })
+                    expect(res.body.message).toBe("Rossz file típus");
+                });
+
+                test("should return 401/400 if auth cookie missing (depends on your middleware)", async () => {
+                    const res = await request(app)
+                        .post("/api/advertisement")
+                        .send({ title: "x", subject: "y" })   // <- JSON, nem multipart
+                        .expect(401);
+
+                    expect(res.body.message).toBe("Hiányzó user token");
+                });
             })
         });
     });

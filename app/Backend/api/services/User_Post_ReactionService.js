@@ -114,7 +114,7 @@ class User_Post_ReactionService {
         } catch (error) {
             // If the execution reaches this line, an error occurred.
             // The transaction has already been rolled back automatically by Sequelize!
-            console.error("Reaction transaction error:", error);
+            //console.error("Reaction transaction error:", error);
             throw error;
         }
         //------------------------------------------------------------
@@ -181,7 +181,7 @@ class User_Post_ReactionService {
                 transaction
             );
         } catch (xpErr) {
-            console.warn("XP hiba:", xpErr.message);
+            //console.warn("XP hiba:", xpErr.message);
             // Ne dobjuk tovább, mert a reaction sikeres volt
         }
 
@@ -249,7 +249,7 @@ class User_Post_ReactionService {
         try {
             await this.user_profileService.addXPToUser(reactionData.USER_ID, 10, transaction);
         } catch (xpErr) {
-            console.warn("XP hiba:", xpErr.message);
+            //console.warn("XP hiba:", xpErr.message);
             // Ne dobjuk tovább, mert a reaction sikeres volt
         }
 

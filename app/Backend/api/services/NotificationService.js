@@ -29,7 +29,7 @@ class NotificationService {
 
         } catch (err) {
             // Email hiba nem akadályozza az értesítési folyamatot
-            console.error('Hiba az értesítéssel kapcsolatban:', err);
+            //console.error('Hiba az értesítéssel kapcsolatban:', err);
             throw err;
         }
     }
@@ -69,7 +69,7 @@ class NotificationService {
 
         } catch (err) {
             // Email hiba nem akadályozza az értesítési folyamatot
-            console.error('Hiba az értesítéssel kapcsolatban:', err);
+            //console.error('Hiba az értesítéssel kapcsolatban:', err);
             throw err;
         }
     }
