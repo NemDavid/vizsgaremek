@@ -112,8 +112,9 @@ class User_PostRepository {
 
     async updateUser_Post(postId, updateData, options = {}) {
         try {
+            console.log("postId:", postId, typeof postId)
             const [affectedRows] = await this.User_Post.update(updateData, {
-                where: { ID: postId },
+                where: { ID: BigInt(postId) },
                 transaction: options.transaction
             });
 

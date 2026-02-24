@@ -198,3 +198,8 @@ code {
   background: #ad7979; /* kb red-900 */
   border-radius: 9999px;
 }
+
+html {
+  scrollbar-gutter: stable; /* foglal helyet akkor is, ha épp nincs scrollbar */
+  background: rgb(121, 36, 36);
+}

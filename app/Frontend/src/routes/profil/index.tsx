@@ -111,17 +111,6 @@ function RouteComponent() {
     })
   }
 
-  const changePageSize = (newSize: number) => {
-    navigate({
-      to: "/profil",
-      search: (prev) => ({
-        ...prev,
-        page: 1,
-        pageSize: newSize,
-      }),
-    })
-  }
-
   const pageItems = useMemo(
     () => getPageItems(page, totalPages),
     [page, totalPages]

@@ -23,6 +23,6 @@ router.delete("/:postId", user_postController.deleteUser_Post);
 
 router.post("/", upload.single("media"), cloudMiddleware.Req_HasFile, user_postController.createUser_Post);
 
-router.patch("/:postId", user_postController.updateUser_Post);
+router.patch("/:postId",upload.single("media"), cloudMiddleware.Req_HasFile, user_postController.updateUser_Post);
 
 module.exports = router;

@@ -144,20 +144,7 @@ function RouteComponent() {
   )
 }
 
-function LastActivity({ posts, myid, mypost }: { posts?: any[], myid: any, mypost: boolean }) {
-  const qc = useQueryClient();
-  const { mutate: deletePost } = useMutation({
-    mutationFn: ({ id }: { id: bigint }) => deletpost({ id }),
-    onError: (error: any) => {
-      toast.error(error.response.data.message)
-    },
-    onSuccess: () => {
-      toast.success("Sikeresen tőrőlted a posztod", {
-        duration: 3000,
-      })
-      qc.refetchQueries({ queryKey: ["profil"] })
-    }
-  })
+function LastActivity({ posts, myid }: { posts?: any[], myid: any, mypost: boolean }) {
   if (!posts || posts.length === 0) {
     return (
       <div className="text-sm text-slate-200">
@@ -179,23 +166,10 @@ function LastActivity({ posts, myid, mypost }: { posts?: any[], myid: any, mypos
               </div>
             </div>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className='bg-transparent border-0'>
             <DialogHeader>
               <DialogTitle></DialogTitle>
             </DialogHeader>
-            {mypost && (
-              <div className="bg-red-100 p-2 rounded-xl flex items-center justify-center gap-2">
-                <Button variant="destructive" size="icon" className='hover:bg-red-400'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    deletePost({ id: BigInt(String(p.ID)) })
-                  }}>
-                  <TrashIcon />
-                </Button>
-                <p>Törlés</p>
-              </div>
-            )}
             <PostAccord post={p} />
           </DialogContent>
         </Dialog>

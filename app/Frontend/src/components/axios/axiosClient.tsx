@@ -176,6 +176,11 @@ export async function PasswordChange(data: any) {
 
   return response;
 }
+export async function PostUpdate(id:number,data: any) {
+  const response = await FormDataClient.patch(`/api/posts/${id}`, data);
+
+  return response;
+}
 
 // #endregion
 

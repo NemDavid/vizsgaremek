@@ -67,10 +67,25 @@ exports.createUser_Post = async (req, res, next) => {
 exports.updateUser_Post = async (req, res, next) => {
     try {
         const { title, content } = req.body || {};
-        const postId = req.postId;
-        const token = req.cookies['user_token'];
+        const postId = req.params.postId; // ✅ ez legyen biztosan
+        const token = req.cookies["user_token"];
 
-        const updatedUser_Post = await user_postService.updatePost(token, postId, { title, content });
+        const mediaDeleted =
+            req.body?.mediaDeleted === "true" || req.body?.mediaDeleted === true;
+
+        let media_url =
+            req.file && !mediaDeleted
+                ? `http://localhost:6769/cloud/${req.file.filename}`
+                : undefined;
+
+        if (mediaDeleted) media_url = null;
+
+        const updatedUser_Post = await user_postService.updatePost(
+            token,
+            postId,
+            { title, content, media_url }
+        );
+
         res.status(200).json(updatedUser_Post);
     } catch (error) {
         next(error);

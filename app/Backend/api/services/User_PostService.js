@@ -23,7 +23,7 @@ class User_PostService {
         if (!Number.isInteger(page) || !Number.isInteger(perpage)) {
             throw new BadRequestError("Hiányzó Adatok");
         }
-        if (page < 1 || perpage < 1) {
+        if (page < 0 || perpage < 0) {
             throw new ValidationError("Rossz adatok");
         }
         return await this.user_postRepository.getUser_PostsByLimit(page, perpage);
