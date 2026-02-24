@@ -44,20 +44,23 @@ class User_SettingsService {
     }
 
 
-    async updateUser_Settings(token, updateData) {
+    async updateUser_Settings(token, updateData, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         const ID = encodedToken.userID;
 
-        if (!updateData.Notifications || updateData.DataPrivacy == null) {
+        console.log(updateData);
+        
+
+        if (!updateData.Notifications) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
         
-        const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData);
+        const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData, { transaction });
         if (!affectedRows) {
             throw new BadRequestError("User_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })
         }
 
-        const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(ID);
+        const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(ID, { transaction });
 
         if (!updateUser_Settings) {
             throw new BadRequestError("A frissitett user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` });
