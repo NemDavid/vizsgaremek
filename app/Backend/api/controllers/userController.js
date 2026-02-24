@@ -27,12 +27,8 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
         const asNumber = parseInt(uniqIdentifier, 10);
 
         if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
-            console.log("szam");
-            
             user = await userService.getUserByID(asNumber);
         } else {
-            console.log("string");
-            
             user = await userService.getUserByUsername(uniqIdentifier);
         }
 

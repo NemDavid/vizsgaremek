@@ -27,8 +27,7 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
  *         last_name:
  *           type: string
  *         birth_date:
- *           type: string
- *           format: date
+ *           type: date
  *         birth_place:
  *           type: string
  *         schools:
@@ -49,18 +48,15 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
  *           type: string
  *         role:
  *           type: string
- *           enum: [user, admin, moderator, owner]
+ *           enum: ['user', 'admin', 'moderator', 'owner']
  *         is_loggedIn:
  *           type: boolean
  *         last_login:
- *           type: string
- *           format: date
+ *           type: date
  *         created_at:
- *           type: string
- *           format: date
+ *           type: date
  *         updated_at:
- *           type: string
- *           format: date
+ *           type: date
  *         profile:
  *           $ref: "#/components/schemas/UserProfile"
  */
