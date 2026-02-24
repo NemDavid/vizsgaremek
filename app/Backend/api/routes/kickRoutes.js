@@ -14,7 +14,6 @@ router.get("/me", kickController.getMyKicks);
 router.get("/all/sent", kickController.getKicksSentByUser);
 router.get("/all/recieved", kickController.getKicksRecievedByUser);
 
-router.get("/all/page/:paramPage", kickController.getKicksByPage);
 
 router.post("/:userId", kickController.doKick);
 

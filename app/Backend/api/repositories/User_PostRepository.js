@@ -69,7 +69,7 @@ class User_PostRepository {
 
     async getUser_Posts_ByuserId(userId) {
         try {
-            return await this.User_Post.scope("allPostData").findOne({
+            return await this.User_Post.scope("allPostData").findAll({
                 where: { USER_ID: userId }
             });
         } catch (error) {

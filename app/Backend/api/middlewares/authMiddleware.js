@@ -6,7 +6,7 @@ exports.userIsLoggedIn = (req, res, next) =>
 {
     const { user_token } = req.cookies || {};
 
-    if(!user_token) return next(new UnauthorizedError("Usrer token is missing"));
+    if(!user_token) return next(new UnauthorizedError("Hiányzó user token"));
 
     try
     {
@@ -14,7 +14,7 @@ exports.userIsLoggedIn = (req, res, next) =>
     }
     catch(error)
     {
-        return next(new ValidationError("Failed to validate token"));
+        return next(new ValidationError("Hiányzó vagy lejárt token."));
     }
 
     next();

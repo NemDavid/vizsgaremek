@@ -245,7 +245,7 @@ describe("user_settings_Controller", () => {
                 test.each([
                     [{ POST_ID: undefined, reaction: "like", }, "Hiányzó post id"],
                     [{ POST_ID: rawPosts[2].ID, reaction: undefined, }, "Hiányzó reaction"],
-                    [{ POST_ID: 9999, reaction: "like", }, "A cel post nem található"],
+                    [{ POST_ID: 9999, reaction: "like", }, "A cél post nem található"],
                 ])("should throw error on missing attributes", async (payload, expextedMessage) => {
                     const token = authUtils.generateUserToken(testUser);
                     const cookie = `user_token=${token}`;

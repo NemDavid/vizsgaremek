@@ -2,15 +2,26 @@ const cors = require("cors");  // (le kell tolteni -- npm install cors)
 const express = require("express");
 const cookieParser = require("cookie-parser");
 
-
 const app = express();
-
 const api = express();
 
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
 
+const sweggerUI = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+
+const swaggerSpec = swaggerJsdoc({
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "mihirünk dokumentáció",
+            version: "1.0.0",
+            description: "# Üdv a mihirünk API dokumentációjában."
+        }
+    },
+    apis: ["./api/routes/*.js", "./api/routes/**/*.js"],
+});
 
 
 if (process.env.Docker_Active != "false") {
@@ -20,14 +31,13 @@ if (process.env.Docker_Active != "false") {
         origin: "http://localhost/",
     }));
 }
-else {  
+else {
     console.log(`origin "http://localhost:3000"`);
     app.use(cors({
         credentials: true,
         origin: "http://localhost:3000",
     }));
 }
-
 
 app.use(cookieParser());
 
@@ -46,13 +56,14 @@ const advertisementRoute = require("./api/routes/advertisementRoute");
 
 const errorHandler = require("./api/middlewares/errorHandler");
 
-
-
 if (process.env.NODE_ENV !== "test") {
-  require("./api/db/");
+    require("./api/db/");
 }
 
 app.use("/api", api);
+
+/* ✅ SWAGGER DOCS */
+api.use("/docs", sweggerUI.serve, sweggerUI.setup(swaggerSpec));
 
 api.use("/auth", authRoutes);
 api.use("/connections", connectionsRoute);
@@ -71,6 +82,5 @@ app.use("/cloud", express.static("public/cloud"));
 
 api.use(errorHandler.notFound);
 app.use(errorHandler.showError);
-
 
 module.exports = app;

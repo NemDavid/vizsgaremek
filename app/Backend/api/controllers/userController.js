@@ -80,26 +80,6 @@ exports.deleteUser = async (req, res, next) => {
     }
 };
 
-exports.createUser = async (req, res, next) => {
-    const { email, password_hash, username } = req.body || {};
-    try {
-        const newUser = await userService.createUser({
-            email,
-            password_hash,
-            username,
-        });
-
-        const token = authUtils.generateUserToken(newUser);
-
-        res.status(201).json({
-            user: newUser,
-            token
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
 exports.updateUser = async (req, res, next) => {
     try {
         const updatedUser = await userService.updateUser(req.userId, req.body);
