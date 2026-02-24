@@ -34,7 +34,7 @@ class User_SettingsService {
 
     async createUser_Settings(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
-        
+
         return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID }, { transaction });
     }
 
@@ -48,13 +48,12 @@ class User_SettingsService {
         const encodedToken = authUtils.verifyToken(token);
         const ID = encodedToken.userID;
 
-        console.log(updateData);
-        
 
-        if (!updateData.Notifications) {
+        if (!updateData.Notifications && !updateData.DataPrivacy) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
-        
+
+
         const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData, { transaction });
         if (!affectedRows) {
             throw new BadRequestError("User_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })
