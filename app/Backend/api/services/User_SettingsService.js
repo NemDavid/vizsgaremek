@@ -49,7 +49,7 @@ class User_SettingsService {
         const ID = encodedToken.userID;
 
 
-        if (!updateData.Notifications && !updateData.DataPrivacy) {
+        if (!updateData.Notifications && updateData.DataPrivacy === undefined) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
 
