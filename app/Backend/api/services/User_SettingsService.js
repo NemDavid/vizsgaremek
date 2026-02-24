@@ -6,17 +6,17 @@ class User_SettingsService {
         this.user_settingsRepository = require("../repositories")(db).user_SettingsRepository;
     }
 
-    async getUser_SettingsByToken(token) {
+    async getUser_SettingsByToken(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
 
-        return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID);
+        return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID, { transaction });
     }
 
-    async getUser_SettingsByID(userId) {
-        return await this.user_settingsRepository.getUser_SettingsByID(userId);
+    async getUser_SettingsByID(userId, transaction) {
+        return await this.user_settingsRepository.getUser_SettingsByID(userId, { transaction });
     }
 
-    async deleteUser_Settings(token) {
+    async deleteUser_Settings(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         const user_SettingsId = encodedToken.userID;
 
@@ -24,7 +24,7 @@ class User_SettingsService {
             throw new BadRequestError("Hiányzó user_Settings ID");
         }
 
-        const deleteProcess = await this.user_settingsRepository.deleteUser_Settings(user_SettingsId);
+        const deleteProcess = await this.user_settingsRepository.deleteUser_Settings(user_SettingsId, { transaction });
 
         if (deleteProcess.deleted == 0) {
             throw new BadRequestError("Nincs ilyen settings");
@@ -32,10 +32,10 @@ class User_SettingsService {
         return deleteProcess;
     }
 
-    async createUser_Settings(token) {
+    async createUser_Settings(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         
-        return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID });
+        return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID }, { transaction });
     }
 
     async createUser_SettingsByID(ID, options = {}) {

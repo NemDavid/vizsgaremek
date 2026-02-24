@@ -13,14 +13,14 @@ class ConnectionsService {
         this.notificationService = notificationService;
     }
 
-    async getConnections() {
-        return await this.connectionsRepository.getConnections();
+    async getConnections(transaction) {
+        return await this.connectionsRepository.getConnections({ transaction });
     }
 
-    async getCurrentUserConnectionsAll(token) {
+    async getCurrentUserConnectionsAll(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         const Tid = encodedToken.userID;
-        const data = await this.connectionsRepository.getCurrentUserConnectionsAll(Tid)
+        const data = await this.connectionsRepository.getCurrentUserConnectionsAll(Tid, { transaction });
 
         let response = []
         for (let i = 0; i < data.length; i++) {
@@ -45,25 +45,25 @@ class ConnectionsService {
         return response;
     }
 
-    async getCurrentUserConnections(token, status) {
+    async getCurrentUserConnections(token, status, transaction) {
         const encodedToken = authUtils.verifyToken(token);
 
-        const filteredConnections = await this.connectionsRepository.getCurrentUserConnections(encodedToken.userID, status);
+        const filteredConnections = await this.connectionsRepository.getCurrentUserConnections(encodedToken.userID, status, { transaction });
 
         return filteredConnections.map(con => ({ userId: con.To_User_ID }));
     }
 
-    async getCurrentUserFriendRequests(token) {
+    async getCurrentUserFriendRequests(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
 
 
-        return await this.connectionsRepository.getCurrentUserFriendRequests(encodedToken.userID);
+        return await this.connectionsRepository.getCurrentUserFriendRequests(encodedToken.userID, { transaction });
     }
 
-    async getCurrentUserFriendlist(token) {
+    async getCurrentUserFriendlist(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
 
-        const rawFriendlist = await this.connectionsRepository.getCurrentUserFriendlist(encodedToken.userID);
+        const rawFriendlist = await this.connectionsRepository.getCurrentUserFriendlist(encodedToken.userID, { transaction });
 
         const filteredFriendlist = rawFriendlist.map(friendItem => (
             {
@@ -72,15 +72,15 @@ class ConnectionsService {
         ));
 
         const friendsWithProfile = await Promise.all(filteredFriendlist.map(
-            friend => this.userRepository.getUserByID(friend.friendId)
+            friend => this.userRepository.getUserByID(friend.friendId, { transaction })
         )
         );
 
         return friendsWithProfile;
     }
 
-    async getUserFriendlistByID(userId) {
-        const rawFriendlist = await this.connectionsRepository.getUserFriendlistByID(userId);
+    async getUserFriendlistByID(userId, transaction) {
+        const rawFriendlist = await this.connectionsRepository.getUserFriendlistByID(userId, { transaction });
 
         const filteredFriendlist = rawFriendlist.map(friendItem => (
             {
@@ -89,7 +89,7 @@ class ConnectionsService {
         ));
 
         const friendsWithProfile = await Promise.all(filteredFriendlist.map(
-            friend => this.userRepository.getUserByID(friend.friendId)
+            friend => this.userRepository.getUserByID(friend.friendId, { transaction })
         )
         );
 
@@ -97,7 +97,7 @@ class ConnectionsService {
         return friendsWithProfile;
     }
 
-    async deleteConnection(token, To_User_ID) {
+    async deleteConnection(token, To_User_ID, transaction) {
         if (!token) {
             throw new BadRequestError("hiányzó token");
         }
@@ -107,7 +107,7 @@ class ConnectionsService {
 
         const encodedToken = authUtils.verifyToken(token);
 
-        const validUser = await this.userRepository.getUser(To_User_ID);
+        const validUser = await this.userRepository.getUser(To_User_ID, { transaction });
         if (!validUser) {
             throw new BadRequestError("Nincs ilyen felhasználó");
         }
@@ -120,7 +120,7 @@ class ConnectionsService {
         return deleteProcess;
     }
 
-    async createConnection(token, To_User_ID, action) {
+    async createConnection(token, To_User_ID, action, transaction, req) {
         if (!token)
             throw new BadRequestError("hiányzó token");
         if (!To_User_ID) {
@@ -133,7 +133,7 @@ class ConnectionsService {
 
 
         // valid user-e
-        const validUser = await this.userRepository.getUser(To_User_ID);
+        const validUser = await this.userRepository.getUser(To_User_ID, { transaction });
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
@@ -144,8 +144,8 @@ class ConnectionsService {
             throw new BadRequestError("magadat nem tudod kezelni");
         }
         if (action == "pending") {
-            const friendlist = await this.getCurrentUserFriendlist(token);
-            const p = await this.userRepository.getUserByID(encodedToken.userID)
+            const friendlist = await this.getCurrentUserFriendlist(token, { transaction });
+            const p = await this.userRepository.getUserByID(encodedToken.userID, { transaction });
             const maxFriend = p.profile.level + 50;
             if (friendlist.length > maxFriend) {
                 throw new BadRequestError("Elérted a barát limited")
@@ -153,7 +153,7 @@ class ConnectionsService {
         }
 
 
-        const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
+        const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID, { transaction });
 
 
         if (existingConnection && existingConnection.Status == "accepted" && action !== "blocked") {
@@ -167,18 +167,29 @@ class ConnectionsService {
                 throw new BadRequestError("Ez a felhasználó letiltott téged, ezért nem tudod barátnak kérni!");
             }
         } else if (existingConnection && existingConnection.Status == "pending") {
-            await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID);
+            await this.connectionsRepository.deleteConnection(encodedToken.userID, To_User_ID, { transaction });
 
-            await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
+
+
+
+            // email az erintett user nek
+            req.afterCommit?.push(() =>
+                this.notificationService
+                    .sendNotificationToUser(validUser, "new_friendrequest")
+                    .catch(err => console.error("Email error:", err))
+            );
+
 
             return await this.connectionsRepository.createConnection({
                 User_Requested_ID: encodedToken.userID,
                 To_User_ID,
-                Status: action
-            });
+                Status: action,
+            },
+                { transaction }
+            );
         }
         else if (existingConnection && (existingConnection.Status == "accepted" || existingConnection.Status == "pending")) {
-            return await this.updateConnection(token, To_User_ID, action);
+            return await this.updateConnection(token, To_User_ID, action, { transaction });
         }
         else if (!existingConnection) {
             await this.notificationService.sendNotificationToUser(validUser, "new_friendrequest");
@@ -187,11 +198,13 @@ class ConnectionsService {
                 User_Requested_ID: encodedToken.userID,
                 To_User_ID,
                 Status: action
-            });
+            },
+                { transaction }
+            );
         }
     }
 
-    async updateConnection(token, To_User_ID, action) {
+    async updateConnection(token, To_User_ID, action, transaction) {
         if (!token) throw new BadRequestError("Hiányzó token");
         if (!To_User_ID) {
             throw new BadRequestError("Hiányzó To_User_ID");
@@ -205,7 +218,7 @@ class ConnectionsService {
 
 
         // valid user-e
-        const validUser = await this.userRepository.getUser(To_User_ID);
+        const validUser = await this.userRepository.getUser(To_User_ID, { transaction });
         if (!validUser) {
             throw new BadRequestError("nincs ilyen felhasználó");
         }
@@ -218,7 +231,7 @@ class ConnectionsService {
         }
 
 
-        const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
+        const existingConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID, { transaction });
         if (!existingConnection) {
             throw new BadRequestError("Nincs ilyen kapcsolat");
         }
@@ -227,11 +240,11 @@ class ConnectionsService {
         // elfogadas es blockolas kezelese
         let affectedRows = 0;
         if (action == "accepted") {
-            affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, { Status: action });
+            affectedRows = await this.connectionsRepository.updateConnection(To_User_ID, encodedToken.userID, { Status: action }, { transaction });
         }
         else if (action == "blocked" && encodedToken.userID == existingConnection.User_Requested_ID) {
 
-            affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, { Status: action });
+            affectedRows = await this.connectionsRepository.updateConnection(encodedToken.userID, To_User_ID, { Status: action }, { transaction });
         }
         // blockolasnal megforditjuk a kapcsolatot, ha akihez erkezett a request, az blokkolja
         else if (action == "blocked" && encodedToken.userID == existingConnection.To_User_ID) {
@@ -240,7 +253,9 @@ class ConnectionsService {
                 To_User_ID,
                 User_Requested_ID: encodedToken.userID,
                 Status: action
-            });
+            },
+                { transaction }
+            );
         }
 
 
@@ -250,7 +265,7 @@ class ConnectionsService {
         }
 
 
-        const updateConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID);
+        const updateConnection = await this.connectionsRepository.getConnection(encodedToken.userID, To_User_ID, { transaction });
         if (!updateConnection) {
             throw new BadRequestError("az updatelt connection  nem található");
         }

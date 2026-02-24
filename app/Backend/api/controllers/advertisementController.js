@@ -3,7 +3,7 @@ const { advertisementService } = require("../services")(db);
 
 exports.getAdvertisements = async (req, res, next) => {
     try {
-        res.status(200).json(await advertisementService.getAdvertisements());
+        res.status(200).json(await advertisementService.getAdvertisements(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -11,15 +11,15 @@ exports.getAdvertisements = async (req, res, next) => {
 
 exports.getAdvertisement = async (req, res, next) => {
     try {
-        res.status(200).json(await advertisementService.getAdvertisement(req.itemId));
+        res.status(200).json(await advertisementService.getAdvertisement(req.itemId, req.transaction));
     } catch (error) {
         next(error);
     }
 };
 
-exports.getRandomAdvertisement = async (req, res, next) => {   
+exports.getRandomAdvertisement = async (req, res, next) => {
     try {
-        res.status(200).json(await advertisementService.getRandomAdvertisement());
+        res.status(200).json(await advertisementService.getRandomAdvertisement(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -29,7 +29,7 @@ exports.getRandomAdvertisement = async (req, res, next) => {
 
 exports.deleteAdvertisement = async (req, res, next) => {
     try {
-        res.status(204).json(await advertisementService.deleteAdvertisement(req.itemId));
+        res.status(200).json(await advertisementService.deleteAdvertisement(req.itemId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -38,13 +38,15 @@ exports.deleteAdvertisement = async (req, res, next) => {
 exports.createAdvertisement = async (req, res, next) => {
     const { title, subject } = req.body || {};
     const imagePath = `http://localhost:6769/cloud/${req.file.filename}`;
-    
+
     try {
         const newAdvertisement = await advertisementService.createAdvertisement({
             title,
             subject,
             imagePath
-        });
+        },
+            req.transaction
+        );
 
         res.status(201).json(newAdvertisement);
     } catch (error) {

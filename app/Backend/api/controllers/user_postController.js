@@ -3,7 +3,7 @@ const { user_postService } = require("../services")(db);
 
 exports.getUser_Posts = async (req, res, next) => {
     try {
-        res.status(200).json(await user_postService.getUser_Posts());
+        res.status(200).json(await user_postService.getUser_Posts(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -15,7 +15,7 @@ exports.getUser_PostsByLimit = async (req, res, next) => {
         const perPage = parseInt(req.query.perPage);
 
 
-        res.status(200).json(await user_postService.getUser_PostsByLimit(page, perPage));
+        res.status(200).json(await user_postService.getUser_PostsByLimit(page, perPage, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -23,7 +23,7 @@ exports.getUser_PostsByLimit = async (req, res, next) => {
 
 exports.getUser_Posts_ByuserId = async (req, res, next) => {
     try {
-        res.status(200).json(await user_postService.getUser_Posts_ByuserId(req.userId));
+        res.status(200).json(await user_postService.getUser_Posts_ByuserId(req.userId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -31,7 +31,7 @@ exports.getUser_Posts_ByuserId = async (req, res, next) => {
 
 exports.getUser_Post_ByID = async (req, res, next) => {
     try {
-        res.status(200).json(await user_postService.getUser_Post_ByID(req.postId));
+        res.status(200).json(await user_postService.getUser_Post_ByID(req.postId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -41,7 +41,7 @@ exports.deleteUser_Post = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(204).json(await user_postService.deleteUser_Post(token, req.postId));
+        res.status(200).json(await user_postService.deleteUser_Post(token, req.postId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -58,7 +58,10 @@ exports.createUser_Post = async (req, res, next) => {
             title,
             content,
             media_url: req.file ? `http://localhost:6769/cloud/${req.file.filename}` : undefined
-        }));
+        },
+        req.transaction,
+        req,
+    ));
     } catch (error) {
         next(error);
     }
@@ -67,7 +70,7 @@ exports.createUser_Post = async (req, res, next) => {
 exports.updateUser_Post = async (req, res, next) => {
     try {
         const { title, content } = req.body || {};
-        const postId = req.params.postId; // ✅ ez legyen biztosan
+        const postId = req.params.postId;
         const token = req.cookies["user_token"];
 
         const mediaDeleted =
@@ -83,7 +86,8 @@ exports.updateUser_Post = async (req, res, next) => {
         const updatedUser_Post = await user_postService.updatePost(
             token,
             postId,
-            { title, content, media_url }
+            { title, content, media_url },
+            req.transaction,
         );
 
         res.status(200).json(updatedUser_Post);

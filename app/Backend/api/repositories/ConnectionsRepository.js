@@ -7,15 +7,15 @@ class ConnectionsRepository {
         this.Op = db.Sequelize.Op;
     }
 
-    async getConnections() {
+    async getConnections(options = {}) {
         try {
-            return await this.Connections.scope("allConnectionData").findAll();
+            return await this.Connections.scope("allConnectionData").findAll({ transaction: options.transaction });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a kapcsolatokat.", { details: error.message });
         }
     }
 
-    async getConnection(User_Requested_ID, To_User_ID) {
+    async getConnection(User_Requested_ID, To_User_ID, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findOne({
                 where: {
@@ -29,16 +29,15 @@ class ConnectionsRepository {
                             To_User_ID: User_Requested_ID
                         }
                     ]
-                }
-
-
+                },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a kapcsolatot.", { details: error.message });
         }
     }
 
-    async getCurrentUserConnectionsAll(User_Requested_ID) {
+    async getCurrentUserConnectionsAll(User_Requested_ID, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
@@ -46,39 +45,42 @@ class ConnectionsRepository {
                         { User_Requested_ID },
                         { To_User_ID: User_Requested_ID }
                     ]
-                }
+                },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználó kapcsolatait.", { details: error.message });
         }
     }
 
-    async getCurrentUserConnections(User_Requested_ID, status) {
+    async getCurrentUserConnections(User_Requested_ID, status, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
                     User_Requested_ID,
                     Status: status
-                }
+                },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználó kapcsolatait.", { details: error.message });
         }
     }
 
-    async getCurrentUserFriendRequests(User_Requested_ID) {
+    async getCurrentUserFriendRequests(User_Requested_ID, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
                     To_User_ID: User_Requested_ID,
-                }
+                },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a barátkérelmeket.", { details: error.message });
         }
     }
 
-    async getCurrentUserFriendlist(userId) {
+    async getCurrentUserFriendlist(userId, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
@@ -87,14 +89,15 @@ class ConnectionsRepository {
                         { User_Requested_ID: userId },
                         { To_User_ID: userId }
                     ]
-                }
+                },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a barátlistát.", { details: error.message });
         }
     }
 
-    async getUserFriendlistByID(userId) {
+    async getUserFriendlistByID(userId, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
@@ -103,14 +106,15 @@ class ConnectionsRepository {
                         { User_Requested_ID: userId },
                         { To_User_ID: userId }
                     ]
-                }
+                },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a barátlistát.", { details: error.message });
         }
     }
 
-    async deleteConnection(User_Requested_ID, To_User_ID) {
+    async deleteConnection(User_Requested_ID, To_User_ID, options = {}) {
         try {
             const deletedRow = await this.Connections.destroy({
                 where: {
@@ -124,7 +128,8 @@ class ConnectionsRepository {
                             To_User_ID: User_Requested_ID
                         }
                     ]
-                }
+                },
+                transaction: options.transaction
             });
 
             return { success: true, deleted: deletedRow };
@@ -133,9 +138,11 @@ class ConnectionsRepository {
         }
     }
 
-    async createConnection(connectionData) {
+    async createConnection(connectionData, options = {}) {
         try {
-            return await this.Connections.create(connectionData);
+            return await this.Connections.create(connectionData, { 
+                transaction: options.transaction 
+            });
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a kapcsolatot.", {
                 details: error.message,
@@ -144,13 +151,14 @@ class ConnectionsRepository {
         }
     }
 
-    async updateConnection(User_Requested_ID, To_User_ID, updateData) {
+    async updateConnection(User_Requested_ID, To_User_ID, updateData, options = {}) {
         try {
             const [affectedRows] = await this.Connections.update(updateData, {
                 where: {
                     User_Requested_ID,
                     To_User_ID
-                }
+                },
+                transaction: options.transaction
             });
 
             return affectedRows;

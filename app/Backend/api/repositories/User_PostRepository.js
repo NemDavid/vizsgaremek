@@ -9,7 +9,7 @@ class User_PostRepository {
     }
 
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
-    async getUser_Posts() {
+    async getUser_Posts(options = {}) {
         try {
             return await this.User_Post.scope("allPostData").findAll({
                 order: [
@@ -21,14 +21,15 @@ class User_PostRepository {
                         as: "comments",
                         scope: "allUserPostCommentData",
                     }
-                ]
+                ],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználói bejegyzéseket.", { details: error.message });
         }
     }
 
-    async getUser_PostsByLimit(page, perPage) {
+    async getUser_PostsByLimit(page, perPage, options = {}) {
         try {
             const p = Number(page);
             const pp = Number(perPage);
@@ -36,7 +37,7 @@ class User_PostRepository {
             const limit = pp;
             const offset = p * pp;
 
-            const total = await this.User_Post.count({ where: {} });
+            const total = await this.User_Post.count({ where: {}, transaction: options.transaction });
 
             const posts = await this.User_Post.scope("allPostData").findAll({
                 order: [["ID", "DESC"]],
@@ -53,7 +54,9 @@ class User_PostRepository {
                         as: "reactions",
                         scope: "allUserPostReactionData",
                     }
-                ]
+                ],
+
+                transaction: options.transaction
             });
 
             const hasMore = offset + limit < total;
@@ -67,29 +70,36 @@ class User_PostRepository {
         }
     }
 
-    async getUser_Posts_ByuserId(userId) {
+    async getUser_Posts_ByuserId(userId, options = {}) {
         try {
             return await this.User_Post.scope("allPostData").findAll({
-                where: { USER_ID: userId }
+                where: { USER_ID: userId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználó bejegyzéseit.", { details: error.message });
         }
     }
 
-    async getUser_Post_ByID(postId) {
+    async getUser_Post_ByID(postId, options = {}) {
         try {
-            return await this.User_Post.scope("allPostData").findOne({
-                where: { ID: postId }
+            const result = await this.User_Post.scope("allPostData").findOne({
+                where: { ID: postId },
+                transaction: options.transaction
             });
+
+            return result;
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a bejegyzést.", { details: error.message });
         }
     }
 
-    async deleteUser_Post(postId) {
+    async deleteUser_Post(postId, options = {}) {
         try {
-            const deletedRow = await this.User_Post.destroy({ where: { ID: postId } });
+            const deletedRow = await this.User_Post.destroy({
+                where: { ID: postId },
+                transaction: options.transaction
+            });
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
@@ -124,10 +134,11 @@ class User_PostRepository {
         }
     }
 
-    async updateUser_POST_LikeDislike(postId, like, dislike) {
+    async updateUser_POST_LikeDislike(postId, like, dislike, options = {}) {
         try {
             await this.User_Post.update({ like, dislike }, {
-                where: { ID: postId }
+                where: { ID: postId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("A bejegyzés frissítése sikertelen.", { details: error.message });

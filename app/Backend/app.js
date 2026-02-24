@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 const api = express();
+const db = require("./api/db");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -54,16 +55,31 @@ const user_settingsRoutes = require("./api/routes/user_settingsRoutes");
 const kickRoutes = require("./api/routes/kickRoutes");
 const advertisementRoute = require("./api/routes/advertisementRoute");
 
+const attachTransaction = require("./api/middlewares/attachTransaction");
 const errorHandler = require("./api/middlewares/errorHandler");
+
+
 
 if (process.env.NODE_ENV !== "test") {
     require("./api/db/");
 }
 
 app.use("/api", api);
+api.use(attachTransaction(db));
 
 /* ✅ SWAGGER DOCS */
-api.use("/docs", sweggerUI.serve, sweggerUI.setup(swaggerSpec));
+api.use(
+    "/docs",
+    sweggerUI.serve,
+    sweggerUI.setup(swaggerSpec, {
+        swaggerOptions: {
+            requestInterceptor: (req) => {
+                req.headers["x-swagger-request"] = "true";
+                return req;
+            },
+        },
+    })
+);
 
 api.use("/auth", authRoutes);
 api.use("/connections", connectionsRoute);

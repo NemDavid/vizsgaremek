@@ -3,7 +3,7 @@ const { kickService } = require("../services")(db);
 
 exports.getKicks = async (req, res, next) => {
     try {
-        res.status(200).json(await kickService.getKicks());
+        res.status(200).json(await kickService.getKicks(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -13,7 +13,7 @@ exports.getMyKicks = async (req, res, next) => {
     const token = req.cookies["user_token"];
 
     try {
-        res.status(200).json(await kickService.getMyKicks(token));
+        res.status(200).json(await kickService.getMyKicks(token, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -24,7 +24,7 @@ exports.getKicksSentByUser = async (req, res, next) => {
     const token = req.cookies["user_token"];
 
     try {
-        res.status(200).json(await kickService.getKicksSentByUser(token));
+        res.status(200).json(await kickService.getKicksSentByUser(token, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -35,7 +35,7 @@ exports.getKicksRecievedByUser = async (req, res, next) => {
     const token = req.cookies["user_token"];
 
     try {
-        res.status(200).json(await kickService.getKicksRecievedByUser(token));
+        res.status(200).json(await kickService.getKicksRecievedByUser(token, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -47,7 +47,7 @@ exports.doKick = async (req, res, next) => {
 
     try {
 
-        res.status(200).json(await kickService.doKick(token, userId));
+        res.status(200).json(await kickService.doKick(token, userId, req.transaction));
 
     } catch (error) {
         next(error);

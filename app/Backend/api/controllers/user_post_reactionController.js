@@ -4,7 +4,7 @@ const { user_post_reactionService } = require("../services")(db);
 
 exports.getUsers_posts_reactions = async (req, res, next) => {
     try {
-        res.status(200).json(await user_post_reactionService.getUsers_posts_reactions());
+        res.status(200).json(await user_post_reactionService.getUsers_posts_reactions(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -14,7 +14,7 @@ exports.getUsers_posts_reaction = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        res.status(200).json(await user_post_reactionService.getUsers_posts_reaction(token, req.itemId));
+        res.status(200).json(await user_post_reactionService.getUsers_posts_reaction(token, req.itemId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -23,7 +23,7 @@ exports.getUsers_posts_reaction = async (req, res, next) => {
 
 exports.deleteUsers_posts_reaction = async (req, res, next) => {
     try {
-        res.status(204).json(await user_post_reactionService.deleteUsers_posts_reaction(req.itemId));
+        res.status(200).json(await user_post_reactionService.deleteUsers_posts_reaction(req.itemId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -38,7 +38,11 @@ exports.userMakeReaction = async (req, res, next) => {
             POST_ID,
             reaction,
         },
-            token
+            token,
+            {
+                transaction: req.transaction,
+            },
+            req,
         );
 
         res.status(200).json(createdUser_Post_Reaction);

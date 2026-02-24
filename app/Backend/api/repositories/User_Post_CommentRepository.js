@@ -6,28 +6,32 @@ class User_Post_CommentRepository {
         this.sequelize = db.sequelize;
     }
 
-    async getUsers_posts_comments() {
+    async getUsers_posts_comments(options = {}) {
         try {
-            return await this.User_Post_Comment.scope("allUserPostCommentData").findAll();
+            return await this.User_Post_Comment.scope("allUserPostCommentData").findAll({
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a bejegyzések hozzászólásait.", { details: error.message });
         }
     }
 
-    async getUsers_posts_comment(itemId) {
+    async getUsers_posts_comment(itemId, options = {}) {
         try {
             return await this.User_Post_Comment.scope("allUserPostCommentData").findOne({
-                where: { ID: itemId }
+                where: { ID: itemId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a hozzászólást.", { details: error.message });
         }
     }
 
-    async getCommentsForPostyPostId(postId) {
+    async getCommentsForPostyPostId(postId, options = {}) {
         try {
             return await this.User_Post_Comment.scope("allUserPostCommentData").findAll({
-                where: { POST_ID: postId }
+                where: { POST_ID: postId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a hozzászólást.", { details: error.message });

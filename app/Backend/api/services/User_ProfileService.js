@@ -7,8 +7,8 @@ class User_ProfileService {
         this.userRepository = require("../repositories")(db).userRepository;
     }
 
-    async getUser_Profiles() {
-        return await this.user_profileRepository.getUser_Profiles();
+    async getUser_Profiles(transaction) {
+        return await this.user_profileRepository.getUser_Profiles({ transaction });
     }
 
     async getUser_Profile(userId, options = {}) {
@@ -18,20 +18,20 @@ class User_ProfileService {
         return await this.user_profileRepository.getUser_Profile(userId, options);
     }
 
-    async getUser_ProfilesByPage(page) {
+    async getUser_ProfilesByPage(page, transaction) {
         if (!page) {
             throw new BadRequestError("hiányzó page paraméter");
         }
 
-        return await this.user_profileRepository.getUser_ProfilesByPage(page);
+        return await this.user_profileRepository.getUser_ProfilesByPage(page, { transaction });
     }
 
-    async deleteUser_Profile(userId) {
+    async deleteUser_Profile(userId, transaction) {
         if (!userId) {
             throw new BadRequestError("hiányzó user ID");
         }
 
-        const deleteProcess = await this.user_profileRepository.deleteUser_Profile(userId);
+        const deleteProcess = await this.user_profileRepository.deleteUser_Profile(userId, { transaction });
 
         if (deleteProcess.deleted == 0) {
             throw new BadRequestError("Nincs ilyen felhasználói profil");
@@ -78,9 +78,9 @@ class User_ProfileService {
         return await this.user_profileRepository.createUser_Profile(userData, options);
     }
 
-    async updateUser_Profile(userId, updateData) {
+    async updateUser_Profile(userId, updateData, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
-        const validUser = await this.userRepository.getUser(userId);
+        const validUser = await this.userRepository.getUser(userId, { transaction });
 
         if (!validUser) {
             throw new BadRequestError("Nincs ilyen felhasználó");
@@ -116,18 +116,19 @@ class User_ProfileService {
             throw new ValidationError("Érvénytelen bio");
         }
 
-        const affectedRows = await this.user_profileRepository.updateUser_Profile(userId, updateData);
+        const affectedRows = await this.user_profileRepository.updateUser_Profile(userId, updateData, { transaction });
 
 
         if (!affectedRows) {
             throw new BadRequestError("User profile nem lett frissítve", { details: `userId: ${userId}` })
         }
 
-        const { profile: updateUser_Profile } = await this.user_profileRepository.getUser_Profile(userId);
+        const { profile: updateUser_Profile } = await this.user_profileRepository.getUser_Profile(userId, { transaction });
 
         if (!updateUser_Profile) {
             throw new BadRequestError("A frissitett user profile nem található", { details: `userId: ${userId}` });
         }
+        
         return updateUser_Profile;
     }
 

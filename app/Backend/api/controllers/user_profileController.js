@@ -4,7 +4,7 @@ const { user_profileService } = require("../services")(db);
 
 exports.getUser_Profiles = async (req, res, next) => {
     try {
-        res.status(200).json(await user_profileService.getUser_Profiles());
+        res.status(200).json(await user_profileService.getUser_Profiles(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -12,7 +12,7 @@ exports.getUser_Profiles = async (req, res, next) => {
 
 exports.getUser_Profile = async (req, res, next) => {
     try {
-        const { result } = await user_profileService.getUser_Profile(req.userId)
+        const { result } = await user_profileService.getUser_Profile(req.userId, req.transaction)
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -21,7 +21,7 @@ exports.getUser_Profile = async (req, res, next) => {
 
 exports.getUser_ProfilesByPage = async (req, res, next) => {
     try {
-        res.status(200).json(await user_profileService.getUser_ProfilesByPage(req.paramPage));
+        res.status(200).json(await user_profileService.getUser_ProfilesByPage(req.paramPage, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -29,7 +29,7 @@ exports.getUser_ProfilesByPage = async (req, res, next) => {
 
 exports.deleteUser_Profile = async (req, res, next) => {
     try {
-        res.status(204).json(await user_profileService.deleteUser_Profile(req.userId));
+        res.status(200).json(await user_profileService.deleteUser_Profile(req.userId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -47,7 +47,9 @@ exports.createUser_Profile = async (req, res, next) => {
             schools,
             bio,
             avatar_url,
-        }));
+        },
+        req.transaction
+    ));
     } catch (error) {
         next(error);
     }
@@ -69,7 +71,7 @@ exports.updateUser_Profile = async (req, res, next) => {
             updatedprofil.avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
         }
 
-        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil);
+        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil, req.transaction);
         res.status(200).json(updatedUser);
     } catch (error) {
         next(error);
