@@ -5,6 +5,22 @@ require("dotenv").config({ quiet: true });
 const app = require("../app");
 
 jest.mock("../api/db");
+jest.mock("../api/utilities/cloudUtils", () => ({
+  getStorage: () => ({
+    single: () => (req, res, next) => {
+      req.file = {
+        filename: "mocked_image.jpg",
+        originalname: "mocked_image.jpg",
+        mimetype: "image/jpeg",
+        size: 1024,
+      };
+      next();
+    },
+  }),
+
+  deleteImage: jest.fn(), // <<< EZ KELL a DELETE-hez
+}));
+
 
 const db = require("../api/db");
 
@@ -13,7 +29,7 @@ const { Op } = require("sequelize");
 
 
 
-describe("user_settings_Controller", () => {
+describe("advertismentController", () => {
     const rawUsers = [
         { ID: 1, username: "admin", email: "admin@example.com", password: "Jelszo123#", role: "admin" },
         { ID: 2, username: "user", email: "user@example.com", password: "Jelszo123#", role: "user" },
@@ -82,11 +98,64 @@ describe("user_settings_Controller", () => {
                     );
                 })
             });
+
+            describe("GET /api/advertisement/random", () => {
+                test("should get one random advertisment from db", async () => {
+                    const res = await request(app).get("/api/advertisement/random").expect(200);
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body.title).toBeDefined();
+                    expect(res.body.subject).toBeDefined();
+                    expect(res.body.imagePath).toBeDefined();
+                })
+            });
+
+            describe("GET /api/advertisement/:itemId", () => {
+                test("should get one advertisment by itemId", async () => {
+                    const itemId = 1;
+
+                    const res = await request(app).get(`/api/advertisement/${itemId}`).expect(200);
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body).toEqual(
+                        expect.objectContaining({
+                            title: rawAdvertisments[0].title,
+                            subject: rawAdvertisments[0].subject,
+                            imagePath: rawAdvertisments[0].imagePath,
+                        }))
+                })
+
+                test("should get null if id invalid", async () => {
+                    const itemId = 9999;
+
+                    const res = await request(app).get(`/api/advertisement/${itemId}`).expect(400);
+
+                    expect(res.body.message).toBe("Nincs ilyen hirdetés");
+                })
+            });
         });
 
         describe("DELETE", () => {
             describe("DELETE /api/advertisement", () => {
+                test("should delete advertisments from db", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+                    const res = await request(app).delete("/api/advertisement/1").set("Cookie", [cookie]).expect(204);
 
+                    const result = await db.Advertisement.findOne({
+                        where: { ID: 1 }
+                    });
+
+                    expect(result).toBeNull();
+                })
+                test.each([
+                    ["asd", { status: 400, msg: "Nincs ilyen hirdetés" }],
+                    ["999", { status: 400, msg: "Nincs ilyen hirdetés" }],
+                ])("should throw error when advertisments id is not valid", async (id, error) => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+                    await request(app).delete(`/api/advertisement/${id}`).set("Cookie", [cookie]).expect(error.status);
+                })
             });
         });
 
@@ -98,7 +167,33 @@ describe("user_settings_Controller", () => {
 
         describe("POST", () => {
             describe("POST /api/advertisement", () => {
+                test("should create new advertisment", async () => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
 
+                    const ad_data = {
+                        title: "post_title",
+                        subject: "post_subject",
+                    }
+
+                    const path = require("path");
+
+                    const filePath = path.join(__dirname, "fixtures", "test_advertisment.jpg");
+
+                    const res = await request(app)
+                        .post("/api/advertisement")
+                        .field("title", ad_data.title)
+                        .field("subject", ad_data.subject)
+                        .attach("file", filePath)
+                        .set("Cookie", [cookie])
+                        .expect(201);
+
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body.title).toBe(ad_data.title);
+                    expect(res.body.subject).toBe(ad_data.subject);
+                    expect(res.body.imagePath).toBe("mocked_image.jpg");
+                })
             })
         });
     });
