@@ -38,7 +38,7 @@ exports.deleteVerify_code = async (req, res, next) => {
 exports.deleteVerify_codesByEmail = async (req, res, next) => {
     const { email } = req.body || {};
     try {
-        res.status(204).json(await verify_codeService.deleteVerify_codesByEmail(email, req.transaction));
+        res.status(200).json(await verify_codeService.deleteVerify_codesByEmail(email, req.transaction));
     } catch (error) {
         next(error);
     }
