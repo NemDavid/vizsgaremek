@@ -332,60 +332,7 @@ describe('5. User Routes Integration Tests', () => {
             expect(response.body.ID).toBe(user.ID);
         });
     });
-
-    // ========== POST TESZTEK ==========
-    describe('POST /api/users', () => {
-        it('should create new user successfully', async () => {
-            const userData = {
-                email: 'new@test.com',
-                password_hash: await bcrypt.hash('Test123!@#', 14),
-                username: 'newuser'
-            };
-
-            const response = await request(app)
-                .post('/api/users')
-                .send(userData)
-                .expect(201);
-
-            expect(response.body.user).toBeDefined();
-            expect(response.body.user.username).toBe('newuser');
-            expect(response.body.token).toBeDefined();
-        });
-
-        it('should return 400 for duplicate username', async () => {
-            await createTestUser({
-                email: 'first@test.com',
-                username: 'duplicateuser'
-            });
-
-            const userData = {
-                email: 'second@test.com',
-                password_hash: await bcrypt.hash('Test123!@#', 14),
-                username: 'duplicateuser'
-            };
-
-            const response = await request(app)
-                .post('/api/users')
-                .send(userData)
-                .expect(400);
-
-            expect(response.body.message).toBe('Ez a felhasználó név már létezik');
-        });
-
-        it('should return 400 for missing fields', async () => {
-            const userData = {
-                email: 'test@test.com'
-                // missing username and password
-            };
-
-            const response = await request(app)
-                .post('/api/users')
-                .send(userData);
-
-            expect(response.status).toBeGreaterThanOrEqual(400);
-        });
-    });
-
+    
     // ========== PATCH TESZTEK ==========
     describe('PATCH /api/users/:userId', () => {
         it('should update user successfully', async () => {
@@ -460,41 +407,12 @@ describe('5. User Routes Integration Tests', () => {
 
     // ========== ERROR HANDLING ==========
     describe('Error Handling', () => {
-        it('should handle malformed JSON', async () => {
-            const response = await request(app)
-                .post('/api/users')
-                .set('Content-Type', 'application/json')
-                .send('{invalid json')
-                .expect(500);
-
-            expect(response.body.message).toBe('Internal Server Error');
-        });
-
         it('should handle 404 for unknown routes', async () => {
             const response = await request(app)
                 .get('/api/users/nonexistent/route')
                 .expect(404);
 
             expect(response.body.message).toBeDefined();
-        });
-    });
-
-    // ========== EDGE CASES ==========
-    describe('Edge Cases', () => {
-        it('should handle maximum length username', async () => {
-            const maxUsername = 'a'.repeat(100);
-            const userData = {
-                email: 'max@test.com',
-                password_hash: await bcrypt.hash('Test123!@#', 14),
-                username: maxUsername
-            };
-
-            const response = await request(app)
-                .post('/api/users')
-                .send(userData)
-                .expect(201);
-
-            expect(response.body.user.username).toBe(maxUsername);
         });
     });
 

@@ -27,8 +27,12 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
         const asNumber = parseInt(uniqIdentifier, 10);
 
         if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
+            console.log("szam");
+            
             user = await userService.getUserByID(asNumber);
         } else {
+            console.log("string");
+            
             user = await userService.getUserByUsername(uniqIdentifier);
         }
 
@@ -75,26 +79,6 @@ exports.deleteUser = async (req, res, next) => {
         const deleteResault = await userService.deleteUser(req.userId);
 
         res.status(204).json(deleteResault);
-    } catch (error) {
-        next(error);
-    }
-};
-
-exports.createUser = async (req, res, next) => {
-    const { email, password_hash, username } = req.body || {};
-    try {
-        const newUser = await userService.createUser({
-            email,
-            password_hash,
-            username,
-        });
-
-        const token = authUtils.generateUserToken(newUser);
-
-        res.status(201).json({
-            user: newUser,
-            token
-        });
     } catch (error) {
         next(error);
     }
