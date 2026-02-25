@@ -436,11 +436,35 @@ describe("/api/connections", () => {
                     .set("Cookie", [cookie])
                     .expect(201);
                 expect(res.body).toBeDefined();
+                expect(res.body.user).toBeDefined();
 
                 const fc = await db.Connections.findOne({
-                    where: { To_User_ID: 7 },
+                    where: { To_User_ID: 7, User_Requested_ID: 1 },
                 });
+
+                expect(fc.dataValues).toBeDefined()
+                expect(fc.dataValues.status).toBe(action)
             })
+        });
+        describe("/:userId/:action", () => {
+            test("should do the action from the user without action", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const res = await request(app)
+                    .post(`/api/connections/7`)
+                    .set("Cookie", [cookie])
+                    .expect(201);
+                expect(res.body).toBeDefined();
+                expect(res.body.user).toBeDefined();
+
+                const fc = await db.Connections.findOne({
+                    where: { To_User_ID: 7, User_Requested_ID: 1 },
+                });
+
+                expect(fc.dataValues).toBeDefined()
+                expect(fc.dataValues.Status).toBe("pending")
+
+            }, 60 * 1000)
         });
     });
     //-----------------------------------------------------------

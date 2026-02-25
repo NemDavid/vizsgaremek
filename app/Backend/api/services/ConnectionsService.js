@@ -49,7 +49,7 @@ class ConnectionsService {
         return response;
     }
 
-    async getCurrentUserConnections(token, status, transaction) {
+    async getCurrentUserConnections(status, transaction) {
         if (status != "accepted" && status != "pending" && status != "blocked") {
             throw new BadRequestError("Érvénytelen status");
         }
