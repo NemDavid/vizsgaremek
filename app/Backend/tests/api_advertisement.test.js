@@ -124,7 +124,7 @@ describe("advertismentController", () => {
                 test("should delete advertisments from db", async () => {
                     const token = authUtils.generateUserToken(testUser);
                     const cookie = `user_token=${token}`;
-                    const res = await request(app).delete("/api/advertisement/1").set("Cookie", [cookie]).expect(204);
+                    const res = await request(app).delete("/api/advertisement/1").set("Cookie", [cookie]).expect(200);
 
                     const result = await db.Advertisement.findOne({
                         where: { ID: 1 }

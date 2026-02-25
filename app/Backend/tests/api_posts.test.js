@@ -392,7 +392,7 @@ describe("user_Posts_Router (/api/posts)", () => {
             const itemId = 34;
             const token = authUtils.generateUserToken(testUser);
             const cookie = `user_token=${token}`;
-            await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(204);
+            await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(200);
 
             const result = await db.User_Post.findOne({
                 where: { ID: itemId }

@@ -28,8 +28,6 @@ class NotificationService {
 
 
         } catch (err) {
-            // Email hiba nem akadályozza az értesítési folyamatot
-            //console.error('Hiba az értesítéssel kapcsolatban:', err);
             throw err;
         }
     }
@@ -68,8 +66,6 @@ class NotificationService {
             }
 
         } catch (err) {
-            // Email hiba nem akadályozza az értesítési folyamatot
-            //console.error('Hiba az értesítéssel kapcsolatban:', err);
             throw err;
         }
     }
@@ -147,8 +143,6 @@ class NotificationService {
 
 
         } catch (err) {
-            // Email hiba nem akadályozza az értesítési folyamatot
-            console.error('Hiba az értesítéssel kapcsolatban:', err);
             throw err;
         }
     }
@@ -165,7 +159,6 @@ class NotificationService {
 
             await emailUtils.sendEmail({ to: user.email, subject, text, html });
         } catch (err) {
-            console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
         }
     }
@@ -206,7 +199,6 @@ class NotificationService {
             
             await emailUtils.sendEmail({ to: email, subject, text, html });
         } catch (err) {
-            console.error("Hiba az aktiváló email küldésénél:", err);
             throw err;
         }
     }

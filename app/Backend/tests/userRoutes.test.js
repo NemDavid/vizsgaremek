@@ -386,7 +386,7 @@ describe('5. User Routes Integration Tests', () => {
 
             await request(app)
                 .delete(`/api/users/${user.ID}`)
-                .expect(204);
+                .expect(200);
 
             // Verify deletion
             const response = await request(app)

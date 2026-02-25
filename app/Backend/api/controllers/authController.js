@@ -46,7 +46,6 @@ exports.confirmRegistration = async (req, res, next) => {
         });
 
     } catch (error) {
-        //console.error("Reaction transaction error:", error);
         next(error);
     }
 }

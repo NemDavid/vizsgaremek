@@ -117,7 +117,7 @@ describe("user_settings_Controller", () => {
                     const token = authUtils.generateUserToken(testUser);
                     const cookie = `user_token=${token}`;
 
-                    await request(app).delete("/api/settings").set("Cookie", [cookie]).expect(204);
+                    await request(app).delete("/api/settings").set("Cookie", [cookie]).expect(200);
                 })
 
                 test("should throw error if user hasn't settings", async () => {

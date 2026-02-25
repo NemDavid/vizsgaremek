@@ -50,7 +50,5 @@ exports.deleteImage = (imagePath) => {
 
   if (fs.existsSync(fullPath)) {
     fs.unlinkSync(fullPath);
-  } else {
-    //console.warn(`Nem található a fájl: ${fullPath}`);
   }
 };

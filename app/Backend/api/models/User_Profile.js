@@ -62,9 +62,6 @@ module.exports = (sequelize, DataTypes) => {
                 if (shouldCommit && currentTransaction) {
                     await currentTransaction.rollback();
                 }
-                
-                //console.error(`[XP ERROR] User ${this.USER_ID}, amount ${amount}:`, err.message);
-
                 if (err.name === 'SequelizeDatabaseError') {
                     throw new Error(`Database error: ${err.message}`);
                 }

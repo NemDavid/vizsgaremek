@@ -106,13 +106,7 @@ class User_Post_CommentService {
                 50,
                 transaction
             );
-        } catch (xpErr) {
-            // Ha az XP hozzáadás hibázik, de nem akarjuk megszakítani a comment létrehozást
-            // console.warn("XP hozzáadás sikertelen:", xpErr.message);
-            // Itt döntés kérdése: ha kritikus az XP hozzáadás, akkor dobjuk tovább a hibát
-            // Ha nem kritikus, csak logoljuk és folytatjuk
-            // Most úgy döntök, hogy nem dobom tovább, mert a komment létrehozása fontosabb
-        }
+        } catch (_) {}
 
 
         // email az erintett user nek

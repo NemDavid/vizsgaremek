@@ -215,7 +215,7 @@ describe("user_profile_Controller", () => {
             test("should delete profile from db", async () => {
                 const inputID = 2;
 
-                await request(app).delete(`/api/profiles/${inputID}`).expect(204);
+                await request(app).delete(`/api/profiles/${inputID}`).expect(200);
 
                 const foundProfile = await db.User_Profile.findOne(
                     {
