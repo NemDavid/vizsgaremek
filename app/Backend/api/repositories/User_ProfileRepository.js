@@ -10,9 +10,11 @@ class User_ProfileRepository {
     }
 
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
-    async getUser_Profiles() {
+    async getUser_Profiles(options = {}) {
         try {
-            return await this.User_Profile.scope("allUser_ProfileData").findAll();
+            return await this.User_Profile.scope("allUser_ProfileData").findAll({
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználói profilokat.", { details: error.message });
         }
@@ -31,10 +33,11 @@ class User_ProfileRepository {
         }
     }
 
-    async updateUser_Profile(userId, updateData) {
+    async updateUser_Profile(userId, updateData, options = {}) {
         try {
             const [affectedRows] = await this.User_Profile.update(updateData, {
                 where: { USER_ID: userId },
+                transaction: options.transaction
             });
 
             return affectedRows;
@@ -43,9 +46,12 @@ class User_ProfileRepository {
         }
     }
 
-    async deleteUser_Profile(userId) {
+    async deleteUser_Profile(userId, options = {}) {
         try {
-            const deletedRow = await this.User_Profile.destroy({ where: { USER_ID: userId } });
+            const deletedRow = await this.User_Profile.destroy({ 
+                where: { USER_ID: userId },
+                transaction: options.transaction
+            });
 
             return { success: true, deleted: deletedRow };
         } catch (error) {
@@ -53,7 +59,7 @@ class User_ProfileRepository {
         }
     }
 
-    async getUser_ProfilesByPage(page) {
+    async getUser_ProfilesByPage(page, options = {}) {
         const limit = 25;
         const offset = (page - 1) * limit;
         try {
@@ -61,6 +67,7 @@ class User_ProfileRepository {
                 limit,
                 offset,
                 order: [["USER_ID", "ASC"]],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Érvénytelen lapozási paraméter.", { details: error.message });

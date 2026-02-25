@@ -6,17 +6,17 @@ class User_SettingsService {
         this.user_settingsRepository = require("../repositories")(db).user_SettingsRepository;
     }
 
-    async getUser_SettingsByToken(token) {
+    async getUser_SettingsByToken(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
 
-        return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID);
+        return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID, { transaction });
     }
 
-    async getUser_SettingsByID(userId) {
-        return await this.user_settingsRepository.getUser_SettingsByID(userId);
+    async getUser_SettingsByID(userId, transaction) {
+        return await this.user_settingsRepository.getUser_SettingsByID(userId, { transaction });
     }
 
-    async deleteUser_Settings(token) {
+    async deleteUser_Settings(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         const user_SettingsId = encodedToken.userID;
 
@@ -24,7 +24,7 @@ class User_SettingsService {
             throw new BadRequestError("Hiányzó user_Settings ID");
         }
 
-        const deleteProcess = await this.user_settingsRepository.deleteUser_Settings(user_SettingsId);
+        const deleteProcess = await this.user_settingsRepository.deleteUser_Settings(user_SettingsId, { transaction });
 
         if (deleteProcess.deleted == 0) {
             throw new BadRequestError("Nincs ilyen settings");
@@ -32,10 +32,10 @@ class User_SettingsService {
         return deleteProcess;
     }
 
-    async createUser_Settings(token) {
+    async createUser_Settings(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
-        
-        return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID });
+
+        return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID }, { transaction });
     }
 
     async createUser_SettingsByID(ID, options = {}) {
@@ -44,20 +44,22 @@ class User_SettingsService {
     }
 
 
-    async updateUser_Settings(token, updateData) {
+    async updateUser_Settings(token, updateData, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         const ID = encodedToken.userID;
 
-        if (!updateData.Notifications || updateData.DataPrivacy == null) {
+
+        if (!updateData.Notifications && updateData.DataPrivacy === undefined) {
             throw new BadRequestError("Hiányzik JSON Fálj");
         }
-        
-        const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData);
+
+
+        const affectedRows = await this.user_settingsRepository.updateUser_Settings(ID, updateData, { transaction });
         if (!affectedRows) {
             throw new BadRequestError("User_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` })
         }
 
-        const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(ID);
+        const updateUser_Settings = await this.user_settingsRepository.getUser_SettingsByID(ID, { transaction });
 
         if (!updateUser_Settings) {
             throw new BadRequestError("A frissitett user_Settings nem található", { details: `user_SettingsId: ${updateData.ID}` });

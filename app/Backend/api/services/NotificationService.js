@@ -171,30 +171,30 @@ class NotificationService {
     }
 
     // send verify code for password reset
-    async sendVerifyCode(email) {
+    async sendVerifyCode(email, transaction) {
         try {
             if (!email) {
                 throw new BadRequestError("Hiányzó email");
             }
 
-            const existingProfiles = await this.userService.getUserByEmail(email); // letezik e ilyen emailhez user
+            const existingProfiles = await this.userService.getUserByEmail(email, transaction); // letezik e ilyen emailhez user
             if (existingProfiles.length == 0) {
                 throw new BadRequestError("Ehez az emailhez nincsen felhasználói fiók");
             }
 
             const verify_code = authUtils.generateVerifyCode();
 
-            const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(email);
+            const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(email, transaction);  // van e ilyen emailhez code
 
             const expire_at = new Date(Date.now() + 5 * 60 * 1000) // 5 perc;
             const created_at = new Date();
 
             let verify_codeData = null;
             if (!existing_verify_code) {
-                verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code, expire_at, created_at });
+                verify_codeData = await this.verify_codeService.createVerify_code({ email, verify_code, expire_at, created_at }, transaction);
             }
             else {
-                verify_codeData = await this.verify_codeService.updateVerify_codeByEmail(email, { verify_code, expire_at, created_at });
+                verify_codeData = await this.verify_codeService.updateVerify_codeByEmail(email, { verify_code, expire_at, created_at }, transaction);
             }
 
             const subject = 'MiHirunk - Jelszó visszaállítási ellenőrző kód';
@@ -212,13 +212,13 @@ class NotificationService {
     }
     
     // verify the code and return the profiles
-    async verifyTheCode(verifyData) {
+    async verifyTheCode(verifyData, transaction) {
         if (!verifyData.email) {
             throw new BadRequestError("Hiányzó email");
         }
 
         // létezik e ilyen emailhez user
-        const existingUsers = await this.userService.getUserByEmail(verifyData.email); // letezik e ilyen emailhez user
+        const existingUsers = await this.userService.getUserByEmail(verifyData.email, transaction); // letezik e ilyen emailhez user
         if (existingUsers.length == 0) {
             throw new BadRequestError("Ehez az emailhez nincsen felhasználói fiók");
         }
@@ -228,7 +228,7 @@ class NotificationService {
         }
 
         // van e ilyen emailhez code
-        const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(verifyData.email);  // van e ilyen emailhez code
+        const existing_verify_code = await this.verify_codeService.getVerify_codeByEmail(verifyData.email, transaction);  // van e ilyen emailhez code
         if (!existing_verify_code) {
             throw new BadRequestError("Ehez az emailhoz nem lett code generálva");
         }
@@ -257,7 +257,7 @@ class NotificationService {
     }
 
     // new password set
-    async setNewPassword(newPasswordData) {
+    async setNewPassword(newPasswordData, transaction) {
         if (!newPasswordData.userId) {
             throw new BadRequestError("Hiányzó userId");
         }
@@ -268,20 +268,20 @@ class NotificationService {
         
         
         // létezik e ilyen id-hez user
-        const existingUser = await this.userService.getUserByID(newPasswordData.userId); // letezik e ilyen emailhez user
+        const existingUser = await this.userService.getUserByID(newPasswordData.userId, transaction); // letezik e ilyen emailhez user
         if (!existingUser) {
             throw new BadRequestError("Nincs ilyen id-vel user");
         }
         
         
         // update user password
-        const updatedUser = await this.userService.updateUser_Password(newPasswordData.userId, { password_hash: authUtils.hashPassword(newPasswordData.password) });
+        const updatedUser = await this.userService.updateUser_Password(newPasswordData.userId, { password_hash: authUtils.hashPassword(newPasswordData.password) }, transaction);
         if (!updatedUser) {
             throw new BadRequestError("A user jelszava nem lett frissítve");
         }
         
         // töröljük a használt codeokat
-        const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(existingUser.email); // töröljük a használt codeokat
+        const deleteProcess = await this.verify_codeService.deleteVerify_codesByEmail(existingUser.email, transaction); // töröljük a használt codeokat
         if (deleteProcess.deleted == 0) {
             throw new BadRequestError("Nem sikerült törölni a használt verify_codeokat");
         }

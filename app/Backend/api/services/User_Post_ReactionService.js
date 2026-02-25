@@ -8,7 +8,6 @@ class User_Post_ReactionService {
         this.userRepository = require("../repositories")(db).userRepository;
         this.user_profileService = user_profileService;
         this.notificationService = null;
-        this.db = db; // Transaction-hoz szükséges
     }
 
     setNotificationService(notificationService) {
@@ -16,25 +15,25 @@ class User_Post_ReactionService {
     }
 
 
-    async getUsers_posts_reactions() {
-        return await this.user_post_reactionRepository.getUsers_posts_reactions();
+    async getUsers_posts_reactions(transaction) {
+        return await this.user_post_reactionRepository.getUsers_posts_reactions({ transaction });
     }
 
-    async getUsers_posts_reaction(token, postId) {
+    async getUsers_posts_reaction(token, postId, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token."); 
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
         }
 
-        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, postId);
+        return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, postId, { transaction });
     }
 
-    async deleteUsers_posts_reaction(itemId) {
+    async deleteUsers_posts_reaction(itemId, transaction) {
         if (!itemId) {
             throw new BadRequestError("hiányzó item ID");
         }
 
-        const deleteProcess = await this.user_post_reactionRepository.deleteUsers_posts_reaction(itemId);
+        const deleteProcess = await this.user_post_reactionRepository.deleteUsers_posts_reaction(itemId, { transaction });
 
         if (deleteProcess.deleted == 0) {
             throw new BadRequestError("Nincs ilyen user post reakció.");
@@ -43,81 +42,61 @@ class User_Post_ReactionService {
         return deleteProcess;
     }
 
-    async userMakeReaction(reactionData, token) {
-        try {
-            const encodedToken = authUtils.verifyToken(token);
-            if (encodedToken == null) {
-                throw new BadRequestError("Hiányzó vagy lejárt token.");
+    async userMakeReaction(reactionData, token, transaction, req) {
+        const encodedToken = authUtils.verifyToken(token);
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+        }
+
+        reactionData.USER_ID = encodedToken.userID;
+
+        // Validálás
+        this._validateReactionData(reactionData);
+
+
+
+        // Post létezik-e
+        const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID, { transaction });
+        if (!targetPost) {
+            throw new BadRequestError("A cél post nem található");
+        }
+
+        // valid use-e
+        const validUser = await this.userRepository.getUser(targetPost.USER_ID, { transaction });
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó");
+        }
+
+        // Meglévő reakció ellenőrzése
+        const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
+            reactionData.USER_ID,
+            reactionData.POST_ID,
+            { transaction }
+        );
+
+        let result;
+        // Reakció feldolgozása transaction-ben
+        if (existingReaction) {
+            if (reactionData.reaction == existingReaction.reaction) {
+                result = await this._removePreviousReaction(reactionData, existingReaction, targetPost, transaction);
+            } else {
+                result = await this._updateReaction(reactionData, targetPost, existingReaction, transaction);
             }
-
-            reactionData.USER_ID = encodedToken.userID;
-
-            // Validálás
-            this._validateReactionData(reactionData);
-
-            // Post létezik-e
-            const targetPost = await this.user_postRepository.getUser_Post_ByID(reactionData.POST_ID);
-            if (!targetPost) {
-                throw new BadRequestError("A cél post nem található");
-            }
-
-            // valid use-e
-            const validUser = await this.userRepository.getUser(targetPost.USER_ID);
-            if (!validUser) {
-                throw new BadRequestError("Nincs ilyen felhasználó");
-            }
+        } else {
+            result = await this._createdReaction(reactionData, targetPost, transaction);
+        }
 
 
-            // transaction
-            //------------------------------------------------------------ 
-            const result = await this.db.sequelize.transaction(async transaction => {
-                let result;
-
-
-                // Meglévő reakció ellenőrzése
-                const existingReaction = await this.user_post_reactionRepository.getUsers_posts_reaction(
-                    reactionData.USER_ID,
-                    reactionData.POST_ID,
-                    { transaction }
-                );
-
-
-                // Reakció feldolgozása transaction-ben
-                if (existingReaction) {
-                    if (reactionData.reaction == existingReaction.reaction) {
-                        result = await this._removePreviousReaction(reactionData, existingReaction, targetPost, transaction);
-                    } else {
-                        result = await this._updateReaction(reactionData, targetPost, existingReaction, transaction);
-                    }
-                } else {
-                    result = await this._createdReaction(reactionData, targetPost, transaction);
-                }
-
-
-
-                return result;
-            });
-
-            
-            // email az erintett usernek commit utan
-            process.nextTick(() => {
-                this.notificationService
+        // email az erintett usernek commit utan
+        if (req.afterCommit && this.notificationService) {
+            req.afterCommit.push(async () => {
+                await this.notificationService
                     .sendNotificationToUser(validUser, "new_post_reaction")
                     .catch(console.error);
             });
-
-            
-            return result;
-
-            // If the execution reaches this line, the transaction has been committed successfully
-            // `result` is whatever was returned from the transaction callback (the `user`, in this case)
-        } catch (error) {
-            // If the execution reaches this line, an error occurred.
-            // The transaction has already been rolled back automatically by Sequelize!
-            //console.error("Reaction transaction error:", error);
-            throw error;
         }
-        //------------------------------------------------------------
+
+        return result;
     }
 
     // ========== PRIVÁT HELPER METÓDUSOK ==========
@@ -198,9 +177,9 @@ class User_Post_ReactionService {
         // Reakció frissítése transaction-ben
         const updatedReaction = await this.user_post_reactionRepository.updateUsers_posts_reaction(
             {
-            ...reactionData,
-            ID: existingReaction.ID
-        },
+                ...reactionData,
+                ID: existingReaction.ID
+            },
             { transaction }
         );
 

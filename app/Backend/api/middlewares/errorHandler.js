@@ -9,6 +9,7 @@ function showError(error, req, res, next)
 {
     if(!(error instanceof AppError))
     {
+        
         error = new AppError("Internal Server Error", 
         {
             isOperational: false,

@@ -9,23 +9,23 @@ class UserService {
         this.userRepository = require("../repositories")(db).userRepository;
     }
 
-    async getUsers() {
-        return await this.userRepository.getUsers();
+    async getUsers(transaction) {
+        return await this.userRepository.getUsers({ transaction });
     }
 
-    async getUser(userId) {
-        return await this.userRepository.getUser(userId);
+    async getUser(userId, transaction) {
+        return await this.userRepository.getUser(userId, { transaction });
     }
 
-    async getUserByID(userId) {
-        return await this.userRepository.getUserByID(userId, {}, "Profil");
+    async getUserByID(userId, transaction) {
+        return await this.userRepository.getUserByID(userId, { transaction }, "Profil");
     }
 
-    async getUserByUsername(username) {
-        return await this.userRepository.getUserByUsername(username);
+    async getUserByUsername(username, transaction) {
+        return await this.userRepository.getUserByUsername(username, { transaction });
     }
 
-    async getUserByContainingUI(data) {
+    async getUserByContainingUI(data, transaction) {
         if (!data) throw new BadRequestError("Hiányzó adat");
 
         const search = String(data.q ?? "").trim();
@@ -41,7 +41,9 @@ class UserService {
             search,
             limit,
             offset,
-        });
+        }, 
+        { transaction }
+    );
 
         return {
             items,
@@ -51,36 +53,36 @@ class UserService {
         };
     }
 
-    async getUserByEmail(email) {
-        return await this.userRepository.getUserByEmail(email);
+    async getUserByEmail(email, transaction) {
+        return await this.userRepository.getUserByEmail(email, { transaction });
     }
 
-    async getUsersByPage(page) {
+    async getUsersByPage(page, transaction) {
         if (!page) {
             throw new BadRequestError("hiányzó page paraméter");
         }
 
-        return await this.userRepository.getUsersByPage(page);
+        return await this.userRepository.getUsersByPage(page, { transaction });
     }
 
-    async updateLastLogin(userId, data) {
-        const user = await this.userRepository.updateUser(userId, data);
+    async updateLastLogin(userId, data, transaction) {
+        const user = await this.userRepository.updateUser(userId, data, { transaction });
         return user;
     }
 
-    async updateLastLogout(token) {
+    async updateLastLogout(token, transaction) {
         const decoded = authUtils.verifyToken(token);
 
-        const user = await this.userRepository.updateUser(decoded.userID, { is_loggedIn: false });
+        const user = await this.userRepository.updateUser(decoded.userID, { is_loggedIn: false }, { transaction });
         return user;
     }
 
-    async deleteUser(userId) {
+    async deleteUser(userId, transaction) {
         if (!userId) {
             throw new BadRequestError("hiányzó user ID");
         }
 
-        const deleteProcess = await this.userRepository.deleteUser(userId);
+        const deleteProcess = await this.userRepository.deleteUser(userId, { transaction });
 
         if (deleteProcess.deleted == 0) {
             throw new NotFoundError("Nincs ilyen felhasznalo");
@@ -90,7 +92,7 @@ class UserService {
 
     async createUser(userData, options = {}) {
         // van e már ilyen felhasználó ezzel a névvel
-        const existingUser = await this.userRepository.getUserByUsername(userData.username);
+        const existingUser = await this.userRepository.getUserByUsername(userData.username, { transaction: options.transaction });
         if (existingUser) {
             throw new BadRequestError("Ez a felhasználó név már létezik");
         }
@@ -134,7 +136,7 @@ class UserService {
         return userData;
     }
 
-    async updateUser(userId, updateData) {
+    async updateUser(userId, updateData, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (!updateData.email) {
             throw new BadRequestError("Hiányzó email");
@@ -147,7 +149,7 @@ class UserService {
         }
         updateData.password_hash = await bcrypt.hash(updateData.password, salt);
 
-        const affectedRows = await this.userRepository.updateUser(userId, updateData);
+        const affectedRows = await this.userRepository.updateUser(userId, updateData, { transaction });
         if (!affectedRows) {
             throw new BadRequestError("user nem található", { details: `userId: ${userId}` })
         }
@@ -160,19 +162,19 @@ class UserService {
         return updateUser;
     }
 
-    async updateUser_Password(userId, updateData) {
+    async updateUser_Password(userId, updateData, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (!updateData.password_hash) {
             throw new BadRequestError("Hiányzó password_hash");
         }
 
-        const affectedRows = await this.userRepository.updateUser_Password(userId, updateData);
+        const affectedRows = await this.userRepository.updateUser_Password(userId, updateData, { transaction });
 
         if (!affectedRows) {
             throw new BadRequestError("user nem található", { details: `userId: ${userId}` })
         }
 
-        const updateUser = await this.userRepository.getUser(userId);
+        const updateUser = await this.userRepository.getUser(userId, { transaction });
 
         if (!updateUser) {
             throw new BadRequestError("a frissitett user nem található", { details: `userId: ${userId}` });
@@ -182,15 +184,14 @@ class UserService {
 
 
 
-    async getExistingUserByToken(token) {
+    async getExistingUserByToken(token, transaction) {
         if (!token) throw new BadRequestError("Hiányzó user token");
         const decoded = authUtils.verifyToken(token);
         if (!decoded) {
             throw new BadRequestError("Érvénytelen vagy lejárt token");
         }
 
-        const existingUser = await this.userRepository.getExistingUserByToken(decoded.username);
-
+        const existingUser = await this.userRepository.getExistingUserByToken(decoded.username, { transaction });
         if (existingUser) {
             throw new BadRequestError("van ilyen felhasználó");
         }
@@ -199,7 +200,7 @@ class UserService {
     }
 
     // Autista csinálta
-    async updatePassword(updateData, token) {
+    async updatePassword(updateData, token, transaction) {
         if (!token) throw new BadRequestError("Hiányzó user token");
         const decoded = authUtils.verifyToken(token);
         if (!decoded) {
@@ -212,7 +213,7 @@ class UserService {
 
         if (!authUtils.isValidPassword(updateData.new_password)) throw new BadRequestError("Nem megfelelő adat")
 
-        const user = await this.userRepository.getUserByID(decoded.userID);
+        const user = await this.userRepository.getUserByID(decoded.userID, { transaction });
         if (!user) throw new NotFoundError("Nincs ilyen felhasználó");
 
         if (!bcrypt.compareSync(updateData.old_password, user.password_hash)) throw new ValidationError("Nem megfelelő adat");
@@ -221,7 +222,7 @@ class UserService {
 
         const hp = authUtils.hashPassword(updateData.new_password)
 
-        const affectedraw = await this.userRepository.updatePassword(hp, decoded.userID);
+        const affectedraw = await this.userRepository.updatePassword(hp, decoded.userID, { transaction });
         if (affectedraw == 0) throw new BadRequestError("Hiba frissités sorrán")
         return { message: "OK" };
     }

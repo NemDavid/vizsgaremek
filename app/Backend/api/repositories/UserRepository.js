@@ -9,7 +9,7 @@ class UserRepository {
         this.sequelize = db.sequelize;
     }
     ///--------------------CRUD NEM VÉGLEGES-----------------------------
-    async getUsers() {
+    async getUsers(options = {}) {
         try {
             return await this.User.scope("allUserData").findAll({
                 include: [
@@ -18,14 +18,15 @@ class UserRepository {
                         as: "profile",
                         scope: "allUser_ProfileData"
                     },
-                ]
+                ],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználókat.", { details: error.message });
         }
     }
 
-    async getUserByUsername(username) {
+    async getUserByUsername(username, options = {}) {
         try {
             return await this.User.scope("allUserData").findOne({
                 where: { username },
@@ -35,14 +36,15 @@ class UserRepository {
                         as: "profile",
                         scope: "allUser_ProfileData"
                     },
-                ]
+                ],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
         }
     }
 
-    async getUserByContainingUI({ search, limit, offset }) {
+    async getUserByContainingUI({ search, limit, offset }, options = {}) {
         try {
             const { rows, count } = await this.User.scope("Profil").findAndCountAll({
                 where: {
@@ -53,6 +55,7 @@ class UserRepository {
                 order: [["username", "ASC"]],
                 limit,
                 offset,
+                transaction: options.transaction
             });
 
             return { items: rows, total: count };
@@ -92,7 +95,7 @@ class UserRepository {
         }
     }
 
-    async getUserByEmail(email) {
+    async getUserByEmail(email, options = {}) {
         try {
             return await this.User.scope("allUserData").findAll({
                 where: { email },
@@ -102,14 +105,15 @@ class UserRepository {
                         as: "profile",
                         scope: "allUser_ProfileData"
                     },
-                ]
+                ],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót e-mail cím alapján.", { details: error.message });
         }
     }
 
-    async getUsersByPage(page) {
+    async getUsersByPage(page, options = {}) {
         const limit = 25;
         const offset = (page - 1) * limit;
         try {
@@ -117,15 +121,19 @@ class UserRepository {
                 limit,
                 offset,
                 order: [["ID", "ASC"]],
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Érvénytelen lapozási paraméter.", { details: error.message });
         }
     }
 
-    async deleteUser(userId) {
+    async deleteUser(userId, options = {}) {
         try {
-            const deletedRow = await this.User.destroy({ where: { ID: userId } });
+            const deletedRow = await this.User.destroy({ 
+                where: { ID: userId },
+                transaction: options.transaction 
+            });
             return { success: true, deleted: deletedRow };
         } catch (error) {
             throw new DbError("A felhasználó törlése sikertelen.", { details: error.message });
@@ -145,10 +153,11 @@ class UserRepository {
         }
     }
 
-    async updateUser(userId, updateData) {
+    async updateUser(userId, updateData, options = {}) {
         try {
             const [affectedRows] = await this.User.update(updateData, {
                 where: { ID: userId },
+                transaction: options.transaction
             });
             return affectedRows;
         } catch (error) {
@@ -156,10 +165,11 @@ class UserRepository {
         }
     }
 
-    async updateUser_Password(userId, updateData) {
+    async updateUser_Password(userId, updateData, options = {}) {
         try {
             const [affectedRows] = await this.User.update(updateData, {
                 where: { ID: userId },
+                transaction: options.transaction
             });
             return affectedRows;
         } catch (error) {
@@ -167,19 +177,21 @@ class UserRepository {
         }
     }
 
-    async getExistingUserByToken(username) {
+    async getExistingUserByToken(username, options = {}) {
         try {
             return await this.User.scope("allUserData").findOne({
-                where: { username }
+                where: { username },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült ellenőrizni a felhasználót token alapján.", { details: error.message });
         }
     }
-    async updatePassword(password_hash, ID) {
+    async updatePassword(password_hash, ID, options = {}) {
         try {
             const [affectedraw] = await this.User.scope("allUserData").update({ password_hash }, {
-                where: { ID }
+                where: { ID },
+                transaction: options.transaction
             });
 
             return affectedraw;

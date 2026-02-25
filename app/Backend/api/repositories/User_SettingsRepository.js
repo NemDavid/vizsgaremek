@@ -6,47 +6,41 @@ class User_SettingsRepository {
         this.sequelize = db.sequelize;
     }
 
-    async getUser_SettingsByToken(user_SettingsId) {  
+    async getUser_SettingsByToken(user_SettingsId, options = {}) {  
         try {
             return await this.User_Settings.scope("allUser_SettingsData").findOne({
-                where: { ID: user_SettingsId }
+                where: { ID: user_SettingsId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
         }
     }
 
-    async getUser_SettingsByID(user_SettingsId) {
+    async getUser_SettingsByID(user_SettingsId, options = {}) {
         try {
             return await this.User_Settings.scope("allUser_SettingsData").findOne({
-                where: { ID: user_SettingsId }
+                where: { ID: user_SettingsId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a felhasználót.", { details: error.message });
         }
     }
 
-    async deleteUser_Settings(user_SettingsId) {
+    async deleteUser_Settings(user_SettingsId, options = {}) {
         try {
-            const deletedRow = await this.User_Settings.destroy({ where: { ID: user_SettingsId } });
+            const deletedRow = await this.User_Settings.destroy({ 
+                where: { ID: user_SettingsId },
+                transaction: options.transaction
+            });
             return { success: true, deleted: deletedRow };
         } catch (error) {
             throw new DbError("A felhasználó törlése sikertelen.", { details: error.message });
         }
     }
 
-    async createUser_Settings(createData) {
-        try {
-            return await this.User_Settings.create(createData);
-        } catch (error) {
-            throw new DbError("Nem sikerült létrehozni a felhasználót.", {
-                details: error.message,
-                data: user_SettingsData,
-            });
-        }
-    }
-
-    async createUser_SettingsByID(createData, options) {
+    async createUser_Settings(createData, options = {}) {
         try {
             return await this.User_Settings.create(createData, {
                 transaction: options.transaction
@@ -54,15 +48,29 @@ class User_SettingsRepository {
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a felhasználót.", {
                 details: error.message,
-                data: user_SettingsData,
+                data: createData,
             });
         }
     }
 
-    async updateUser_Settings(ID, updateData) {;
+    async createUser_SettingsByID(createData, options = {}) {
+        try {
+            return await this.User_Settings.create(createData, {
+                transaction: options.transaction
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült létrehozni a felhasználót.", {
+                details: error.message,
+                data: createData,
+            });
+        }
+    }
+
+    async updateUser_Settings(ID, updateData, options = {}) {;
         try {
             const [affectedRows] = await this.User_Settings.update(updateData, {
                 where: { ID },
+                transaction: options.transaction
             });
             return affectedRows;
         } catch (error) {
