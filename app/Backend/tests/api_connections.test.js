@@ -65,6 +65,13 @@ describe("/api/connections", () => {
             password: "Jelszo123#",
             role: "user",
         },
+        {
+            ID: 8, // ismeretlen
+            username: "user(7)",
+            email: "user(7)@example.com",
+            password: "Jelszo123#",
+            role: "user",
+        },
     ];
     const rawProfiles = [
         {
@@ -107,6 +114,12 @@ describe("/api/connections", () => {
             USER_ID: 7, // ismeretlen
             first_name: "Ferenc",
             last_name: "Puskás",
+            avatar_url: "/user.png",
+        },
+        {
+            USER_ID: 8, // ismeretlen
+            first_name: "test(8)",
+            last_name: "test(8)",
             avatar_url: "/user.png",
         },
     ];
@@ -188,6 +201,17 @@ describe("/api/connections", () => {
             },
             DataPrivacy: false,
         },
+        {
+            ID: 8,
+            Notifications: {
+                new_post: false,
+                new_comment_on_post: false,
+                new_reaction_on_post: false,
+                new_login: false,
+                new_friend_request: false,
+            },
+            DataPrivacy: false,
+        },
     ];
     const rawConnections = [
         { ID: 1, Status: "accepted", User_Requested_ID: 1, To_User_ID: 2 },
@@ -195,6 +219,7 @@ describe("/api/connections", () => {
         { ID: 3, Status: "pending", User_Requested_ID: 4, To_User_ID: 1 },
         { ID: 4, Status: "blocked", User_Requested_ID: 1, To_User_ID: 5 },
         { ID: 5, Status: "blocked", User_Requested_ID: 6, To_User_ID: 1 },
+        { ID: 6, Status: "blocked", User_Requested_ID: 8, To_User_ID: 1 },
     ];
     const testUser = {
         ID: rawUsers[0].ID,
@@ -287,6 +312,77 @@ describe("/api/connections", () => {
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
             });
         });
+
+        //-----------------------------------------------------------
+        //    /filtered
+        //-----------------------------------------------------------
+        describe("/filtered", () => {
+            test.each([
+                ["accepted"],
+                ["pending"],
+                ["blocked"]
+            ])(
+                "should return logged user's connections with given status", async (status) => {
+                    const token = authUtils.generateUserToken(testUser);
+                    const cookie = `user_token=${token}`;
+
+                    const res = await request(app)
+                        .get(`/api/connections/filtered?status=${status}`)
+                        .set("Cookie", [cookie])
+                        .expect(200);
+
+                    const foundConnections = await db.Connections.findAll({
+                        where: {
+                            Status: status
+                        }
+
+                    })
+
+                    expect(res.body).toBeDefined();
+                    expect(res.body).toEqual(
+                        expect.arrayContaining(
+                            foundConnections.map((connection) =>
+                                expect.objectContaining({
+                                    Status: connection.Status,
+                                }),
+                            ),
+                        ),
+                    );
+                },
+            );
+
+            test("should throw error on user role token", async () => {
+                const user = {
+                    ID: rawUsers[1].ID,
+                    username: rawUsers[1].username,
+                    email: rawUsers[1].email,
+                    role: rawUsers[1].role,
+                }
+
+                const token = authUtils.generateUserToken(user);
+                const cookie = `user_token=${token}`;
+
+                const res = await request(app).get("/api/connections/filtered/?status=accepted").set("Cookie", [cookie]).expect(401);
+
+                expect(res.body.message).toBe("Nincs jogod ehez a művelethez.");
+            });
+
+            test("should throw error on unlogged try", async () => {
+                const res = await request(app).get("/api/connections/filtered/?status=accepted").expect(401);
+
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
+
+            test("should throw error on invalid status param", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+
+                const res = await request(app).get("/api/connections/filtered/?status=_invalid").set("Cookie", [cookie]).expect(400);
+
+                expect(res.body.message).toBe("Érvénytelen status");
+            });
+        });
+
         //-----------------------------------------------------------
         //    /me/received-request
         //-----------------------------------------------------------
@@ -317,107 +413,65 @@ describe("/api/connections", () => {
                 );
             },
             );
+
+            test("should throw error on invalid token", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}_invalid`;
+                const res = await request(app)
+                    .get(`/api/connections/me/received-request`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            },
+            );
         });
         //-----------------------------------------------------------
         //    /me/friends
         //-----------------------------------------------------------
         describe("/me/friends", () => {
-            test(
-                "should return logged user's friends",
-                async () => {
-                    const correct = [
-                        {
-                            ID: 2,
-                            email: 'user@example.com',
-                            profile: {}
-                        }
-                    ]
+            test("should return logged user's friends", async () => {
+                const correct = [
+                    {
+                        ID: 2,
+                        email: 'user@example.com',
+                        profile: {}
+                    }
+                ]
 
-                    const token = authUtils.generateUserToken(testUser);
-                    const cookie = `user_token=${token}`;
-                    const res = await request(app)
-                        .get(`/api/connections/me/friends`)
-                        .set("Cookie", [cookie])
-                        .expect(200);
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const res = await request(app)
+                    .get(`/api/connections/me/friends`)
+                    .set("Cookie", [cookie])
+                    .expect(200);
 
 
-                    expect(res.body).toBeDefined();
-                    expect(res.body).toEqual(
-                        expect.arrayContaining(
-                            correct.map((user) =>
-                                expect.objectContaining({
-                                    ID: user.ID,
-                                }),
-                            ),
+                expect(res.body).toBeDefined();
+                expect(res.body).toEqual(
+                    expect.arrayContaining(
+                        correct.map((user) =>
+                            expect.objectContaining({
+                                ID: user.ID,
+                            }),
                         ),
-                    );
-                },
-            );
-        });
-        //-----------------------------------------------------------
-        //    /filtered
-        //-----------------------------------------------------------
-        describe("/filtered", () => {
-            test.each([["accepted"], ["pending"], ["blocked"]])(
-                "should return logged user's connections with given status", async (status) => {
-                    const token = authUtils.generateUserToken(testUser);
-                    const cookie = `user_token=${token}`;
-
-                    const res = await request(app)
-                        .get(`/api/connections/filtered?status=${status}`)
-                        .set("Cookie", [cookie])
-                        .expect(200);
-
-                    const foundConnections = await db.Connections.findAll({
-                        Status: status
-                    })
-
-                    expect(res.body).toBeDefined();
-                    expect(res.body).toEqual(
-                        expect.arrayContaining(
-                            foundConnections.map((connection) =>
-                                expect.objectContaining({
-                                    Status: connection.status,
-                                }),
-                            ),
-                        ),
-                    );
-                },
+                    ),
+                );
+            },
             );
 
-            test("should throw error on invalid status", async () => {
+            test("should throw error on invalid token", async () => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}_invalid`;
+                const res = await request(app)
+                    .get(`/api/connections/me/friends`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
 
-                const res = await request(app).get("/api/connections/filtered/?status=accepted").set("Cookie", [cookie]).expect(400);
 
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
-            });
-
-            test("should throw error on user token", async () => {
-                const user = {
-                    ID: rawUsers[1].ID,
-                    username: rawUsers[1].username,
-                    email: rawUsers[1].email,
-                    role: rawUsers[1].role,
-                }
-
-                const token = authUtils.generateUserToken(user);
-                const cookie = `user_token=${token}`;
-
-                const res = await request(app).get("/api/connections/filtered/?status=accepted").set("Cookie", [cookie]).expect(401);
-
-                expect(res.body.message).toBe("Nincs jogod ehez a művelethez.");
-            });
-
-            test("should throw error on invalid status param", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
-
-                const res = await request(app).get("/api/connections/filtered/?status=accepted").set("Cookie", [cookie]).expect(400);
-
-                expect(res.body.message).toBe("Érvénytelen status");
-            });
+            },
+            );
         });
     });
     //-----------------------------------------------------------
@@ -426,27 +480,76 @@ describe("/api/connections", () => {
     describe("POST", () => {
         describe("/:userId/:action", () => {
             test.each([
-                ["pending"]
+                ["pending"],
                 ["blocked"]
             ])("should do the action from the user", async (action) => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}`;
                 const res = await request(app)
-                    .post(`/api/connections/7/pending`)
+                    .post(`/api/connections/7/${action}`)
                     .set("Cookie", [cookie])
                     .expect(201);
                 expect(res.body).toBeDefined();
                 expect(res.body.user).toBeDefined();
 
                 const fc = await db.Connections.findOne({
-                    where: { To_User_ID: 7, User_Requested_ID: 1 },
+                    where: {
+                        To_User_ID: 7,
+                        User_Requested_ID: 1
+                    },
                 });
 
+
                 expect(fc.dataValues).toBeDefined()
-                expect(fc.dataValues.status).toBe(action)
+                expect(fc.dataValues.Status).toBe(action)
+            })
+
+            test("should throw error on invalid action", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 7;
+                const action = "_invalid";
+
+                const res = await request(app)
+                    .post(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Rossz paramáter action érték");
+            })
+
+            test("should throw error on invalid token", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}_invalid`;
+                const userId = 7;
+                const action = "blocked";
+
+                const res = await request(app)
+                    .post(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            })
+
+            test.each([
+                [9999, "Nincs ilyen felhasználó"],
+                [testUser.ID, "Magadat nem tudod kezelni"]
+            ])("should throw error on invalid user id", async (userId, expectedMessage) => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const action = "blocked";
+
+                const res = await request(app)
+                    .post(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe(expectedMessage);
             })
         });
-        describe("/:userId/:action", () => {
+
+        describe("/:userId", () => {
             test("should do the action from the user without action", async () => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}`;
@@ -463,21 +566,197 @@ describe("/api/connections", () => {
 
                 expect(fc.dataValues).toBeDefined()
                 expect(fc.dataValues.Status).toBe("pending")
+            })
 
-            }, 60 * 1000)
+            test("should throw error if i blocked a user and i send frind request", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 5;
+
+
+                const res = await request(app)
+                    .post(`/api/connections/${userId}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Ezt a felhasználót letiltottad, előbb oldd fel, mielőtt barátnak kéred!");
+            })
+
+            test("should throw error if user blocked me and i send frind request", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 8;
+
+
+                const res = await request(app)
+                    .post(`/api/connections/${userId}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Ez a felhasználó letiltott téged, ezért nem tudod barátnak kérni!");
+            })
+
+            test("should throw error on two accept", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 2;
+
+                const res = await request(app)
+                    .post(`/api/connections/${userId}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Csak egyszer küldhetsz barátkérést egy felhasználónak!");
+            })
         });
     });
     //-----------------------------------------------------------
     //    PATCH
     //-----------------------------------------------------------
     describe("PATCH", () => {
-        describe("/:userId/:action", () => { });
+        describe("/:userId/:action", () => {
+            test.each([
+                [2, "blocked"],
+                [4, "accepted"],
+            ])("should update status between users", async (userId, action) => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+
+                const res = await request(app)
+                    .patch(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(200);
+
+                expect(res.body).toBeDefined();
+                expect(res.body).toEqual(
+                    expect.objectContaining({
+                        Status: action,
+                    })
+                );
+            })
+
+            test("should throw error on invalid action", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}_invalid`;
+                const userId = 2;
+                const action = "blocked";
+
+                const res = await request(app)
+                    .patch(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            })
+
+            test("should throw error on invalid action", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 2;
+                const action = "blocked_invalid";
+
+                const res = await request(app)
+                    .patch(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Rossz action érték");
+            })
+
+            test.each([
+                [9999, "Nincs ilyen felhasználó"],
+                [testUser.ID, "Magadat nem tudod kezelni"],
+            ])("should throw error on invalid user id", async (userId, expectedMessage) => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const action = "blocked";
+
+                const res = await request(app)
+                    .patch(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe(expectedMessage);
+            })
+
+            test("should throw error on if no connection with user", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 7;
+                const action = "blocked";
+
+                const res = await request(app)
+                    .patch(`/api/connections/${userId}/${action}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+                expect(res.body.message).toBe("Nincs ilyen kapcsolat");
+            })
+        });
     });
     //-----------------------------------------------------------
     //    DELETE
     //-----------------------------------------------------------
     describe("DELETE", () => {
-        describe("/:userId", () => { });
+        describe("/:userId", () => {
+            test("should delete the connection between the users", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 2;
+
+
+                await request(app)
+                    .delete(`/api/connections/${userId}`)
+                    .set("Cookie", [cookie])
+                    .expect(200);
+
+                const foundConnection = await db.Connections.findOne({
+                    where: {
+                        [Op.or]: [
+                            {
+                                To_User_ID: testUser.ID,
+                                User_Requested_ID: userId
+                            },
+                            {
+                                To_User_ID: userId,
+                                User_Requested_ID: testUser.ID
+                            }
+                        ]
+                    }
+                })
+
+
+                expect(foundConnection).toBeNull();
+            });
+
+            test("should throw error on invalid token", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}_invalid`;
+                const userId = 2;
+
+                const res = await request(app)
+                    .delete(`/api/connections/${userId}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            });
+
+            test("should throw error on invalid user id", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+                const userId = 9999;
+
+                const res = await request(app)
+                    .delete(`/api/connections/${userId}`)
+                    .set("Cookie", [cookie])
+                    .expect(400);
+
+
+                expect(res.body.message).toBe("Nincs ilyen felhasználó");
+            });
+        });
     });
 
 

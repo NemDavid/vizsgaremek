@@ -53,7 +53,7 @@ class ConnectionsRepository {
         }
     }
 
-    async getCurrentUserConnections(status, options = {}) {
+    async getFilteredConnections(status, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {

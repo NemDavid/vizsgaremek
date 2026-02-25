@@ -13,7 +13,7 @@ router.get("/", connectionsController.getConnections);
 
 router.get("/me", connectionsController.getCurrentUserConnectionsAll);
 
-router.get("/filtered", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getCurrentUserConnections);
+router.get("/filtered", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getFilteredConnections);
 
 router.get("/me/received-request", connectionsController.getCurrentUserFriendRequests);
 

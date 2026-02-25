@@ -19,11 +19,11 @@ exports.getCurrentUserConnectionsAll = async (req, res, next) => {
     }
 };
 
-exports.getCurrentUserConnections = async (req, res, next) => {
+exports.getFilteredConnections = async (req, res, next) => {
     const status = req.query.status || "";
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserConnections(status, req.transaction));
+        res.status(200).json(await connectionsService.getFilteredConnections(status, req.transaction));
     } catch (error) {
         next(error);
     }

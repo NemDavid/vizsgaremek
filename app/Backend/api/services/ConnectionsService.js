@@ -49,12 +49,12 @@ class ConnectionsService {
         return response;
     }
 
-    async getCurrentUserConnections(status, transaction) {
+    async getFilteredConnections(status, transaction) {
         if (status != "accepted" && status != "pending" && status != "blocked") {
             throw new BadRequestError("Érvénytelen status");
         }
 
-        return await this.connectionsRepository.getCurrentUserConnections(status, { transaction });
+        return await this.connectionsRepository.getFilteredConnections(status, { transaction });
     }
 
     async getCurrentUserFriendRequests(token, transaction) {
@@ -108,7 +108,7 @@ class ConnectionsService {
     }
 
     async deleteConnection(token, To_User_ID, transaction) {
-            const encodedToken = authUtils.verifyToken(token);
+        const encodedToken = authUtils.verifyToken(token);
         if (encodedToken == null) {
             throw new BadRequestError("Hiányzó vagy lejárt token.");
         }
@@ -234,7 +234,7 @@ class ConnectionsService {
             throw new BadRequestError("Hiányzó action");
         }
         if (!(action == "accepted" || action == "blocked")) {
-            throw new BadRequestError("rossz action érték");
+            throw new BadRequestError("Rossz action érték");
         }
 
 
