@@ -18,21 +18,12 @@ exports.getCurrentUserConnectionsAll = async (req, res, next) => {
         next(error);
     }
 };
-exports.getCurrentUserConnectionsWithSomeOne = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+
+exports.getCurrentUserConnections = async (req, res, next) => {
+    const status = req.query.status || "";
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserConnectionsWithSomeOne(token, req.transaction));
-    } catch (error) {
-        next(error);
-    }
-};
-
-exports.getCurrentUserConnections = async (req, res, next, status) => {
-    const token = req.cookies['user_token'];
-
-    try {
-        res.status(200).json(await connectionsService.getCurrentUserConnections(token, status, req.transaction));
+        res.status(200).json(await connectionsService.getCurrentUserConnections(status, req.transaction));
     } catch (error) {
         next(error);
     }
