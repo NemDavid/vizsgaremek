@@ -148,7 +148,7 @@ describe("user_settings_Controller", () => {
             describe("DELETE /api/verify", () => {
                 test("should delete code by email in body", async () => {
                     const email = rawUsers[0].email;
-                    await request(app).delete("/api/verify").send({ email }).expect(204);
+                    await request(app).delete("/api/verify").send({ email }).expect(200);
 
                     const foundCode = await db.Verify_Code.findOne({
                         where: { email: email }
@@ -175,7 +175,7 @@ describe("user_settings_Controller", () => {
             describe("DELETE /api/verify/:itemId", () => {
                 test("should delete code by itemId", async () => {
                     const itemId = codes[0].ID;
-                    await request(app).delete(`/api/verify/${itemId}`).expect(204);
+                    await request(app).delete(`/api/verify/${itemId}`).expect(200);
 
                     const foundCode = await db.Verify_Code.findOne({
                         where: { ID: itemId }

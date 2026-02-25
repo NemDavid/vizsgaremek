@@ -35,7 +35,9 @@ exports.confirmRegistration = async (req, res, next) => {
             schools,
             bio,
             file: req.file
-        });
+        },
+            req.transaction
+        );
 
         res.status(201).json({
             message: "A fiókod és a profilod sikeresen létrehozva!",
@@ -44,7 +46,6 @@ exports.confirmRegistration = async (req, res, next) => {
         });
 
     } catch (error) {
-        //console.error("Reaction transaction error:", error);
         next(error);
     }
 }
@@ -54,7 +55,7 @@ exports.login = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        const result = await authService.login(username, password, token);
+        const result = await authService.login(username, password, token, req.transaction, req);
         authUtils.setCookie(res, "user_token", result.token);
         res.status(200).json({ token: result.token });
 
@@ -66,7 +67,7 @@ exports.login = async (req, res, next) => {
 exports.logout = async (req, res, next) => {
     const token = req.cookies['user_token'];
     try {
-        await authService.logout(token);
+        await authService.logout(token, req.transaction);
 
         res.clearCookie("user_token");
         res.status(200).json({ message: "OK" });
@@ -98,7 +99,7 @@ exports.sendVerifyCode = async (req, res, next) => {
     const { email } = req.body || {};
 
     try {
-        await authService.sendVerifyCode(email);
+        await authService.sendVerifyCode(email, req.transaction);
 
         res.status(201).json({ message: "Nézd meg a póstafiókodat." });
     } catch (error) {
@@ -110,7 +111,7 @@ exports.verifyTheCode = async (req, res, next) => {
     const { email, verify_code } = req.body || {};
 
     try {
-        res.status(200).json(await authService.verifyTheCode(email, verify_code));
+        res.status(200).json(await authService.verifyTheCode(email, verify_code, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -121,9 +122,9 @@ exports.setNewPassword = async (req, res, next) => {
     const { userId, password } = req.body || {};
 
     try {
-        const result = await authService.setNewPassword(userId, password);
+        const result = await authService.setNewPassword(userId, password, req.transaction);
 
-        res.status(200).json({message: result.message});
+        res.status(200).json({ message: result.message });
     } catch (error) {
         next(error);
     }

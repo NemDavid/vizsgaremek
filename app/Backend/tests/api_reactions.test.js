@@ -261,7 +261,7 @@ describe("user_settings_Controller", () => {
                 test("should delete reaction by ID", async () => {
                     const itemId = 1;
 
-                    await request(app).delete(`/api/reactions/${itemId}`).expect(204);
+                    await request(app).delete(`/api/reactions/${itemId}`).expect(200);
 
                     const foundReaction = await db.User_Post_Reaction.findOne({
                         where: { ID: itemId }

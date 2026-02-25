@@ -9,7 +9,6 @@ class AuthService {
         this.user_profileService = user_profileService;
         this.user_SettingsService = user_SettingsService;
         this.notificationService = null;
-        this.db = db;
     }
 
     setNotificationService(notificationService) {
@@ -36,66 +35,50 @@ class AuthService {
         await this.notificationService.sendRegistrationConfirm(pendingUser, confirmUrl);
     }
 
-    async confirmRegistration(token, profileData) {
-        try {
-            const decoded = authUtils.verifyToken(token);
-            if (decoded === null) {
-                throw new BadRequestError("Érvénytelen vagy lejárt token.");
-            }
-
-
-            const result = await this.db.sequelize.transaction(async transaction => {
-
-                const createdUser = await this.userService.createUser({
-                    username: decoded.username,
-                    email: decoded.email,
-                    password_hash: decoded.password_hash
-                },
-                    {
-                        transaction
-                    }
-                );
-
-                let newProfile = {
-                    USER_ID: createdUser.ID,
-                    first_name: profileData.first_name,
-                    last_name: profileData.last_name,
-                    birth_date: profileData.birth_date,
-                    birth_place: profileData.birth_place,
-                    schools: profileData.schools,
-                    bio: profileData.bio,
-                }
-
-                if (profileData.file) {
-                    avatar_url = `http://localhost:6769/cloud/${profileData.file.filename}`;
-                    newProfile.avatar_url = profileData.avatar_url;
-                }
-
-                const createdUser_Profile = await this.user_profileService.createUser_Profile(newProfile,
-                    {
-                        transaction
-                    }
-                );
-
-                const user_settings = await this.user_SettingsService.createUser_SettingsByID(newProfile.USER_ID, { transaction });
-
-                return {
-                    user: createdUser,
-                    profile: createdUser_Profile,
-                    settings: user_settings
-                };
-            });
-
-
-            return result;
-        } catch (error) {
-            //console.error("Registration transaction error:", error);
-            throw error;
-
+    async confirmRegistration(token, profileData, transaction) {
+        const decoded = authUtils.verifyToken(token);
+        if (decoded === null) {
+            throw new BadRequestError("Érvénytelen vagy lejárt token.");
         }
+
+
+        const createdUser = await this.userService.createUser({
+            username: decoded.username,
+            email: decoded.email,
+            password_hash: decoded.password_hash
+        },
+            transaction
+        );
+
+        let newProfile = {
+            USER_ID: createdUser.ID,
+            first_name: profileData.first_name,
+            last_name: profileData.last_name,
+            birth_date: profileData.birth_date,
+            birth_place: profileData.birth_place,
+            schools: profileData.schools,
+            bio: profileData.bio,
+        }
+
+        if (profileData.file) {
+            avatar_url = `http://localhost:6769/cloud/${profileData.file.filename}`;
+            newProfile.avatar_url = profileData.avatar_url;
+        }
+
+        const createdUser_Profile = await this.user_profileService.createUser_Profile(newProfile,
+            transaction
+        );
+
+        const user_settings = await this.user_SettingsService.createUser_SettingsByID(newProfile.USER_ID, transaction);
+
+        return {
+            user: createdUser,
+            profile: createdUser_Profile,
+            settings: user_settings
+        };
     }
 
-    async login(username, password, token = undefined) {
+    async login(username, password, token = undefined, transaction, req) {
         if (!username) {
             throw new BadRequestError("Hiányzó username");
         }
@@ -108,7 +91,7 @@ class AuthService {
             throw new BadRequestError("Már van bejelentkezett felhasználó ezen a gépen.");
         }
 
-        const user = await this.userService.getUserByUsername(username);
+        const user = await this.userService.getUserByUsername(username, transaction);
         if (!user) {
             throw new NotFoundError("Nincs ilyen felhasználó");
         }
@@ -118,17 +101,24 @@ class AuthService {
             throw new BadRequestError("Hibás jelszó");
         }
 
-        await this.userService.updateLastLogin(user.ID, { is_loggedIn: true, last_login: new Date() });
+        await this.userService.updateLastLogin(user.ID, { is_loggedIn: true, last_login: new Date() }, transaction);
 
         token = authUtils.generateUserToken(user);
 
-        await this.notificationService.sendNotificationToUser(user, "login");
+        // email az erintett user nek
+        if (req.afterCommit && this.notificationService) {
+            req.afterCommit.push(async () => {
+                await this.notificationService
+                    .sendNotificationToUser(user, "login")
+                    .catch(console.error);
+            });
+        }
 
         return { token };
     }
 
-    async logout(token) {
-        await this.userService.updateLastLogout(token);
+    async logout(token, transaction) {
+        await this.userService.updateLastLogout(token, transaction);
     }
 
     async getActiveTokenDetails(token) {
@@ -142,22 +132,26 @@ class AuthService {
         }
     }
 
-    async sendVerifyCode(email) {
-        await this.notificationService.sendVerifyCode(email);
+    async sendVerifyCode(email, transaction) {
+        await this.notificationService.sendVerifyCode(email, transaction);
     }
 
-    async verifyTheCode(email, verify_code) {
+    async verifyTheCode(email, verify_code, transaction) {
         return await this.notificationService.verifyTheCode({
             email,
-            verify_code
-        })
+            verify_code,
+        },
+            transaction
+        )
     }
 
-    async setNewPassword(userId, password) {
+    async setNewPassword(userId, password, transaction) {
         const result = await this.notificationService.setNewPassword({
             userId,
-            password
-        });
+            password,
+        },
+            transaction
+        );
         return { message: result.message };
     }
 }

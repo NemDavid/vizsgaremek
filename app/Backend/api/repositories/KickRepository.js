@@ -8,28 +8,14 @@ class KickRepository {
         this.sequelize = db.sequelize;
     }
 
-    async getKicks() {
+    async getKicks(options = {}) {
         try {
-            return await this.Kick.scope("allKickData").findAll();
+            return await this.Kick.scope("allKickData").findAll({ transaction: options.transaction });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
         }
     }
-    async getMyKicks(userId) {
-        try {
-            return await this.Kick.scope("allKickData").findAll({
-                where: {
-                    [Op.or]: [
-                        { FROM_USER_ID: userId },
-                        { TO_USER_ID: userId }
-                    ],
-                },
-            });
-        } catch (error) {
-            throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
-        }
-    }
-    async getMyKicks(userId) {
+    async getMyKicks(userId, options = {}) {
         try {
             return await this.Kick.scope("allKickData").findAll({
                 where: {
@@ -38,12 +24,28 @@ class KickRepository {
                         { TO_USER_ID: userId }
                     ],
                 },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
         }
     }
-    async getKickByUserId(FROM_USER_ID, TO_USER_ID) {
+    async getMyKicks(userId, options = {}) {
+        try {
+            return await this.Kick.scope("allKickData").findAll({
+                where: {
+                    [Op.or]: [
+                        { FROM_USER_ID: userId },
+                        { TO_USER_ID: userId }
+                    ],
+                },
+                transaction: options.transaction
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
+        }
+    }
+    async getKickByUserId(FROM_USER_ID, TO_USER_ID, options = {}) {
         try {
             return await this.Kick.scope("allKickData").findOne({
                 where: {
@@ -58,6 +60,7 @@ class KickRepository {
                         },
                     ],
                 },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a rúgást.", { details: error.message });
@@ -65,10 +68,11 @@ class KickRepository {
     }
 
     // én kiket rúgtam
-    async getKicksSentByUser(userId) {
+    async getKicksSentByUser(userId, options = {}) {
         try {
             return await this.Kick.scope("allKickData").findAll({
                 where: { FROM_USER_ID: userId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a rúgást.", { details: error.message });
@@ -76,19 +80,22 @@ class KickRepository {
     }
 
     // ki rúgott engem
-    async getKicksRecievedByUser(userId) {
+    async getKicksRecievedByUser(userId, options = {}) {
         try {
             return await this.Kick.scope("allKickData").findAll({
                 where: { TO_USER_ID: userId },
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a rúgást.", { details: error.message });
         }
     }
 
-    async createKick(kickData) {
+    async createKick(kickData, options = {}) {
         try {
-            return await this.Kick.create(kickData);
+            return await this.Kick.create(kickData, {
+                transaction: options.transaction
+            });
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a rúgást.", {
                 details: error.message,
@@ -97,10 +104,11 @@ class KickRepository {
         }
     }
 
-    async updateKick(ID, updatedata) {
+    async updateKick(ID, updatedata, options = {}) {
         try {
             const [affectedRows] = await this.Kick.update(updatedata, {
-                where: { ID }
+                where: { ID },
+                transaction: options.transaction
             })
 
             return affectedRows

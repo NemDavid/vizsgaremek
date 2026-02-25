@@ -64,7 +64,7 @@ exports.updatePassword = async (req, res, next) => {
 
 exports.getUsersByPage = async (req, res, next) => {
     try {
-        res.status(200).json(await userService.getUsersByPage(req.paramPage));
+        res.status(200).json(await userService.getUsersByPage(req.paramPage, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -72,9 +72,9 @@ exports.getUsersByPage = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        const deleteResault = await userService.deleteUser(req.userId);
+        const deleteResault = await userService.deleteUser(req.userId, req.transaction);
 
-        res.status(204).json(deleteResault);
+        res.status(200).json(deleteResault);
     } catch (error) {
         next(error);
     }
@@ -82,7 +82,7 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     try {
-        const updatedUser = await userService.updateUser(req.userId, req.body);
+        const updatedUser = await userService.updateUser(req.userId, req.body, req.transaction);
         res.status(200).json(updatedUser);
     } catch (error) {
         next(error);
@@ -93,10 +93,9 @@ exports.getExistingUserByToken = async (req, res, next) => {
     const token = req.params.token;
 
     try {
-        res.status(200).json(await userService.getExistingUserByToken(token));
+        res.status(200).json(await userService.getExistingUserByToken(token, req.transaction));
     } catch (error) {
         next(error);
     }
-
 
 };

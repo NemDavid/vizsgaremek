@@ -327,7 +327,7 @@ describe("user_settings_Controller", () => {
                     const token = authUtils.generateUserToken(testUser);
                     const cookie = `user_token=${token}`;
 
-                    await request(app).delete(`/api/comments/${itemId}`).set("Cookie", [cookie]).expect(204);
+                    await request(app).delete(`/api/comments/${itemId}`).set("Cookie", [cookie]).expect(200);
 
                     const foundComment = await db.User_Post_Comment.findOne({
                         where: { ID: itemId }
@@ -366,7 +366,7 @@ describe("user_settings_Controller", () => {
                     const res = await request(app).delete(`/api/comments/${itemId}`).set("Cookie", [cookie]).expect(400);
 
 
-                    expect(res.body.message).toBe("Ez nem a te commmented");
+                    expect(res.body.message).toBe("Ez nem a te commented");
                 })
             })
         });
