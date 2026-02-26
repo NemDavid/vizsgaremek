@@ -12,9 +12,8 @@ const authUtils = require("../api/utilities/authUtils");
 
 
 
-
-describe("user_settings_Controller", () => {
-    const rawUsers = [
+    describe("/api/profiles", () => {
+        const rawUsers = [
         { ID: 1, username: "admin", email: "admin@example.com", password: "Jelszo123#", role: "admin" },
         { ID: 2, username: "user", email: "user@example.com", password: "Jelszo123#", role: "user" },
     ];
@@ -61,7 +60,6 @@ describe("user_settings_Controller", () => {
         await db.Settings.destroy({ where: {} });
     });
 
-    describe("/api/profiles", () => {
         describe("GET", () => {
             describe("GET /api/settings", () => {
                 test("should return user settings by cookie", async () => {
@@ -231,4 +229,3 @@ describe("user_settings_Controller", () => {
             })
         });
     });
-});

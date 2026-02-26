@@ -53,11 +53,10 @@ class ConnectionsRepository {
         }
     }
 
-    async getCurrentUserConnections(User_Requested_ID, status, options = {}) {
+    async getFilteredConnections(status, options = {}) {
         try {
             return await this.Connections.scope("allConnectionData").findAll({
                 where: {
-                    User_Requested_ID,
                     Status: status
                 },
                 transaction: options.transaction

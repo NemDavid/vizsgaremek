@@ -22,7 +22,8 @@ exports.userIsLoggedIn = (req, res, next) =>
 
 exports.isAdmin = (req, res, next) =>
 {
-    if(!req.user.role && req.user.role == "admin") return next(new UnauthorizedError("You do not have the right privileges to access this feature"));
+
+    if(!req.user.role || req.user.role !== "admin") return next(new UnauthorizedError("Nincs jogod ehez a művelethez."));
 
     next();
 }

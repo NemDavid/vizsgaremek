@@ -9,7 +9,7 @@ const db = require("../api/db");
 
 const authUtils = require("../api/utilities/authUtils");
 
-describe("user_Posts_Router (/api/posts)", () => {
+describe("/api/posts", () => {
     const rawUsers = [
         {
             ID: 1,
@@ -198,10 +198,6 @@ describe("user_Posts_Router (/api/posts)", () => {
     afterAll(async () => {
         await db.sequelize.close();
     });
-
-    // =============================
-    // GET
-    // =============================
 
     describe("GET /api/posts/all", () => {
         test("should return all user posts", async () => {
