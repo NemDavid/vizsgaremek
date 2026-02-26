@@ -1,9 +1,9 @@
 // GhostPost.tsx
 import { Card, CardContent } from "@/components/ui/card";
 
-export function GhostPost() {
+export function GhostPost({className}:{className?:string}) {
     return (
-        <Card className="relative rounded-2xl border shadow-md bg-red-50 overflow-hidden min-h-[220px]">
+        <Card className={`relative rounded-2xl border shadow-md bg-red-50 overflow-hidden min-h-[220px] ${className}`}>
 
             {/* fentről lefelé mozgó csík */}
             <div className="pointer-events-none absolute inset-0">

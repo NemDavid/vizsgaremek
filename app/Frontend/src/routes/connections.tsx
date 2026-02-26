@@ -90,7 +90,7 @@ export function FriendsList({ id, className,myid }: { id: bigint, myid: bigint, 
   return (
     <div className={`bg-rose-100 flex items-center rounded-xl p-2 px-4 gap-3 ${className}`}>
       <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
-      <KickButton id={id} myid={myid}/>
+      <KickButton id={id} myid={myid} className="w-min"/>
     </div>
   )
 }

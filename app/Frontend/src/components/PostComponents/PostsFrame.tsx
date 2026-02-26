@@ -46,7 +46,7 @@ export function PostsFrame() {
 
 
     return (
-        <ScrollArea className="m-1! max-w-full h-full bg-white rounded-3xl ">
+        <ScrollArea className="m-1! max-w-full h-full bg-white rounded-3xl">
             {status === "error" ?
                 <>
                     <Card className='bg-red-200  rounded-xl p-4 m-20'>
@@ -89,6 +89,7 @@ export function PostsFrame() {
                                 <GhostPost />
                                 <GhostPost />
                             </>}
+                            <div className="p-6"></div>
                         </div>
                     </main>
                 </>

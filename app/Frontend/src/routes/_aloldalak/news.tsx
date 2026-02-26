@@ -33,10 +33,10 @@ const news = [
 function RouteComponent() {
     return (
         <DefaultUIFrame>
-            <div className="flex flex-col items-center w-full p-10 bg-red-50 gap-10">
+            <div className="flex flex-col items-center w-full p-10 bg-red-50 gap-10 ">
                 <h1 className="text-5xl font-bold text-red-950 text-center mb-6">Aktuális Hírek</h1>
-                <ScrollArea className="w-full max-w-6xl h-[650px] bg-white shadow rounded-lg p-6">
-                    <div className="flex flex-col gap-6">
+                <ScrollArea className="w-full max-w-6xl h-[650px] bg-white shadow rounded-lg">
+                    <div className="flex flex-col gap-6 h-full overflow-y-auto p-6">
                         {news.map((item, idx) => (
                             <Card key={idx} className="bg-red-100 hover:bg-red-200 transition-all">
                                 <CardHeader>

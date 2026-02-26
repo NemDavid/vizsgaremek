@@ -28,7 +28,7 @@ function daysSince(ymd: string) {
     return Math.floor((Date.now() - utcDayStamp(ymd)) / DAY_MS)
 }
 
-export function KickButton({ id, myid }: { id: bigint; myid: bigint }) {
+export function KickButton({ id, myid, className }: { id: bigint; myid: bigint, className:string }) {
     const qc = useQueryClient()
 
     const { data, isLoading } = useQuery({
@@ -70,12 +70,12 @@ export function KickButton({ id, myid }: { id: bigint; myid: bigint }) {
             variant="outline"
             disabled={disabled}
             onClick={() => doKick(id)}
-            className={cn(
+            className={`${cn(
                 // Régi kick van, nincs vissza -> kiemelt állapot
                 isOld && "border-amber-500 bg-amber-50 text-amber-900 hover:bg-amber-100",
                 // Friss kick van -> disabled is legyen láthatóbb
                 isFresh && "bg-slate-200 text-slate-600 opacity-100"
-            )}
+            )} ${className}`}
             title={
                 isFresh
                     ? "Már kickelted az elmúlt 2 hétben."

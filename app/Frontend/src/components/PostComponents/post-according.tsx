@@ -115,7 +115,7 @@ export function PostAccord({ post, className }: { post: Post, className?: string
                 <Accordion type="single" collapsible>
                     <AccordionItem value={`item-${post.ID}`}>
                         <div className="relative">
-                            <AccordionTrigger className="flex items-center gap-2 p-0 bg-gray-50 rounded-full! pr-12">
+                            <AccordionTrigger className="flex items-center gap-2 p-0 rounded-full! pr-12 bg-red-50">
                                 <div className="flex items-center gap-3 bg-red-50 w-full rounded-full!">
                                     <AvatarFrame userid={userid} className="bg-red-100 rounded-2xl" />
                                     <h2 className="text-xl font-semibold tracking-tight">{post.title}</h2>

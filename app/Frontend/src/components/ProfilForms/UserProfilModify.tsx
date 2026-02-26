@@ -121,9 +121,9 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
             <DialogTrigger asChild >
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' ><PenLine className='text-black' />Profil Modositása</Button>
             </DialogTrigger>
-            <DialogContent className="bg-red-100">
+            <DialogContent className="bg-red-100 z-999 max-h-[90vh] overflow-y-auto">
                 <DialogTitle className="display-none"/>
-                <div>
+                <div className="h-max ">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className={"flex flex-col gap-6"}>
                             <div className="flex flex-col items-center gap-1 text-center">

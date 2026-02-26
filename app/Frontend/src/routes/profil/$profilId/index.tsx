@@ -29,8 +29,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { AvatarFrame } from '@/components/custom/AvatarFrame';
-import { toast } from 'sonner';
-
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 export const Route = createFileRoute('/profil/$profilId/')({
   component: () => (
@@ -88,33 +92,93 @@ function RouteComponent() {
   return (
 
     <DefaultUIFrame className='bg-red-300 text-white '>
+      {/* DEFAULT (magas képernyő) */}
+      <div className="sm:[@media(max-height:820px)]:hidden">
+        {/* BANNER */}
+        <div className="relative w-full h-40 bg-gradient-to-b from-red-600 to-red-100">
+          <div className="absolute left-1/2 -bottom-16 -translate-x-1/2">
+            <img
+              src={profil?.data.avatar_url}
+              alt={`${profil?.data.first_name} ${profil?.data.last_name}`}
+              className="w-40 h-40 rounded-full border-4 border-slate-950 object-cover shadow-lg bg-slate-100"
+            />
+          </div>
+        </div>
 
-      {/* BANNER */}
-      <div className="relative w-full h-40 bg-gradient-to-b from-red-600 to-red-100">
-        {/* Profilkép lelógva középre */}
+        {/* Név és statok (lelógós verzió) */}
+        <div className="-mt-20 flex flex-col items-center text-center px-4 pb-5 bg-red-400 pt-40">
+          <h1 className="text-2xl font-semibold">
+            {profil?.data.first_name} {profil?.data.last_name}
+          </h1>
 
-        <div className="absolute left-1/2 -bottom-16 transform -translate-x-1/2">
-          <img
-            src={profil?.data.avatar_url}
-            alt={`${profil?.data.first_name} ${profil?.data.last_name}`}
-            className="w-40 h-40 rounded-full border-4 border-slate-950 object-cover shadow-lg bg-slate-100"
-          />
+          <div className="ml-auto">
+            <ProfileMenu isMe={auth?.data.userID === UserID} profilId={UserID} profil={profil} />
+          </div>
+
+          <div className="flex gap-8 mt-4 text-sm text-slate-300">
+            <div className="flex flex-col items-center">
+              <span className="text-white font-bold text-lg">{profil?.data.friendCount}/{`${maxFriend}`}</span>
+              <span>Barát</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-white font-bold text-lg">{profil?.data.user.posts.length}</span>
+              <span>Poszt</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-white font-bold text-lg">{profil?.data.level}</span>
+              <span>Szint</span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-6 py-2">
+            <ProfileInfo label="Bio" value={profil?.data.bio || ""} />
+            <ProfileInfo label="Iskolák" value={profil?.data.schools || ""} />
+            <ProfileInfo label="Születési dátum" value={profil?.data.birth_date || ""} />
+            <ProfileInfo label="Születési hely" value={profil?.data.birth_place || ""} />
+          </div>
         </div>
       </div>
+      {/* COMPACT (<= 820px magasság) */}
+      <div className="hidden sm:[@media(max-height:820px)]:block bg-red-400 px-4 py-4 border-b-10">
+        {/* FELSŐ SOR: bal avatar+név | jobb infók */}
+        <div className="grid grid-cols-2 gap-4 items-start">
+          {/* BAL: avatar + név + menü */}
+          <div className="flex items-center gap-4">
+            <img
+              src={profil?.data.avatar_url}
+              alt={`${profil?.data.first_name} ${profil?.data.last_name}`}
+              className="w-20 h-20 rounded-full border-4 border-slate-950 object-cover shadow-lg bg-slate-100 shrink-0"
+            />
 
-      {/* Név és statok */}
-      <div className="-mt-20 flex flex-col items-center text-center px-4 border-b-10 pb-5 bg-red-400 pt-40">
-        <h1 className="text-2xl font-semibold">{profil?.data.first_name} {profil?.data.last_name}</h1>
-        <div className={`ml-auto`}>
-          <ProfileMenu
-            isMe={auth?.data.userID === UserID}
-            profilId={UserID}
-            profil={profil}
-          />
+            <div className="min-w-0">
+              <h1 className="text-2xl font-semibold text-white truncate">
+                {profil?.data.first_name} {profil?.data.last_name}
+              </h1>
+              <div className="mt-1">
+                <ProfileMenu
+                  isMe={auth?.data.userID === UserID}
+                  profilId={UserID}
+                  profil={profil}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* JOBB: Bio/Iskolák/Születés... */}
+          <div className="flex flex-wrap justify-end gap-3">
+            <ProfileInfo label="Bio" value={profil?.data.bio || ""} />
+            <ProfileInfo label="Iskolák" value={profil?.data.schools || ""} />
+            <ProfileInfo label="Születési dátum" value={profil?.data.birth_date || ""} />
+            <ProfileInfo label="Születési hely" value={profil?.data.birth_place || ""} />
+          </div>
         </div>
-        <div className="flex gap-8 mt-4 text-sm text-slate-300">
+
+        {/* ALUL: statok */}
+        <div className="mt-4 flex justify-center gap-10 text-sm text-slate-200">
           <div className="flex flex-col items-center">
-            <span className="text-white font-bold text-lg">{profil?.data.friendCount}/{`${maxFriend}`}</span>
+            <span className="text-white font-bold text-lg">
+              {profil?.data.friendCount}/{`${maxFriend}`}
+            </span>
             <span>Barát</span>
           </div>
           <div className="flex flex-col items-center">
@@ -126,25 +190,24 @@ function RouteComponent() {
             <span>Szint</span>
           </div>
         </div>
-        <div className='flex flex-wrap gap-6 py-2'>
-          <div className="flex flex-wrap gap-6 py-2">
-            <ProfileInfo label="Bio" value={profil?.data.bio || ""} />
-            <ProfileInfo label="Iskolák" value={profil?.data.schools || ""} />
-            <ProfileInfo label="Születési dátum" value={profil?.data.birth_date || ""} />
-            <ProfileInfo label="Születési hely" value={profil?.data.birth_place || ""} />
-          </div>
-        </div>
       </div>
-      <div className="mt-10 px-6">
+      <div className="mt-10 px-6 hidden sm:block">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
         <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} />
       </div>
-
+      <Accordion type="single" collapsible className='block sm:hidden bg-transparent'>
+        <AccordionItem value="activites" className='bg-transparent'>
+          <AccordionTrigger className="text-xl font-semibold mb-4 p-4">Legutóbbi aktivitások</AccordionTrigger>
+          <AccordionContent>
+            <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} className="bg-rose-100! p-2 rounded-xl" />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </DefaultUIFrame>
   )
 }
 
-function LastActivity({ posts, myid }: { posts?: any[], myid: any, mypost: boolean }) {
+function LastActivity({ posts, myid, className }: { posts?: any[], myid: any, mypost: boolean, className?: string }) {
   if (!posts || posts.length === 0) {
     return (
       <div className="text-sm text-slate-200">
@@ -153,7 +216,7 @@ function LastActivity({ posts, myid }: { posts?: any[], myid: any, mypost: boole
     )
   }
   return (
-    <div className="bg-red-950 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className={`bg-red-950 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${className}`}>
       {posts.map((p) => (
         <Dialog key={p.ID}>
           <DialogTrigger>

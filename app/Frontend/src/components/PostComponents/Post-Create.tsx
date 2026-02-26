@@ -85,7 +85,7 @@ export function PostCreate() {
                 <Button variant="outline" className="bg-red-300 hover:bg-red-400">Mire gondolsz most?</Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md space-y-6 bg-red-50 border-black">
+            <DialogContent className="sm:max-w-md space-y-6 bg-red-50 border-black z-999 p-2 sm:p-6">
                 <DialogHeader>
                     <DialogTitle>Új bejegyzés</DialogTitle>
                     <DialogDescription>
@@ -146,7 +146,7 @@ export function PostCreate() {
                                                     field.onChange(null); // vagy töröld a mezőt
                                                 }
                                             }}
-                                            className="mt-1 "
+                                            className="mt-1 w-max sm:w-auto"
                                         />
                                     </FormControl>
                                     <FormDescription>JPEG, PNG, GIF képek feltöltése.</FormDescription>

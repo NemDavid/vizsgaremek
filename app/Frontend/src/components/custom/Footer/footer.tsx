@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
-export function Footer() {
+export function Footer({className}:{className?:string}) {
     return (
-        <div className="flex flex-col w-full bg-red-950 text-white px-6 py-10 lg:px-14 lg:py-14">
+        <div className={`flex flex-col w-full bg-red-950 text-white px-6 py-10 lg:px-14 lg:py-14 ${className}`}>
             {/* Fő tartalom */}
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
 

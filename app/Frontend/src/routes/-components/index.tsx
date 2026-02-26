@@ -10,7 +10,7 @@ export function MainPage() {
 
     useEffect(() => {
         const checkSize = () => {
-            setShowAd(window.innerWidth >= 900); // md alatt kikapcs
+            setShowAd(window.innerWidth >= 1000); // md alatt kikapcs
         };
 
         checkSize();
