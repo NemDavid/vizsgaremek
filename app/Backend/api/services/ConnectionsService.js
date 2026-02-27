@@ -82,7 +82,7 @@ class ConnectionsService {
         ));
 
         const friendsWithProfile = await Promise.all(filteredFriendlist.map(
-            friend => this.userRepository.getUserByID(friend.friendId, { transaction },"Profil")
+            friend =>  this.userRepository.getUserByID(friend.friendId, { transaction }, "Profil")
         )
         );
 

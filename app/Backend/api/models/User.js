@@ -93,7 +93,7 @@ module.exports = (sequelize, DataTypes) =>
                     attributes: ["ID", "email", "username","created_at", "updated_at","last_login"],
                 },
                 Profil:{
-                    attributes: ["ID", "email","username",],
+                    attributes: ["ID", "email","username", "created_at"],
                 }
             },
         }

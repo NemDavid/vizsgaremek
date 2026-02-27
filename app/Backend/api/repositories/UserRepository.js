@@ -46,12 +46,20 @@ class UserRepository {
 
     async getUserByContainingUI({ search, limit, offset }, options = {}) {
         try {
-            const { rows, count } = await this.User.scope("Profil").findAndCountAll({
+            const { rows, count } = await this.User.findAndCountAll({
+                attributes: ["username", "email", "created_at"],
                 where: {
                     username: {
                         [Op.like]: `%${search}%`,
                     },
                 },
+                include: [
+                    {
+                        model: this.User_Profile,
+                        as: "profile",
+                        scope: "allUser_ProfileData",
+                    }
+                ],
                 order: [["username", "ASC"]],
                 limit,
                 offset,
@@ -74,7 +82,7 @@ class UserRepository {
                     {
                         model: this.User_Profile,
                         as: "profile",
-                        scope: "allUser_ProfileData"
+                        scope: "allUser_ProfileData",
                     },
                 ],
                 transaction: options.transaction
