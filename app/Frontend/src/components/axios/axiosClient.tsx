@@ -55,8 +55,13 @@ export async function TokenStatusRequest(Token: string) {
 
   return response;
 }
+export async function GetMyconnections(Who:string) {
+  const response = await JsonClient.get(`/api/connections/me/${Who}`);
+
+  return response;
+}
 export async function GetMyFriends() {
-  const response = await JsonClient.get(`/api/connections/me`);
+  const response = await JsonClient.get(`/api/connections/me/friends`);
 
   return response;
 }

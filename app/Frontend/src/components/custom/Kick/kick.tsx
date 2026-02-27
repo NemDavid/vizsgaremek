@@ -14,7 +14,7 @@ type KickRow = {
 }
 
 async function GetKick() {
-    return JsonClient.get<KickRow[]>("/api/kicks/all")
+    return JsonClient.get<KickRow[]>("/api/kicks/me")
 }
 
 const Kick = (userId: bigint) => postKick(userId)

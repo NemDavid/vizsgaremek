@@ -133,7 +133,7 @@ export function DefaultUIFrame({
                         <AdsFrame id={3} variant="bottom" className="h-full w-full" />
                     </div>
                 )}
-                <DrawerFriends />
+                {/* <DrawerFriends /> */}
                 <Toaster richColors position="top-center" closeButton duration={3000} />
             </div>
         );
@@ -160,7 +160,7 @@ export function DefaultUIFrame({
                     </div>
                 ) : null}
 
-                <DrawerFriends />
+                {/* <DrawerFriends /> */}
                 <Footer />
                 <Toaster richColors position="top-center" closeButton duration={3000} />
             </div>

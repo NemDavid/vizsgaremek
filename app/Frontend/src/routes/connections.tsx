@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Annoyed, ShieldBan, ShieldQuestionMark, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { authStatusRequest,GetMyFriends } from '@/components/axios/axiosClient'
+import { authStatusRequest, GetMyconnections } from '@/components/axios/axiosClient'
 import { KickButton } from '@/components/custom/Kick/kick'
 import { AcceptFriend, BlockUserFromrequest, DeletFriend, RemoveBlock, RemoveRequest } from '@/components/custom/UserConnectionButton/UserConnectionButton'
 
@@ -27,19 +27,11 @@ export const Route = createFileRoute('/connections')({
 
 
 function RouteComponent() {
-  const { data: Connections } = useQuery({
-    queryKey: ["Friends"],
-    queryFn: () => GetMyFriends()
-  })
   const { data: auth } = useQuery<any>({
     queryKey: ["auth-status"],
     queryFn: authStatusRequest,
     enabled: false,
   })
-  const PendingList = Connections?.data?.filter((item:any) => item.Status === "pending") || [];
-  const blockedList = Connections?.data?.filter((item:any) => item.Status === "blocked") || [];
-  const friendsList = Connections?.data?.filter((item:any) => item.Status === "accepted") || [];
-
   const [ShowMenu, setMenu] = useState("FriendsMenu");
   return (
     <DefaultUIFrame className='bg-red-100'>
@@ -55,7 +47,7 @@ function RouteComponent() {
           </CardContent>
         </Card>
         <div className='flex-1 overflow-auto'>
-          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu list={blockedList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendRequestMenu list={PendingList} myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu list={friendsList} myid={BigInt(auth?.data.userID || 0n)} />}
+          {ShowMenu !== "FriendsMenu" ? ShowMenu !== "FriendRequestMenu" ? <BlackListMenu myid={BigInt(auth?.data.userID || 0n)} /> : <FriendRequestMenu myid={BigInt(auth?.data.userID || 0n)} /> : <FriendsMenu myid={BigInt(auth?.data.userID || 0n)} />}
 
         </div>
       </div>
@@ -63,7 +55,11 @@ function RouteComponent() {
   )
 }
 
-function FriendsMenu({ list, myid }: { list: any[],myid: bigint, }) {
+function FriendsMenu({ myid }: { myid: bigint, }) {
+  const { data: friends } = useQuery({
+    queryKey: ["Connection","Friends"],
+    queryFn: () => GetMyconnections("accepted")
+  })
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -76,8 +72,8 @@ function FriendsMenu({ list, myid }: { list: any[],myid: bigint, }) {
       </CardHeader>
       <CardContent>
         <div className='flex gap-4 flex-wrap'>
-          {list?.map((item: any) => (
-            <FriendsList id={item.UserID} myid={myid}/>
+          {friends?.data.map((item: any) => (
+            <FriendsList id={item.UserID} myid={myid} userData={item} />
           ))
           }
         </div>
@@ -86,16 +82,18 @@ function FriendsMenu({ list, myid }: { list: any[],myid: bigint, }) {
   )
 }
 
-export function FriendsList({ id, className,myid }: { id: bigint, myid: bigint, className?: string }) {
+export function FriendsList({ id, className, myid, userData }: { id: bigint, myid: bigint, className?: string, userData?: any }) {
+  console.log(userData);
+
   return (
     <div className={`bg-rose-100 flex items-center rounded-xl p-2 px-4 gap-3 ${className}`}>
-      <AvatarFrame userid={id} className='max-w-max max-h-min p-0 bg-slate-200 m-0' />
-      <KickButton id={id} myid={myid} className="w-min"/>
+      <AvatarFrame className='max-w-max max-h-min p-0 bg-slate-200 m-0' userData={userData} />
+      {/* <KickButton id={id} myid={myid} className="w-min"/> */}
     </div>
   )
 }
 
-function FriendRequestMenu({ list, myid }: { list?: any[], myid: bigint }) {
+function FriendRequestMenu({ myid }: { myid: bigint }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -146,7 +144,7 @@ function FriendsreqListPerEach({ item, myid }: { item: any, myid: bigint }) {
   )
 }
 
-function BlackListMenu({ list, myid }: { list: any[], myid: bigint }) {
+function BlackListMenu({ myid }: { myid: bigint }) {
   return (
     <Card className='bg-red-300 h-full rounded-none pt-0 mt-0'>
       <CardHeader className='my-4 bg-red-100 mt-0 border-red-100 '>
@@ -172,11 +170,11 @@ function BlackListMenu({ list, myid }: { list: any[], myid: bigint }) {
               }
               {item.Requested_BY == myid ?
                 <>
-                  <RemoveBlock userID={item?.UserID || -1n}  />
+                  <RemoveBlock userID={item?.UserID || -1n} />
                 </>
                 :
                 <>
-                  <div className='px-2 py-1 bg-rose-200 rounded-xl m-2 flex'><Annoyed className='p-1'/> Lelettél tiltva </div>
+                  <div className='px-2 py-1 bg-rose-200 rounded-xl m-2 flex'><Annoyed className='p-1' /> Lelettél tiltva </div>
                 </>
               }
             </div>

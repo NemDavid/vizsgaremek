@@ -18,6 +18,8 @@ export function DrawerFriends() {
         queryFn: () => GetMyFriends(),
         queryKey: ["Friends"],
         retry: 0,
+        gcTime: 30000,
+        refetchIntervalInBackground: false,
         refetchOnWindowFocus: false,
     })
     const { data: auth } = useQuery<any>({
@@ -25,7 +27,6 @@ export function DrawerFriends() {
         queryFn: authStatusRequest,
         enabled: false,
     })
-    const acceptedFriends = data?.data?.filter((item: any) => item.Status === "accepted") || [];
     return (
         <Drawer >
             <DrawerTrigger className="contents">
@@ -38,8 +39,8 @@ export function DrawerFriends() {
                     <DrawerTitle className="text-white">Friends</DrawerTitle>
                     <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
                         <div className="flex gap-3 overflow-x-auto p-3">
-                            {acceptedFriends.map((item: any) => (
-                                <FriendsList id={item.UserID} key={item.UserID} className={"bg-rose-900"} myid={BigInt(auth?.data.userID || 0n)}/>
+                            {data?.data.map((item: any) => (
+                                <FriendsList userData={item} id={item.UserID} key={item.UserID} className={"bg-rose-900"} myid={BigInt(auth?.data.userID || 0n)}/>
                             ))}
                         </div>
                     </div>
