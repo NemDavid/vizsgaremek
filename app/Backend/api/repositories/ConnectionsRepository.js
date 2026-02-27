@@ -92,21 +92,21 @@ class ConnectionsRepository {
                 include: [
                     {
                         association: "requester",
-                        attributes: ["USER_ID", "username"],
+                        attributes: ["ID", "username"],
                         include: [
                             {
                                 association: "profile",
-                                attributes: ["avatar", "bio"]
+                                scope: "allUser_ProfileData"
                             }
                         ]
                     },
                     {
                         association: "receiver",
-                        attributes: ["USER_ID", "username"],
+                        attributes: ["ID", "username"],
                         include: [
                             {
                                 association: "profile",
-                                attributes: ["avatar", "bio"]
+                                scope: "allUser_ProfileData"
                             }
                         ]
                     }
