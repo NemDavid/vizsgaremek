@@ -79,11 +79,11 @@ class ConnectionsRepository {
         }
     }
 
-    async getCurrentUserFriendlist(userId, options = {}) {
+    async getCurrentUserFilteredConnections(userId, action, options = {}) {
         try {
             const connections = await this.Connections.scope("allConnectionData").findAll({
                 where: {
-                    Status: "accepted",
+                    Status: action,
                     [this.Op.or]: [
                         { User_Requested_ID: userId },
                         { To_User_ID: userId }
@@ -92,7 +92,7 @@ class ConnectionsRepository {
                 include: [
                     {
                         association: "requester",
-                        scope: "Profil",
+                        attributes: ["ID", "username", "created_at"],
                         include: [
                             {
                                 association: "profile",
@@ -102,7 +102,7 @@ class ConnectionsRepository {
                     },
                     {
                         association: "receiver",
-                        scope: "Profil",
+                        attributes: ["ID", "username", "created_at"],
                         include: [
                             {
                                 association: "profile",

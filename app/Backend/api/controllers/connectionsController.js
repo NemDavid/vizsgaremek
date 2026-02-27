@@ -39,11 +39,12 @@ exports.getCurrentUserFriendRequests = async (req, res, next) => {
     }
 };
 
-exports.getCurrentUserFriendlist = async (req, res, next) => {
+exports.getCurrentUserFilteredConnections = async (req, res, next) => {
     const token = req.cookies['user_token'];
+    const action = req.action || "";
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserFriendlist(token, req.transaction));
+        res.status(200).json(await connectionsService.getCurrentUserFilteredConnections(token, action, req.transaction));
     } catch (error) {
         next(error);
     }

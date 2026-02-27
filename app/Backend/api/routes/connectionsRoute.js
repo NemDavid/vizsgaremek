@@ -13,11 +13,12 @@ router.get("/", connectionsController.getConnections);
 
 router.get("/me", connectionsController.getCurrentUserConnectionsAll);
 
+router.get("/me/:action", connectionsController.getCurrentUserFilteredConnections);
+
 router.get("/filtered", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getFilteredConnections);
 
 router.get("/me/received-request", connectionsController.getCurrentUserFriendRequests);
 
-router.get("/me/friends", connectionsController.getCurrentUserFriendlist);
 
 
 router.delete("/:userId", connectionsController.deleteConnection);

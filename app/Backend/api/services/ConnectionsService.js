@@ -67,14 +67,16 @@ class ConnectionsService {
         return await this.connectionsRepository.getCurrentUserFriendRequests(encodedToken.userID, { transaction });
     }
 
-    async getCurrentUserFriendlist(token, transaction) {
+    async getCurrentUserFilteredConnections(token, action, transaction) {
         const encodedToken = authUtils.verifyToken(token);
         if (encodedToken == null) {
             throw new BadRequestError("Hiányzó vagy lejárt token.");
         }
+        if (action != "pending" && action != "accepted" && action != "blocked") {
+            throw new BadRequestError("Rossz paramáter action érték");
+        }
 
-
-        return await this.connectionsRepository.getCurrentUserFriendlist(encodedToken.userID, { transaction });
+        return await this.connectionsRepository.getCurrentUserFilteredConnections(encodedToken.userID, action, { transaction });
     }
 
     async getUserFriendlistByID(userId, transaction) {
