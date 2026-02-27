@@ -146,7 +146,7 @@ class ConnectionsService {
             throw new BadRequestError("Magadat nem tudod kezelni");
         }
         if (action == "pending") {
-            const friendlist = await this.getCurrentUserFriendlist(token, transaction);
+            const friendlist = await this.getCurrentUserFilteredConnections(token, "accepted", transaction);
             const p = await this.userRepository.getUserByID(encodedToken.userID, { transaction });
             const maxFriend = p.profile.level + 50;
             if (friendlist.length > maxFriend) {

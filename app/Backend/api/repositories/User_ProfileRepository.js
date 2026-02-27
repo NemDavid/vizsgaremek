@@ -90,6 +90,7 @@ class User_ProfileRepository {
                         as: "user",
                         required: true,
                         where: userWhere,
+                        attributes: { exclude: ["password_hash","is_loggedIn","last_login","role"] },
                         include: [
                             {
                                 model: this.User_Post,

@@ -115,12 +115,27 @@ class ConnectionsRepository {
             });
 
             // itt már a repository-ban visszaadjuk a friend objektumot
-            return connections.map(connection =>
-                connection.User_Requested_ID === userId
-                    ? connection.receiver
-                    : connection.requester
-            );
+            const res = connections.map(connection => {
+                let friend;
+                let connection_status;
 
+                if (connection.User_Requested_ID === userId) {
+                    // Te kezdeményezted
+                    friend = connection.receiver;
+                    connection_status = connection.Status === "blocked" ? "blocked_by_me" : connection.Status === "pending" ? "waiting" : connection.Status;
+                } else {
+                    // Ő kezdeményezte
+                    friend = connection.requester;
+                    connection_status = connection.Status === "blocked" ? "blocked_me" : connection.Status === "pending" ? "to_respond" : connection.Status;
+                }
+
+                return {
+                    ...friend.toJSON(), // ha Sequelize objektum
+                    connection_status
+                };
+            });
+
+            return res;
         } catch (error) {
             throw new DbError("Nem sikerült lekérni a barátlistát.", {
                 details: error.message

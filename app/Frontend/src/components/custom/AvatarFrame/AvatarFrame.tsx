@@ -94,11 +94,11 @@ export function AvatarFrame({ userid, className, userData }: { userid?: bigint, 
                     <Card key={userid} className={`bg-red-200 rounded-none rounded-l-3xl hover:bg-red-600 hover:text-white ${className}`}>
                         <CardContent className="p-0 flex">
                             <Avatar className="p-0 border-2 border-red-500 ">
-                                <AvatarImage src={`${userData.profil.avatar_url}`} />
-                                <AvatarFallback>{userData?.profil.first_name} {userData?.profil.last_name}</AvatarFallback>
+                                <AvatarImage src={`${userData.profile.avatar_url}`} />
+                                <AvatarFallback>{userData?.profile.first_name} {userData?.profile.last_name}</AvatarFallback>
                             </Avatar>
                             <h3 className="scroll-m-20 text-xs font-semibold tracking-tight p-2">
-                                {userData?.profil.first_name} {userData?.profil.last_name}
+                                {userData?.profile.first_name} {userData?.profile.last_name}
                             </h3>
                         </CardContent>
                     </Card>
@@ -111,27 +111,27 @@ export function AvatarFrame({ userid, className, userData }: { userid?: bigint, 
                     </button>
                     <div className="flex items-center gap-4">
                         <Avatar className="h-16 w-16 border-2 border-[#ff3b3b]">
-                            <AvatarImage src={`${userData?.profil.avatar_url}`} />
+                            <AvatarImage src={`${userData?.profile.avatar_url}`} />
                             <AvatarFallback>
-                                {userData?.profil.first_name?.[0]}
-                                {userData?.profil.last_name?.[0]}
+                                {userData?.profile.first_name?.[0]}
+                                {userData?.profile.last_name?.[0]}
                             </AvatarFallback>
                         </Avatar>
 
                         <div>
                             <p className="text-lg font-bold text-[#ff3b3b]">
-                                {User?.profil.first_name} {User?.profil.last_name}
+                                {userData?.profile.first_name} {userData?.profile.last_name}
                             </p>
 
                             <p className="text-xs text-gray-400">
-                                @{User?.user.username}
+                                @{userData?.username}
                             </p>
                         </div>
                     </div>
 
                     <div className="mt-4 text-xs text-gray-300 space-y-1">
-                        <p>Email: {User?.user.email}</p>
-                        <p>Csatlakozott: {User?.user.created_at?.slice(0, 10)}</p>
+                        <p>Email: {userData?.email}</p>
+                        <p>Csatlakozott: {userData?.created_at?.slice(0, 10)}</p>
                     </div>
 
                     <div className="mt-4 p-2 rounded bg-[#150a0c] border border-[#3a1b1d]">
@@ -139,7 +139,7 @@ export function AvatarFrame({ userid, className, userData }: { userid?: bigint, 
                             Rövid bemutatkozás
                         </p>
                         <p className="text-xs text-gray-300">
-                            {User?.profil.bio || "Nincs megadva."}
+                            {userData?.profile.bio || "Nincs megadva."}
                         </p>
                     </div>
                 </HoverCardContent>

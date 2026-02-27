@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/drawer"
 import { Users } from 'lucide-react'
 import { useQuery } from "@tanstack/react-query"
-import { authStatusRequest, GetMyFriends } from "../../axios/axiosClient"
+import { authStatusRequest, GetMyconnections } from "../../axios/axiosClient"
 import { FriendsList } from "@/routes/connections"
 
 
 export function DrawerFriends() {
-    const { data } = useQuery({
-        queryFn: () => GetMyFriends(),
-        queryKey: ["Friends"],
+    const { data} = useQuery({
+        queryKey: ["Connection", "Friends"],
+        queryFn: () => GetMyconnections("accepted"),
         retry: 0,
         gcTime: 30000,
         refetchIntervalInBackground: false,
@@ -40,7 +40,7 @@ export function DrawerFriends() {
                     <div className="flex gap-3 overflow-x-auto border-b border-gray-300 p-3 bg-red-100">
                         <div className="flex gap-3 overflow-x-auto p-3">
                             {data?.data.map((item: any) => (
-                                <FriendsList userData={item} id={item.UserID} key={item.UserID} className={"bg-rose-900"} myid={BigInt(auth?.data.userID || 0n)}/>
+                                <FriendsList userData={item} id={item.UserID} key={item.UserID} className={"bg-rose-900"} myid={BigInt(auth?.data.userID || 0n)} avatarClass="size-30"/>
                             ))}
                         </div>
                     </div>

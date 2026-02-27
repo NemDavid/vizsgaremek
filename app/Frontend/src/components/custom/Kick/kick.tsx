@@ -32,8 +32,9 @@ export function KickButton({ id, myid, className }: { id: bigint; myid: bigint, 
     const qc = useQueryClient()
 
     const { data, isLoading } = useQuery({
-        queryKey: ["Rugas", String(id), String(myid)],
+        queryKey: ["Rugas"],
         queryFn: GetKick,
+        gcTime: 1000*60*60,
         enabled: myid != null && id != null,
     })
 
@@ -59,7 +60,7 @@ export function KickButton({ id, myid, className }: { id: bigint; myid: bigint, 
     const { mutate: doKick, isPending } = useMutation({
         mutationFn: (userId: bigint) => Kick(userId),
         onSuccess: async () => {
-            await qc.invalidateQueries({ queryKey: ["Rugas", String(id), String(myid)] })
+            await qc.invalidateQueries({ queryKey: ["Rugas"] })
         },
     })
 

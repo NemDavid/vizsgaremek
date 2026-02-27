@@ -160,7 +160,8 @@ export function RemoveBlock({ className, userID }: { className?: string, userID:
             toast.success("Sikeresen feloldottad a tiltást", {
                 duration: 3000,
             })
-            QueryClient.refetchQueries({ queryKey: ["Friends"] })
+            QueryClient.refetchQueries({ queryKey: ["Connection", "blocked"] })
+            QueryClient.refetchQueries({ queryKey: ["Connection", "pending"] })
         }
     })
 

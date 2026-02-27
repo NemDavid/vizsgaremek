@@ -143,7 +143,7 @@ function RouteComponent() {
                     key={e.ID}
                     className="flex items-center gap-3 p-3 m-2 bg-rose-100 rounded-xl"
                   >
-                    <AvatarFrame userid={e.ID} className="rounded-xl" />
+                    <AvatarFrame userid={e.ID} userData={e} className="rounded-xl" />
                     <Button>Open</Button>
                   </div>
                 ))}
