@@ -92,7 +92,7 @@ class ConnectionsRepository {
                 include: [
                     {
                         association: "requester",
-                        attributes: ["ID", "username"],
+                        scope: "Profil",
                         include: [
                             {
                                 association: "profile",
@@ -102,7 +102,7 @@ class ConnectionsRepository {
                     },
                     {
                         association: "receiver",
-                        attributes: ["ID", "username"],
+                        scope: "Profil",
                         include: [
                             {
                                 association: "profile",
