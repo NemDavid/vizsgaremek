@@ -15,6 +15,7 @@ class KickRepository {
             throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
         }
     }
+
     async getMyKicks(userId, options = {}) {
         try {
             return await this.Kick.scope("allKickData").findAll({
@@ -22,6 +23,28 @@ class KickRepository {
                     [Op.or]: [
                         { FROM_USER_ID: userId },
                         { TO_USER_ID: userId }
+                    ],
+                },
+                transaction: options.transaction
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a rúgásokat.", { details: error.message });
+        }
+    }
+
+    async getKicksWithUser(userId, targetUserId, options = {}) {
+        try {
+            return await this.Kick.scope("allKickData").findOne({
+                where: {
+                    [Op.or]: [
+                        { 
+                            FROM_USER_ID: userId,
+                            TO_USER_ID: targetUserId,
+                         },
+                        { 
+                            FROM_USER_ID: targetUserId,
+                            TO_USER_ID: userId,
+                        },
                     ],
                 },
                 transaction: options.transaction

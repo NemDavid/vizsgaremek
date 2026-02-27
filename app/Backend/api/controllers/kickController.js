@@ -19,6 +19,17 @@ exports.getMyKicks = async (req, res, next) => {
     }
 };
 
+exports.getKicksWithUser = async (req, res, next) => {
+    const token = req.cookies["user_token"];
+    const userId = req.userId;
+
+    try {
+        res.status(200).json(await kickService.getKicksWithUser(token, userId, req.transaction));
+    } catch (error) {
+        next(error);
+    }
+};
+
 // én kiket rúgtam
 exports.getKicksSentByUser = async (req, res, next) => {
     const token = req.cookies["user_token"];

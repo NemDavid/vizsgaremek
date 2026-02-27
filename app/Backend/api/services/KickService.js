@@ -21,6 +21,21 @@ class KickService {
         return await this.kickRepository.getMyKicks(encodedToken.userID, { transaction });
     }
 
+    async getKicksWithUser(token, userId, transaction) {
+        const encodedToken = authUtils.verifyToken(token);
+        if (encodedToken == null) {
+            throw new BadRequestError("Hiányzó vagy lejárt token.");
+        }
+
+        // valid user-e
+        const validUser = await this.userRepository.getUser(userId, { transaction });
+        if (!validUser) {
+            throw new BadRequestError("Nincs ilyen felhasználó", { details: `TO_USER_ID: ${userId}` });
+        }
+
+        return await this.kickRepository.getKicksWithUser(encodedToken.userID, userId, { transaction });
+    }
+
     // én kiket rúgtam
     async getKicksSentByUser(token, transaction) {
         const encodedToken = authUtils.verifyToken(token);
@@ -49,7 +64,7 @@ class KickService {
         if (encodedToken == null) {
             throw new BadRequestError("Hiányzó vagy lejárt token.");
         }
-        
+
         TO_USER_ID = parseInt(TO_USER_ID);
 
         // valid user-e
