@@ -81,7 +81,7 @@ class ConnectionsRepository {
 
     async getCurrentUserFriendlist(userId, options = {}) {
         try {
-            return await this.Connections.scope("allConnectionData").findAll({
+            const connections = await this.Connections.scope("allConnectionData").findAll({
                 where: {
                     Status: "accepted",
                     [this.Op.or]: [
@@ -89,10 +89,42 @@ class ConnectionsRepository {
                         { To_User_ID: userId }
                     ]
                 },
+                include: [
+                    {
+                        association: "requester",
+                        attributes: ["USER_ID", "username"],
+                        include: [
+                            {
+                                association: "profile",
+                                attributes: ["avatar", "bio"]
+                            }
+                        ]
+                    },
+                    {
+                        association: "receiver",
+                        attributes: ["USER_ID", "username"],
+                        include: [
+                            {
+                                association: "profile",
+                                attributes: ["avatar", "bio"]
+                            }
+                        ]
+                    }
+                ],
                 transaction: options.transaction
             });
+
+            // itt már a repository-ban visszaadjuk a friend objektumot
+            return connections.map(connection =>
+                connection.User_Requested_ID === userId
+                    ? connection.receiver
+                    : connection.requester
+            );
+
         } catch (error) {
-            throw new DbError("Nem sikerült lekérni a barátlistát.", { details: error.message });
+            throw new DbError("Nem sikerült lekérni a barátlistát.", {
+                details: error.message
+            });
         }
     }
 
@@ -139,8 +171,8 @@ class ConnectionsRepository {
 
     async createConnection(connectionData, options = {}) {
         try {
-            return await this.Connections.create(connectionData, { 
-                transaction: options.transaction 
+            return await this.Connections.create(connectionData, {
+                transaction: options.transaction
             });
         } catch (error) {
             throw new DbError("Nem sikerült létrehozni a kapcsolatot.", {

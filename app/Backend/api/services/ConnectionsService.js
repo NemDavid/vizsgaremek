@@ -73,20 +73,8 @@ class ConnectionsService {
             throw new BadRequestError("Hiányzó vagy lejárt token.");
         }
 
-        const rawFriendlist = await this.connectionsRepository.getCurrentUserFriendlist(encodedToken.userID, { transaction });
 
-        const filteredFriendlist = rawFriendlist.map(friendItem => (
-            {
-                friendId: friendItem.User_Requested_ID != encodedToken.userID ? friendItem.User_Requested_ID : friendItem.To_User_ID
-            }
-        ));
-
-        const friendsWithProfile = await Promise.all(filteredFriendlist.map(
-            friend =>  this.userRepository.getUserByID(friend.friendId, { transaction }, "Profil")
-        )
-        );
-
-        return friendsWithProfile;
+        return await this.connectionsRepository.getCurrentUserFriendlist(encodedToken.userID, { transaction });
     }
 
     async getUserFriendlistByID(userId, transaction) {
