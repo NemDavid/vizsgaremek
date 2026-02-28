@@ -19,12 +19,7 @@ class User_Post_ReactionService {
         return await this.user_post_reactionRepository.getUsers_posts_reactions({ transaction });
     }
 
-    async getUsers_posts_reaction(token, postId, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async getUsers_posts_reaction(encodedToken, postId, transaction) {
         return await this.user_post_reactionRepository.getUsers_posts_reaction(encodedToken.userID, postId, { transaction });
     }
 
@@ -42,12 +37,7 @@ class User_Post_ReactionService {
         return deleteProcess;
     }
 
-    async userMakeReaction(reactionData, token, transaction, req) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async userMakeReaction(reactionData, encodedToken, transaction, req) {
         reactionData.USER_ID = encodedToken.userID;
 
         // Validálás

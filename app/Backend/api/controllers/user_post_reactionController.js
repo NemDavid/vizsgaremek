@@ -11,10 +11,10 @@ exports.getUsers_posts_reactions = async (req, res, next) => {
 };
 
 exports.getUsers_posts_reaction = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
     try {
-        res.status(200).json(await user_post_reactionService.getUsers_posts_reaction(token, req.itemId, req.transaction));
+        res.status(200).json(await user_post_reactionService.getUsers_posts_reaction(user, req.itemId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -31,14 +31,14 @@ exports.deleteUsers_posts_reaction = async (req, res, next) => {
 
 exports.userMakeReaction = async (req, res, next) => {
     const { POST_ID, reaction } = req.body || {};
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
     try {
         const createdUser_Post_Reaction = await user_post_reactionService.userMakeReaction({
             POST_ID,
             reaction,
         },
-            token,
+            user,
             req.transaction,
             req,
         );

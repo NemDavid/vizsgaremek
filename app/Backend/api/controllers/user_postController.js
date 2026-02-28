@@ -38,10 +38,10 @@ exports.getUser_Post_ByID = async (req, res, next) => {
 };
 
 exports.deleteUser_Post = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
     try {
-        res.status(200).json(await user_postService.deleteUser_Post(token, req.postId, req.transaction));
+        res.status(200).json(await user_postService.deleteUser_Post(user, req.postId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -49,12 +49,12 @@ exports.deleteUser_Post = async (req, res, next) => {
 
 exports.createUser_Post = async (req, res, next) => {
     const { title, content } = req.body || {};
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
 
     try {
         res.status(201).json(await user_postService.createUser_Post({
-            token,
+            user,
             title,
             content,
             media_url: req.file ? `http://localhost:6769/cloud/${req.file.filename}` : undefined
@@ -71,7 +71,7 @@ exports.updateUser_Post = async (req, res, next) => {
     try {
         const { title, content } = req.body || {};
         const postId = req.params.postId;
-        const token = req.cookies["user_token"];
+        const user = req.user;
 
         const mediaDeleted =
             req.body?.mediaDeleted === "true" || req.body?.mediaDeleted === true;
@@ -84,7 +84,7 @@ exports.updateUser_Post = async (req, res, next) => {
         if (mediaDeleted) media_url = "";
 
         const updatedUser_Post = await user_postService.updatePost(
-            token,
+            user,
             postId,
             { title, content, media_url },
             req.transaction,

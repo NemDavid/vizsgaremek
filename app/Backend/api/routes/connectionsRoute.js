@@ -7,26 +7,30 @@ const authMiddleware = require("../middlewares/authMiddleware");
 router.param("userId", paramHandler.paramUserId);
 router.param("action", paramHandler.paramAction);
 
-
-router.get("/", connectionsController.getConnections);
-
-
-router.get("/me", connectionsController.getCurrentUserConnectionsAll);
-
-router.get("/me/:action", connectionsController.getCurrentUserFilteredConnections);
-
+//--------------------------------------------------
+//                   ADMIN
+//--------------------------------------------------
+router.get("/",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], connectionsController.getConnections);
 router.get("/filtered", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getFilteredConnections);
-
-router.get("/me/received-request", connectionsController.getCurrentUserFriendRequests);
-
+//router.get("/me/received-request",[authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getCurrentUserFriendRequests);
 
 
-router.delete("/:userId", connectionsController.deleteConnection);
+//--------------------------------------------------
+//              NEM ADMIN
+//--------------------------------------------------
+//get
+router.get("/me",[authMiddleware.userIsLoggedIn], connectionsController.getCurrentUserConnectionsAll); // szar
+router.get("/me/:action",[authMiddleware.userIsLoggedIn], connectionsController.getCurrentUserFilteredConnections);
 
-router.post("/:userId", connectionsController.createConnection);
-router.post("/:userId/:action", connectionsController.createConnection);
+//post
+router.post("/:userId/:action",[authMiddleware.userIsLoggedIn], connectionsController.createConnection);
+router.post("/:userId",[authMiddleware.userIsLoggedIn], connectionsController.createConnection);
 
-router.patch("/:userId/:action", connectionsController.updateConnection);
+//delete
+router.delete("/:userId",[authMiddleware.userIsLoggedIn], connectionsController.deleteConnection);
+
+//patch
+router.patch("/:userId/:action",[authMiddleware.userIsLoggedIn], connectionsController.updateConnection);
 
 
 module.exports = router;

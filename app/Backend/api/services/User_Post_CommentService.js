@@ -36,15 +36,10 @@ class User_Post_CommentService {
         return postComments;
     }
 
-    async deleteUsers_posts_comment(token, itemId, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
+    async deleteUsers_posts_comment(encodedToken, itemId, transaction) {
         if (!itemId) {
             throw new BadRequestError("Hiányzó item ID");
         }
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
 
         const targetComment = await this.user_post_CommentRepository.getUsers_posts_comment(itemId, { transaction });
         if (targetComment == null) {
@@ -64,12 +59,7 @@ class User_Post_CommentService {
         return deleteProcess;
     }
 
-    async createUsers_posts_comment(commentData, token, transaction, req) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async createUsers_posts_comment(commentData, encodedToken, transaction, req) {
         commentData.USER_ID = encodedToken.userID;
 
         // Validálás

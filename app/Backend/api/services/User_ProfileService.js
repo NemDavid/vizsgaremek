@@ -78,7 +78,10 @@ class User_ProfileService {
         return await this.user_profileRepository.createUser_Profile(userData, options);
     }
 
-    async updateUser_Profile(userId, updateData, transaction) {
+    async updateUser_Profile(userId, updateData, transaction, user) {
+        if (user.role === 'user' && user.userID !== userId) {
+            throw new ValidationError("Nem módosíthatsz más fiókot!");
+        }
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         const validUser = await this.userRepository.getUser(userId, { transaction });
 
@@ -97,7 +100,6 @@ class User_ProfileService {
         if (!authUtils.isValidLastName(updateData.last_name)) {
             throw new ValidationError("Érvénytelen last_name");
         }
-
 
         // opcionalisak
         if (!authUtils.isValidSchools(updateData.schools)) {
@@ -128,7 +130,7 @@ class User_ProfileService {
         if (!updateUser_Profile) {
             throw new BadRequestError("A frissitett user profile nem található", { details: `userId: ${userId}` });
         }
-        
+
         return updateUser_Profile;
     }
 
@@ -152,7 +154,7 @@ class User_ProfileService {
         if (!getProfile) {
             throw new BadRequestError("Profil nem található");
         }
-        
+
         const userProfile = getProfile.profile;
 
         // Ha invalid adat, NE próbáljuk meg javítani, dobjunk hibát

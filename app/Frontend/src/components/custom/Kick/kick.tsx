@@ -1,9 +1,10 @@
 import { useMemo } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Button } from "../../ui/button"
-import { JsonClient, postKick } from "../../axios/axiosClient"
+import { GetKick, postKick } from "../../axios/axiosClient"
 import { Loader2, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { AxiosResponse } from "axios"
 
 type KickRow = {
     ID: number
@@ -13,9 +14,6 @@ type KickRow = {
     updated_at: string // YYYY-MM-DD
 }
 
-async function GetKick() {
-    return JsonClient.get<KickRow[]>("/api/kicks/me")
-}
 
 const Kick = (userId: bigint) => postKick(userId)
 
@@ -28,15 +26,18 @@ function daysSince(ymd: string) {
     return Math.floor((Date.now() - utcDayStamp(ymd)) / DAY_MS)
 }
 
-export function KickButton({ id, myid, className }: { id: bigint; myid: bigint, className:string }) {
+export function KickButton({ id, myid, className }: { id: bigint; myid: string, className: string }) {
     const qc = useQueryClient()
-
+    
     const { data, isLoading } = useQuery({
-        queryKey: ["Rugas"],
-        queryFn: GetKick,
-        gcTime: 1000*60*60,
+        queryKey: ["Rugas", id,myid],
+        queryFn: async () => {
+            const response = await GetKick();
+            return response;
+        },
+        staleTime: 1000 * 60 * 60,
         enabled: myid != null && id != null,
-    })
+    });
 
     const kicks = data?.data ?? []
 
@@ -45,7 +46,7 @@ export function KickButton({ id, myid, className }: { id: bigint; myid: bigint, 
         const me = String(myid)
         const other = String(id)
         return kicks.find(
-            (k) => String(k.FROM_USER_ID) === me && String(k.TO_USER_ID) === other
+            (k:KickRow) => String(k.FROM_USER_ID) === me && String(k.TO_USER_ID) === other
         )
     }, [kicks, id, myid])
 

@@ -36,18 +36,16 @@ class AuthService {
     }
 
     async confirmRegistration(token, profileData, transaction) {
-        const decoded = authUtils.verifyToken(token);
-        if (decoded === null) {
+        let decoded = undefined;
+        try {
+            decoded = authUtils.verifyToken(token);
+        }
+        catch (_) {
             throw new BadRequestError("Érvénytelen vagy lejárt token.");
         }
-
-
-        const createdUser = await this.userService.createUser({
-            username: decoded.username,
-            email: decoded.email,
-            password_hash: decoded.password_hash
-        },
-            transaction
+        const createdUser = await this.userService.createUser(
+            { username: decoded.username, email: decoded.email, password_hash: decoded.password_hash },
+            { transaction }
         );
 
         let newProfile = {
@@ -61,16 +59,18 @@ class AuthService {
         }
 
         if (profileData.file) {
-            avatar_url = `http://localhost:6769/cloud/${profileData.file.filename}`;
-            newProfile.avatar_url = profileData.avatar_url;
+            newProfile.avatar_url = `http://localhost:6769/cloud/${profileData.file.filename}`;
         }
 
-        const createdUser_Profile = await this.user_profileService.createUser_Profile(newProfile,
-            transaction
+        const createdUser_Profile = await this.user_profileService.createUser_Profile(
+            newProfile,
+            { transaction }
         );
 
-        const user_settings = await this.user_SettingsService.createUser_SettingsByID(newProfile.USER_ID, transaction);
-
+        const user_settings = await this.user_SettingsService.createUser_SettingsByID(
+            newProfile.USER_ID,
+            { transaction }
+        );
         return {
             user: createdUser,
             profile: createdUser_Profile,
@@ -122,13 +122,12 @@ class AuthService {
     }
 
     async getActiveTokenDetails(token) {
-        const active = authUtils.verifyToken(token);
-
-        if (active == null) {
-            throw new BadRequestError("Érvénytelen vagy lejárt token.");
-        }
-        else {
+        try {
+            const active = authUtils.verifyToken(token);
             return { active };
+        }
+        catch (last_login) {
+            throw new BadRequestError("Érvénytelen vagy lejárt token.");
         }
     }
 

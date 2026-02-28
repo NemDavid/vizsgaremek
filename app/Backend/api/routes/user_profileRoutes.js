@@ -2,27 +2,41 @@ const express = require("express");
 const router = express.Router();
 const user_profileController = require("../controllers/user_profileController");
 const paramHandler = require("../middlewares/paramHandler")
+const authMiddleware = require("../middlewares/authMiddleware");
 
+//---------------------------------------------------------
 const { getStorage } = require("../utilities/cloudUtils");
 const upload = getStorage()
 const cloudMiddleware = require("../middlewares/uploadMiddleware");
+//---------------------------------------------------------
 
 router.param("paramPage", paramHandler.paramPage)
 router.param("userId", paramHandler.paramUserId)
 
+//--------------------------------------------------
+//                   ADMIN
+//--------------------------------------------------
+router.get("/all",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.getUser_Profiles);
+router.get("/pages/:paramPage",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.getUser_ProfilesByPage);
+router.delete("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.deleteUser_Profile);
+router.post("/",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.createUser_Profile);
 
-router.get("/all", user_profileController.getUser_Profiles);
+//--------------------------------------------------
+//              NEM ADMIN
+//--------------------------------------------------
+//GET
+router.get("/:userId",[authMiddleware.userIsLoggedIn], user_profileController.getUser_Profile);
+//POST
 
-router.get("/pages/:paramPage", user_profileController.getUser_ProfilesByPage);
 
-router.get("/:userId", user_profileController.getUser_Profile);
+//DELETE
 
 
-router.delete("/:userId", user_profileController.deleteUser_Profile);
+//PATCH
+router.patch("/:userId", [authMiddleware.userIsLoggedIn,upload.single("avatar"), cloudMiddleware.Req_HasFile], user_profileController.updateUser_Profile);
 
-router.post("/", user_profileController.createUser_Profile);
 
-router.patch("/:userId", upload.single("avatar"), cloudMiddleware.Req_HasFile, user_profileController.updateUser_Profile);
+
 
 
 module.exports = router;

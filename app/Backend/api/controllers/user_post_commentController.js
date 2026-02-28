@@ -27,10 +27,10 @@ exports.getCommentsForPostyPostId = async (req, res, next) => {
 };
 
 exports.deleteUsers_posts_comment = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
     try {
-        res.status(200).json(await user_post_commentService.deleteUsers_posts_comment(token, req.itemId, req.transaction));
+        res.status(200).json(await user_post_commentService.deleteUsers_posts_comment(user, req.itemId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -38,14 +38,14 @@ exports.deleteUsers_posts_comment = async (req, res, next) => {
 
 exports.createUsers_posts_comment = async (req, res, next) => {
     const { POST_ID, comment } = req.body || {};
-    const token = req.cookies['user_token'];
+    const user = req.user;
     
     try {
         const createdUser_Post_comment = await user_post_commentService.createUsers_posts_comment({
                 POST_ID,
                 comment,
             },
-            token,
+            user,
             req.transaction,
             req
         );

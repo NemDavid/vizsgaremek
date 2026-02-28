@@ -90,7 +90,7 @@ export function AvatarFrame({ userid, className, userData }: { userid?: bigint, 
     else {
         return (
             <HoverCard>
-                <HoverCardTrigger onClick={() => nav({ to: "/profil/$profilId", params: { profilId: `${userid}` } })} className="cursor-pointer">
+                <HoverCardTrigger onClick={() => nav({ to: "/profil/$profilId", params: { profilId: `${userData.ID}` } })} className="cursor-pointer">
                     <Card key={userid} className={`bg-red-200 rounded-none rounded-l-3xl hover:bg-red-600 hover:text-white ${className}`}>
                         <CardContent className="p-0 flex">
                             <Avatar className="p-0 border-2 border-red-500 ">
@@ -106,7 +106,7 @@ export function AvatarFrame({ userid, className, userData }: { userid?: bigint, 
                 <HoverCardContent className="w-72 bg-[#1a0f10] text-white border border-[#3a1b1d] shadow-xl">
                     <button
                         className="absolute top-[6px] right-[6px] h-7 w-7 rounded-full bg-[#ff3b3b] hover:bg-[#cc2f2f] flex items-center justify-center text-white text-sm cursor-pointer z-70"
-                        onClick={() => nav({ to: "/profil/$profilId", params: { profilId: `${userid}` } })}>
+                        onClick={() => nav({ to: "/profil/$profilId", params: { profilId: `${userData.ID}` } })}>
                         ›
                     </button>
                     <div className="flex items-center gap-4">

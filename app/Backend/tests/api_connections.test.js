@@ -227,9 +227,9 @@ describe("/api/connections", () => {
         email: rawUsers[0].email,
         role: rawUsers[0].role,
     };
-    //-----------------------------------------------------------
-    //    BEFOROK/AFTEREK
-    //-----------------------------------------------------------
+    let token = undefined;
+    let cookie = undefined;
+    let cookieinvalid = undefined
     beforeAll(async () => {
         await db.sequelize.sync();
     });
@@ -244,6 +244,10 @@ describe("/api/connections", () => {
         await db.User_Profile.bulkCreate(rawProfiles);
         await db.Settings.bulkCreate(settings);
         await db.Connections.bulkCreate(rawConnections);
+        token = authUtils.generateUserToken(testUser);
+        cookie = `user_token=${token}`;
+        cookieinvalid = `user_token=${token}_invalid`;
+
     }, 60 * 1000);
 
     afterEach(async () => {
@@ -255,29 +259,30 @@ describe("/api/connections", () => {
     afterAll(async () => {
         await db.sequelize.close();
     });
-    //-----------------------------------------------------------
-    //    GET
-    //-----------------------------------------------------------
     describe("GET", () => {
-        //-----------------------------------------------------------
-        //    /
-        //-----------------------------------------------------------
         describe("/", () => {
             test("should returt all connection from db", async () => {
-                const res = await request(app).get("/api/connections").expect(200);
+                const res = await request(app).get("/api/connections").set("Cookie", [cookie]).expect(200);
 
                 expect(res.body).toBeDefined();
                 expect(res.body.length).toBe(rawConnections.length);
             });
+            test("should throw ValidationError when token is invalid", async () => {
+                const res = await request(app).get("/api/connections").set("Cookie", [cookieinvalid]).expect(403);
+
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+            });
+            test("should throw UnauthorizedError when missing token", async () => {
+                const res = await request(app).get("/api/connections").expect(401);
+
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
         });
-        //-----------------------------------------------------------
-        //    /ME
-        //-----------------------------------------------------------
         describe("/me", () => {
             test("should return logged user's connections", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
-
                 const res = await request(app)
                     .get("/api/connections/me")
                     .set("Cookie", [cookie])
@@ -299,23 +304,24 @@ describe("/api/connections", () => {
                 expect(res.body).toBeDefined();
                 expect(res.body.length).toBe(foundConnections.length);
             });
-
             test("should throw error on invalid token", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}_invalid`;
-
                 const res = await request(app)
                     .get("/api/connections/me")
-                    .set("Cookie", [cookie])
-                    .expect(400);
+                    .set("Cookie", [cookieinvalid])
+                    .expect(403);
 
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
             });
-        });
+            test("should throw UnauthorizedError when missing token", async () => {
+                const res = await request(app)
+                    .get("/api/connections/me")
+                    .expect(401);
 
-        //-----------------------------------------------------------
-        //    /filtered
-        //-----------------------------------------------------------
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
+        });
         describe("/filtered", () => {
             test.each([
                 ["accepted"],
@@ -323,9 +329,6 @@ describe("/api/connections", () => {
                 ["blocked"]
             ])(
                 "should return logged user's connections with given status", async (status) => {
-                    const token = authUtils.generateUserToken(testUser);
-                    const cookie = `user_token=${token}`;
-
                     const res = await request(app)
                         .get(`/api/connections/filtered?status=${status}`)
                         .set("Cookie", [cookie])
@@ -350,7 +353,6 @@ describe("/api/connections", () => {
                     );
                 },
             );
-
             test("should throw error on user role token", async () => {
                 const user = {
                     ID: rawUsers[1].ID,
@@ -366,70 +368,18 @@ describe("/api/connections", () => {
 
                 expect(res.body.message).toBe("Nincs jogod ehez a művelethez.");
             });
-
             test("should throw error on unlogged try", async () => {
                 const res = await request(app).get("/api/connections/filtered/?status=accepted").expect(401);
 
                 expect(res.body.message).toBe("Hiányzó user token");
             });
-
             test("should throw error on invalid status param", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
-
                 const res = await request(app).get("/api/connections/filtered/?status=_invalid").set("Cookie", [cookie]).expect(400);
 
                 expect(res.body.message).toBe("Érvénytelen status");
             });
         });
-
-        //-----------------------------------------------------------
-        //    /me/received-request
-        //-----------------------------------------------------------
-        describe("/me/received-request", () => {
-            test("should return logged user's received-requests", async () => {
-                const correct = [
-                    { ID: 3, User_Requested_ID: 4, To_User_ID: 1, Status: 'pending' },
-                    { ID: 5, User_Requested_ID: 6, To_User_ID: 1, Status: 'blocked' }
-                ]
-
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
-                const res = await request(app)
-                    .get(`/api/connections/me/received-request`)
-                    .set("Cookie", [cookie])
-                    .expect(200);
-
-                expect(res.body).toBeDefined();
-                expect(res.body).toEqual(
-                    expect.arrayContaining(
-                        correct.map((profil) =>
-                            expect.objectContaining({
-                                User_Requested_ID: profil.User_Requested_ID,
-                                To_User_ID: profil.To_User_ID
-                            }),
-                        ),
-                    ),
-                );
-            },
-            );
-
-            test("should throw error on invalid token", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}_invalid`;
-                const res = await request(app)
-                    .get(`/api/connections/me/received-request`)
-                    .set("Cookie", [cookie])
-                    .expect(400);
-
-                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
-            },
-            );
-        });
-        //-----------------------------------------------------------
-        //    /me/friends
-        //-----------------------------------------------------------
-        describe("/me/friends", () => {
+        describe("/me/action", () => {
             test("should return logged user's friends", async () => {
                 const correct = [
                     {
@@ -438,11 +388,8 @@ describe("/api/connections", () => {
                         profile: {}
                     }
                 ]
-
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const res = await request(app)
-                    .get(`/api/connections/me/friends`)
+                    .get(`/api/connections/me/accepted`)
                     .set("Cookie", [cookie])
                     .expect(200);
 
@@ -459,51 +406,49 @@ describe("/api/connections", () => {
                 );
             },
             );
-
             test("should throw error on invalid token", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}_invalid`;
                 const res = await request(app)
                     .get(`/api/connections/me/friends`)
-                    .set("Cookie", [cookie])
-                    .expect(400);
+                    .set("Cookie", [cookieinvalid])
+                    .expect(403);
 
-
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            },
+            );
+            test("should throw error on invalid token", async () => {
+                const res = await request(app)
+                    .get(`/api/connections/me/friends`)
+                    .expect(401);
+
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
             },
             );
         });
     });
-    //-----------------------------------------------------------
-    //    POST
-    //-----------------------------------------------------------
     describe("POST", () => {
         describe("/:userId/:action", () => {
             test.each([
                 ["pending"],
                 ["blocked"]
             ])("should do the action from the user", async (action) => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const res = await request(app)
                     .post(`/api/connections/7/${action}`)
                     .set("Cookie", [cookie])
                     .expect(201);
                 expect(res.body).toBeDefined();
                 expect(res.body.user).toBeDefined();
-
                 const fc = await db.Connections.findOne({
                     where: {
                         To_User_ID: 7,
                         User_Requested_ID: 1
                     },
                 });
-
-
                 expect(fc.dataValues).toBeDefined()
                 expect(fc.dataValues.Status).toBe(action)
             })
-
             test("should throw error on invalid action", async () => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}`;
@@ -517,21 +462,17 @@ describe("/api/connections", () => {
 
                 expect(res.body.message).toBe("Rossz paramáter action érték");
             })
-
             test("should throw error on invalid token", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}_invalid`;
                 const userId = 7;
                 const action = "blocked";
 
                 const res = await request(app)
                     .post(`/api/connections/${userId}/${action}`)
-                    .set("Cookie", [cookie])
-                    .expect(400);
+                    .set("Cookie", [cookieinvalid])
+                    .expect(403);
 
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
             })
-
             test.each([
                 [9999, "Nincs ilyen felhasználó"],
                 [testUser.ID, "Magadat nem tudod kezelni"]
@@ -548,7 +489,6 @@ describe("/api/connections", () => {
                 expect(res.body.message).toBe(expectedMessage);
             })
         });
-
         describe("/:userId", () => {
             test("should do the action from the user without action", async () => {
                 const token = authUtils.generateUserToken(testUser);
@@ -567,7 +507,6 @@ describe("/api/connections", () => {
                 expect(fc.dataValues).toBeDefined()
                 expect(fc.dataValues.Status).toBe("pending")
             })
-
             test("should throw error if i blocked a user and i send frind request", async () => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}`;
@@ -581,7 +520,6 @@ describe("/api/connections", () => {
 
                 expect(res.body.message).toBe("Ezt a felhasználót letiltottad, előbb oldd fel, mielőtt barátnak kéred!");
             })
-
             test("should throw error if user blocked me and i send frind request", async () => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}`;
@@ -595,7 +533,6 @@ describe("/api/connections", () => {
 
                 expect(res.body.message).toBe("Ez a felhasználó letiltott téged, ezért nem tudod barátnak kérni!");
             })
-
             test("should throw error on two accept", async () => {
                 const token = authUtils.generateUserToken(testUser);
                 const cookie = `user_token=${token}`;
@@ -610,18 +547,12 @@ describe("/api/connections", () => {
             })
         });
     });
-    //-----------------------------------------------------------
-    //    PATCH
-    //-----------------------------------------------------------
     describe("PATCH", () => {
         describe("/:userId/:action", () => {
             test.each([
                 [2, "blocked"],
                 [4, "accepted"],
             ])("should update status between users", async (userId, action) => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
-
                 const res = await request(app)
                     .patch(`/api/connections/${userId}/${action}`)
                     .set("Cookie", [cookie])
@@ -636,22 +567,29 @@ describe("/api/connections", () => {
             })
 
             test("should throw error on invalid action", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}_invalid`;
                 const userId = 2;
                 const action = "blocked";
 
                 const res = await request(app)
                     .patch(`/api/connections/${userId}/${action}`)
-                    .set("Cookie", [cookie])
-                    .expect(400);
+                    .set("Cookie", [cookieinvalid])
+                    .expect(403);
 
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
             })
+            test("should throw UnauthorizedError when missing token", async () => {
+                const userId = 2;
+                const action = "blocked";
+
+                const res = await request(app)
+                    .patch(`/api/connections/${userId}/${action}`)
+                    .expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            })
 
             test("should throw error on invalid action", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const userId = 2;
                 const action = "blocked_invalid";
 
@@ -667,8 +605,6 @@ describe("/api/connections", () => {
                 [9999, "Nincs ilyen felhasználó"],
                 [testUser.ID, "Magadat nem tudod kezelni"],
             ])("should throw error on invalid user id", async (userId, expectedMessage) => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const action = "blocked";
 
                 const res = await request(app)
@@ -680,8 +616,6 @@ describe("/api/connections", () => {
             })
 
             test("should throw error on if no connection with user", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const userId = 7;
                 const action = "blocked";
 
@@ -694,14 +628,9 @@ describe("/api/connections", () => {
             })
         });
     });
-    //-----------------------------------------------------------
-    //    DELETE
-    //-----------------------------------------------------------
     describe("DELETE", () => {
         describe("/:userId", () => {
             test("should delete the connection between the users", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const userId = 2;
 
 
@@ -730,22 +659,28 @@ describe("/api/connections", () => {
             });
 
             test("should throw error on invalid token", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}_invalid`;
                 const userId = 2;
 
                 const res = await request(app)
                     .delete(`/api/connections/${userId}`)
-                    .set("Cookie", [cookie])
-                    .expect(400);
+                    .set("Cookie", [cookieinvalid])
+                    .expect(403);
 
 
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
             });
+            test("should throw UnauthorizedError when missing token", async () => {
+                const userId = 2;
+
+                const res = await request(app)
+                    .delete(`/api/connections/${userId}`)
+                    .expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
 
             test("should throw error on invalid user id", async () => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
                 const userId = 9999;
 
                 const res = await request(app)

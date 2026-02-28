@@ -4,7 +4,7 @@ const authUtils = require("../utilities/authUtils");
 
 exports.getUsers = async (req, res, next) => {
     try {
-        res.status(200).json(await userService.getUsers());
+        res.status(200).json(await userService.getUsers(req.transaction));
     } catch (error) {
         next(error);
     }
@@ -12,7 +12,7 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
     try {
-        res.status(200).json(await userService.getUser(req.userId));
+        res.status(200).json(await userService.getUser(req.userId,req.transaction));
     } catch (error) {
         next(error);
     }
@@ -27,9 +27,9 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
         const asNumber = parseInt(uniqIdentifier, 10);
 
         if (!isNaN(asNumber) && String(asNumber) === uniqIdentifier) {
-            user = await userService.getUserByID(asNumber);
+            user = await userService.getUserByID(asNumber,req.transaction);
         } else {
-            user = await userService.getUserByUsername(uniqIdentifier);
+            user = await userService.getUserByUsername(uniqIdentifier,req.transaction);
         }
 
         res.status(200).json(user);
@@ -39,24 +39,24 @@ exports.getUserByUsernameOrUserId = async (req, res, next) => {
 };
 
 exports.searchUserByUsernameOrUserId = async (req, res, next) => {
-  try {
-    const q = String(req.query.q ?? "").trim();
-    const page = Number(req.query.page ?? 1) || 1;
-    const pageSize = Number(req.query.pageSize ?? 20) || 20;
+    try {
+        const q = String(req.query.q ?? "").trim();
+        const page = Number(req.query.page ?? 1) || 1;
+        const pageSize = Number(req.query.pageSize ?? 20) || 20;
 
-    const result = await userService.getUserByContainingUI({ q, page, pageSize });
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
+        const result = await userService.getUserByContainingUI({ q, page, pageSize },req.transaction);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
 };
 
 
 exports.updatePassword = async (req, res, next) => {
     try {
         const { old_password, new_password, confirm_password } = req.body.data || {};
-        const token = req.cookies["user_token"]
-        res.status(200).json(await userService.updatePassword({ old_password, new_password, confirm_password }, token));
+        const user = req.user
+        res.status(200).json(await userService.updatePassword({ old_password, new_password, confirm_password }, user, req.transaction));
     } catch (error) {
         next(error);
     }

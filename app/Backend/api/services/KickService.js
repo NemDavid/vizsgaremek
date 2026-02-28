@@ -12,21 +12,11 @@ class KickService {
     }
 
 
-    async getMyKicks(token, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async getMyKicks(encodedToken, transaction) {
         return await this.kickRepository.getMyKicks(encodedToken.userID, { transaction });
     }
 
-    async getKicksWithUser(token, userId, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async getKicksWithUser(encodedToken, userId, transaction) {
         // valid user-e
         const validUser = await this.userRepository.getUser(userId, { transaction });
         if (!validUser) {
@@ -37,33 +27,18 @@ class KickService {
     }
 
     // én kiket rúgtam
-    async getKicksSentByUser(token, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async getKicksSentByUser(encodedToken, transaction) {
         return await this.kickRepository.getKicksSentByUser(encodedToken.userID, { transaction });
     }
 
     // ki rúgott engem
-    async getKicksRecievedByUser(token, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async getKicksRecievedByUser(encodedToken, transaction) {
         return await this.kickRepository.getKicksRecievedByUser(encodedToken.userID, { transaction });
     }
 
 
-    async doKick(token, TO_USER_ID, transaction) {
+    async doKick(encodedToken, TO_USER_ID, transaction) {
         if (!TO_USER_ID) throw new BadRequestError("Hianyzó TO_USER_ID");
-
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
 
         TO_USER_ID = parseInt(TO_USER_ID);
 

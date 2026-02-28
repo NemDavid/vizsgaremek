@@ -10,10 +10,10 @@ exports.getConnections = async (req, res, next) => {
 };
 
 exports.getCurrentUserConnectionsAll = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+    const user = req.user;
     
     try {
-        res.status(200).json(await connectionsService.getCurrentUserConnectionsAll(token, req.transaction));
+        res.status(200).json(await connectionsService.getCurrentUserConnectionsAll(user, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -30,21 +30,21 @@ exports.getFilteredConnections = async (req, res, next) => {
 };
 
 exports.getCurrentUserFriendRequests = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserFriendRequests(token, req.transaction));
+        res.status(200).json(await connectionsService.getCurrentUserFriendRequests(user, req.transaction));
     } catch (error) {
         next(error);
     }
 };
 
 exports.getCurrentUserFilteredConnections = async (req, res, next) => {
-    const token = req.cookies['user_token'];
+    const user = req.user;
     const action = req.action || "";
 
     try {
-        res.status(200).json(await connectionsService.getCurrentUserFilteredConnections(token, action, req.transaction));
+        res.status(200).json(await connectionsService.getCurrentUserFilteredConnections(user, action, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -53,10 +53,10 @@ exports.getCurrentUserFilteredConnections = async (req, res, next) => {
 
 exports.deleteConnection = async (req, res, next) => {
     const To_User_ID = req.userId;
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
     try {
-        res.status(200).json(await connectionsService.deleteConnection(token, To_User_ID, req.transaction));
+        res.status(200).json(await connectionsService.deleteConnection(user, To_User_ID, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -65,14 +65,12 @@ exports.deleteConnection = async (req, res, next) => {
 exports.createConnection = async (req, res, next) => {
     const To_User_ID = req.userId;
     const action = req.action || "pending";
-    const token = req.cookies['user_token'];
-    
+    const user = req.user;    
     try {
-        const newConnection = await connectionsService.createConnection(token, To_User_ID, action, req.transaction, req);
+        const newConnection = await connectionsService.createConnection(user, To_User_ID, action, req.transaction, req);
         
         res.status(201).json({
-            user: newConnection,
-            token
+            user: newConnection
         });
     } catch (error) {
         next(error);
@@ -82,11 +80,11 @@ exports.createConnection = async (req, res, next) => {
 exports.updateConnection = async (req, res, next) => {
     const To_User_ID = req.userId;
     const action = req.action;
-    const token = req.cookies['user_token'];
+    const user = req.user;
 
 
     try {
-        const updatedConnection = await connectionsService.updateConnection(token, To_User_ID, action, req.transaction);
+        const updatedConnection = await connectionsService.updateConnection(user, To_User_ID, action, req.transaction);
         res.status(200).json(updatedConnection);
     } catch (error) {
         next(error);

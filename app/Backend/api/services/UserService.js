@@ -200,12 +200,7 @@ class UserService {
     }
 
     // Autista csinálta
-    async updatePassword(updateData, token, transaction) {
-        if (!token) throw new BadRequestError("Hiányzó user token");
-        const decoded = authUtils.verifyToken(token);
-        if (!decoded) {
-            throw new BadRequestError("Érvénytelen vagy lejárt token");
-        }
+    async updatePassword(updateData, decoded, transaction) {
 
         if (!updateData.old_password || !updateData.new_password || !updateData.confirm_password) throw new BadRequestError("Hiányzó adatt");
 

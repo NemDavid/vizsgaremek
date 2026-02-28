@@ -10,21 +10,21 @@ exports.getKicks = async (req, res, next) => {
 };
 
 exports.getMyKicks = async (req, res, next) => {
-    const token = req.cookies["user_token"];
+    const user = req.user;
 
     try {
-        res.status(200).json(await kickService.getMyKicks(token, req.transaction));
+        res.status(200).json(await kickService.getMyKicks(user, req.transaction));
     } catch (error) {
         next(error);
     }
 };
 
 exports.getKicksWithUser = async (req, res, next) => {
-    const token = req.cookies["user_token"];
+    const user = req.user;
     const userId = req.userId;
 
     try {
-        res.status(200).json(await kickService.getKicksWithUser(token, userId, req.transaction));
+        res.status(200).json(await kickService.getKicksWithUser(user, userId, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -32,10 +32,10 @@ exports.getKicksWithUser = async (req, res, next) => {
 
 // én kiket rúgtam
 exports.getKicksSentByUser = async (req, res, next) => {
-    const token = req.cookies["user_token"];
+    const user = req.user;
 
     try {
-        res.status(200).json(await kickService.getKicksSentByUser(token, req.transaction));
+        res.status(200).json(await kickService.getKicksSentByUser(user, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -43,10 +43,10 @@ exports.getKicksSentByUser = async (req, res, next) => {
 
 // ki rúgott engem
 exports.getKicksRecievedByUser = async (req, res, next) => {
-    const token = req.cookies["user_token"];
+    const user = req.user;
 
     try {
-        res.status(200).json(await kickService.getKicksRecievedByUser(token, req.transaction));
+        res.status(200).json(await kickService.getKicksRecievedByUser(user, req.transaction));
     } catch (error) {
         next(error);
     }
@@ -54,11 +54,11 @@ exports.getKicksRecievedByUser = async (req, res, next) => {
 
 exports.doKick = async (req, res, next) => {
     const userId = req.userId;
-    const token = req.cookies["user_token"];
+    const user = req.user;
 
     try {
 
-        res.status(200).json(await kickService.doKick(token, userId, req.transaction));
+        res.status(200).json(await kickService.doKick(user, userId, req.transaction));
 
     } catch (error) {
         next(error);

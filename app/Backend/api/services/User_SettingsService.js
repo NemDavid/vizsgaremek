@@ -6,9 +6,7 @@ class User_SettingsService {
         this.user_settingsRepository = require("../repositories")(db).user_SettingsRepository;
     }
 
-    async getUser_SettingsByToken(token, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-
+    async getUser_SettingsByToken(encodedToken, transaction) {
         return await this.user_settingsRepository.getUser_SettingsByToken(encodedToken.userID, { transaction });
     }
 
@@ -16,8 +14,7 @@ class User_SettingsService {
         return await this.user_settingsRepository.getUser_SettingsByID(userId, { transaction });
     }
 
-    async deleteUser_Settings(token, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
+    async deleteUser_Settings(encodedToken, transaction) {
         const user_SettingsId = encodedToken.userID;
 
         if (!user_SettingsId) {
@@ -32,10 +29,13 @@ class User_SettingsService {
         return deleteProcess;
     }
 
-    async createUser_Settings(token, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
+    async createUser_Settings(encodedToken, transaction) {
+        const id = encodedToken.userID;
 
-        return await this.user_settingsRepository.createUser_Settings({ ID: encodedToken.userID }, { transaction });
+        const existing = await this.user_settingsRepository.getUser_SettingsByID(id, { transaction });
+        if (existing) return existing;
+
+        return await this.user_settingsRepository.createUser_Settings({ ID: id }, { transaction });
     }
 
     async createUser_SettingsByID(ID, options = {}) {
@@ -44,8 +44,7 @@ class User_SettingsService {
     }
 
 
-    async updateUser_Settings(token, updateData, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
+    async updateUser_Settings(encodedToken, updateData, transaction) {
         const ID = encodedToken.userID;
 
 

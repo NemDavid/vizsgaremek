@@ -47,7 +47,7 @@ class UserRepository {
     async getUserByContainingUI({ search, limit, offset }, options = {}) {
         try {
             const { rows, count } = await this.User.findAndCountAll({
-                attributes: ["username", "email", "created_at"],
+                attributes: ["username", "email", "created_at","ID"],
                 where: {
                     username: {
                         [Op.like]: `%${search}%`,

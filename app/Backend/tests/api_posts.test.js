@@ -172,6 +172,9 @@ describe("/api/posts", () => {
         email: rawUsers[0].email,
         role: rawUsers[0].role,
     };
+    let token = undefined;
+    let cookie = undefined;
+    let cookieinvalid = undefined;
     beforeAll(async () => {
         await db.sequelize.sync();
     });
@@ -186,6 +189,9 @@ describe("/api/posts", () => {
         await db.User_Profile.bulkCreate(rawProfiles);
         await db.Settings.bulkCreate(settings);
         await db.User_Post.bulkCreate(rawPosts);
+        token = authUtils.generateUserToken(testUser);
+        cookie = `user_token=${token}`;
+        cookieinvalid = `user_token=${token}_invalid`;
     });
 
     afterEach(async () => {
@@ -194,228 +200,288 @@ describe("/api/posts", () => {
         await db.Settings.destroy({ where: {} });
         await db.User_Post.destroy({ where: {} });
     });
-
-    afterAll(async () => {
-        await db.sequelize.close();
-    });
-
-    describe("GET /api/posts/all", () => {
-        test("should return all user posts", async () => {
-            const res = await request(app).get("/api/posts/all").expect(200);
-            expect(res.body).toBeDefined();
-            expect(res.body).toEqual(
-                expect.arrayContaining(
-                    rawPosts.map((p) =>
-                        expect.objectContaining({
-                            USER_ID: p.USER_ID,
-                            ID: p.ID,
-                        }),
+    describe("GET", () => {
+        describe("GET /api/posts/all", () => {
+            test("should return all user posts", async () => {
+                const res = await request(app).get("/api/posts/all").set("Cookie", [cookie]).expect(200);
+                expect(res.body).toBeDefined();
+                expect(res.body).toEqual(
+                    expect.arrayContaining(
+                        rawPosts.map((p) =>
+                            expect.objectContaining({
+                                USER_ID: p.USER_ID,
+                                ID: p.ID,
+                            }),
+                        ),
                     ),
-                ),
-            );
-        });
-    });
-
-    describe("GET /api/posts", () => {
-        test.each([
-            [{ page: 1, perPage: 1 }, 4],
-            [{ page: 2, perPage: 1 }, 3],
-            [{ page: 3, perPage: 1 }, 2],
-        ])("should get all posts by page and perpage attributes", async (query, Cursor) => {
-            const res = await request(app).get("/api/posts").query(query).expect(200);
-            expect(res.body).toBeDefined();
-            const expectedPosts = {
-                data: [rawPosts[rawPosts.length - query.page - 1]], //[{"ID": 30, "USER_ID": 4, "comments": [], "content": "test comment (30)", "created_at": "2026-02-23", "dislike": 0, "like": 0, "media_url": "", "reactions": [], "title": "test title (30)", "updated_at": "2026-02-23"}]
-                nextCursor: Cursor
-            }
-            expect(res.body.data).toEqual(
-                expect.arrayContaining(
-                    expectedPosts.data.map((p) =>
-                        expect.objectContaining({
-                            USER_ID: p.USER_ID,
-                            ID: p.ID,
-                        }),
-                    ),
-                ),
-            );
-        });
-
-        test.each([
-            [{ page: 1, perPage: undefined }, "Hiányzó Adatok"],
-            [{ page: undefined, perPage: 10 }, "Hiányzó Adatok"],
-            [{ page: undefined, perPage: undefined }, "Hiányzó Adatok"],
-        ])("should throw BadRequestError with unexisting query data for getting posts", async (payload, expectedMessage) => {
-            const res = await request(app).get("/api/posts").query(payload).expect(400);
-            expect(res.body.message).toBe(expectedMessage);
-        });
-
-        test.each([
-            [{ page: -10, perPage: 10 }, "Rossz adatok"],
-            [{ page: 1, perPage: -10 }, "Rossz adatok"],
-            [{ page: -1000, perPage: -1000 }, "Rossz adatok"],
-        ])("should throw ValidationError with invalide query data for posts", async (payload, expectedMessage) => {
-            const res = await request(app).get("/api/posts").query(payload).expect(403);
-            expect(res.body.message).toBe(expectedMessage);
-        });
-    });
-
-
-    describe("GET /api/posts/user/:userId", () => {
-        test("should return posts by userId", async () => {
-            const res = await request(app)
-                .get(`/api/posts/user/${testUser.ID}`)
-                .expect(200);
-            expect(res.body).toBeDefined();
-            const UserPostedPosts = rawPosts.filter((e) => e.USER_ID == testUser.ID);
-            expect(res.body).toEqual(
-                expect.arrayContaining(
-                    UserPostedPosts.map((p) =>
-                        expect.objectContaining({
-                            USER_ID: p.USER_ID,
-                            ID: p.ID,
-                        }),
-                    ),
-                ),
-            );
-        });
-
-        test("should throw error by using not defined userId", async () => {
-            const res = await request(app).get(`/api/posts/user/999`).expect(400);
-            expect(res.body).toBeDefined();
-            expect(res.body.message).toEqual("Nincs ilyen felhasználó");
-        });
-    });
-
-    // =============================
-    // POST
-    // =============================
-
-    describe("POST /api/posts", () => {
-        test.each([
-            [{ content: "Skibidi 1 test content", title: "Skibidi 1 test title" }],
-            [{ content: "Skibidi 2 test content", title: "Skibidi 2 test title" }],
-        ])("should create new user post with media", async (post) => {
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}`;
-            const res = await request(app).post("/api/posts").send(post).set("Cookie", [cookie]).expect(201);
-
-            expect(res.body).toBeDefined();
-        });
-
-        test.each([
-            [{ content: "Skibidi test content", title: "Skibidi test title" }, "Hiányzó vagy lejárt token.", 400, "_invalid"],
-            [{ content: "Skibidi test content", title: undefined }, "Hiányzó cim", 400, ""],
-            [{ content: "Skibidi test content", title: "1" }, "A cím 3 és 255 karakter között lehet", 403, ""],
-            [{ content: undefined, title: "Skibidi test title" }, "hiányzó content", 400, ""],
-            [{ content: "12", title: "Skibidi test title" }, "A tartalom 3 és 1000 karakter között lehet", 403, ""],
-        ])("should create new user post with media", async (post, errorMessage, errorStatus, tokenInvalid) => {
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}${tokenInvalid}`;
-
-            const res = await request(app).post("/api/posts").send(post).set("Cookie", [cookie]).expect(errorStatus);
-
-            expect(res.body.message).toBe(errorMessage);
-        });
-    });
-
-    // =============================
-    // PATCH
-    // =============================
-
-    describe("PATCH /api/posts/:postId", () => {
-        test.each([
-            [{ ID: 34, USER_ID: 1 }, { content: "updated" }],
-            [{ ID: 34, USER_ID: 1 }, { title: "updated" }]
-        ])("should update user post", async (data, updatedData) => {
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}`;            
-            const res = await request(app)
-                .patch(`/api/posts/${data.ID}`)
-                .send(updatedData)
-                .set("Cookie", [cookie])
-                .expect(200);
-
-            expect(res.body).toBeDefined();
-
-            const result = await db.User_Post.findOne({ where: { ID: data.ID } });
-            expect(result).toBeTruthy();
-
-
-            Object.keys(updatedData).forEach((k) => {
-                expect(result[k]).toBe(updatedData[k]);
+                );
             });
-        })
+            test("should throw ValidationError when token is invalid", async () => {
+                const res = await request(app).get("/api/posts/all").set("Cookie", [cookieinvalid]).expect(403);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            });
+            test("should throw UnauthorizedError when missing token", async () => {
+                const res = await request(app).get("/api/posts/all").expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
+        });
 
-        test.each([
-            [{message:"Nincs ilyen post", status:400}, {ID: 999, content: "update", title: "update"}],
-            [{message:"Ez nem a te posztod", status: 400}, {ID: 1, content: "update", title: "update"}],
-            [{message:"Hiányzó adat", status: 400}, {ID: 34, content: undefined, title: undefined}],
-        ])("should throw error on bad update post", async (error, data) => {
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}`;            
-            
-            const res = await request(app)
-                .patch(`/api/posts/${data.ID}`)
-                .send(data)
-                .set("Cookie", [cookie])
-                .expect(error.status);
+        describe("GET /api/posts", () => {
+            test.each([
+                [{ page: 1, perPage: 1 }, 4],
+                [{ page: 2, perPage: 1 }, 3],
+                [{ page: 3, perPage: 1 }, 2],
+            ])("should get all posts by page and perpage attributes", async (query, Cursor) => {
+                const res = await request(app).get("/api/posts").set("Cookie", [cookie]).query(query).expect(200);
+                expect(res.body).toBeDefined();
+                const expectedPosts = {
+                    data: [rawPosts[rawPosts.length - query.page - 1]], //[{"ID": 30, "USER_ID": 4, "comments": [], "content": "test comment (30)", "created_at": "2026-02-23", "dislike": 0, "like": 0, "media_url": "", "reactions": [], "title": "test title (30)", "updated_at": "2026-02-23"}]
+                    nextCursor: Cursor
+                }
+                expect(res.body.data).toEqual(
+                    expect.arrayContaining(
+                        expectedPosts.data.map((p) =>
+                            expect.objectContaining({
+                                USER_ID: p.USER_ID,
+                                ID: p.ID,
+                            }),
+                        ),
+                    ),
+                );
+            });
+            test.each([
+                [{ page: 1, perPage: 1 }, 4],
+                [{ page: 2, perPage: 1 }, 3],
+                [{ page: 3, perPage: 1 }, 2],
+            ])("should throw ValidationError when token is invalid", async (query, Cursor) => {
+                const res = await request(app).get("/api/posts").set("Cookie", [cookieinvalid]).query(query).expect(403);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            });
+            test.each([
+                [{ page: 1, perPage: 1 }, 4],
+                [{ page: 2, perPage: 1 }, 3],
+                [{ page: 3, perPage: 1 }, 2],
+            ])("should throw UnauthorizedError when missing token", async (query, Cursor) => {
+                const res = await request(app).get("/api/posts").query(query).expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
+            test.each([
+                [{ page: 1, perPage: undefined }, "Hiányzó Adatok"],
+                [{ page: undefined, perPage: 10 }, "Hiányzó Adatok"],
+                [{ page: undefined, perPage: undefined }, "Hiányzó Adatok"],
+            ])("should throw BadRequestError with unexisting query data for getting posts", async (payload, expectedMessage) => {
+                const res = await request(app).get("/api/posts").query(payload).set("Cookie", [cookie]).expect(400);
+                expect(res.body.message).toBe(expectedMessage);
+            });
+
+            test.each([
+                [{ page: -10, perPage: 10 }, "Rossz adatok"],
+                [{ page: 1, perPage: -10 }, "Rossz adatok"],
+                [{ page: -1000, perPage: -1000 }, "Rossz adatok"],
+            ])("should throw ValidationError with invalide query data for posts", async (payload, expectedMessage) => {
+                const res = await request(app).get("/api/posts").set("Cookie", [cookie]).query(payload).expect(403);
+                expect(res.body.message).toBe(expectedMessage);
+            });
+        });
+        describe("GET /api/posts/user/:userId", () => {
+            test("should return posts by userId", async () => {
+                const res = await request(app)
+                    .get(`/api/posts/user/${testUser.ID}`)
+                    .set("Cookie", [cookie])
+                    .expect(200);
+                expect(res.body).toBeDefined();
+                const UserPostedPosts = rawPosts.filter((e) => e.USER_ID == testUser.ID);
+                expect(res.body).toEqual(
+                    expect.arrayContaining(
+                        UserPostedPosts.map((p) =>
+                            expect.objectContaining({
+                                USER_ID: p.USER_ID,
+                                ID: p.ID,
+                            }),
+                        ),
+                    ),
+                );
+            });
+
+            test("should throw error by using not defined userId", async () => {
+                const res = await request(app).get(`/api/posts/user/999`).set("Cookie", [cookie]).expect(400);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toEqual("Nincs ilyen felhasználó");
+            });
+            test("should throw ValidationError when token is invalid", async () => {
+                const res = await request(app).get(`/api/posts/user/999`).set("Cookie", [cookieinvalid]).expect(403);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+
+            });
+            test("should throw UnauthorizedError when missing token", async () => {
+                const res = await request(app).get(`/api/posts/user/999`).expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
+        });
+    })
+    describe("POST", () => {
+        describe("POST /api/posts", () => {
+            test.each([
+                [{ content: "Skibidi 1 test content", title: "Skibidi 1 test title" }],
+                [{ content: "Skibidi 2 test content", title: "Skibidi 2 test title" }],
+            ])("should create new user post with media", async (post) => {
+                const res = await request(app).post("/api/posts").send(post).set("Cookie", [cookie]).expect(201);
+
+                expect(res.body).toBeDefined();
+            });
+
+            test.each([
+                [{ content: "Skibidi test content", title: undefined }, "Hiányzó cim", 400, ""],
+                [{ content: "Skibidi test content", title: "1" }, "A cím 3 és 255 karakter között lehet", 403, ""],
+                [{ content: undefined, title: "Skibidi test title" }, "hiányzó content", 400, ""],
+                [{ content: "12", title: "Skibidi test title" }, "A tartalom 3 és 1000 karakter között lehet", 403, ""],
+            ])("should create new user post with media", async (post, errorMessage, errorStatus, tokenInvalid) => {
+                const res = await request(app).post("/api/posts").send(post).set("Cookie", [cookie]).expect(errorStatus);
+
+                expect(res.body.message).toBe(errorMessage);
+            });
+            test.each([
+                [{ content: "Skibidi test content", title: "Skibidi test title" }],
+                [{ content: "Skibidi test content", title: undefined }],
+                [{ content: "Skibidi test content", title: "1" }],
+                [{ content: undefined, title: "Skibidi test title" }],
+                [{ content: "12", title: "Skibidi test title" }],
+            ])("should throw ValidationError when token is invalid", async (post) => {
+                const res = await request(app).post("/api/posts").send(post).set("Cookie", [cookieinvalid]).expect(403);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+
+            });
+            test.each([
+                [{ content: "Skibidi test content", title: "Skibidi test title" }],
+                [{ content: "Skibidi test content", title: undefined }],
+                [{ content: "Skibidi test content", title: "1" }],
+                [{ content: undefined, title: "Skibidi test title" }],
+                [{ content: "12", title: "Skibidi test title" }],
+            ])("should throw UnauthorizedError when missing token", async (post) => {
+                const res = await request(app).post("/api/posts").send(post).expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+
+            });
+        });
+    })
+    describe("PATCH", () => {
+        describe("PATCH /api/posts/:postId", () => {
+            test.each([
+                [{ ID: 34, USER_ID: 1 }, { content: "updated" }],
+                [{ ID: 34, USER_ID: 1 }, { title: "updated" }]
+            ])("should update user post", async (data, updatedData) => {
+                const res = await request(app)
+                    .patch(`/api/posts/${data.ID}`)
+                    .send(updatedData)
+                    .set("Cookie", [cookie])
+                    .expect(200);
+
+                expect(res.body).toBeDefined();
+
+                const result = await db.User_Post.findOne({ where: { ID: data.ID } });
+                expect(result).toBeTruthy();
+
+
+                Object.keys(updatedData).forEach((k) => {
+                    expect(result[k]).toBe(updatedData[k]);
+                });
+            })
+
+            test.each([
+                [{ message: "Nincs ilyen post", status: 400 }, { ID: 999, content: "update", title: "update" }],
+                [{ message: "Ez nem a te posztod", status: 400 }, { ID: 1, content: "update", title: "update" }],
+                [{ message: "Hiányzó adat", status: 400 }, { ID: 34, content: undefined, title: undefined }],
+            ])("should throw error on bad update post", async (error, data) => {
+                const res = await request(app)
+                    .patch(`/api/posts/${data.ID}`)
+                    .send(data)
+                    .set("Cookie", [cookie])
+                    .expect(error.status);
 
                 expect(res.body.message).toBe(error.message);
-        })
+            })
 
-        test("should throw error on invalid token", async () => {
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}_invalid`; 
+            test("should throw error on invalid token", async () => {
+                const data = { ID: 34, content: "update", title: "update" };
+                const res = await request(app)
+                    .patch(`/api/posts/${data.ID}`)
+                    .send(data)
+                    .set("Cookie", [cookieinvalid])
+                    .expect(403);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            })
+            test("should throw UnauthorizedError when missing token", async () => {
+                const data = { ID: 34, content: "update", title: "update" };
+                const res = await request(app)
+                    .patch(`/api/posts/${data.ID}`)
+                    .send(data)
+                    .expect(401);
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            })
+        });
+    })
 
-            const data = { ID: 34, content: "update", title: "update" };
+    describe("DELETE", () => {
+        describe("DELETE /api/posts/:postId", () => {
+            test("should delete user post", async () => {
+                const itemId = 34;
+                await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(200);
 
-            const res = await request(app)
-                .patch(`/api/posts/${data.ID}`)
-                .send(data)
-                .set("Cookie", [cookie])
-                .expect(400);
+                const result = await db.User_Post.findOne({
+                    where: { ID: itemId }
+                });
 
-            expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
-        })
-    });
-
-    // =============================
-    // DELETE
-    // =============================
-
-    describe("DELETE /api/posts/:postId", () => {
-        test("should delete user post", async () => {
-            const itemId = 34;
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}`;
-            await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(200);
-
-            const result = await db.User_Post.findOne({
-                where: { ID: itemId }
+                expect(result).toBeNull();
             });
 
-            expect(result).toBeNull();
+            test.each([
+                [9999, "Nincs ilyen post"],
+                [1, "Ez nem a te posztod"],
+            ])("should throw error on missing id for post deletion", async (itemId, expectedMessage) => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+
+                const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(400);
+
+                expect(res.body.message).toBe(expectedMessage);
+            });
+
+            test("should throw error on invalid token", async () => {
+                const itemId = 34;
+                const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookieinvalid]).expect(403);
+
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
+            });
+            test("should throw UnauthorizedError when missing token", async () => {
+                const itemId = 34;
+                const res = await request(app).delete(`/api/posts/${itemId}`).expect(401);
+
+                expect(res.body).toBeDefined();
+                expect(res.body.message).toBeDefined();
+                expect(res.body.message).toBe("Hiányzó user token");
+            });
         });
-
-        test.each([
-            [9999, "Nincs ilyen post"],
-            [1, "Ez nem a te posztod"],
-        ])("should throw error on missing id for post deletion", async (itemId, expectedMessage) => {
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}`;
-
-            const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(400);
-
-            expect(res.body.message).toBe(expectedMessage);
-        });
-
-        test("should throw error on invalid token", async () => {
-            const itemId = 34;
-            const token = authUtils.generateUserToken(testUser);
-            const cookie = `user_token=${token}_invalid`;
-            const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(400);
-
-            expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
-        });
-    });
+    })
 });

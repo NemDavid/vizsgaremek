@@ -11,12 +11,7 @@ exports.generateUserToken = (user) => {
 }
 
 exports.verifyToken = (token) => {
-    try {
-        return jwt.verify(token, process.env.JWT_SECRET);
-    }
-    catch (error) {
-        return null;
-    }
+    return jwt.verify(token, process.env.JWT_SECRET);
 }
 
 // Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót

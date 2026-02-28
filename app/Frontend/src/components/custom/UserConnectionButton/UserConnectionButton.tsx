@@ -40,7 +40,7 @@ export function AcceptFriend({ className, userID }: { className?: string, userID
             toast.success("Sikeresen elfogadtad barátnak 🎉", {
                 duration: 3000,
             })
-            QueryClient.refetchQueries({ queryKey: ["Friends"] })
+            QueryClient.refetchQueries({ queryKey: ["Connection", "pending"] })
         }
     })
     return (
@@ -64,7 +64,7 @@ export function DeletFriend({ className, userID }: { className?: string, userID:
             toast.success("Sikeresen elutasitottad barátnak", {
                 duration: 3000,
             })
-            QueryClient.refetchQueries({ queryKey: ["Friends"] })
+            QueryClient.refetchQueries({ queryKey: ["Connection", "pending"] })
         }
     })
     return (
@@ -89,7 +89,7 @@ export function BlockUserFromrequest({ className, userID }: { className?: string
             toast.success("Sikeresen Blockoltad a felhasználot", {
                 duration: 3000,
             })
-            QueryClient.refetchQueries({ queryKey: ["Friends"] })
+            QueryClient.refetchQueries({ queryKey: ["Connection", "pending"] })
         }
     })
     return (
@@ -136,7 +136,7 @@ export function RemoveRequest({ className, userID }: { className?: string, userI
             toast.success("Sikeresen elutasitottad barátnak", {
                 duration: 3000,
             })
-            QueryClient.refetchQueries({ queryKey: ["Friends"] })
+            QueryClient.refetchQueries({ queryKey: ["Connection", "pending"] })
         }
     })
     return (

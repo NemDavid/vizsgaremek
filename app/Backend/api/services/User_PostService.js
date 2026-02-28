@@ -40,12 +40,7 @@ class User_PostService {
         return await this.user_postRepository.getUser_Post_ByID(postId, { transaction });
     }
 
-    async deleteUser_Post(token, postId, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async deleteUser_Post(encodedToken, postId, transaction) {
         if (!postId) {
             throw new BadRequestError("Hiányzó post ID");
         }
@@ -68,12 +63,7 @@ class User_PostService {
     }
 
     async createUser_Post(postData, transaction, req) {
-        const encodedToken = authUtils.verifyToken(postData.token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
-        postData.USER_ID = encodedToken.userID;
+        postData.USER_ID = postData.user.userID;
 
         // validate
         if (!postData.title) {
@@ -120,12 +110,7 @@ class User_PostService {
         return newPost;
 
     }
-    async updatePost(token, postId, newdata, transaction) {
-        const encodedToken = authUtils.verifyToken(token);
-        if (encodedToken == null) {
-            throw new BadRequestError("Hiányzó vagy lejárt token.");
-        }
-
+    async updatePost(encodedToken, postId, newdata, transaction) {
         const validUser = await this.userRepository.getUser(encodedToken.userID, { transaction });
         if (!validUser) {
             throw new BadRequestError("Nincs ilyen felhasználó");

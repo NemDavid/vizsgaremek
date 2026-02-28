@@ -115,7 +115,6 @@ function RouteComponent() {
     () => getPageItems(page, totalPages),
     [page, totalPages]
   )
-
   return (
     <DefaultUIFrame className="p-6">
       {/* fontos: a gyerek töltse ki a DefaultUIFrame belső magasságát */}
@@ -144,7 +143,7 @@ function RouteComponent() {
                     className="flex items-center gap-3 p-3 m-2 bg-rose-100 rounded-xl"
                   >
                     <AvatarFrame userid={e.ID} userData={e} className="rounded-xl" />
-                    <Button>Open</Button>
+                    <Button onClick={()=>navigate({to:"/profil/$profilId", params:{profilId:e.ID}})}>Open</Button>
                   </div>
                 ))}
 

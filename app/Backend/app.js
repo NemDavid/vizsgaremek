@@ -50,7 +50,6 @@ const user_postRouter = require("./api/routes/user_postRoutes");
 const user_post_reactionRoutes = require("./api/routes/user_post_reactionRoutes");
 const user_post_commentRoutes = require("./api/routes/user_post_commentRoutes");
 const connectionsRoute = require("./api/routes/connectionsRoute");
-const verify_codeRoutes = require("./api/routes/verify_codeRoutes");
 const user_settingsRoutes = require("./api/routes/user_settingsRoutes");
 const kickRoutes = require("./api/routes/kickRoutes");
 const advertisementRoute = require("./api/routes/advertisementRoute");
@@ -81,17 +80,16 @@ api.use(
     })
 );
 
+api.use("/advertisement", advertisementRoute);
 api.use("/auth", authRoutes);
-api.use("/connections", connectionsRoute);
 api.use("/comments", user_post_commentRoutes);
-api.use("/reactions", user_post_reactionRoutes);
+api.use("/connections", connectionsRoute);
+api.use("/kicks", kickRoutes);
 api.use("/posts", user_postRouter);
 api.use("/profiles", user_profileRoutes);
-api.use("/users", userRoutes);
-api.use("/verify", verify_codeRoutes);
+api.use("/reactions", user_post_reactionRoutes);
 api.use("/settings", user_settingsRoutes);
-api.use("/kicks", kickRoutes);
-api.use("/advertisement", advertisementRoute);
+api.use("/users", userRoutes);
 
 app.use("/cloud", cloudRouter);
 app.use("/cloud", express.static("public/cloud"));

@@ -70,8 +70,8 @@ exports.updateUser_Profile = async (req, res, next) => {
         if (req.file) {
             updatedprofil.avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
         }
-
-        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil, req.transaction);
+        const user = req.user;
+        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil, req.transaction,user);
         res.status(200).json(updatedUser);
     } catch (error) {
         next(error);

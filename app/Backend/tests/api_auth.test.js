@@ -133,7 +133,7 @@ describe("/api/auth", () => {
                 );
             });
 
-            test("shoult trhow error on missing token", async () => {
+            test("shoult throw error on missing token", async () => {
                 let token = authUtils.generateUserToken(testUser);
                 token = token + "_invalid";
 
