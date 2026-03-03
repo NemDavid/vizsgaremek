@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const paramHandler = require("../middlewares/paramHandler")
+const paramHandler = require("../middlewares/paramHandler");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 router.param("userId", paramHandler.paramUserId);
@@ -17,47 +17,70 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
  *       properties:
  *         ID:
  *           type: integer
+ *           example: 10
  *         USER_ID:
  *           type: integer
+ *           example: 1
  *         level:
  *           type: integer
+ *           example: 3
  *         XP:
  *           type: integer
+ *           example: 420
  *         first_name:
  *           type: string
+ *           example: János
  *         last_name:
  *           type: string
+ *           example: Kovács
  *         birth_date:
- *           type: date
+ *           type: string
+ *           format: date
+ *           example: 2000-01-01
  *         birth_place:
  *           type: string
+ *           example: Budapest
  *         schools:
  *           type: string
+ *           example: BME
  *         bio:
  *           type: string
+ *           example: "Szeretek programozni."
  *         avatar_url:
  *           type: string
+ *           example: "http://localhost:6769/cloud/avatar.png"
  *
  *     User:
  *       type: object
  *       properties:
  *         ID:
  *           type: integer
+ *           example: 1
  *         email:
  *           type: string
+ *           example: "ad@ad.ad"
  *         username:
  *           type: string
+ *           example: "admin"
  *         role:
  *           type: string
  *           enum: ['user', 'admin', 'moderator', 'owner']
+ *           example: "admin"
  *         is_loggedIn:
  *           type: boolean
+ *           example: true
  *         last_login:
- *           type: date
+ *           type: string
+ *           format: date
+ *           example: "2026-03-03T15:31:00.000Z"
  *         created_at:
- *           type: date
+ *           type: string
+ *           format: date
+ *           example: "2026-01-10T12:00:00.000Z"
  *         updated_at:
- *           type: date
+ *           type: string
+ *           format: date
+ *           example: "2026-02-01T09:15:00.000Z"
  *         profile:
  *           $ref: "#/components/schemas/UserProfile"
  */
@@ -72,6 +95,7 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
 //--------------------------------------------------
 //              NEM ADMIN
 //--------------------------------------------------
+
 //GET
 /**
  * @swagger
@@ -97,13 +121,7 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
  *       200:
  *         description: Search result
  */
-router.get("/search",[authMiddleware.userIsLoggedIn], userController.searchUserByUsernameOrUserId);
-
-//POST
-
-
-//DELETE
-
+router.get("/search", [authMiddleware.userIsLoggedIn], userController.searchUserByUsernameOrUserId);
 
 //PATCH
 /**
@@ -132,10 +150,12 @@ router.get("/search",[authMiddleware.userIsLoggedIn], userController.searchUserB
  *       200:
  *         description: Password updated
  */
-router.patch("/password/change",[authMiddleware.userIsLoggedIn],userController.updatePassword)
+router.patch("/password/change", [authMiddleware.userIsLoggedIn], userController.updatePassword);
+
 //--------------------------------------------------
 //                   ADMIN
 //--------------------------------------------------
+
 /**
  * @swagger
  * /api/users/{userId}:
@@ -152,7 +172,7 @@ router.patch("/password/change",[authMiddleware.userIsLoggedIn],userController.u
  *       204:
  *         description: User deleted
  */
-router.delete("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userController.deleteUser);
+router.delete("/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], userController.deleteUser);
 
 /**
  * @swagger
@@ -183,7 +203,7 @@ router.delete("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],
  *       200:
  *         description: Updated user
  */
-router.patch("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userController.updateUser);
+router.patch("/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], userController.updateUser);
 
 /**
  * @swagger
@@ -195,7 +215,7 @@ router.patch("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], 
  *       200:
  *         description: List of users
  */
-router.get("/all",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userController.getUsers);
+router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], userController.getUsers);
 
 /**
  * @swagger
@@ -213,7 +233,7 @@ router.get("/all",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userCo
  *       200:
  *         description: User found
  */
-router.get("/id/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userController.getUser);
+router.get("/id/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], userController.getUser);
 
 /**
  * @swagger
@@ -231,7 +251,7 @@ router.get("/id/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],
  *       200:
  *         description: Paginated users
  */
-router.get("/page/:paramPage",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userController.getUsersByPage);
+router.get("/page/:paramPage", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], userController.getUsersByPage);
 
 /**
  * @swagger
@@ -249,8 +269,6 @@ router.get("/page/:paramPage",[authMiddleware.userIsLoggedIn,authMiddleware.isAd
  *       200:
  *         description: User found
  */
-router.get("/see/:uniqIdentifier",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin], userController.getUserByUsernameOrUserId);
-
-
+router.get("/see/:uniqIdentifier", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], userController.getUserByUsernameOrUserId);
 
 module.exports = router;

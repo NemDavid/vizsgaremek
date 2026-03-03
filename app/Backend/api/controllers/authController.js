@@ -64,6 +64,37 @@ exports.login = async (req, res, next) => {
     }
 }
 
+exports.swaggerLogin = async (req, res, next) => {
+  try {
+    // Bizottságnak szánva: csak swaggerből lehessen (nálad amúgy is be van állítva)
+    if (req.headers["x-swagger-request"] !== "true") {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    // Demo user adatok - minimálisan az kell, amit a generateUserToken beleír:
+    // { ID, username, email, role }
+    const demoUser = {
+        ID: 1,
+      username: "admin",
+      email: "ad@ad.ad",
+      role: "admin",
+    };
+
+    const token = authUtils.generateUserToken(demoUser);
+
+    // ugyanúgy cookie-ba tesszük, mint rendes login
+    authUtils.setCookie(res, "user_token", token);
+
+    return res.status(200).json({
+      success: true,
+      message: "Swagger demo login OK (cookie set: user_token)",
+      role: demoUser.role,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.logout = async (req, res, next) => {
     const token = req.cookies['user_token'];
     try {
