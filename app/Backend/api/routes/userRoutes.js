@@ -10,164 +10,154 @@ router.param("uniqIdentifier", paramHandler.paramUniqIdentifier);
 
 /**
  * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management endpoints (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     UserProfile:
  *       type: object
  *       properties:
- *         ID:
- *           type: integer
- *           example: 10
- *         USER_ID:
- *           type: integer
- *           example: 1
- *         level:
- *           type: integer
- *           example: 3
- *         XP:
- *           type: integer
- *           example: 420
- *         first_name:
- *           type: string
- *           example: János
- *         last_name:
- *           type: string
- *           example: Kovács
- *         birth_date:
- *           type: string
- *           format: date
- *           example: 2000-01-01
- *         birth_place:
- *           type: string
- *           example: Budapest
- *         schools:
- *           type: string
- *           example: BME
- *         bio:
- *           type: string
- *           example: "Szeretek programozni."
- *         avatar_url:
- *           type: string
- *           example: "http://localhost:6769/cloud/avatar.png"
+ *         ID: { type: integer, example: 10 }
+ *         USER_ID: { type: integer, example: 1 }
+ *         level: { type: integer, example: 3 }
+ *         XP: { type: integer, example: 250 }
+ *         first_name: { type: string, example: "John" }
+ *         last_name: { type: string, example: "Doe" }
+ *         birth_date: { type: string, format: date, example: "2000-01-01" }
+ *         birth_place: { type: string, example: "Budapest" }
+ *         schools: { type: string, example: "Example School" }
+ *         bio: { type: string, example: "Short bio..." }
+ *         avatar_url: { type: string, example: "/dpfp.png" }
  *
  *     User:
  *       type: object
  *       properties:
- *         ID:
- *           type: integer
- *           example: 1
- *         email:
- *           type: string
- *           example: "ad@ad.ad"
- *         username:
- *           type: string
- *           example: "admin"
+ *         ID: { type: integer, example: 1 }
+ *         email: { type: string, format: email, example: "admin@ad.ad" }
+ *         username: { type: string, example: "admin_01" }
  *         role:
  *           type: string
- *           enum: ['user', 'admin', 'moderator', 'owner']
+ *           enum: ["user", "admin", "moderator", "owner"]
  *           example: "admin"
- *         is_loggedIn:
- *           type: boolean
- *           example: true
- *         last_login:
- *           type: string
- *           format: date
- *           example: "2026-03-03T15:31:00.000Z"
- *         created_at:
- *           type: string
- *           format: date
- *           example: "2026-01-10T12:00:00.000Z"
- *         updated_at:
- *           type: string
- *           format: date
- *           example: "2026-02-01T09:15:00.000Z"
+ *         is_loggedIn: { type: boolean, example: true }
+ *         last_login: { type: string, format: date, nullable: true, example: "2026-03-03" }
+ *         created_at: { type: string, format: date, example: "2026-03-01" }
+ *         updated_at: { type: string, format: date, example: "2026-03-03" }
  *         profile:
  *           $ref: "#/components/schemas/UserProfile"
+ *
+ *     ChangePasswordRequest:
+ *       type: object
+ *       properties:
+ *         data:
+ *           type: object
+ *           properties:
+ *             old_password:
+ *               type: string
+ *               description: Must match password policy (8-21 chars, 1 lower, 1 upper, 1 digit, 1 special from @$!%*?&#+-).
+ *               example: "OldPass1+"
+ *             new_password:
+ *               type: string
+ *               description: Must match password policy (8-21 chars, 1 lower, 1 upper, 1 digit, 1 special from @$!%*?&#+-).
+ *               example: "TestPass1+"
+ *             confirm_password:
+ *               type: string
+ *               example: "TestPass1+"
+ *       example:
+ *         data:
+ *           old_password: "OldPass1+"
+ *           new_password: "TestPass1+"
+ *           confirm_password: "TestPass1+"
+ *
+ *     UpdateUserAdminRequest:
+ *       type: object
+ *       properties:
+ *         email: { type: string, format: email, example: "new@mail.com" }
+ *         password:
+ *           type: string
+ *           description: If provided, must match password policy.
+ *           example: "TestPass1+"
+ *         username:
+ *           type: string
+ *           description: Allowed: letters, numbers, underscore only.
+ *           example: "new_username_01"
+ *       example:
+ *         email: "new@mail.com"
+ *         username: "new_username_01"
+ *         password: "TestPass1+"
  */
 
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: User management operations
- */
-
-//--------------------------------------------------
-//              NEM ADMIN
-//--------------------------------------------------
-
-//GET
 /**
  * @swagger
  * /api/users/search:
  *   get:
- *     summary: Search user by username
+ *     summary: Search users by username or user ID
+ *     description: >
+ *       Searches users using query parameter "q" (username fragment or numeric user ID).
+ *       Optional pagination via "page" and "pageSize".
+ *       Requires cookie authentication.
  *     tags: [Users]
  *     parameters:
  *       - in: query
  *         name: q
  *         required: true
- *         schema:
- *           type: string
+ *         schema: { type: string }
+ *         example: "admin"
  *       - in: query
  *         name: page
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 0
  *       - in: query
  *         name: pageSize
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 10
  *     responses:
  *       200:
- *         description: Search result
+ *         description: Search results (implementation-defined shape)
  */
 router.get("/search", [authMiddleware.userIsLoggedIn], userController.searchUserByUsernameOrUserId);
 
-//PATCH
 /**
  * @swagger
  * /api/users/password/change:
  *   patch:
- *     summary: Change user password
+ *     summary: Change the current user's password
+ *     description: >
+ *       Changes password for the authenticated user. Password must match policy:
+ *       8-21 chars, at least 1 lowercase, 1 uppercase, 1 digit, and 1 special from @$!%*?&#+-.
+ *       Requires cookie authentication.
  *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               data:
- *                 type: object
- *                 properties:
- *                   old_password:
- *                     type: string
- *                   new_password:
- *                     type: string
- *                   confirm_password:
- *                     type: string
+ *           schema: { $ref: "#/components/schemas/ChangePasswordRequest" }
+ *           example:
+ *             data:
+ *               old_password: "12345678"
+ *               new_password: "TestPass1+"
+ *               confirm_password: "TestPass1+"
  *     responses:
  *       200:
  *         description: Password updated
  */
 router.patch("/password/change", [authMiddleware.userIsLoggedIn], userController.updatePassword);
 
-//--------------------------------------------------
-//                   ADMIN
-//--------------------------------------------------
-
 /**
  * @swagger
  * /api/users/{userId}:
  *   delete:
- *     summary: Delete user
+ *     summary: Delete a user (admin)
+ *     description: Deletes a user by ID. Admin-only. Requires cookie auth.
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *     responses:
  *       204:
  *         description: User deleted
@@ -178,27 +168,26 @@ router.delete("/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin
  * @swagger
  * /api/users/{userId}:
  *   patch:
- *     summary: Update user
+ *     summary: Update a user (admin)
+ *     description: >
+ *       Admin can update user email/username/password. Username may contain only letters, numbers, underscore.
+ *       Password must match the password policy.
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               username:
- *                 type: string
+ *           schema: { $ref: "#/components/schemas/UpdateUserAdminRequest" }
+ *           example:
+ *             email: "new@mail.com"
+ *             username: "new_username_01"
+ *             password: "TestPass1+"
  *     responses:
  *       200:
  *         description: Updated user
@@ -209,7 +198,8 @@ router.patch("/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin]
  * @swagger
  * /api/users/all:
  *   get:
- *     summary: Get all users
+ *     summary: Get all users (admin)
+ *     description: Returns all users. Admin-only. Requires cookie auth.
  *     tags: [Users]
  *     responses:
  *       200:
@@ -221,14 +211,15 @@ router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user
  * @swagger
  * /api/users/id/{userId}:
  *   get:
- *     summary: Get user by ID
+ *     summary: Get user by ID (admin)
+ *     description: Returns user by numeric ID. Admin-only. Requires cookie auth.
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 1
  *     responses:
  *       200:
  *         description: User found
@@ -239,14 +230,15 @@ router.get("/id/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin
  * @swagger
  * /api/users/page/{paramPage}:
  *   get:
- *     summary: Get users by page
+ *     summary: Get users by page (admin)
+ *     description: Returns users by page number (implementation-defined paging). Admin-only.
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: paramPage
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 1
  *     responses:
  *       200:
  *         description: Paginated users
@@ -257,14 +249,16 @@ router.get("/page/:paramPage", [authMiddleware.userIsLoggedIn, authMiddleware.is
  * @swagger
  * /api/users/see/{uniqIdentifier}:
  *   get:
- *     summary: Get user by username or ID
+ *     summary: Get user by username or ID (admin)
+ *     description: >
+ *       Fetches a user using a single identifier (numeric ID or username). Admin-only.
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: uniqIdentifier
  *         required: true
- *         schema:
- *           type: string
+ *         schema: { type: string }
+ *         example: "admin_01"
  *     responses:
  *       200:
  *         description: User found

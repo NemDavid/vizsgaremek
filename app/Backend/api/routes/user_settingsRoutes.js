@@ -5,6 +5,10 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
+ * tags:
+ *   name: Settings
+ *   description: User settings endpoints (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     UserSettings:
@@ -16,34 +20,46 @@ const authMiddleware = require("../middlewares/authMiddleware");
  *         Notifications:
  *           type: object
  *           description: Notification preferences
- *           additionalProperties: false
  *           properties:
- *             new_post:
- *               type: boolean
- *               example: false
- *             new_comment_on_post:
- *               type: boolean
- *               example: true
- *             new_reaction_on_post:
- *               type: boolean
- *               example: true
- *             new_login:
- *               type: boolean
- *               example: true
- *             new_friend_request:
- *               type: boolean
- *               example: false
+ *             new_post: { type: boolean, example: false }
+ *             new_comment_on_post: { type: boolean, example: true }
+ *             new_reaction_on_post: { type: boolean, example: true }
+ *             new_login: { type: boolean, example: true }
+ *             new_friend_request: { type: boolean, example: false }
+ *           example:
+ *             new_post: false
+ *             new_comment_on_post: true
+ *             new_reaction_on_post: true
+ *             new_login: true
+ *             new_friend_request: false
  *         DataPrivacy:
  *           type: boolean
  *           description: Data privacy setting
  *           example: true
- */
-
-/**
- * @swagger
- * tags:
- *   name: Settings
- *   description: User settings operations
+ *
+ *     UpdateSettingsRequest:
+ *       type: object
+ *       description: At least one of Notifications or DataPrivacy must be provided.
+ *       properties:
+ *         Notifications:
+ *           type: object
+ *           properties:
+ *             new_post: { type: boolean, example: true }
+ *             new_comment_on_post: { type: boolean, example: true }
+ *             new_reaction_on_post: { type: boolean, example: true }
+ *             new_login: { type: boolean, example: true }
+ *             new_friend_request: { type: boolean, example: false }
+ *         DataPrivacy:
+ *           type: boolean
+ *           example: true
+ *       example:
+ *         Notifications:
+ *           new_post: true
+ *           new_comment_on_post: true
+ *           new_reaction_on_post: true
+ *           new_login: true
+ *           new_friend_request: false
+ *         DataPrivacy: true
  */
 
 //--------------------------------------------------
@@ -54,15 +70,15 @@ const authMiddleware = require("../middlewares/authMiddleware");
  * @swagger
  * /api/settings:
  *   get:
- *     summary: Get current user's settings (by token)
+ *     summary: Get my settings
+ *     description: Returns settings for the authenticated user.
  *     tags: [Settings]
  *     responses:
  *       200:
- *         description: User settings
+ *         description: Settings
  *         content:
  *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/UserSettings"
+ *             schema: { $ref: "#/components/schemas/UserSettings" }
  */
 router.get("/", [authMiddleware.userIsLoggedIn], user_settingsController.getUser_SettingsByToken);
 
@@ -70,44 +86,28 @@ router.get("/", [authMiddleware.userIsLoggedIn], user_settingsController.getUser
  * @swagger
  * /api/settings:
  *   patch:
- *     summary: Update current user's settings (by token)
+ *     summary: Update my settings
+ *     description: Updates settings for the authenticated user.
  *     tags: [Settings]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               Notifications:
- *                 type: object
- *                 additionalProperties: false
- *                 properties:
- *                   new_post:
- *                     type: boolean
- *                     example: true
- *                   new_comment_on_post:
- *                     type: boolean
- *                     example: true
- *                   new_reaction_on_post:
- *                     type: boolean
- *                     example: true
- *                   new_login:
- *                     type: boolean
- *                     example: true
- *                   new_friend_request:
- *                     type: boolean
- *                     example: false
- *               DataPrivacy:
- *                 type: boolean
- *                 example: true
+ *           schema: { $ref: "#/components/schemas/UpdateSettingsRequest" }
+ *           example:
+ *             Notifications:
+ *               new_post: true
+ *               new_comment_on_post: true
+ *               new_reaction_on_post: true
+ *               new_login: true
+ *               new_friend_request: false
+ *             DataPrivacy: true
  *     responses:
  *       200:
  *         description: Updated settings
  *         content:
  *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/UserSettings"
+ *             schema: { $ref: "#/components/schemas/UserSettings" }
  */
 router.patch("/", [authMiddleware.userIsLoggedIn], user_settingsController.updateUser_Settings);
 
@@ -119,11 +119,12 @@ router.patch("/", [authMiddleware.userIsLoggedIn], user_settingsController.updat
  * @swagger
  * /api/settings:
  *   delete:
- *     summary: Delete current user's settings (admin)
+ *     summary: Delete a user's settings (admin)
+ *     description: Deletes settings of the authenticated user (admin-only endpoint in your code).
  *     tags: [Settings]
  *     responses:
  *       200:
- *         description: Settings deleted
+ *         description: Deleted
  */
 router.delete("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_settingsController.deleteUser_Settings);
 
@@ -131,15 +132,24 @@ router.delete("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user
  * @swagger
  * /api/settings:
  *   post:
- *     summary: Create settings for current user if missing (admin)
+ *     summary: Create settings if missing (admin)
+ *     description: Creates settings for the authenticated user if they don't exist. Admin-only in your code.
  *     tags: [Settings]
  *     responses:
  *       201:
- *         description: Settings created
+ *         description: Created settings
  *         content:
  *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/UserSettings"
+ *             example:
+ *               user_Settings:
+ *                 ID: 1
+ *                 Notifications:
+ *                   new_post: false
+ *                   new_comment_on_post: true
+ *                   new_reaction_on_post: true
+ *                   new_login: true
+ *                   new_friend_request: false
+ *                 DataPrivacy: true
  */
 router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_settingsController.createUser_Settings);
 

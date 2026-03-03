@@ -8,37 +8,27 @@ const upload = getStorage();
 
 /**
  * @swagger
+ * tags:
+ *   name: Cloud
+ *   description: Image upload endpoints (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     CloudUploadResponse:
  *       type: object
  *       properties:
- *         success:
- *           type: boolean
- *           example: true
- *         message:
- *           type: string
- *           example: "Kép feltöltve!"
- *         file:
- *           type: string
- *           example: "550e8400-e29b-41d4-a716-446655440000.png"
- *         path:
- *           type: string
- *           example: "/cloud/550e8400-e29b-41d4-a716-446655440000.png"
- */
-
-/**
- * @swagger
- * tags:
- *   name: Cloud
- *   description: File upload operations
+ *         success: { type: boolean, example: true }
+ *         message: { type: string, example: "Kép feltöltve!" }
+ *         file: { type: string, example: "550e8400-e29b-41d4-a716-446655440000.png" }
+ *         path: { type: string, example: "/cloud/550e8400-e29b-41d4-a716-446655440000.png" }
  */
 
 /**
  * @swagger
  * /cloud/upload:
  *   post:
- *     summary: Upload image file (admin)
+ *     summary: Upload an image (admin)
+ *     description: Uploads an image to the cloud storage. Uses multipart field "avatar". Admin-only.
  *     tags: [Cloud]
  *     requestBody:
  *       required: true
@@ -46,8 +36,7 @@ const upload = getStorage();
  *         multipart/form-data:
  *           schema:
  *             type: object
- *             required:
- *               - avatar
+ *             required: [avatar]
  *             properties:
  *               avatar:
  *                 type: string
@@ -57,8 +46,7 @@ const upload = getStorage();
  *         description: Image uploaded successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/CloudUploadResponse"
+ *             schema: { $ref: "#/components/schemas/CloudUploadResponse" }
  */
 router.post(
   "/upload",

@@ -11,36 +11,20 @@ router.param("itemId", paramHandler.paramItemId);
 
 /**
  * @swagger
+ * tags:
+ *   name: Advertisements
+ *   description: Advertisement endpoints (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     Advertisement:
  *       type: object
  *       properties:
- *         ID:
- *           type: integer
- *           example: 12
- *         title:
- *           type: string
- *           nullable: true
- *           example: "Akció!"
- *         subject:
- *           type: string
- *           nullable: true
- *           example: "Nézd meg a legújabb ajánlatot!"
- *         imagePath:
- *           type: string
- *           example: "http://localhost:6769/cloud/advert.png"
- *         created_at:
- *           type: string
- *           format: date
- *           example: 2026-03-03
- */
-
-/**
- * @swagger
- * tags:
- *   name: Advertisements
- *   description: Advertisement operations
+ *         ID: { type: integer, example: 1 }
+ *         title: { type: string, example: "Summer Sale" }
+ *         subject: { type: string, example: "Discounts on products" }
+ *         imagePath: { type: string, example: "http://localhost:6769/cloud/abc.png" }
+ *         created_at: { type: string, format: date, example: "2026-03-03" }
  */
 
 //--------------------------------------------------
@@ -52,14 +36,11 @@ router.param("itemId", paramHandler.paramItemId);
  * /api/advertisement/random:
  *   get:
  *     summary: Get a random advertisement
+ *     description: Returns a random advertisement.
  *     tags: [Advertisements]
  *     responses:
  *       200:
- *         description: Random advertisement
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Advertisement"
+ *         description: Random ad
  */
 router.get("/random", [authMiddleware.userIsLoggedIn], advertisementController.getRandomAdvertisement);
 
@@ -72,16 +53,11 @@ router.get("/random", [authMiddleware.userIsLoggedIn], advertisementController.g
  * /api/advertisement/all:
  *   get:
  *     summary: Get all advertisements (admin)
+ *     description: Returns all advertisements. Admin-only.
  *     tags: [Advertisements]
  *     responses:
  *       200:
- *         description: List of advertisements
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/Advertisement"
+ *         description: List of ads
  */
 router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], advertisementController.getAdvertisements);
 
@@ -90,21 +66,17 @@ router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], adve
  * /api/advertisement/{itemId}:
  *   get:
  *     summary: Get advertisement by ID (admin)
+ *     description: Returns a single advertisement. Admin-only.
  *     tags: [Advertisements]
  *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
- *         schema:
- *           type: integer
- *         description: Advertisement ID
+ *         schema: { type: integer }
+ *         example: 1
  *     responses:
  *       200:
- *         description: Advertisement found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Advertisement"
+ *         description: Advertisement
  */
 router.get("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], advertisementController.getAdvertisement);
 
@@ -112,7 +84,9 @@ router.get("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], 
  * @swagger
  * /api/advertisement:
  *   post:
- *     summary: Create advertisement (admin) - upload image
+ *     summary: Create advertisement (admin)
+ *     description: >
+ *       Creates an advertisement. Upload the image using multipart field "image".
  *     tags: [Advertisements]
  *     requestBody:
  *       required: true
@@ -120,48 +94,33 @@ router.get("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], 
  *         multipart/form-data:
  *           schema:
  *             type: object
- *             required:
- *               - image
+ *             required: [image]
  *             properties:
- *               title:
- *                 type: string
- *                 example: "Akció!"
- *               subject:
- *                 type: string
- *                 example: "Csak ma!"
- *               image:
- *                 type: string
- *                 format: binary
+ *               title: { type: string, example: "Summer Sale" }
+ *               subject: { type: string, example: "Discounts on products" }
+ *               image: { type: string, format: binary }
  *     responses:
  *       201:
- *         description: Advertisement created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Advertisement"
+ *         description: Created
  */
-router.post(
-  "/",
-  [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin, upload.single("image")],
-  advertisementController.createAdvertisement
-);
+router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin, upload.single("image")], advertisementController.createAdvertisement);
 
 /**
  * @swagger
  * /api/advertisement/{itemId}:
  *   delete:
- *     summary: Delete advertisement by ID (admin)
+ *     summary: Delete advertisement (admin)
+ *     description: Deletes advertisement by ID. Admin-only.
  *     tags: [Advertisements]
  *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
- *         schema:
- *           type: integer
- *         description: Advertisement ID
+ *         schema: { type: integer }
+ *         example: 1
  *     responses:
  *       200:
- *         description: Delete result
+ *         description: Deleted
  */
 router.delete("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], advertisementController.deleteAdvertisement);
 

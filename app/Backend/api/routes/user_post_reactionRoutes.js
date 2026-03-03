@@ -8,116 +8,91 @@ router.param("itemId", paramHandler.paramItemId);
 
 /**
  * @swagger
+ * tags:
+ *   name: Reactions
+ *   description: Post reaction endpoints (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     UserPostReaction:
  *       type: object
  *       properties:
- *         ID:
- *           type: integer
- *           example: 500
- *         USER_ID:
- *           type: integer
- *           example: 1
- *         POST_ID:
- *           type: integer
- *           example: 101
+ *         ID: { type: integer, example: 50 }
+ *         USER_ID: { type: integer, example: 1 }
+ *         POST_ID: { type: integer, example: 100 }
  *         reaction:
  *           type: string
  *           enum: ["like", "dislike"]
  *           example: "like"
- *         created_at:
- *           type: string
- *           format: date
- *           example: 2026-03-03
- *         updated_at:
- *           type: string
- *           format: date
- *           example: 2026-03-03
+ *         created_at: { type: string, format: date, example: "2026-03-03" }
+ *         updated_at: { type: string, format: date, example: "2026-03-03" }
  *
- *     UserPostReactionMakeRequest:
+ *     MakeReactionRequest:
  *       type: object
  *       properties:
- *         POST_ID:
- *           type: integer
- *           example: 101
+ *         POST_ID: { type: integer, example: 100 }
  *         reaction:
  *           type: string
  *           enum: ["like", "dislike"]
  *           example: "like"
+ *       required: [POST_ID, reaction]
  */
 
-/**
- * @swagger
- * tags:
- *   name: Reactions
- *   description: User post reaction operations
- */
-
-//--------------------------------------------------
-//              NEM ADMIN
-//--------------------------------------------------
-
+// GET (non-admin)
 /**
  * @swagger
  * /api/reactions/{itemId}:
  *   get:
- *     summary: Get current user's reaction for a post
+ *     summary: Get my reaction for a post
+ *     description: Returns the authenticated user's reaction for POST_ID=itemId (if exists).
  *     tags: [Reactions]
  *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
- *         schema:
- *           type: integer
- *         description: POST_ID (the target post id)
+ *         schema: { type: integer }
+ *         example: 100
  *     responses:
  *       200:
- *         description: Reaction found (or null)
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/UserPostReaction"
+ *         description: Reaction (or null)
  */
 router.get("/:itemId", [authMiddleware.userIsLoggedIn], user_post_reactionController.getUsers_posts_reaction);
 
+// POST (non-admin)
 /**
  * @swagger
  * /api/reactions:
  *   post:
- *     summary: Create / toggle / update reaction for a post (like/dislike)
+ *     summary: Like or dislike a post (toggle/update)
+ *     description: >
+ *       Creates/updates/removes a reaction depending on previous state.
+ *       reaction must be either "like" or "dislike".
  *     tags: [Reactions]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/UserPostReactionMakeRequest"
+ *           schema: { $ref: "#/components/schemas/MakeReactionRequest" }
+ *           example:
+ *             POST_ID: 100
+ *             reaction: "like"
  *     responses:
  *       200:
- *         description: Reaction operation result
+ *         description: Reaction processed
  */
 router.post("/", [authMiddleware.userIsLoggedIn], user_post_reactionController.userMakeReaction);
 
-//--------------------------------------------------
-//                   ADMIN
-//--------------------------------------------------
-
+// ADMIN
 /**
  * @swagger
  * /api/reactions:
  *   get:
- *     summary: Get all user post reactions (admin)
+ *     summary: Get all reactions (admin)
+ *     description: Returns all reactions. Admin-only.
  *     tags: [Reactions]
  *     responses:
  *       200:
  *         description: List of reactions
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/UserPostReaction"
  */
 router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_post_reactionController.getUsers_posts_reactions);
 
@@ -125,18 +100,18 @@ router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_po
  * @swagger
  * /api/reactions/{itemId}:
  *   delete:
- *     summary: Delete a reaction by reaction ID (admin)
+ *     summary: Delete a reaction (admin)
+ *     description: Deletes a reaction by reaction ID. Admin-only.
  *     tags: [Reactions]
  *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
- *         schema:
- *           type: integer
- *         description: Reaction ID
+ *         schema: { type: integer }
+ *         example: 50
  *     responses:
  *       200:
- *         description: Delete result
+ *         description: Deleted
  */
 router.delete("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_post_reactionController.deleteUsers_posts_reaction);
 

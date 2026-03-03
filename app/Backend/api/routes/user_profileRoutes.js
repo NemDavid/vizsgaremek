@@ -15,111 +15,89 @@ router.param("userId", paramHandler.paramUserId);
 
 /**
  * @swagger
+ * tags:
+ *   name: Profiles
+ *   description: User profile operations (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     UserProfile:
  *       type: object
  *       properties:
- *         ID:
- *           type: integer
- *           example: 10
- *         USER_ID:
- *           type: integer
- *           example: 1
- *         level:
- *           type: integer
- *           example: 3
- *         XP:
- *           type: integer
- *           example: 420
- *         first_name:
- *           type: string
- *           example: János
- *         last_name:
- *           type: string
- *           example: Kovács
+ *         ID: { type: integer, example: 10 }
+ *         USER_ID: { type: integer, example: 1 }
+ *         level: { type: integer, example: 3 }
+ *         XP: { type: integer, example: 250 }
+ *         first_name: { type: string, example: "John" }
+ *         last_name: { type: string, example: "Doe" }
  *         birth_date:
  *           type: string
  *           format: date
- *           example: 2000-01-01
- *         birth_place:
- *           type: string
- *           example: Budapest
- *         schools:
- *           type: string
- *           example: BME
- *         bio:
- *           type: string
- *           example: "Szeretek programozni."
- *         avatar_url:
- *           type: string
- *           example: "http://localhost:6769/cloud/avatar.png"
+ *           description: Must represent an age between ~6 and ~100 years if provided.
+ *           example: "2000-01-01"
+ *         birth_place: { type: string, example: "Budapest" }
+ *         schools: { type: string, example: "Example School" }
+ *         bio: { type: string, example: "Short bio..." }
+ *         avatar_url: { type: string, example: "/dpfp.png" }
  */
-
-/**
- * @swagger
- * tags:
- *   name: Profiles
- *   description: User profile management operations
- */
-
-//--------------------------------------------------
-//                   ADMIN
-//--------------------------------------------------
 
 /**
  * @swagger
  * /api/profiles/all:
  *   get:
- *     summary: Get all user profiles
+ *     summary: Get all user profiles (admin)
+ *     description: Returns all user profiles. Admin-only.
  *     tags: [Profiles]
  *     responses:
  *       200:
- *         description: List of user profiles
+ *         description: List of profiles
  */
-router.get("/all",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.getUser_Profiles);
+router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_profileController.getUser_Profiles);
 
 /**
  * @swagger
  * /api/profiles/pages/{paramPage}:
  *   get:
- *     summary: Get user profiles by page
+ *     summary: Get profiles by page (admin)
+ *     description: Returns profiles for a given page number. Admin-only.
  *     tags: [Profiles]
  *     parameters:
  *       - in: path
  *         name: paramPage
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 1
  *     responses:
  *       200:
- *         description: Paginated user profiles
+ *         description: Paginated profiles
  */
-router.get("/pages/:paramPage",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.getUser_ProfilesByPage);
+router.get("/pages/:paramPage", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_profileController.getUser_ProfilesByPage);
 
 /**
  * @swagger
  * /api/profiles/{userId}:
  *   delete:
- *     summary: Delete user profile (admin)
+ *     summary: Delete a user profile (admin)
+ *     description: Deletes a profile by USER_ID. Admin-only.
  *     tags: [Profiles]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *     responses:
  *       200:
- *         description: User profile deleted
+ *         description: Deleted
  */
-router.delete("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.deleteUser_Profile);
+router.delete("/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_profileController.deleteUser_Profile);
 
 /**
  * @swagger
  * /api/profiles:
  *   post:
- *     summary: Create user profile (admin)
+ *     summary: Create a user profile (admin)
+ *     description: Creates a profile for an existing user. Admin-only.
  *     tags: [Profiles]
  *     requestBody:
  *       required: true
@@ -128,71 +106,54 @@ router.delete("/:userId",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],
  *           schema:
  *             type: object
  *             properties:
- *               USER_ID:
- *                 type: integer
- *                 example: 1
- *               first_name:
- *                 type: string
- *                 example: János
- *               last_name:
- *                 type: string
- *                 example: Kovács
- *               birth_date:
- *                 type: string
- *                 format: date
- *                 example: 2000-01-01
- *               birth_place:
- *                 type: string
- *                 example: Budapest
- *               schools:
- *                 type: string
- *                 example: BME
- *               bio:
- *                 type: string
- *                 example: "Szeretek programozni."
- *               avatar_url:
- *                 type: string
- *                 example: "/dpfp.png"
+ *               USER_ID: { type: integer, example: 2 }
+ *               first_name: { type: string, example: "John" }
+ *               last_name: { type: string, example: "Doe" }
+ *               birth_date: { type: string, format: date, example: "2000-01-01" }
+ *               birth_place: { type: string, example: "Budapest" }
+ *               schools: { type: string, example: "Example School" }
+ *               bio: { type: string, example: "Short bio..." }
+ *               avatar_url: { type: string, example: "/dpfp.png" }
  *     responses:
  *       201:
- *         description: User profile created
+ *         description: Created
  */
-router.post("/",[authMiddleware.userIsLoggedIn,authMiddleware.isAdmin],  user_profileController.createUser_Profile);
-
-//--------------------------------------------------
-//              NEM ADMIN
-//--------------------------------------------------
+router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_profileController.createUser_Profile);
 
 /**
  * @swagger
  * /api/profiles/{userId}:
  *   get:
- *     summary: Get user profile by user ID
+ *     summary: Get a user's profile
+ *     description: Returns the profile for the given user id (or username depending on your param handler/repo logic).
  *     tags: [Profiles]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 1
  *     responses:
  *       200:
- *         description: User profile found
+ *         description: Profile found
  */
-router.get("/:userId",[authMiddleware.userIsLoggedIn], user_profileController.getUser_Profile);
+router.get("/:userId", [authMiddleware.userIsLoggedIn], user_profileController.getUser_Profile);
 
 /**
  * @swagger
  * /api/profiles/{userId}:
  *   patch:
- *     summary: Update user profile (optionally upload avatar)
+ *     summary: Update a user profile (and optionally upload avatar)
+ *     description: >
+ *       Updates profile fields. Avatar upload uses multipart/form-data field "avatar".
+ *       If birth_date is provided it must represent an age between ~6 and ~100 years.
  *     tags: [Profiles]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 1
  *     requestBody:
  *       required: true
  *       content:
@@ -200,32 +161,21 @@ router.get("/:userId",[authMiddleware.userIsLoggedIn], user_profileController.ge
  *           schema:
  *             type: object
  *             properties:
- *               first_name:
- *                 type: string
- *                 example: János
- *               last_name:
- *                 type: string
- *                 example: Kovács
- *               birth_date:
- *                 type: string
- *                 format: date
- *                 example: 2000-01-01
- *               birth_place:
- *                 type: string
- *                 example: Budapest
- *               schools:
- *                 type: string
- *                 example: BME
- *               bio:
- *                 type: string
- *                 example: "Szeretek programozni."
- *               avatar:
- *                 type: string
- *                 format: binary
+ *               first_name: { type: string, example: "John" }
+ *               last_name: { type: string, example: "Doe" }
+ *               birth_date: { type: string, format: date, example: "2000-01-01" }
+ *               birth_place: { type: string, example: "Budapest" }
+ *               schools: { type: string, example: "Example School" }
+ *               bio: { type: string, example: "Short bio..." }
+ *               avatar: { type: string, format: binary }
  *     responses:
  *       200:
- *         description: User profile updated
+ *         description: Updated
  */
-router.patch("/:userId", [authMiddleware.userIsLoggedIn,upload.single("avatar"), cloudMiddleware.Req_HasFile], user_profileController.updateUser_Profile);
+router.patch(
+  "/:userId",
+  [authMiddleware.userIsLoggedIn, upload.single("avatar"), cloudMiddleware.Req_HasFile],
+  user_profileController.updateUser_Profile
+);
 
 module.exports = router;

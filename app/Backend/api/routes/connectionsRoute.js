@@ -9,74 +9,34 @@ router.param("action", paramHandler.paramAction);
 
 /**
  * @swagger
+ * tags:
+ *   name: Connections
+ *   description: Friend connections endpoints (cookie-authenticated).
+ *
  * components:
  *   schemas:
  *     Connection:
  *       type: object
  *       properties:
- *         ID:
- *           type: integer
- *           example: 55
- *         User_Requested_ID:
- *           type: integer
- *           example: 1
- *         To_User_ID:
- *           type: integer
- *           example: 2
+ *         ID: { type: integer, example: 300 }
+ *         User_Requested_ID: { type: integer, example: 1 }
+ *         To_User_ID: { type: integer, example: 2 }
  *         Status:
  *           type: string
  *           enum: ["pending", "accepted", "blocked"]
  *           example: "pending"
- *
- *     ConnectionCreateResponse:
- *       type: object
- *       properties:
- *         user:
- *           $ref: "#/components/schemas/Connection"
- *
- *     CurrentUserConnection:
- *       type: object
- *       description: Simplified connection format returned by /me endpoint
- *       properties:
- *         UserID:
- *           type: integer
- *           example: 2
- *         Requested_BY:
- *           type: integer
- *           nullable: true
- *           description: Present for pending/blocked items
- *           example: 1
- *         Status:
- *           type: string
- *           example: "pending"
  */
-
-/**
- * @swagger
- * tags:
- *   name: Connections
- *   description: Friend connections operations
- */
-
-//--------------------------------------------------
-//                   ADMIN
-//--------------------------------------------------
 
 /**
  * @swagger
  * /api/connections:
  *   get:
  *     summary: Get all connections (admin)
+ *     description: Returns all connection records. Admin-only.
  *     tags: [Connections]
  *     responses:
  *       200:
- *         description: List of all connections
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/Connection"
+ *         description: List of connections
  */
 router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getConnections);
 
@@ -85,6 +45,7 @@ router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connect
  * /api/connections/filtered:
  *   get:
  *     summary: Get connections filtered by status (admin)
+ *     description: Filter by query param "status" (accepted|pending|blocked). Admin-only.
  *     tags: [Connections]
  *     parameters:
  *       - in: query
@@ -92,38 +53,24 @@ router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connect
  *         required: true
  *         schema:
  *           type: string
- *           enum: ["pending", "accepted", "blocked"]
+ *           enum: ["accepted", "pending", "blocked"]
+ *         example: "accepted"
  *     responses:
  *       200:
- *         description: Filtered connections
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/Connection"
+ *         description: Filtered list
  */
 router.get("/filtered", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], connectionsController.getFilteredConnections);
-
-//--------------------------------------------------
-//              NEM ADMIN
-//--------------------------------------------------
 
 /**
  * @swagger
  * /api/connections/me:
  *   get:
- *     summary: Get all current user's connections (simplified)
+ *     summary: Get my connections (raw)
+ *     description: Returns all connection entries related to the authenticated user.
  *     tags: [Connections]
  *     responses:
  *       200:
- *         description: Simplified list of connections
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: "#/components/schemas/ConnectionMeItem"
+ *         description: My connections
  */
 router.get("/me", [authMiddleware.userIsLoggedIn], connectionsController.getCurrentUserConnectionsAll);
 
@@ -131,7 +78,8 @@ router.get("/me", [authMiddleware.userIsLoggedIn], connectionsController.getCurr
  * @swagger
  * /api/connections/me/{action}:
  *   get:
- *     summary: Get current user's connections filtered by action/status
+ *     summary: Get my connections filtered by action
+ *     description: action must be one of pending|accepted|blocked.
  *     tags: [Connections]
  *     parameters:
  *       - in: path
@@ -140,9 +88,10 @@ router.get("/me", [authMiddleware.userIsLoggedIn], connectionsController.getCurr
  *         schema:
  *           type: string
  *           enum: ["pending", "accepted", "blocked"]
+ *         example: "accepted"
  *     responses:
  *       200:
- *         description: Filtered connection list (friend objects with connection_status)
+ *         description: Filtered connections
  */
 router.get("/me/:action", [authMiddleware.userIsLoggedIn], connectionsController.getCurrentUserFilteredConnections);
 
@@ -150,27 +99,26 @@ router.get("/me/:action", [authMiddleware.userIsLoggedIn], connectionsController
  * @swagger
  * /api/connections/{userId}/{action}:
  *   post:
- *     summary: Create a connection with action (pending/blocked)
+ *     summary: Create a connection (friend request or block)
+ *     description: >
+ *       Creates a connection towards userId. action must be "pending" (friend request) or "blocked".
  *     tags: [Connections]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *       - in: path
  *         name: action
  *         required: true
  *         schema:
  *           type: string
  *           enum: ["pending", "blocked"]
+ *         example: "pending"
  *     responses:
  *       201:
  *         description: Connection created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/ConnectionCreateResponse"
  */
 router.post("/:userId/:action", [authMiddleware.userIsLoggedIn], connectionsController.createConnection);
 
@@ -179,20 +127,17 @@ router.post("/:userId/:action", [authMiddleware.userIsLoggedIn], connectionsCont
  * /api/connections/{userId}:
  *   post:
  *     summary: Create a connection (defaults to pending)
+ *     description: Creates a friend request towards userId (defaults to pending).
  *     tags: [Connections]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *     responses:
  *       201:
  *         description: Connection created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/ConnectionCreateResponse"
  */
 router.post("/:userId", [authMiddleware.userIsLoggedIn], connectionsController.createConnection);
 
@@ -200,17 +145,18 @@ router.post("/:userId", [authMiddleware.userIsLoggedIn], connectionsController.c
  * @swagger
  * /api/connections/{userId}:
  *   delete:
- *     summary: Delete connection with a user
+ *     summary: Delete a connection
+ *     description: Deletes the connection between authenticated user and userId.
  *     tags: [Connections]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *     responses:
  *       200:
- *         description: Delete result
+ *         description: Deleted
  */
 router.delete("/:userId", [authMiddleware.userIsLoggedIn], connectionsController.deleteConnection);
 
@@ -218,27 +164,25 @@ router.delete("/:userId", [authMiddleware.userIsLoggedIn], connectionsController
  * @swagger
  * /api/connections/{userId}/{action}:
  *   patch:
- *     summary: Update connection with a user (accepted/blocked)
+ *     summary: Update a connection (accept or block)
+ *     description: action must be accepted|blocked.
  *     tags: [Connections]
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
- *         schema:
- *           type: integer
+ *         schema: { type: integer }
+ *         example: 2
  *       - in: path
  *         name: action
  *         required: true
  *         schema:
  *           type: string
  *           enum: ["accepted", "blocked"]
+ *         example: "accepted"
  *     responses:
  *       200:
- *         description: Updated connection
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Connection"
+ *         description: Updated
  */
 router.patch("/:userId/:action", [authMiddleware.userIsLoggedIn], connectionsController.updateConnection);
 

@@ -201,12 +201,11 @@ class UserService {
 
     // Autista csinálta
     async updatePassword(updateData, decoded, transaction) {
-
         if (!updateData.old_password || !updateData.new_password || !updateData.confirm_password) throw new BadRequestError("Hiányzó adatt");
 
         if (updateData.new_password !== updateData.confirm_password) throw new BadRequestError("Nem megfelelő adat");
 
-        if (!authUtils.isValidPassword(updateData.new_password)) throw new BadRequestError("Nem megfelelő adat")
+        if (!authUtils.isValidPassword(updateData.new_password))  throw new BadRequestError("Nem megfelelő adat")
 
         const user = await this.userRepository.getUserByID(decoded.userID, { transaction });
         if (!user) throw new NotFoundError("Nincs ilyen felhasználó");
