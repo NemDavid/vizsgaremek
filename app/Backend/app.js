@@ -56,8 +56,7 @@ const advertisementRoute = require("./api/routes/advertisementRoute");
 
 const attachTransaction = require("./api/middlewares/attachTransaction");
 const errorHandler = require("./api/middlewares/errorHandler");
-
-
+const swaggerAdminSession = require("./api/middlewares/swaggerCookie")
 
 if (process.env.NODE_ENV !== "test") {
     require("./api/db/");
@@ -65,7 +64,7 @@ if (process.env.NODE_ENV !== "test") {
 
 app.use("/api", api);
 api.use(attachTransaction(db));
-
+app.use(swaggerAdminSession);
 /* ✅ SWAGGER DOCS */
 api.use(
     "/docs",
