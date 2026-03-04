@@ -7,7 +7,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
  * @swagger
  * tags:
  *   - name: Settings
- *     description: User settings endpoints (cookie-authenticated). Some operations are admin-only.
+ *     description: User settings endpoints (cookie-authenticated; some admin-only).
  *
  * components:
  *   securitySchemes:
@@ -26,52 +26,30 @@ const authMiddleware = require("../middlewares/authMiddleware");
  *         new_reaction_on_post: { type: boolean }
  *         new_login: { type: boolean }
  *         new_friend_request: { type: boolean }
- *       required:
- *         - new_post
- *         - new_comment_on_post
- *         - new_reaction_on_post
- *         - new_login
- *         - new_friend_request
+ *       required: [new_post, new_comment_on_post, new_reaction_on_post, new_login, new_friend_request]
  *
  *     UserSettings:
  *       type: object
  *       additionalProperties: false
  *       properties:
- *         ID:
- *           type: integer
- *           format: int64
- *         Notifications:
- *           $ref: '#/components/schemas/NotificationPreferences'
- *         DataPrivacy:
- *           type: boolean
- *           description: Data privacy setting
+ *         ID: { type: integer, format: int64 }
+ *         Notifications: { $ref: '#/components/schemas/NotificationPreferences' }
+ *         DataPrivacy: { type: boolean }
  *       required: [ID, Notifications, DataPrivacy]
  *
  *     UpdateSettingsRequest:
  *       type: object
  *       additionalProperties: false
- *       description: Provide at least one of Notifications or DataPrivacy.
  *       properties:
- *         Notifications:
- *           $ref: '#/components/schemas/NotificationPreferences'
- *         DataPrivacy:
- *           type: boolean
+ *         Notifications: { $ref: '#/components/schemas/NotificationPreferences' }
+ *         DataPrivacy: { type: boolean }
  *
  *     CreateSettingsResponse:
  *       type: object
  *       additionalProperties: false
  *       properties:
- *         user_Settings:
- *           $ref: '#/components/schemas/UserSettings'
+ *         user_Settings: { $ref: '#/components/schemas/UserSettings' }
  *       required: [user_Settings]
- *
- *     DeleteResult:
- *       type: object
- *       additionalProperties: false
- *       properties:
- *         success: { type: boolean }
- *         deleted: { type: integer }
- *       required: [success, deleted]
  *
  *     ErrorResponse:
  *       type: object
@@ -95,7 +73,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
  *         application/json:
  *           schema: { $ref: '#/components/schemas/ErrorResponse' }
  *     BadRequest:
- *       description: Bad request (validation/business rule)
+ *       description: Bad request
  *       content:
  *         application/json:
  *           schema: { $ref: '#/components/schemas/ErrorResponse' }
@@ -111,7 +89,6 @@ const authMiddleware = require("../middlewares/authMiddleware");
  *   get:
  *     tags: [Settings]
  *     summary: Get my settings
- *     description: Returns settings for the authenticated user (based on cookie token).
  *     security:
  *       - cookieAuth: []
  *     responses:
@@ -131,7 +108,7 @@ router.get("/", [authMiddleware.userIsLoggedIn], user_settingsController.getUser
  *   patch:
  *     tags: [Settings]
  *     summary: Update my settings
- *     description: Updates settings for the authenticated user. Provide at least one of Notifications or DataPrivacy.
+ *     description: Provide at least one of Notifications or DataPrivacy.
  *     security:
  *       - cookieAuth: []
  *     requestBody:
@@ -161,16 +138,13 @@ router.patch("/", [authMiddleware.userIsLoggedIn], user_settingsController.updat
  * /api/settings:
  *   delete:
  *     tags: [Settings]
- *     summary: Delete settings of the authenticated user (admin)
- *     description: Admin/owner only. Deletes settings for the authenticated user (based on cookie token).
+ *     summary: Delete settings (admin)
+ *     description: Admin/owner only. Deletes settings. Returns 200 with no JSON body.
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: Deleted
- *         content:
- *           application/json:
- *             schema: { $ref: '#/components/schemas/DeleteResult' }
+ *         description: Deleted (no content)
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  *       403:
@@ -186,7 +160,7 @@ router.delete("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user
  *   post:
  *     tags: [Settings]
  *     summary: Create settings if missing (admin)
- *     description: Admin/owner only. Creates settings for the authenticated user if they do not exist.
+ *     description: Admin/owner only. Creates settings if they do not exist.
  *     security:
  *       - cookieAuth: []
  *     responses:

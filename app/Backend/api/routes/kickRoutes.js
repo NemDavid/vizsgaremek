@@ -176,7 +176,7 @@ router.get("/all/recieved", [authMiddleware.userIsLoggedIn], kickController.getK
  *     summary: Kick a user
  *     description: |
  *       Creates a kick record from the authenticated user to the target user.
- *       If a kick record already exists between the two users (either direction), it updates it and returns `{ updated: true }`.
+ *       If a kick record already exists between the two users (either direction), it updates it and returns an object where "updated" is true.
  *     security:
  *       - cookieAuth: []
  *     parameters:

@@ -16,9 +16,9 @@ const swaggerSpec = swaggerJsdoc({
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "mihirünk dokumentáció",
+            title: "Mi hírünk dokumentáció",
             version: "1.0.0",
-            description: "# Üdv a mihirünk API dokumentációjában."
+            description: "# Üdv a Mi hírünk API dokumentációjában."
         },
     },
     apis: ["./api/routes/*.js", "./api/routes/**/*.js"],
