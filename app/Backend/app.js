@@ -13,15 +13,15 @@ const sweggerUI = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
 const swaggerSpec = swaggerJsdoc({
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "mihirünk dokumentáció",
-      version: "1.0.0",
-      description: "# Üdv a mihirünk API dokumentációjában."
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "mihirünk dokumentáció",
+            version: "1.0.0",
+            description: "# Üdv a mihirünk API dokumentációjában."
+        },
     },
-  },
-  apis: ["./api/routes/*.js", "./api/routes/**/*.js"],
+    apis: ["./api/routes/*.js", "./api/routes/**/*.js"],
 });
 
 

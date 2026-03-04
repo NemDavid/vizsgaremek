@@ -9,52 +9,116 @@ router.param("itemId", paramHandler.paramItemId);
 /**
  * @swagger
  * tags:
- *   name: Reactions
- *   description: Post reaction endpoints (cookie-authenticated).
+ *   - name: Reactions
+ *     description: Post reaction endpoints (like/dislike etc.). Cookie-authenticated.
  *
  * components:
+ *   securitySchemes:
+ *     cookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: user_token
+ *
  *   schemas:
  *     UserPostReaction:
  *       type: object
+ *       additionalProperties: false
  *       properties:
- *         ID: { type: integer, example: 50 }
- *         USER_ID: { type: integer, example: 1 }
- *         POST_ID: { type: integer, example: 100 }
+ *         ID: { type: integer, format: int64 }
+ *         USER_ID: { type: integer, format: int64 }
+ *         POST_ID: { type: integer, format: int64 }
  *         reaction:
  *           type: string
- *           enum: ["like", "dislike"]
- *           example: "like"
- *         created_at: { type: string, format: date, example: "2026-03-03" }
- *         updated_at: { type: string, format: date, example: "2026-03-03" }
+ *           description: Reaction type (project-defined)
+ *         created_at:
+ *           type: string
+ *           format: date
+ *       required: [ID, USER_ID, POST_ID, reaction, created_at]
  *
- *     MakeReactionRequest:
+ *     CreateReactionRequest:
  *       type: object
+ *       additionalProperties: false
  *       properties:
- *         POST_ID: { type: integer, example: 100 }
+ *         POST_ID: { type: integer, format: int64 }
  *         reaction:
  *           type: string
- *           enum: ["like", "dislike"]
- *           example: "like"
+ *           description: Reaction type (project-defined)
  *       required: [POST_ID, reaction]
+ *
+ *     CreateReactionResponse:
+ *       type: object
+ *       additionalProperties: false
+ *       properties:
+ *         reaction:
+ *           $ref: '#/components/schemas/UserPostReaction'
+ *         updated:
+ *           type: boolean
+ *           description: True if an existing reaction was updated instead of creating a new one
+ *       required: [reaction]
+ *
+ *     DeleteResult:
+ *       type: object
+ *       additionalProperties: false
+ *       properties:
+ *         success: { type: boolean }
+ *         deleted: { type: integer }
+ *       required: [success, deleted]
+ *
+ *     ErrorResponse:
+ *       type: object
+ *       additionalProperties: true
+ *       properties:
+ *         message: { type: string }
+ *         statusCode: { type: integer }
+ *         isOperational: { type: boolean }
+ *         details: { nullable: true }
+ *         data: { nullable: true }
+ *
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized (missing/invalid cookie token)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *     Forbidden:
+ *       description: Forbidden (admin/owner only)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *     BadRequest:
+ *       description: Bad request (validation or business rule)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
  */
 
 // GET (non-admin)
 /**
  * @swagger
- * /api/reactions/{itemId}:
+ * /api/reactions/postReactions/{itemId}:
  *   get:
- *     summary: Get my reaction for a post
- *     description: Returns the authenticated user's reaction for POST_ID=itemId (if exists).
  *     tags: [Reactions]
+ *     summary: Get reactions for a post
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
- *         schema: { type: integer }
- *         example: 100
+ *         schema:
+ *           type: integer
+ *         description: Post ID
  *     responses:
  *       200:
- *         description: Reaction (or null)
+ *         description: List of reactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserPostReaction'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 router.get("/:itemId", [authMiddleware.userIsLoggedIn], user_post_reactionController.getUsers_posts_reaction);
 
@@ -63,22 +127,25 @@ router.get("/:itemId", [authMiddleware.userIsLoggedIn], user_post_reactionContro
  * @swagger
  * /api/reactions:
  *   post:
- *     summary: Like or dislike a post (toggle/update)
- *     description: >
- *       Creates/updates/removes a reaction depending on previous state.
- *       reaction must be either "like" or "dislike".
  *     tags: [Reactions]
+ *     summary: Create or update a reaction
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema: { $ref: "#/components/schemas/MakeReactionRequest" }
- *           example:
- *             POST_ID: 100
- *             reaction: "like"
+ *           schema:
+ *             $ref: '#/components/schemas/CreateReactionRequest'
  *     responses:
- *       200:
- *         description: Reaction processed
+ *       201:
+ *         description: Reaction created or updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreateReactionResponse'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 router.post("/", [authMiddleware.userIsLoggedIn], user_post_reactionController.userMakeReaction);
 
@@ -87,12 +154,23 @@ router.post("/", [authMiddleware.userIsLoggedIn], user_post_reactionController.u
  * @swagger
  * /api/reactions:
  *   get:
- *     summary: Get all reactions (admin)
- *     description: Returns all reactions. Admin-only.
  *     tags: [Reactions]
+ *     summary: Get all reactions (admin)
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: List of reactions
+ *         description: List of all reactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserPostReaction'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_post_reactionController.getUsers_posts_reactions);
 
@@ -100,18 +178,26 @@ router.get("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_po
  * @swagger
  * /api/reactions/{itemId}:
  *   delete:
- *     summary: Delete a reaction (admin)
- *     description: Deletes a reaction by reaction ID. Admin-only.
  *     tags: [Reactions]
+ *     summary: Delete my reaction
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
- *         schema: { type: integer }
- *         example: 50
+ *         schema:
+ *           type: integer
+ *         description: Reaction ID
  *     responses:
  *       200:
- *         description: Deleted
+ *         description: Reaction deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DeleteResult'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
  */
 router.delete("/:itemId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_post_reactionController.deleteUsers_posts_reaction);
 

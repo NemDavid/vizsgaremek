@@ -16,42 +16,88 @@ router.param("postId", paramHandler.paramPostId);
 /**
  * @swagger
  * tags:
- *   name: Posts
- *   description: User post endpoints (cookie-authenticated).
+ *   - name: Posts
+ *     description: User post endpoints (cookie-authenticated; some admin-only).
  *
  * components:
+ *   securitySchemes:
+ *     cookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: user_token
+ *
  *   schemas:
  *     UserPost:
  *       type: object
+ *       additionalProperties: false
  *       properties:
- *         ID: { type: integer, example: 100 }
- *         USER_ID: { type: integer, example: 1 }
- *         like: { type: integer, example: 5 }
- *         dislike: { type: integer, example: 1 }
- *         visibility: { type: boolean, example: true }
+ *         ID: { type: integer, format: int64 }
+ *         USER_ID: { type: integer, format: int64 }
+ *         like: { type: integer }
+ *         dislike: { type: integer }
+ *         visibility: { type: boolean }
  *         title:
  *           type: string
- *           description: Must be 3-255 characters.
- *           example: "Hello world"
+ *           minLength: 3
+ *           maxLength: 255
  *         content:
  *           type: string
- *           description: Must be 3-1000 characters.
- *           example: "This is a valid post content."
- *         media_url: { type: string, example: "http://localhost:6769/cloud/abc.png" }
- *         created_at: { type: string, format: date, example: "2026-03-03" }
- *         updated_at: { type: string, format: date, example: "2026-03-03" }
+ *           minLength: 3
+ *           maxLength: 1000
+ *         media_url:
+ *           type: string
+ *           nullable: true
+ *         created_at: { type: string, format: date }
+ *         updated_at: { type: string, format: date }
+ *       required: [ID, USER_ID, like, dislike, visibility, title, content, created_at, updated_at]
  *
  *     PostsCursorResponse:
  *       type: object
+ *       additionalProperties: false
  *       properties:
  *         data:
  *           type: array
- *           items: { $ref: "#/components/schemas/UserPost" }
+ *           items: { $ref: '#/components/schemas/UserPost' }
  *         nextCursor:
  *           type: integer
  *           nullable: true
- *           description: Next page index to request (or null if no more posts).
- *           example: 1
+ *           description: Next page index (or null if no more pages)
+ *       required: [data, nextCursor]
+ *
+ *     DeleteResult:
+ *       type: object
+ *       additionalProperties: false
+ *       properties:
+ *         success: { type: boolean }
+ *         deleted: { type: integer }
+ *       required: [success, deleted]
+ *
+ *     ErrorResponse:
+ *       type: object
+ *       additionalProperties: true
+ *       properties:
+ *         message: { type: string }
+ *         statusCode: { type: integer }
+ *         isOperational: { type: boolean }
+ *         details: { nullable: true }
+ *         data: { nullable: true }
+ *
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized (missing/invalid cookie token)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *     Forbidden:
+ *       description: Forbidden (admin/owner only)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *     BadRequest:
+ *       description: Bad request (validation/business rule)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
  */
 
 //--------------------------------------------------
@@ -62,40 +108,32 @@ router.param("postId", paramHandler.paramPostId);
  * @swagger
  * /api/posts:
  *   get:
- *     summary: Get posts with cursor paging
- *     description: >
- *       Returns posts using "page" and "perPage". Response includes "nextCursor" (next page index) or null.
  *     tags: [Posts]
+ *     summary: Get posts with cursor paging
+ *     description: Returns posts using cursor-like paging with `page` and `perPage`. Response includes `nextCursor` (next page index) or null.
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: query
  *         name: page
  *         required: true
- *         schema: { type: integer }
- *         example: 0
+ *         schema: { type: integer, minimum: 0 }
+ *         description: Page index (0-based)
  *       - in: query
  *         name: perPage
  *         required: true
- *         schema: { type: integer }
- *         example: 10
+ *         schema: { type: integer, minimum: 1, maximum: 100 }
+ *         description: Items per page
  *     responses:
  *       200:
  *         description: Cursor paged posts
  *         content:
  *           application/json:
- *             schema: { $ref: "#/components/schemas/PostsCursorResponse" }
- *             example:
- *               data:
- *                 - ID: 100
- *                   USER_ID: 1
- *                   like: 0
- *                   dislike: 0
- *                   visibility: true
- *                   title: "Hello world"
- *                   content: "This is a valid post content."
- *                   media_url: ""
- *                   created_at: "2026-03-03"
- *                   updated_at: "2026-03-03"
- *               nextCursor: 1
+ *             schema: { $ref: '#/components/schemas/PostsCursorResponse' }
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  */
 router.get("/", [authMiddleware.userIsLoggedIn], user_postController.getUser_PostsByLimit);
 
@@ -103,31 +141,43 @@ router.get("/", [authMiddleware.userIsLoggedIn], user_postController.getUser_Pos
  * @swagger
  * /api/posts:
  *   post:
- *     summary: Create a post
- *     description: >
- *       Creates a post. Title must be 3-255 chars. Content must be 3-1000 chars.
- *       Optional media upload using multipart field "media".
  *     tags: [Posts]
+ *     summary: Create a post
+ *     description: |
+ *       Creates a post. Title must be 3-255 chars, content 3-1000 chars.
+ *       Optional media upload via **multipart/form-data** field **media**.
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             additionalProperties: false
  *             required: [title, content]
  *             properties:
  *               title:
  *                 type: string
- *                 example: "My first post"
+ *                 minLength: 3
+ *                 maxLength: 255
  *               content:
  *                 type: string
- *                 example: "This is a valid post content (min 3 chars)."
+ *                 minLength: 3
+ *                 maxLength: 1000
  *               media:
  *                 type: string
  *                 format: binary
  *     responses:
  *       201:
  *         description: Created post
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/UserPost' }
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  */
 router.post("/", authMiddleware.userIsLoggedIn, upload.single("media"), cloudMiddleware.Req_HasFile, user_postController.createUser_Post);
 
@@ -135,18 +185,27 @@ router.post("/", authMiddleware.userIsLoggedIn, upload.single("media"), cloudMid
  * @swagger
  * /api/posts/{postId}:
  *   delete:
+ *     tags: [Posts]
  *     summary: Delete my post
  *     description: Deletes a post owned by the authenticated user.
- *     tags: [Posts]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: postId
  *         required: true
  *         schema: { type: integer }
- *         example: 100
+ *         description: Post ID
  *     responses:
  *       200:
  *         description: Deleted
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/DeleteResult' }
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  */
 router.delete("/:postId", [authMiddleware.userIsLoggedIn], user_postController.deleteUser_Post);
 
@@ -154,31 +213,51 @@ router.delete("/:postId", [authMiddleware.userIsLoggedIn], user_postController.d
  * @swagger
  * /api/posts/{postId}:
  *   patch:
- *     summary: Update my post
- *     description: >
- *       Updates title/content, optionally replaces media via multipart "media".
- *       You can also pass "mediaDeleted"=true to remove current media.
  *     tags: [Posts]
+ *     summary: Update my post
+ *     description: |
+ *       Updates title/content and optionally replaces media via **multipart/form-data** field **media**.
+ *       You can also pass **mediaDeleted=true** to remove the current media.
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: postId
  *         required: true
  *         schema: { type: integer }
- *         example: 100
+ *         description: Post ID
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             additionalProperties: false
  *             properties:
- *               title: { type: string, example: "Updated title" }
- *               content: { type: string, example: "Updated content with valid length." }
- *               mediaDeleted: { type: boolean, example: false }
- *               media: { type: string, format: binary }
+ *               title:
+ *                 type: string
+ *                 minLength: 3
+ *                 maxLength: 255
+ *               content:
+ *                 type: string
+ *                 minLength: 3
+ *                 maxLength: 1000
+ *               mediaDeleted:
+ *                 type: boolean
+ *                 description: If true, deletes existing media_url
+ *               media:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Updated post
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/UserPost' }
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  */
 router.patch("/:postId", [authMiddleware.userIsLoggedIn], upload.single("media"), cloudMiddleware.Req_HasFile, user_postController.updateUser_Post);
 
@@ -190,12 +269,23 @@ router.patch("/:postId", [authMiddleware.userIsLoggedIn], upload.single("media")
  * @swagger
  * /api/posts/all:
  *   get:
- *     summary: Get all posts (admin)
- *     description: Returns all posts. Admin-only.
  *     tags: [Posts]
+ *     summary: Get all posts (admin)
+ *     description: Returns all posts. Admin/owner only.
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: List of posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items: { $ref: '#/components/schemas/UserPost' }
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_postController.getUser_Posts);
 
@@ -203,18 +293,31 @@ router.get("/all", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user
  * @swagger
  * /api/posts/user/{userId}:
  *   get:
- *     summary: Get posts for a user (admin)
- *     description: Returns all posts of a specific user. Admin-only.
  *     tags: [Posts]
+ *     summary: Get posts for a user (admin)
+ *     description: Returns all posts of a specific user. Admin/owner only.
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
  *         schema: { type: integer }
- *         example: 1
+ *         description: User ID
  *     responses:
  *       200:
  *         description: User posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items: { $ref: '#/components/schemas/UserPost' }
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  */
 router.get("/user/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_postController.getUser_Posts_ByuserId);
 

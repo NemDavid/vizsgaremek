@@ -9,33 +9,82 @@ const upload = getStorage();
 /**
  * @swagger
  * tags:
- *   name: Cloud
- *   description: Image upload endpoints (cookie-authenticated).
+ *   - name: Cloud
+ *     description: Cloud storage endpoints (image upload + static serving at /cloud/*).
  *
  * components:
+ *   securitySchemes:
+ *     cookieAuth:
+ *       type: apiKey
+ *       in: cookie
+ *       name: user_token
+ *
  *   schemas:
  *     CloudUploadResponse:
  *       type: object
+ *       additionalProperties: false
  *       properties:
- *         success: { type: boolean, example: true }
- *         message: { type: string, example: "Kép feltöltve!" }
- *         file: { type: string, example: "550e8400-e29b-41d4-a716-446655440000.png" }
- *         path: { type: string, example: "/cloud/550e8400-e29b-41d4-a716-446655440000.png" }
+ *         success:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *         file:
+ *           type: string
+ *           description: Stored filename
+ *         path:
+ *           type: string
+ *           description: Public path under /cloud
+ *       required: [success, message, file, path]
+ *
+ *     ErrorResponse:
+ *       type: object
+ *       additionalProperties: true
+ *       properties:
+ *         message: { type: string }
+ *         statusCode: { type: integer }
+ *         isOperational: { type: boolean }
+ *         details: { nullable: true }
+ *         data: { nullable: true }
+ *
+ *   responses:
+ *     Unauthorized:
+ *       description: Unauthorized (missing/invalid cookie token)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *     Forbidden:
+ *       description: Forbidden (admin/owner only)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *     BadRequest:
+ *       description: Bad request (missing file / invalid multipart)
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ErrorResponse' }
  */
 
 /**
  * @swagger
  * /cloud/upload:
  *   post:
- *     summary: Upload an image (admin)
- *     description: Uploads an image to the cloud storage. Uses multipart field "avatar". Admin-only.
  *     tags: [Cloud]
+ *     summary: Upload image to cloud storage (admin)
+ *     description: |
+ *       Admin/owner only. Uploads a single image using **multipart/form-data**.
+ *       Field name must be **avatar** (because the route uses upload.single("avatar")).
+ *
+ *       The uploaded file becomes publicly available via:
+ *       **GET /cloud/{filename}** (static hosting).
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             additionalProperties: false
  *             required: [avatar]
  *             properties:
  *               avatar:
@@ -46,7 +95,14 @@ const upload = getStorage();
  *         description: Image uploaded successfully
  *         content:
  *           application/json:
- *             schema: { $ref: "#/components/schemas/CloudUploadResponse" }
+ *             schema:
+ *               $ref: '#/components/schemas/CloudUploadResponse'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 router.post(
   "/upload",
