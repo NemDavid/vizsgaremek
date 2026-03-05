@@ -62,9 +62,9 @@ if (process.env.NODE_ENV !== "test") {
     require("./api/db/");
 }
 
+app.use(swaggerAdminSession);
 app.use("/api", api);
 api.use(attachTransaction(db));
-app.use(swaggerAdminSession);
 /* ✅ SWAGGER DOCS */
 api.use(
     "/docs",

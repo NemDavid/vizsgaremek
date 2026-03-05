@@ -228,38 +228,6 @@ router.post("/login", authController.login);
 
 /**
  * @swagger
- * /api/auth/swagger-login:
- *   post:
- *     tags: [Auth]
- *     summary: Swagger demo login (sets cookie)
- *     description: |
- *       Demo endpoint intended for Swagger UI testing.
- *       Requires header **x-swagger-request: true**.
- *       Sets a valid **user_token** cookie (admin role) so protected routes can be tested.
- *     parameters:
- *       - in: header
- *         name: x-swagger-request
- *         required: true
- *         schema: { type: string, enum: ["true"] }
- *         description: Must be "true" to allow demo login
- *     responses:
- *       200:
- *         description: Demo login OK (cookie set)
- *         headers:
- *           Set-Cookie:
- *             description: httpOnly cookie containing JWT
- *             schema: { type: string }
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SwaggerLoginResponse'
- *       403:
- *         $ref: '#/components/responses/Forbidden'
- */
-router.post("/swagger-login", authController.swaggerLogin);
-
-/**
- * @swagger
  * /api/auth/register:
  *   post:
  *     tags: [Auth]

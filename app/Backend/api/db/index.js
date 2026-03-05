@@ -37,13 +37,13 @@ const db =
 
 (async () => {
     try {
-        await db.sequelize.sync({ force: false })
+        await db.sequelize.sync({ force: false });
         console.log("database sync OK");
 
         await seedAdminUser(db)
     }
     catch (error) {
-        console.log("database synk error");        
+        console.log("database sync error");
     }
 })();
 

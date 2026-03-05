@@ -6,15 +6,15 @@ module.exports = function swaggerAdminSession(req, res, next) {
 
   // 0) eredeti token mentése
   const originalToken = req.cookies?.user_token;
-
-  // 1) request alatt admin swagger token
+  
+  // 1) request alatt admin swagger token 
   req.cookies.user_token = authUtils.generateSwaggerToken({
     ID: 1,
     username: "admin",
     email: "ad@ad.ad",
     role: "admin",
   });
-
+  
   // 2) response végén restore vagy clear (ugyanazokkal az opciókkal!)
   const originalEnd = res.end;
   res.end = function (...args) {
