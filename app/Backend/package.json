@@ -5,7 +5,8 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage",
-    "start": "nodemon ."
+    "start": "nodemon .",
+    "start:seed": "cross-env Seed=true nodemon ."
   },
   "keywords": [],
   "author": "",

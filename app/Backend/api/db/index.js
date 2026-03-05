@@ -39,8 +39,8 @@ const db =
     try {
         await db.sequelize.sync({ force: false });
         console.log("database sync OK");
-
-        await seedAdminUser(db)
+        if(process.env.Seed == "true")
+            await seedAdminUser(db);
     }
     catch (error) {
         console.log("database sync error");

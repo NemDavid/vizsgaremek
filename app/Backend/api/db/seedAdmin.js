@@ -94,10 +94,7 @@ async function seedAdminUser(db) {
     console.log(`[Seed] Kész: ${usersToSeed.length} user ellenőrizve/seedelve`);
   } catch (error) {
     console.error(
-      "[Seed] Default felhasználók létrehozása sikertelen:",
-      error.message,
-      error.stack,
-      error
+      "[Seed] Default felhasználók létrehozása sikertelen",
     );
   }
 }

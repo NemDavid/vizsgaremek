@@ -150,6 +150,20 @@ module.exports = (sequelize) => {
         onDelete: "CASCADE"
     });
 
+    Verify_Code.hasMany(User, {
+        foreignKey: "email",
+        sourceKey: "email",
+        as: "users",
+        constraints: false,
+    });
+
+    User.belongsTo(Verify_Code, {
+        foreignKey: "email",
+        targetKey: "email",
+        as: "verify_code",
+        constraints: false,
+    });
+
 
     return {
         User,
