@@ -14,6 +14,16 @@ exports.verifyToken = (token) => {
     return jwt.verify(token, process.env.JWT_SECRET);
 }
 
+exports.generateSwaggerToken = (user) => {
+    return jwt.sign({ userID: user.ID, username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET, {
+        expiresIn: '2m' // 3 nap
+    });
+}
+
+exports.verifyToken = (token) => {
+    return jwt.verify(token, process.env.JWT_SECRET);
+}
+
 // Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót
 exports.generateRegistrationToken = (userData) => {
     const password_hash = bcrypt.hashSync(userData.password, salt);
