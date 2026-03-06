@@ -39,11 +39,15 @@ router.param("itemId", paramHandler.paramItemId);
  *       type: object
  *       additionalProperties: false
  *       properties:
- *         POST_ID: { type: integer, format: int64 }
+ *         POST_ID:
+ *           type: integer
+ *           format: int64
+ *           example: 1
  *         comment:
  *           type: string
  *           minLength: 1
  *           maxLength: 500
+ *           example: "string"   
  *       required: [POST_ID, comment]
  *
  *     CreateCommentResponse:

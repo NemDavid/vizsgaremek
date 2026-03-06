@@ -121,6 +121,7 @@ class User_Post_CommentService {
         if (!commentData.USER_ID) {
             throw new BadRequestError("Hiányzó user id");
         }
+        
         if (!commentData.POST_ID) {
             throw new BadRequestError("Hiányzó post id");
         }
