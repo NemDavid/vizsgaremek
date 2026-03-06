@@ -29,6 +29,8 @@ body {
     padding: 25px;
 }
 
+/*--------------------*/
+
 /* ROUTE ANIMÁCIÓ */
 
 .swagger-ui .opblock.is-open {
@@ -46,9 +48,31 @@ body {
     }
 }
 
+/*--------------------*/
+
 /* HOVER EFFECT */
 
 .swagger-ui .opblock:hover {
     transform: scale(1.02);
     box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+}
+
+/*--------------------*/
+
+/* PAGE LOAD ANIMÁCIÓ */
+
+.swagger-ui .wrapper {
+    opacity: 0;
+    animation: swaggerPageLoad 0.8s ease forwards;
+}
+
+@keyframes swaggerPageLoad {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
