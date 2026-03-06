@@ -62,6 +62,8 @@ if (process.env.NODE_ENV !== "test") {
     require("./api/db/");
 }
 
+
+app.use("/assets", express.static("public"));
 app.use(swaggerAdminSession);
 app.use("/api", api);
 api.use(attachTransaction(db));
@@ -70,13 +72,14 @@ api.use(
     "/docs",
     sweggerUI.serve,
     sweggerUI.setup(swaggerSpec, {
+        customCssUrl: "/assets/swagger.css",
         swaggerOptions: {
             withCredentials: true,
             requestInterceptor: (req) => {
                 req.headers["x-swagger-request"] = "true";
                 return req;
             },
-        },
+        }
     })
 );
 

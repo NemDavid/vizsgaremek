@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.swagger-ui .auth-wrapper { display: none !important; }
+.swagger-ui .authorize { display: none !important; }
+
+.swagger-ui,
+.swagger-ui * {
+    font-family: "Press Start 2P", cursive !important;
+}
+
+body {
+    background-color: oklch(88.5% 0.062 18.334) !important;
+}
+
+.opblock {
+    background-color: oklch(80.8% 0.114 19.571) !important;
+    transition: all 0.25s ease;
+}
+
+.opblock-section-header {
+    background-color: oklch(81% 0.117 11.638) !important;
+}
+
+.scheme-container {
+    background-color: oklch(41% 0.159 10.272) !important;
+}
+
+.modell {
+    padding: 25px;
+}
+
+/* ROUTE ANIMÁCIÓ */
+
+.swagger-ui .opblock.is-open {
+    animation: routeOpen 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes routeOpen {
+    from {
+        transform: translateY(-12px) scale(0.98);
+        opacity: 0.6;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* HOVER EFFECT */
+
+.swagger-ui .opblock:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+}
