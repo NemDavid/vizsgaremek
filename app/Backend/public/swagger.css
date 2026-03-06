@@ -1,11 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 
-.swagger-ui .auth-wrapper { display: none !important; }
-.swagger-ui .authorize { display: none !important; }
+.swagger-ui .auth-wrapper {
+    display: none !important;
+}
+
+.swagger-ui .authorize {
+    display: none !important;
+}
 
 .swagger-ui,
 .swagger-ui * {
-    font-family: "Press Start 2P", cursive !important;
+    font-family: "Source Sans 3", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
 body {
@@ -22,7 +29,10 @@ body {
 }
 
 .scheme-container {
-    background-color: oklch(41% 0.159 10.272) !important;
+    background-color: rgb(99, 99, 99) !important;
+    margin: 2px !important;
+    padding: 2px !important;
+    box-shadow: 2px;
 }
 
 .modell {
@@ -34,7 +44,7 @@ body {
 /* ROUTE ANIMÁCIÓ */
 
 .swagger-ui .opblock.is-open {
-    animation: routeOpen 0.35s cubic-bezier(.34,1.56,.64,1);
+    animation: routeOpen 0.35s cubic-bezier(.34, 1.56, .64, 1);
 }
 
 @keyframes routeOpen {
@@ -42,6 +52,7 @@ body {
         transform: translateY(-12px) scale(0.98);
         opacity: 0.6;
     }
+
     to {
         transform: translateY(0) scale(1);
         opacity: 1;
@@ -54,7 +65,7 @@ body {
 
 .swagger-ui .opblock:hover {
     transform: scale(1.02);
-    box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
 }
 
 /*--------------------*/
@@ -71,6 +82,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
