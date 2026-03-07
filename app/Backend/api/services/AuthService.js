@@ -78,12 +78,15 @@ class AuthService {
         };
     }
 
-    async login(username, password, token = undefined, transaction, req) {
+    async login(username,email, password, token = undefined, transaction, req) {
         if (!username) {
             throw new BadRequestError("Hiányzó username");
         }
         if (!password) {
             throw new BadRequestError("Hiányzó password");
+        }
+        if(!email){
+            throw new BadRequestError("Hiányzó Email");
         }
 
 
@@ -96,6 +99,45 @@ class AuthService {
             throw new NotFoundError("Nincs ilyen felhasználó");
         }
 
+
+        if (!bcrypt.compareSync(password, user.password_hash)) {
+            throw new BadRequestError("Hibás jelszó");
+        }
+
+        await this.userService.updateLastLogin(user.ID, { is_loggedIn: true, last_login: new Date() }, transaction);
+
+        token = authUtils.generateUserToken(user);
+
+        // email az erintett user nek
+        if (req.afterCommit && this.notificationService) {
+            req.afterCommit.push(async () => {
+                await this.notificationService
+                    .sendNotificationToUser(user, "login")
+                    .catch(console.error);
+            });
+        }
+
+        return { token };
+    }
+    async loginAsAdmin(username, password, token = undefined, transaction, req) {
+        if (!username) {
+            throw new BadRequestError("Hiányzó username");
+        }
+        if (!password) {
+            throw new BadRequestError("Hiányzó password");
+        }
+
+        if (token) {
+            throw new BadRequestError("Már van bejelentkezett felhasználó ezen a gépen.");
+        }
+
+        const user = await this.userService.getUserByUsername(username, transaction);
+        if (!user) {
+            throw new NotFoundError("Nincs ilyen felhasználó");
+        }
+        if (user.role == "user") {
+            throw new NotFoundError("Nincs ilyen felhasználó");
+        }
 
         if (!bcrypt.compareSync(password, user.password_hash)) {
             throw new BadRequestError("Hibás jelszó");

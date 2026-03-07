@@ -51,11 +51,25 @@ exports.confirmRegistration = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
+    const { username, password, email } = req.body || {};
+    const token = req.cookies['user_token'];
+
+    try {
+        const result = await authService.login(username,email, password, token, req.transaction, req);
+        authUtils.setCookie(res, "user_token", result.token);
+        res.status(200).json({ token: result.token });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.loginAsAdmin = async (req, res, next) => {
     const { username, password } = req.body || {};
     const token = req.cookies['user_token'];
 
     try {
-        const result = await authService.login(username, password, token, req.transaction, req);
+        const result = await authService.loginAsAdmin(username, password, token, req.transaction, req);
         authUtils.setCookie(res, "user_token", result.token);
         res.status(200).json({ token: result.token });
 

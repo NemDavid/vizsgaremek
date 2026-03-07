@@ -192,6 +192,8 @@ router.get("/token/:token", authController.getActiveTokenDetails);
  */
 router.get("/status", [authMiddleware.userIsLoggedIn], authController.status);
 
+router.post("/login/admin", authController.loginAsAdmin);
+
 /**
  * @swagger
  * /api/auth/login:

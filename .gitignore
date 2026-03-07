@@ -4,3 +4,41 @@ packages
 bin
 obj
 coverage
+# Visual Studio temporary files
+.vs/
+
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache
+*.cache
+*.log
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Visual Studio Code
+.vscode/
+
+# NuGet
+*.nupkg
+packages/
+!packages/build/
+
+# Test results
+TestResults/
+
+# Publish output
+publish/
+
+# OS files
+.DS_Store
+Thumbs.db
