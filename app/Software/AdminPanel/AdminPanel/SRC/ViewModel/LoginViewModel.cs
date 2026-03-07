@@ -5,6 +5,9 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AdminPanel.SRC.DAL;
+using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace AdminPanel.SRC.ViewModel
 {
@@ -15,6 +18,8 @@ namespace AdminPanel.SRC.ViewModel
         private SecureString _password;
         private string _errorMessage;
         private bool _isViewVisible=true;
+
+        private readonly AuthApiService _authApiService;
 
         //Properties
         public string Username 
@@ -75,26 +80,68 @@ namespace AdminPanel.SRC.ViewModel
         //Consturctor
         public LoginViewModel()
         {
-            LoginCommand = new ViewModelCommand(executeLoginCommand, CanExecuteLoginCommand);
+            _username = string.Empty;
+            _password = new SecureString();
+            _errorMessage = string.Empty;
+
+            _authApiService = new AuthApiService();
+            LoginCommand = new ViewModelCommand(async (o) => await ExecuteLoginCommand(), CanExecuteLoginCommand);
         }
 
         private bool CanExecuteLoginCommand(object obj)
         {
-            bool validDate;
-            if (string.IsNullOrWhiteSpace(Username) || 
-                Username.Length < 3 || 
-                Password==null || 
-                Password.Length<3)
-                validDate = false;
-            else 
-                validDate = true;
-
-            return validDate;
+            return !string.IsNullOrWhiteSpace(Username)
+                   && Username.Length >= 3
+                   && Password != null
+                   && Password.Length >= 3;
         }
 
-        private void executeLoginCommand(object obj)
+        private async Task ExecuteLoginCommand()
         {
-            throw new NotImplementedException();
+            try
+            {
+                ErrorMessage = string.Empty;
+
+                string plainPassword = ConvertToUnsecureString(Password);
+
+                var result = await _authApiService.LoginAsAdminAsync(Username, plainPassword);
+
+                if (result != null && !string.IsNullOrWhiteSpace(result.Token))
+                {
+                    MessageBox.Show("Sikeres admin bejelentkezés!");
+
+                    // IDE JÖN MAJD A DASHBOARD
+                    // pl:
+                    // var dashboard = new DashboardWindow();
+                    // dashboard.Show();
+                    // Application.Current.MainWindow.Close();
+                }
+                else
+                {
+                    ErrorMessage = "Sikertelen bejelentkezés.";
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
+        }
+        private string ConvertToUnsecureString(SecureString securePassword)
+        {
+            if (securePassword == null || securePassword.Length == 0)
+                return string.Empty;
+
+            IntPtr unmanagedString = IntPtr.Zero;
+
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
+                return Marshal.PtrToStringUni(unmanagedString) ?? string.Empty;
+            }
+            finally
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
         }
     }
 }

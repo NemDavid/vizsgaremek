@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace AdminPanel.SRC.Model
 {
-    internal class LoginResponseModel
+    public class LoginResponseModel
     {
+        public string Token { get; set; } = string.Empty;
     }
 }

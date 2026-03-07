@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SRC\DAL\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Images\Background.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
