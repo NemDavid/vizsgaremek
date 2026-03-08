@@ -1,7 +1,7 @@
 ﻿using AdminPanel.SRC.Model;
+using AdminPanel.SRC.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -25,8 +25,8 @@ namespace AdminPanel.SRC.Service
 
             if (!response.IsSuccessStatusCode)
             {
-                var raw = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Nem sikerült lekérni a felhasználókat. {raw}");
+                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponseModel>();
+                throw new Exception(errorObj?.Message ?? "Nem sikerült lekérni a felhasználókat.");
             }
 
             return await response.Content.ReadFromJsonAsync<List<UserModel>>();
@@ -38,17 +38,16 @@ namespace AdminPanel.SRC.Service
 
             if (!response.IsSuccessStatusCode)
             {
-                var raw = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Nem sikerült törölni a felhasználót. {raw}");
+                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponseModel>();
+                throw new Exception(errorObj?.Message ?? "Nem sikerült törölni a felhasználót.");
             }
         }
 
-        public async Task UpdateUserAsync(int userId, string email, string password, string username)
+        public async Task UpdateUserAsync(int userId, string email, string username)
         {
             var body = new
             {
                 email,
-                password,
                 username
             };
 
@@ -59,8 +58,8 @@ namespace AdminPanel.SRC.Service
 
             if (!response.IsSuccessStatusCode)
             {
-                var raw = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Nem sikerült frissíteni a user adatokat. {raw}");
+                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponseModel>();
+                throw new Exception(errorObj?.Message ?? "Nem sikerült frissíteni a felhasználót.");
             }
         }
 
@@ -77,7 +76,7 @@ namespace AdminPanel.SRC.Service
             {
                 first_name = firstName,
                 last_name = lastName,
-                birth_date = birthDate,
+                birth_date = string.IsNullOrWhiteSpace(birthDate) ? "0000-00-00" : birthDate,
                 birth_place = birthPlace,
                 schools = schools,
                 bio = bio
@@ -90,8 +89,8 @@ namespace AdminPanel.SRC.Service
 
             if (!response.IsSuccessStatusCode)
             {
-                var raw = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Nem sikerült frissíteni a profil adatokat. {raw}");
+                var errorObj = await response.Content.ReadFromJsonAsync<ErrorResponseModel>();
+                throw new Exception(errorObj?.Message ?? "Nem sikerült frissíteni a profilt.");
             }
         }
     }

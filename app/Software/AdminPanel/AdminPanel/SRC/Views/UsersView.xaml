@@ -114,9 +114,9 @@
                           RowStyle="{StaticResource DarkDataGridRowStyle}"
                           >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="70"/>
-                        <DataGridTextColumn Header="Név" Binding="{Binding Profile.first_name}" Width="120"/>
-                        <DataGridTextColumn Header="Vezetéknév" Binding="{Binding Profile.last_name}" Width="140"/>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="70"/>
+                        <DataGridTextColumn Header="Keresztnév" Binding="{Binding profile.first_name}" Width="120"/>
+                        <DataGridTextColumn Header="Vezetéknév" Binding="{Binding profile.last_name}" Width="140"/>
                         <DataGridTextColumn Header="Username" Binding="{Binding username}" Width="140"/>
                         <DataGridTextColumn Header="Létrehozva" Binding="{Binding created_at}" Width="*"/>
                     </DataGrid.Columns>
@@ -165,9 +165,6 @@
                     <TextBlock Text="Username" Foreground="{StaticResource titleColor2}"/>
                     <TextBox Text="{Binding SelectedUsername, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
 
-                    <TextBlock Text="Új jelszó" Foreground="{StaticResource titleColor2}"/>
-                    <TextBox Text="{Binding SelectedPassword, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
-
                     <TextBlock Text="Keresztnév" Foreground="{StaticResource titleColor2}"/>
                     <TextBox Text="{Binding SelectedFirstName, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
 
@@ -192,7 +189,12 @@
 
                     <TextBlock Text="Szint" Foreground="{StaticResource titleColor2}"/>
                     <TextBox Text="{Binding SelectedLevel}" IsReadOnly="True" Margin="0,5,0,12" Background="Transparent" Foreground="LightCyan"/>
-
+                    <TextBlock Text="Létrehozva" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedCreatedAt}"
+                         IsReadOnly="True"
+                         Background="Transparent"
+                         Foreground="LightCyan"
+                         Margin="0,5,0,12"/>
                     <TextBlock Text="XP" Foreground="{StaticResource titleColor2}"/>
                     <TextBox Text="{Binding SelectedXp}" IsReadOnly="True" Margin="0,5,0,20" Background="Transparent" Foreground="LightCyan"/>
 

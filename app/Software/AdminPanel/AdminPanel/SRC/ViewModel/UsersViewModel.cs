@@ -63,13 +63,6 @@ namespace AdminPanel.SRC.ViewModel
             set { _selectedUsername = value; OnPropertyChanged(nameof(SelectedUsername)); }
         }
 
-        private string _selectedPassword = string.Empty;
-        public string SelectedPassword
-        {
-            get => _selectedPassword;
-            set { _selectedPassword = value; OnPropertyChanged(nameof(SelectedPassword)); }
-        }
-
         private string _selectedFirstName = string.Empty;
         public string SelectedFirstName
         {
@@ -225,22 +218,21 @@ namespace AdminPanel.SRC.ViewModel
                 return;
             }
 
-            SelectedId = SelectedUser.id;
+            SelectedId = SelectedUser.ID;
             SelectedEmail = SelectedUser.email ?? string.Empty;
             SelectedUsername = SelectedUser.username ?? string.Empty;
-            SelectedPassword = string.Empty;
             SelectedCreatedAt = SelectedUser.created_at ?? string.Empty;
             SelectedRole = SelectedUser.role ?? string.Empty;
 
-            SelectedFirstName = SelectedUser.Profile?.first_name ?? string.Empty;
-            SelectedLastName = SelectedUser.Profile?.last_name ?? string.Empty;
-            SelectedBirthDate = SelectedUser.Profile?.birth_date ?? string.Empty;
-            SelectedBirthPlace = SelectedUser.Profile?.birth_place ?? string.Empty;
-            SelectedSchools = SelectedUser.Profile?.schools ?? string.Empty;
-            SelectedBio = SelectedUser.Profile?.bio ?? string.Empty;
-            SelectedAvatarUrl = SelectedUser.Profile?.avatar_url ?? string.Empty;
-            SelectedLevel = SelectedUser.Profile?.level?.ToString() ?? string.Empty;
-            SelectedXp = SelectedUser.Profile?.XP?.ToString() ?? string.Empty;
+            SelectedFirstName = SelectedUser.profile?.first_name ?? string.Empty;
+            SelectedLastName = SelectedUser.profile?.last_name ?? string.Empty;
+            SelectedBirthDate = SelectedUser.profile?.birth_date ?? string.Empty;
+            SelectedBirthPlace = SelectedUser.profile?.birth_place ?? string.Empty;
+            SelectedSchools = SelectedUser.profile?.schools ?? string.Empty;
+            SelectedBio = SelectedUser.profile?.bio ?? string.Empty;
+            SelectedAvatarUrl = SelectedUser.profile?.avatar_url ?? string.Empty;
+            SelectedLevel = SelectedUser.profile?.level?.ToString() ?? string.Empty;
+            SelectedXp = SelectedUser.profile?.XP?.ToString() ?? string.Empty;
         }
 
         private void ClearSelectedUserData()
@@ -248,7 +240,6 @@ namespace AdminPanel.SRC.ViewModel
             SelectedId = 0;
             SelectedEmail = string.Empty;
             SelectedUsername = string.Empty;
-            SelectedPassword = string.Empty;
             SelectedCreatedAt = string.Empty;
             SelectedRole = string.Empty;
             SelectedFirstName = string.Empty;
@@ -295,12 +286,12 @@ namespace AdminPanel.SRC.ViewModel
                         var normal = token.ToLower();
 
                         bool normalMatch =
-                            user.id.ToString().Contains(normal) ||
+                            user.ID.ToString().Contains(normal) ||
                             (user.username ?? string.Empty).ToLower().Contains(normal) ||
                             (user.email ?? string.Empty).ToLower().Contains(normal) ||
                             (user.role ?? string.Empty).ToLower().Contains(normal) ||
-                            (user.Profile?.first_name ?? string.Empty).ToLower().Contains(normal) ||
-                            (user.Profile?.last_name ?? string.Empty).ToLower().Contains(normal);
+                            (user.profile?.first_name ?? string.Empty).ToLower().Contains(normal) ||
+                            (user.profile?.last_name ?? string.Empty).ToLower().Contains(normal);
 
                         if (!normalMatch)
                             return false;
@@ -327,7 +318,7 @@ namespace AdminPanel.SRC.ViewModel
             switch (key)
             {
                 case "id":
-                    return user.id.ToString().Contains(value);
+                    return user.ID.ToString().Contains(value);
 
                 case "username":
                     return (user.username ?? string.Empty).ToLower().Contains(value);
@@ -336,20 +327,20 @@ namespace AdminPanel.SRC.ViewModel
                     return (user.email ?? string.Empty).ToLower().Contains(value);
 
                 case "firstname":
-                    return (user.Profile?.first_name ?? string.Empty).ToLower().Contains(value);
+                    return (user.profile?.first_name ?? string.Empty).ToLower().Contains(value);
 
                 case "lastname":
-                    return (user.Profile?.last_name ?? string.Empty).ToLower().Contains(value);
+                    return (user.profile?.last_name ?? string.Empty).ToLower().Contains(value);
 
                 case "role":
                     return (user.role ?? string.Empty).ToLower().Contains(value);
 
                 case "birthplace":
-                    return (user.Profile?.birth_place ?? string.Empty).ToLower().Contains(value);
+                    return (user.profile?.birth_place ?? string.Empty).ToLower().Contains(value);
 
                 case "school":
                 case "schools":
-                    return (user.Profile?.schools ?? string.Empty).ToLower().Contains(value);
+                    return (user.profile?.schools ?? string.Empty).ToLower().Contains(value);
 
                 case "before-date":
                     return CompareCreatedAt(user.created_at, value, before: true);
@@ -396,7 +387,6 @@ namespace AdminPanel.SRC.ViewModel
                 await _userApiService.UpdateUserAsync(
                     SelectedId,
                     SelectedEmail,
-                    SelectedPassword,
                     SelectedUsername
                 );
 
