@@ -70,7 +70,8 @@ namespace AdminPanel.SRC.Service
             string? birthDate,
             string? birthPlace,
             string? schools,
-            string? bio)
+            string? bio,
+            string? avatarUrl)
         {
             var body = new
             {
@@ -79,7 +80,8 @@ namespace AdminPanel.SRC.Service
                 birth_date = string.IsNullOrWhiteSpace(birthDate) ? "0000-00-00" : birthDate,
                 birth_place = birthPlace,
                 schools = schools,
-                bio = bio
+                bio = bio,
+                avatar_url = avatarUrl
             };
 
             var json = JsonSerializer.Serialize(body);

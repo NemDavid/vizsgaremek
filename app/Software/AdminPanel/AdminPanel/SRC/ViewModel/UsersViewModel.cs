@@ -3,10 +3,12 @@ using AdminPanel.SRC.Service;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace AdminPanel.SRC.ViewModel
 {
@@ -48,7 +50,16 @@ namespace AdminPanel.SRC.ViewModel
             get => _selectedId;
             set { _selectedId = value; OnPropertyChanged(nameof(SelectedId)); }
         }
-
+        private BitmapImage? _selectedAvatarImage;
+        public BitmapImage? SelectedAvatarImage
+        {
+            get => _selectedAvatarImage;
+            set
+            {
+                _selectedAvatarImage = value;
+                OnPropertyChanged(nameof(SelectedAvatarImage));
+            }
+        }
         private string _selectedEmail = string.Empty;
         public string SelectedEmail
         {
@@ -105,8 +116,8 @@ namespace AdminPanel.SRC.ViewModel
             set { _selectedBio = value; OnPropertyChanged(nameof(SelectedBio)); }
         }
 
-        private string _selectedAvatarUrl = string.Empty;
-        public string SelectedAvatarUrl
+        private string? _selectedAvatarUrl = string.Empty;
+        public string? SelectedAvatarUrl
         {
             get => _selectedAvatarUrl;
             set { _selectedAvatarUrl = value; OnPropertyChanged(nameof(SelectedAvatarUrl)); }
@@ -164,20 +175,61 @@ namespace AdminPanel.SRC.ViewModel
         public ICommand RefreshCommand { get; }
         public ICommand DeleteUserCommand { get; }
         public ICommand SaveUserCommand { get; }
-
+        public ICommand RemoveAvatarCommand { get; }
         public UsersViewModel()
         {
             _userApiService = new UserApiService();
             Users = new ObservableCollection<UserModel>();
             _allUsersBackup = new ObservableCollection<UserModel>();
-
+            RemoveAvatarCommand = new ViewModelCommand(o => RemoveAvatar(), o => SelectedUser != null);
             RefreshCommand = new ViewModelCommand(async o => await LoadUsersAsync());
             DeleteUserCommand = new ViewModelCommand(async o => await DeleteSelectedUserAsync(), o => SelectedUser != null);
             SaveUserCommand = new ViewModelCommand(async o => await SaveSelectedUserAsync(), o => SelectedUser != null);
 
             _ = LoadUsersAsync();
         }
+        private void RemoveAvatar()
+        {
+            SelectedAvatarUrl = null;
+            SuccessMessage = "A profilkép törlésre lett jelölve. A mentéshez nyomd meg a Mentés gombot.";
+            ErrorMessage = string.Empty;
+        }
+        private async Task LoadAvatarImageAsync()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(SelectedAvatarUrl))
+                {
+                    SelectedAvatarImage = GetDefaultAvatarImage();
+                    return;
+                }
 
+                using var response = await ApiClient.Client.GetAsync(SelectedAvatarUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    SelectedAvatarImage = GetDefaultAvatarImage();
+                    return;
+                }
+
+                await using var stream = await response.Content.ReadAsStreamAsync();
+                using var memory = new MemoryStream();
+                await stream.CopyToAsync(memory);
+                memory.Position = 0;
+
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = memory;
+                image.EndInit();
+                image.Freeze();
+
+                SelectedAvatarImage = image;
+            }
+            catch
+            {
+                SelectedAvatarImage = GetDefaultAvatarImage();
+            }
+        }
         private async System.Threading.Tasks.Task LoadUsersAsync()
         {
             try
@@ -233,8 +285,12 @@ namespace AdminPanel.SRC.ViewModel
             SelectedAvatarUrl = SelectedUser.profile?.avatar_url ?? string.Empty;
             SelectedLevel = SelectedUser.profile?.level?.ToString() ?? string.Empty;
             SelectedXp = SelectedUser.profile?.XP?.ToString() ?? string.Empty;
+            _ = LoadAvatarImageAsync();
         }
-
+        private BitmapImage GetDefaultAvatarImage()
+        {
+            return new BitmapImage(new Uri("pack://application:,,,/Images/default-profile.png"));
+        }
         private void ClearSelectedUserData()
         {
             SelectedId = 0;
@@ -251,6 +307,7 @@ namespace AdminPanel.SRC.ViewModel
             SelectedAvatarUrl = string.Empty;
             SelectedLevel = string.Empty;
             SelectedXp = string.Empty;
+            SelectedAvatarImage = GetDefaultAvatarImage();
         }
 
         private void FilterUsers()
@@ -397,7 +454,8 @@ namespace AdminPanel.SRC.ViewModel
                     SelectedBirthDate,
                     SelectedBirthPlace,
                     SelectedSchools,
-                    SelectedBio
+                    SelectedBio,
+                    SelectedAvatarUrl
                 );
 
                 SuccessMessage = "Felhasználó sikeresen frissítve.";

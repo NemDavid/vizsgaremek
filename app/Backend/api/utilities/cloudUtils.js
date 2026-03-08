@@ -6,10 +6,19 @@ const { ValidationError } = require("../errors");
 
 // külön: filter, hogy mindkét storage használhassa
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+  const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+  const allowedExts = [".jpg", ".jpeg", ".png", ".webp"];
 
-  if (allowedTypes.includes(file.mimetype)) cb(null, true);
-  else cb(new ValidationError("Rossz file típus"), false);
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (
+    allowedMimeTypes.includes(file.mimetype) ||
+    (file.mimetype === "application/octet-stream" && allowedExts.includes(ext))
+  ) {
+    return cb(null, true);
+  }
+
+  cb(new ValidationError("Rossz file típus"), false);
 };
 
 // ------------------------

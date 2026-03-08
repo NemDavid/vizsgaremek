@@ -111,19 +111,19 @@ class User_ProfileService {
         if (!authUtils.isValidBirthPlace(updateData.birth_place)) {
             throw new ValidationError("Érvénytelen birth_place mező");
         }
-        if (!authUtils.isValidAvatar(updateData.avatar)) {
-            throw new ValidationError("Érvénytelen avatar");
+        if ("avatar_url" in updateData) {
+            if (updateData.avatar_url !== null && !authUtils.isValidAvatar(updateData.avatar)) {
+                throw new ValidationError("Érvénytelen avatar");
+            }
+            if(updateData.avatar_url == null){
+                updateData.avatar_url= "http://localhost:3000/dpfp.png"
+            }
         }
         if (!authUtils.isValidBio(updateData.bio)) {
             throw new ValidationError("Érvénytelen bio");
         }
 
         const affectedRows = await this.user_profileRepository.updateUser_Profile(userId, updateData, { transaction });
-
-
-        if (!affectedRows) {
-            throw new BadRequestError("User profile nem lett frissítve", { details: `userId: ${userId}` })
-        }
 
         const { profile: updateUser_Profile } = await this.user_profileRepository.getUser_Profile(userId, { transaction });
 

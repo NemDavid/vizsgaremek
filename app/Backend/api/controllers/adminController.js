@@ -29,7 +29,7 @@ exports.getDBInfo = async (req, res, next) => {
 
 exports.deleteAdmin = async (req, res, next) => {
     try {
-        const deleteResault = await adminService.deleteAdmin(req.userId, req.transaction);
+        const deleteResault = await adminService.deleteAdmin(req.user, req.userId, req.transaction);
 
         res.status(200).json(deleteResault);
     } catch (error) {
@@ -37,9 +37,9 @@ exports.deleteAdmin = async (req, res, next) => {
     }
 };
 
-exports.updateAdmin = async (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
     try {
-        const updatedAdmin = await adminService.updateAdmin(req.userId, req.body.role, req.transaction);
+        const updatedAdmin = await adminService.updateUser(req.user, req.userId, req.body.role, req.transaction);
         
         res.status(200).json(updatedAdmin);
     } catch (error) {

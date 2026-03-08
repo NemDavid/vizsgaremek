@@ -486,6 +486,7 @@ describe("/api/comments", () => {
 
                 expect(res.body.message).toBe("Hiányzó vagy lejárt token.");
             });
+
             test("should throw UnauthorizedError when missing token", async () => {
                 const itemId = 1;
                 const res = await request(app)
@@ -494,11 +495,39 @@ describe("/api/comments", () => {
                 expect(res.body).toBeDefined();
                 expect(res.body.message).toBeDefined();
             });
-            test("should throw error if user is not the owner of the comment", async () => {
+
+            test("should delete comment if admin logged in", async () => {
                 const itemId = 4;
                 const res = await request(app)
                     .delete(`/api/comments/${itemId}`)
                     .set("Cookie", [cookie])
+                    .expect(200);
+
+                const foundComment = await db.User_Post_Comment.findOne({
+                    where: {
+                        ID: itemId    
+                    },
+                })
+
+                expect(foundComment).toBeNull();
+            });
+
+            test("should throw error if user try delete another person's comment", async () => {
+                
+                const user = {
+                    ID: 2,
+                    username: "user",
+                    email: "user@example.com",
+                    password: "Jelszo123#",
+                    role: "user",
+                }
+                const user_token = authUtils.generateUserToken(user);
+                const user_cookie = `user_token=${user_token}`;
+
+                const itemId = 4;
+                const res = await request(app)
+                    .delete(`/api/comments/${itemId}`)
+                    .set("Cookie", [user_cookie])
                     .expect(400);
 
                 expect(res.body.message).toBe("Ez nem a te commented");

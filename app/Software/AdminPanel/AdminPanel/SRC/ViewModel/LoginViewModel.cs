@@ -80,12 +80,8 @@ namespace AdminPanel.SRC.ViewModel
         //Consturctor
         public LoginViewModel()
         {
-            _username = "admin";//string.Empty;
+            _username = string.Empty;
             _password = new SecureString();
-            foreach (char c in "12345678")
-            {
-                _password.AppendChar(c);
-            }
             _errorMessage = string.Empty;
 
             _authApiService = new AuthApiService();
@@ -112,7 +108,7 @@ namespace AdminPanel.SRC.ViewModel
 
                 if (result != null && !string.IsNullOrWhiteSpace(result.Token))
                 {
-                    MessageBox.Show("Sikeres admin bejelentkezés!");
+                    MessageBox.Show("Sikeres bejelentkezés!");
                     
                     IsViewVisible = false;
                 }

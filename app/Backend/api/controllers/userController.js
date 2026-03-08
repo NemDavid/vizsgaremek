@@ -82,8 +82,6 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     try {
-        console.log(req.body);
-        
         const updatedUser = await userService.updateUser(req.userId, req.body, req.transaction);
         res.status(200).json(updatedUser);
     } catch (error) {

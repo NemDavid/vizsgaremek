@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { DbError } = require("../errors");
 
 class AdminRepository {
@@ -11,7 +12,14 @@ class AdminRepository {
         try {
             return await this.User.scope("allUserData").findAll({
                 where: {
-                    role: "admin"
+                    [Op.or]: [
+                        {
+                            role: "admin"
+                        },
+                        {
+                            role: "owner"
+                        },
+                    ]
                 },
                 include: [
                     {
@@ -54,7 +62,7 @@ class AdminRepository {
         }
     }
 
-    async updateAdmin(userId, updateData, options = {}) {
+    async updateUser(userId, updateData, options = {}) {
         try {
             const [affectedRows] = await this.User.update(updateData, {
                 where: { ID: userId },

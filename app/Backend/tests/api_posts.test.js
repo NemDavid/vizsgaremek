@@ -73,7 +73,7 @@ describe("/api/posts", () => {
             ID: 1,
             Notifications: {
                 new_post: false,
-                new_comment_on_post: false,
+                new_post_on_post: false,
                 new_reaction_on_post: false,
                 new_login: false,
                 new_friend_request: false,
@@ -84,7 +84,7 @@ describe("/api/posts", () => {
             ID: 2,
             Notifications: {
                 new_post: false,
-                new_comment_on_post: false,
+                new_post_on_post: false,
                 new_reaction_on_post: false,
                 new_login: false,
                 new_friend_request: false,
@@ -95,7 +95,7 @@ describe("/api/posts", () => {
             ID: 3,
             Notifications: {
                 new_post: false,
-                new_comment_on_post: false,
+                new_post_on_post: false,
                 new_reaction_on_post: false,
                 new_login: false,
                 new_friend_request: false,
@@ -106,7 +106,7 @@ describe("/api/posts", () => {
             ID: 4,
             Notifications: {
                 new_post: false,
-                new_comment_on_post: false,
+                new_post_on_post: false,
                 new_reaction_on_post: false,
                 new_login: false,
                 new_friend_request: false,
@@ -115,56 +115,41 @@ describe("/api/posts", () => {
         },
     ];
 
-    const rawPosts = [
-        {
-            ID: 1,
-            USER_ID: 2,
-            content: "test comment (1)",
-            title: "test title (1)",
-        },
-        {
-            ID: 2,
-            USER_ID: 3,
-            content: "test comment (2)",
-            title: "test title (2)",
-        },
-        {
-            ID: 3,
-            USER_ID: 4,
-            content: "test comment (3)",
-            title: "test title (3)",
-        },
-        { ID: 4, USER_ID: 2, content: "test comment (4)", title: "test title (4)" },
-        { ID: 5, USER_ID: 3, content: "test comment (5)", title: "test title (5)" },
-        { ID: 6, USER_ID: 4, content: "test comment (6)", title: "test title (6)" },
-        { ID: 7, USER_ID: 2, content: "test comment (7)", title: "test title (7)" },
-        { ID: 8, USER_ID: 3, content: "test comment (8)", title: "test title (8)" },
-        { ID: 9, USER_ID: 4, content: "test comment (9)", title: "test title (9)" },
-        { ID: 10, USER_ID: 2, content: "test comment (10)", title: "test title (10)", },
-        { ID: 11, USER_ID: 3, content: "test comment (11)", title: "test title (11)", },
-        { ID: 12, USER_ID: 4, content: "test comment (12)", title: "test title (12)", },
-        { ID: 13, USER_ID: 2, content: "test comment (13)", title: "test title (13)", },
-        { ID: 14, USER_ID: 3, content: "test comment (14)", title: "test title (14)", },
-        { ID: 15, USER_ID: 4, content: "test comment (15)", title: "test title (15)", },
-        { ID: 16, USER_ID: 2, content: "test comment (16)", title: "test title (16)", },
-        { ID: 17, USER_ID: 3, content: "test comment (17)", title: "test title (17)", },
-        { ID: 18, USER_ID: 4, content: "test comment (18)", title: "test title (18)", },
-        { ID: 19, USER_ID: 2, content: "test comment (19)", title: "test title (19)", },
-        { ID: 20, USER_ID: 3, content: "test comment (20)", title: "test title (20)", },
-        { ID: 21, USER_ID: 4, content: "test comment (21)", title: "test title (21)", },
-        { ID: 22, USER_ID: 2, content: "test comment (22)", title: "test title (22)", },
-        { ID: 23, USER_ID: 3, content: "test comment (23)", title: "test title (23)", },
-        { ID: 24, USER_ID: 4, content: "test comment (24)", title: "test title (24)", },
-        { ID: 25, USER_ID: 2, content: "test comment (25)", title: "test title (25)", },
-        { ID: 26, USER_ID: 3, content: "test comment (26)", title: "test title (26)", },
-        { ID: 27, USER_ID: 4, content: "test comment (27)", title: "test title (27)", },
-        { ID: 28, USER_ID: 2, content: "test comment (28)", title: "test title (28)", },
-        { ID: 29, USER_ID: 3, content: "test comment (29)", title: "test title (29)", },
-        { ID: 30, USER_ID: 4, content: "test comment (30)", title: "test title (30)", },
-        { ID: 31, USER_ID: 2, content: "test comment (31)", title: "test title (31)", },
-        { ID: 32, USER_ID: 3, content: "test comment (32)", title: "test title (32)", },
-        { ID: 33, USER_ID: 4, content: "test comment (33)", title: "test title (33)", },
-        { ID: 34, USER_ID: 1, content: "test comment (34)", title: "test title (34)", },
+    const rawPosts = [ 
+        { ID: 1, USER_ID: 2, content: "test post (1)", title: "test title (1)", }, 
+        { ID: 2, USER_ID: 3, content: "test post (2)", title: "test title (2)", }, 
+        { ID: 3, USER_ID: 4, content: "test post (3)", title: "test title (3)", },
+        { ID: 4, USER_ID: 2, content: "test post (4)", title: "test title (4)" },
+        { ID: 5, USER_ID: 3, content: "test post (5)", title: "test title (5)" },
+        { ID: 6, USER_ID: 4, content: "test post (6)", title: "test title (6)" },
+        { ID: 7, USER_ID: 2, content: "test post (7)", title: "test title (7)" },
+        { ID: 8, USER_ID: 3, content: "test post (8)", title: "test title (8)" },
+        { ID: 9, USER_ID: 4, content: "test post (9)", title: "test title (9)" },
+        { ID: 10, USER_ID: 2, content: "test post (10)", title: "test title (10)", },
+        { ID: 11, USER_ID: 3, content: "test post (11)", title: "test title (11)", },
+        { ID: 12, USER_ID: 4, content: "test post (12)", title: "test title (12)", },
+        { ID: 13, USER_ID: 2, content: "test post (13)", title: "test title (13)", },
+        { ID: 14, USER_ID: 3, content: "test post (14)", title: "test title (14)", },
+        { ID: 15, USER_ID: 4, content: "test post (15)", title: "test title (15)", },
+        { ID: 16, USER_ID: 2, content: "test post (16)", title: "test title (16)", },
+        { ID: 17, USER_ID: 3, content: "test post (17)", title: "test title (17)", },
+        { ID: 18, USER_ID: 4, content: "test post (18)", title: "test title (18)", },
+        { ID: 19, USER_ID: 2, content: "test post (19)", title: "test title (19)", },
+        { ID: 20, USER_ID: 3, content: "test post (20)", title: "test title (20)", },
+        { ID: 21, USER_ID: 4, content: "test post (21)", title: "test title (21)", },
+        { ID: 22, USER_ID: 2, content: "test post (22)", title: "test title (22)", },
+        { ID: 23, USER_ID: 3, content: "test post (23)", title: "test title (23)", },
+        { ID: 24, USER_ID: 4, content: "test post (24)", title: "test title (24)", },
+        { ID: 25, USER_ID: 2, content: "test post (25)", title: "test title (25)", },
+        { ID: 26, USER_ID: 3, content: "test post (26)", title: "test title (26)", },
+        { ID: 27, USER_ID: 4, content: "test post (27)", title: "test title (27)", },
+        { ID: 28, USER_ID: 2, content: "test post (28)", title: "test title (28)", },
+        { ID: 29, USER_ID: 3, content: "test post (29)", title: "test title (29)", },
+        { ID: 30, USER_ID: 4, content: "test post (30)", title: "test title (30)", },
+        { ID: 31, USER_ID: 2, content: "test post (31)", title: "test title (31)", },
+        { ID: 32, USER_ID: 3, content: "test post (32)", title: "test title (32)", },
+        { ID: 33, USER_ID: 4, content: "test post (33)", title: "test title (33)", },
+        { ID: 34, USER_ID: 1, content: "test post (34)", title: "test title (34)", },
     ];
     const testUser = {
         ID: rawUsers[0].ID,
@@ -239,7 +224,7 @@ describe("/api/posts", () => {
                 const res = await request(app).get("/api/posts").set("Cookie", [cookie]).query(query).expect(200);
                 expect(res.body).toBeDefined();
                 const expectedPosts = {
-                    data: [rawPosts[rawPosts.length - query.page - 1]], //[{"ID": 30, "USER_ID": 4, "comments": [], "content": "test comment (30)", "created_at": "2026-02-23", "dislike": 0, "like": 0, "media_url": "", "reactions": [], "title": "test title (30)", "updated_at": "2026-02-23"}]
+                    data: [rawPosts[rawPosts.length - query.page - 1]], //[{"ID": 30, "USER_ID": 4, "posts": [], "content": "test post (30)", "created_at": "2026-02-23", "dislike": 0, "like": 0, "media_url": "", "reactions": [], "title": "test title (30)", "updated_at": "2026-02-23"}]
                     nextCursor: Cursor
                 }
                 expect(res.body.data).toEqual(
@@ -454,16 +439,43 @@ describe("/api/posts", () => {
                 expect(result).toBeNull();
             });
 
-            test.each([
-                [9999, "Nincs ilyen post"],
-                [1, "Ez nem a te posztod"],
-            ])("should throw error on missing id for post deletion", async (itemId, expectedMessage) => {
-                const token = authUtils.generateUserToken(testUser);
-                const cookie = `user_token=${token}`;
-
+            test("should throw error on invalid id", async () => {
+                const itemId = 9999
+                
                 const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(400);
+                
+                expect(res.body.message).toBe("Nincs ilyen post");
+            });
+            
+            test("should throw error user try delete another person's post", async () => {
+                const user = {
+                    ID: 2,
+                    username: "user",
+                    email: "user@example.com",
+                    password: "Jelszo123#",
+                    role: "user",
+                }
+                const user_token = authUtils.generateUserToken(user);
+                const user_cookie = `user_token=${user_token}`;
+                const itemId = 2;
 
-                expect(res.body.message).toBe(expectedMessage);
+                const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [user_cookie]).expect(400);
+
+                expect(res.body.message).toBe("Ez nem a te posztod");
+            });
+
+            test("should delete if admin try delete another person's post", async () => {
+                const itemId = 1;
+
+                const res = await request(app).delete(`/api/posts/${itemId}`).set("Cookie", [cookie]).expect(200);
+
+                const foundPost = await db.User_Post.findOne({
+                    where: {
+                        ID: itemId,
+                    },
+                });
+
+                expect(foundPost).toBeNull();
             });
 
             test("should throw error on invalid token", async () => {

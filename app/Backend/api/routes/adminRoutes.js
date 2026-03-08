@@ -266,6 +266,6 @@ router.delete("/:userId", authMiddleware.isOwner, adminController.deleteAdmin);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.patch("/:userId", authMiddleware.isOwner, adminController.updateAdmin);
+router.patch("/:userId", authMiddleware.isOwner, adminController.updateUser);
 
 module.exports = router;

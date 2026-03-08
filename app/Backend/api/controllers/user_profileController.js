@@ -48,8 +48,8 @@ exports.createUser_Profile = async (req, res, next) => {
             bio,
             avatar_url,
         },
-        req.transaction
-    ));
+            req.transaction
+        ));
     } catch (error) {
         next(error);
     }
@@ -57,7 +57,7 @@ exports.createUser_Profile = async (req, res, next) => {
 
 exports.updateUser_Profile = async (req, res, next) => {
     try {
-        const {first_name,last_name,birth_date,birth_place,schools,bio} = req.body;
+        const { first_name, last_name, birth_date, birth_place, schools, bio, avatar_url } = req.body;
         let updatedprofil = {
             first_name,
             last_name,
@@ -65,13 +65,14 @@ exports.updateUser_Profile = async (req, res, next) => {
             birth_place,
             schools,
             bio,
+            avatar_url,
         }
-
         if (req.file) {
             updatedprofil.avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
+            updatedprofil.avatar = req.file;
         }
         const user = req.user;
-        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil, req.transaction,user);
+        const updatedUser = await user_profileService.updateUser_Profile(req.userId, updatedprofil, req.transaction, user);
         res.status(200).json(updatedUser);
     } catch (error) {
         next(error);

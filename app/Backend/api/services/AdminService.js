@@ -26,7 +26,7 @@ class AdminService {
         };
     }
 
-    async deleteAdmin(userId, transaction) {
+    async deleteAdmin(encodedToken, userId, transaction) {
         if (!userId) {
             throw new BadRequestError("Hiányzó user ID");
         }
@@ -40,6 +40,10 @@ class AdminService {
         if (validUser.role != "admin") {
             throw new BadRequestError("Csak admin felhasználó törölhető ezen az endpointon");
         }
+        if (encodedToken.userID == userId) {
+            throw new BadRequestError("Magadat nem tudod kezelni");
+        }
+
 
         const deleteProcess = await this.adminRepository.deleteAdmin(userId, { transaction });
         if (deleteProcess.deleted == 0) {
@@ -49,7 +53,7 @@ class AdminService {
         return deleteProcess;
     }
 
-    async updateAdmin(userId, role, transaction) {
+    async updateUser(encodedToken, userId, role, transaction) {
         if (!userId) throw new BadRequestError("Hiányzó user ID");
         if (!role) {
             throw new BadRequestError("Hiányzó role");
@@ -57,18 +61,19 @@ class AdminService {
         if (role != "user" && role != "admin" && role != "owner") {
             throw new BadRequestError("Érvénytelen role típus");
         }
-
-        const validUser = await this.adminRepository.getAdmin(userId, { transaction });
+        
+        const validUser = await this.userRepository.getUser(userId, { transaction });
         if (!validUser) {
             throw new NotFoundError("Nincs ilyen felhasználó");
         }
-        if (validUser.role != "admin") {
-            throw new BadRequestError("Csak admin felhasználó törölhető ezen az endpointon");
+
+        if (encodedToken.userID == userId) {
+            throw new BadRequestError("Magadat nem tudod kezelni");
         }
 
-        const affectedRows = await this.adminRepository.updateAdmin(userId, { role }, { transaction });
+        const affectedRows = await this.adminRepository.updateUser(userId, { role }, { transaction });
         if (!affectedRows) {
-            throw new BadRequestError("Admin nem található", { details: `userId: ${userId}` })
+            throw new BadRequestError("User nem lett frissítve", { details: `userId: ${userId}` })
         }
 
         const updateAdmin = await this.userRepository.getUser(userId, { transaction });
