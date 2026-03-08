@@ -5,9 +5,9 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AdminPanel.SRC.DAL;
 using System.Runtime.InteropServices;
 using System.Windows;
+using AdminPanel.SRC.Service;
 
 namespace AdminPanel.SRC.ViewModel
 {
@@ -80,8 +80,12 @@ namespace AdminPanel.SRC.ViewModel
         //Consturctor
         public LoginViewModel()
         {
-            _username = string.Empty;
+            _username = "admin";//string.Empty;
             _password = new SecureString();
+            foreach (char c in "12345678")
+            {
+                _password.AppendChar(c);
+            }
             _errorMessage = string.Empty;
 
             _authApiService = new AuthApiService();
@@ -109,12 +113,8 @@ namespace AdminPanel.SRC.ViewModel
                 if (result != null && !string.IsNullOrWhiteSpace(result.Token))
                 {
                     MessageBox.Show("Sikeres admin bejelentkezés!");
-
-                    // IDE JÖN MAJD A DASHBOARD
-                    // pl:
-                    // var dashboard = new DashboardWindow();
-                    // dashboard.Show();
-                    // Application.Current.MainWindow.Close();
+                    
+                    IsViewVisible = false;
                 }
                 else
                 {

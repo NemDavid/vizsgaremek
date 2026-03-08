@@ -12,7 +12,12 @@ const ADMIN_DATA = {
   password: "12345678",
   role: "admin",
 };
-
+const Owner_DATA = {
+  email: "ad@ad.ad",
+  username: "Owner",
+  password: "12345678",
+  role: "owner",
+};
 const EXAMPLE_ACCOUNT = {
   email: "user@ad.ad",
   username: "user",
@@ -72,6 +77,12 @@ async function seedAdminUser(db) {
     const ctx = { userService, userProfileService, settingsService };
 
     const usersToSeed = [
+      {
+        ...Owner_DATA,
+        first_name: "Owner",
+        last_name: "User",
+        avatar_url: DEFAULT_AVATAR,
+      },
       {
         ...ADMIN_DATA,
         first_name: "Admin",

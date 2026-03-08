@@ -2,8 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AdminPanel"
-             StartupUri="./SRC/Views/Login.xaml">
+             xmlns:converters="clr-namespace:AdminPanel.SRC.Converters"
+             Startup="ApplicationStart">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/UIColors.xaml"/>
+                <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+            <converters:NullOrEmptyToDefaultImageConverter x:Key="NullOrEmptyToDefaultImageConverter"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

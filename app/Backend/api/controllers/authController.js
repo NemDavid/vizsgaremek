@@ -55,7 +55,7 @@ exports.login = async (req, res, next) => {
     const token = req.cookies['user_token'];
 
     try {
-        const result = await authService.login(username,email, password, token, req.transaction, req);
+        const result = await authService.login(username, email, password, token, req.transaction, req);
         authUtils.setCookie(res, "user_token", result.token);
         res.status(200).json({ token: result.token });
 

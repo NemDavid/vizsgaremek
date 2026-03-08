@@ -1,0 +1,77 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Background Colors -->
+    <Color x:Key="primaryBackColor1">#f43f5e</Color>
+    <Color x:Key="primaryBackColor2">#ef4444</Color>
+
+    <!-- Secondary backgrounds a login sötétebb kiegészítő tónusaihoz -->
+    <Color x:Key="secondaryBackColor1">#881337</Color>
+    <Color x:Key="secondaryBackColor2">#7f1d1d</Color>
+
+    <!-- Window Border Colors -->
+    <Color x:Key="winBorderColor1">#4b5563</Color>
+    <Color x:Key="winBorderColor2">#fecdd3</Color>
+    <Color x:Key="winBorderColor3">#fb7185</Color>
+
+    <!-- Color Palette -->
+    <SolidColorBrush x:Key="color1" Color="#f43f5e"/>
+    <SolidColorBrush x:Key="color2" Color="#ef4444"/>
+    <SolidColorBrush x:Key="color3" Color="#fb7185"/>
+    <SolidColorBrush x:Key="color4" Color="#9d174d"/>
+    <SolidColorBrush x:Key="color5" Color="#be123c"/>
+    <SolidColorBrush x:Key="color6" Color="#fecdd3"/>
+    <SolidColorBrush x:Key="color7" Color="#fda4af"/>
+    <SolidColorBrush x:Key="color8" Color="#881337"/>
+    <SolidColorBrush x:Key="color9" Color="#7f1d1d"/>
+    <SolidColorBrush x:Key="color10" Color="#fca5a5"/>
+
+    <!-- Font Colors -->
+    <SolidColorBrush x:Key="titleColor1" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="titleColor2" Color="#FDECEC"/>
+    <SolidColorBrush x:Key="titleColor3" Color="#fecdd3"/>
+
+    <SolidColorBrush x:Key="plainTextColor1" Color="#D1D5DB"/>
+    <SolidColorBrush x:Key="plainTextColor2" Color="#9CA3AF"/>
+    <SolidColorBrush x:Key="plainTextColor3" Color="#6B7280"/>
+
+    <!-- Panel Colors -->
+    <SolidColorBrush x:Key="panelColor" Color="#881337"/>
+    <SolidColorBrush x:Key="overcolorPanel" Color="#9d174d"/>
+    <SolidColorBrush x:Key="activecolorPanel" Color="#be123c"/>
+
+    <!-- Button Colors -->
+    <SolidColorBrush x:Key="buttonColor" Color="#9d174d"/>
+    <SolidColorBrush x:Key="buttonHoverColor" Color="#fb7185"/>
+    <SolidColorBrush x:Key="buttonPressedColor" Color="#881337"/>
+
+    <!-- TextBox Colors -->
+    <SolidColorBrush x:Key="textBoxBorderColor" Color="#6B7280"/>
+    <SolidColorBrush x:Key="textBoxForegroundColor" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="textBoxPlaceholderColor" Color="#9CA3AF"/>
+
+    <!-- Etc -->
+    <SolidColorBrush x:Key="errorColor" Color="#fca5a5"/>
+    <SolidColorBrush x:Key="successColor" Color="#86efac"/>
+    <Style x:Key="DarkDataGridHeaderStyle" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="#2B2D42"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderBrush" Value="#3A3F5A"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="10,8"/>
+    </Style>
+
+    <Style x:Key="DarkDataGridCellStyle" TargetType="DataGridCell">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="8"/>
+    </Style>
+
+    <Style x:Key="DarkDataGridRowStyle" TargetType="DataGridRow">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+</ResourceDictionary>

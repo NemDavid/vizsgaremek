@@ -47,26 +47,39 @@ const cloudMiddleware = require("../middlewares/uploadMiddleware");
  *         username:
  *           type: string
  *           description: Allowed characters are letters, numbers, underscore only.
+ *           example: user
+ *         email:
+ *           type: string
+ *           description: Users email must be valid.
+ *           example: ad@ad.ad
  *         password:
  *           type: string
  *           description: Must match password policy (8-21 chars, 1 lower, 1 upper, 1 digit, 1 special from @$!%*?&#+-).
+ *           example: 12345678
+ *       required: [username, password]
+ *
+ *     AdminLoginRequest:
+ *       type: object
+ *       additionalProperties: false
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: Admin or owner username.
+ *           example: admin
+ *         password:
+ *           type: string
+ *           description: Admin or owner password.
+ *           example: 12345678
  *       required: [username, password]
  *
  *     LoginResponse:
  *       type: object
  *       additionalProperties: false
  *       properties:
- *         token: { type: string }
+ *         token:
+ *           type: string
+ *           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       required: [token]
- *
- *     SwaggerLoginResponse:
- *       type: object
- *       additionalProperties: false
- *       properties:
- *         success: { type: boolean }
- *         message: { type: string }
- *         role: { type: string, enum: [user, admin, owner] }
- *       required: [success, message, role]
  *
  *     RegisterRequest:
  *       type: object
@@ -192,6 +205,38 @@ router.get("/token/:token", authController.getActiveTokenDetails);
  */
 router.get("/status", [authMiddleware.userIsLoggedIn], authController.status);
 
+/**
+ * @swagger
+ * /api/auth/login/admin:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Admin login (sets cookie)
+ *     description: Logs in an admin or owner user and sets the **user_token** httpOnly cookie.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdminLoginRequest'
+ *     responses:
+ *       200:
+ *         description: Login OK (cookie set)
+ *         headers:
+ *           Set-Cookie:
+ *             description: httpOnly cookie containing JWT
+ *             schema: { type: string }
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         description: User not found or not an admin
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ErrorResponse' }
+ */
 router.post("/login/admin", authController.loginAsAdmin);
 
 /**

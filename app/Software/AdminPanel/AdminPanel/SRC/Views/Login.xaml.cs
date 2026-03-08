@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace AdminPanel.SRC.View
+namespace AdminPanel.SRC.Views
 {
     /// <summary>
     /// Interaction logic for Login.xaml
@@ -38,11 +38,6 @@ namespace AdminPanel.SRC.View
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        }
-
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

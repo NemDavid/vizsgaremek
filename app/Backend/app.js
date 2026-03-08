@@ -45,6 +45,7 @@ app.use(cookieParser());
 const cloudRouter = require("./api/routes/cloudRoutes")
 const authRoutes = require("./api/routes/authRoutes");
 const userRoutes = require("./api/routes/userRoutes");
+const adminRoutes = require("./api/routes/adminRoutes");
 const user_profileRoutes = require("./api/routes/user_profileRoutes");
 const user_postRouter = require("./api/routes/user_postRoutes");
 const user_post_reactionRoutes = require("./api/routes/user_post_reactionRoutes");
@@ -93,6 +94,7 @@ api.use("/profiles", user_profileRoutes);
 api.use("/reactions", user_post_reactionRoutes);
 api.use("/settings", user_settingsRoutes);
 api.use("/users", userRoutes);
+api.use("/admins", adminRoutes);
 
 app.use("/cloud", cloudRouter);
 app.use("/cloud", express.static("public/cloud"));

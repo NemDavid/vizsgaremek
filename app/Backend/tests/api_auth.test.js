@@ -221,6 +221,81 @@ describe("/api/auth", () => {
                 expect(res.body.message).toEqual("Hibás jelszó");
             });
         });
+        describe("POST /api/auth/login/admin", () => {
+            test("should set user_token on admin login", async () => {
+                const user = { ...testUser, password: "Jelszo123#" };
+                const res = await request(app)
+                    .post("/api/auth/login/admin")
+                    .send(user)
+                    .expect(200);
+
+                const cookies = res.headers["set-cookie"];
+                const tokenCookie = cookies.find((c) => c.startsWith("user_token="));
+                const tokenValue = tokenCookie.split(";")[0].split("=")[1];
+
+                expect(res.body.token).toBeDefined();
+                expect(tokenValue).toBeDefined(); // a cookie token is létezik
+            });
+
+            test.each([
+                [{ username: "admin", password: undefined }, "Hiányzó password"],
+                [{ username: undefined, password: "Jelszo123#" }, "Hiányzó username"],
+            ])(
+                "should throw error on missing attributes",
+                async (payload, expectedMessage) => {
+                    try {
+                        await request(app)
+                            .post("/api/auth/login/admin")
+                            .send(payload)
+                            .expect(400);
+                    } catch (error) {
+                        expect(error.message).toEqual(expectedMessage);
+                        expect(error).toBeInstanceOf(BadRequestError);
+                    }
+                },
+            );
+
+            test("shouldn't login twice", async () => {
+                const token = authUtils.generateUserToken(testUser);
+                const cookie = `user_token=${token}`;
+
+                const user = { ...testUser, password: "Jelszo123#" };
+
+                const res = await request(app)
+                    .post("/api/auth/login/admin")
+                    .set("Cookie", cookie)
+                    .send(user)
+                    .expect(400);
+
+                expect(res.body.message).toEqual(
+                    "Már van bejelentkezett felhasználó ezen a gépen.",
+                );
+            });
+
+            test("should throw error on invalid username", async () => {
+                let user = { ...testUser, password: "Jelszo123#" };
+
+                user.username = "invalid_username";
+
+                const res = await request(app)
+                    .post("/api/auth/login/admin")
+                    .send(user)
+                    .expect(404);
+
+                expect(res.body.message).toEqual("Nincs ilyen felhasználó");
+            });
+
+            test("should throw error on bad password", async () => {
+                let user = { ...testUser, password: "Jelszo123#_invalid" };
+
+                const res = await request(app)
+                    .post("/api/auth/login/admin")
+                    .send(user)
+                    .expect(400);
+
+                expect(res.body.message).toEqual("Hibás jelszó");
+            });
+        });
 
         describe("POST /api/auth/register", () => {
             test("should return succesfull registration", async () => {

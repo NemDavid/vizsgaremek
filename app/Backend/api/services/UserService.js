@@ -141,20 +141,17 @@ class UserService {
         if (!updateData.email) {
             throw new BadRequestError("Hiányzó email");
         }
-        if (!updateData.password) {
-            throw new BadRequestError("Hiányzó password");
-        }
         if (!updateData.username) {
             throw new BadRequestError("Hiányzó username");
         }
-        updateData.password_hash = await bcrypt.hash(updateData.password, salt);
+        if(updateData.password) updateData.password_hash = await bcrypt.hash(updateData.password, salt);
 
         const affectedRows = await this.userRepository.updateUser(userId, updateData, { transaction });
         if (!affectedRows) {
             throw new BadRequestError("user nem található", { details: `userId: ${userId}` })
         }
 
-        const updateUser = await this.userRepository.getUser(userId);
+        const updateUser = await this.userRepository.getUser(userId, { transaction });
 
         if (!updateUser) {
             throw new BadRequestError("a frissitett user nem található", { details: `userId: ${userId}` });

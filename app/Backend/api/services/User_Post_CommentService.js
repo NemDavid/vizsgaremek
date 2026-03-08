@@ -45,7 +45,7 @@ class User_Post_CommentService {
         if (targetComment == null) {
             throw new BadRequestError("A cél comment nem található");
         }
-        if (targetComment.dataValues.USER_ID != encodedToken.userID) {
+        if (encodedToken.role == "user" && targetComment.dataValues.USER_ID != encodedToken.userID) {
             throw new BadRequestError("Ez nem a te commented");
         }
 

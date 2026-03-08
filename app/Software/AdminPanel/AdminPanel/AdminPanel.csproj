@@ -10,13 +10,21 @@
 
   <ItemGroup>
     <None Remove="Images\Background.jpg" />
+    <None Remove="Images\default-profile.png" />
     <None Remove="Images\key-Icon.png" />
     <None Remove="Images\Logo.png" />
     <None Remove="Images\user-Icon.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\Background.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\default-profile.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\key-Icon.png">

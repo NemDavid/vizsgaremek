@@ -29,6 +29,16 @@ class User_PostRepository {
         }
     }
 
+    async countPosts(options = {}) {
+        try {
+            return await this.User_Post.scope("allPostData").count({
+                transaction: options.transaction
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a felhasználói bejegyzéseket.", { details: error.message });
+        }
+    }
+
     async getUser_PostsByLimit(page, perPage, options = {}) {
         try {
             const p = Number(page);

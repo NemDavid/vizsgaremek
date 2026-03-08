@@ -1,4 +1,5 @@
 const UserService = require("./UserService");
+const AdminService = require("./AdminService");
 const User_PostService = require("./User_PostService");
 const User_ProfileService = require("./User_ProfileService");
 const User_Post_ReactionService = require("./User_Post_ReactionService");
@@ -14,6 +15,7 @@ const NotificationService = require("./NotificationService");
 module.exports = (db) =>
 {
     const userService = new UserService(db);
+    const adminService = new AdminService(db);
     const user_profileService = new User_ProfileService(db);
     const user_postService = new User_PostService(db, user_profileService);
     const user_post_reactionService = new User_Post_ReactionService(db, user_profileService);
@@ -36,6 +38,7 @@ module.exports = (db) =>
     
     return { 
         userService, 
+        adminService, 
         user_profileService, 
         user_postService, 
         user_post_reactionService, 

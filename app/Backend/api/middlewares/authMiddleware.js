@@ -6,6 +6,7 @@ exports.userIsLoggedIn = (req, res, next) =>
 {
     const { user_token } = req.cookies || {};
 
+
     if(!user_token) return next(new UnauthorizedError("Hiányzó user token"));
 
     try
@@ -22,9 +23,15 @@ exports.userIsLoggedIn = (req, res, next) =>
 
 exports.isAdmin = (req, res, next) =>
 {
-
     if(!req.user.role || (req.user.role !== "admin" && req.user.role !== "owner")) 
         return next(new UnauthorizedError("Nincs jogod ehez a művelethez."));
 
+    next();
+}
+
+exports.isOwner = (req, res, next) =>
+{
+    if(!req.user.role || req.user.role !== "owner") 
+        return next(new UnauthorizedError("Nincs jogod ehez a művelethez."));
     next();
 }

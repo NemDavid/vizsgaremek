@@ -49,7 +49,7 @@ class User_PostService {
         if (!existingPost) {
             throw new BadRequestError("Nincs ilyen post");
         }
-        if (existingPost.USER_ID != encodedToken.userID) {
+        if (encodedToken.role == "user" && existingPost.USER_ID != encodedToken.userID) {
             throw new BadRequestError("Ez nem a te posztod");
         }
 

@@ -1,0 +1,215 @@
+﻿<UserControl x:Class="AdminPanel.SRC.Views.UsersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.2*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="1.5*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Bal oldal -->
+        <Border Grid.Column="0"
+                Background="{StaticResource overcolorPanel}"
+                CornerRadius="14"
+                Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0">
+                    
+                    <Border
+                        Width="250"
+                        Height="34"
+                        Padding="5,0,5,2"
+                        Background="#2B2D42" 
+                        DockPanel.Dock="Left"
+                        >
+                        <TextBox 
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="White"
+                                 Background="Transparent"
+                                 BorderThickness="0,0,0,1"
+                                 BorderBrush="White"
+                                 Padding="0,0,0,0"
+                             />
+                    </Border>
+                    <Button Content="Frissítés"
+                            Width="110"
+                            Height="34"
+                            Margin="12,0,0,0"
+                            Command="{Binding RefreshCommand}"
+                            DockPanel.Dock="Right"/>
+                </DockPanel>
+                <Border Grid.Row="2"
+                        Background="#25283A"
+                        CornerRadius="10"
+                        Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="Advanced keresés példák"
+                       Foreground="{StaticResource titleColor2}"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8"/>
+
+                        <TextBlock Text="@username:admin"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                        <TextBlock Text="@email:gmail.com"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                        <TextBlock Text="@firstname:bela"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                        <TextBlock Text="@lastname:kiss"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                        <TextBlock Text="@before-date:2020-01-01"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                        <TextBlock Text="@after-date:2023-01-01"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                        <TextBlock Text="@firstname:bela @after-date:2020-01-01"
+                       Foreground="White"
+                       Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+                <TextBlock Grid.Row="4"
+                           Text="{Binding ErrorMessage}"
+                           Foreground="{StaticResource errorColor}"
+                           FontSize="13"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                <DataGrid Grid.Row="6"
+                          ItemsSource="{Binding Users}"
+                          SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          Background="Transparent"
+                          Foreground="White"
+                          RowBackground="Transparent"
+                          AlternatingRowBackground="#202335"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          ColumnHeaderStyle="{StaticResource DarkDataGridHeaderStyle}"
+                          CellStyle="{StaticResource DarkDataGridCellStyle}"
+                          RowStyle="{StaticResource DarkDataGridRowStyle}"
+                          >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="70"/>
+                        <DataGridTextColumn Header="Név" Binding="{Binding Profile.first_name}" Width="120"/>
+                        <DataGridTextColumn Header="Vezetéknév" Binding="{Binding Profile.last_name}" Width="140"/>
+                        <DataGridTextColumn Header="Username" Binding="{Binding username}" Width="140"/>
+                        <DataGridTextColumn Header="Létrehozva" Binding="{Binding created_at}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Jobb oldal -->
+        <Border Grid.Column="2"
+                Background="{StaticResource overcolorPanel}"
+                CornerRadius="14"
+                Padding="20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Felhasználó részletek"
+                               Foreground="{StaticResource titleColor2}"
+                               FontSize="20"
+                               FontWeight="SemiBold"/>
+
+                    <TextBlock Text="{Binding SuccessMessage}"
+                               Foreground="LightGreen"
+                               Margin="0,12,0,0"
+                               Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="{StaticResource errorColor}"
+                               Margin="0,8,0,0"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <Border Width="120"
+                            Height="120"
+                            CornerRadius="60"
+                            Margin="0,20,0,20"
+                            HorizontalAlignment="Left"
+                            ClipToBounds="True">
+                        <Image Source="{Binding SelectedAvatarUrl, Converter={StaticResource NullOrEmptyToDefaultImageConverter}}"
+                               Stretch="Fill"/>
+                    </Border>
+
+                    <TextBlock Text="ID" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedId}" IsReadOnly="True" Margin="0,5,0,12" Background="Transparent" Foreground="LightCyan"/>
+
+                    <TextBlock Text="Email" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Username" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedUsername, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Új jelszó" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedPassword, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Keresztnév" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedFirstName, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Vezetéknév" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedLastName, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Születési dátum" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedBirthDate, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Születési hely" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedBirthPlace, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Iskolák" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedSchools, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Bio" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedBio, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             Height="90"
+                             Margin="0,5,0,12"/>
+
+                    <TextBlock Text="Szint" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedLevel}" IsReadOnly="True" Margin="0,5,0,12" Background="Transparent" Foreground="LightCyan"/>
+
+                    <TextBlock Text="XP" Foreground="{StaticResource titleColor2}"/>
+                    <TextBox Text="{Binding SelectedXp}" IsReadOnly="True" Margin="0,5,0,20" Background="Transparent" Foreground="LightCyan"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Mentés"
+                                Width="120"
+                                Height="38"
+                                Margin="0,0,10,0"
+                                Command="{Binding SaveUserCommand}"/>
+
+                        <Button Content="Törlés"
+                                Width="120"
+                                Height="38"
+                                Command="{Binding DeleteUserCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -26,6 +26,16 @@ class UserRepository {
         }
     }
 
+    async countUsers(options = {}) {
+        try {
+            return await this.User.scope("allUserData").count({
+                transaction: options.transaction
+            });
+        } catch (error) {
+            throw new DbError("Nem sikerült lekérni a felhasználókat.", { details: error.message });
+        }
+    }
+
     async getUserByUsername(username, options = {}) {
         try {
             return await this.User.scope("allUserData").findOne({
