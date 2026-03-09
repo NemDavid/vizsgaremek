@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
@@ -82,17 +82,7 @@ if (process.env.NODE_ENV !== "production") {
 // =========================
 // Rate limiting
 // =========================
-const noopMiddleware = (req, res, next) => next();
 
-const authLimiter =
-    process.env.NODE_ENV === "test"
-        ? noopMiddleware
-        : rateLimit({
-            windowMs: 15 * 60 * 1000,
-            max: 20,
-            standardHeaders: true,
-            legacyHeaders: false,
-        });
 // =========================
 // API mount
 // =========================
@@ -123,7 +113,7 @@ if (process.env.NODE_ENV !== "production") {
 // API routes
 // =========================
 api.use("/advertisement", advertisementRoutes);
-api.use("/auth", authLimiter, authRoutes);
+api.use("/auth", authRoutes);
 api.use("/comments", userPostCommentRoutes);
 api.use("/connections", connectionsRoutes);
 api.use("/kicks", kickRoutes);

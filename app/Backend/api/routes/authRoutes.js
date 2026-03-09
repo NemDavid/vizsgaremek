@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const authLimiter = require("../middlewares/authLimiterMiddleware");
 const authController = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -182,7 +182,7 @@ const cloudMiddleware = require("../middlewares/uploadMiddleware");
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.get("/token/:token", authController.getActiveTokenDetails);
+router.get("/token/:token", [ authLimiter ], authController.getActiveTokenDetails);
 
 /**
  * @swagger
@@ -203,7 +203,7 @@ router.get("/token/:token", authController.getActiveTokenDetails);
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
-router.get("/status", [authMiddleware.userIsLoggedIn], authController.status);
+router.get("/status", [ authMiddleware.userIsLoggedIn ], authController.status);
 
 /**
  * @swagger
@@ -237,7 +237,7 @@ router.get("/status", [authMiddleware.userIsLoggedIn], authController.status);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/ErrorResponse' }
  */
-router.post("/login/admin", authController.loginAsAdmin);
+router.post("/login/admin", [ authLimiter ], authController.loginAsAdmin);
 
 /**
  * @swagger
@@ -271,7 +271,7 @@ router.post("/login/admin", authController.loginAsAdmin);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/ErrorResponse' }
  */
-router.post("/login", authController.login);
+router.post("/login", [ authLimiter ], authController.login);
 
 /**
  * @swagger
@@ -296,7 +296,7 @@ router.post("/login", authController.login);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.post("/register", authController.registerUser);
+router.post("/register", [ authLimiter ], authController.registerUser);
 
 /**
  * @swagger
@@ -343,12 +343,7 @@ router.post("/register", authController.registerUser);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.post(
-  "/register/confirm/:token",
-  upload.single("avatar"),
-  cloudMiddleware.Req_HasFile,
-  authController.confirmRegistration
-);
+router.post("/register/confirm/:token", authLimiter, upload.single("avatar"), cloudMiddleware.Req_HasFile, authController.confirmRegistration);
 
 /**
  * @swagger
@@ -373,7 +368,7 @@ router.post(
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.post("/reset/send-code", authController.sendVerifyCode);
+router.post("/reset/send-code", [ authLimiter ], authController.sendVerifyCode);
 
 /**
  * @swagger
@@ -398,7 +393,7 @@ router.post("/reset/send-code", authController.sendVerifyCode);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.post("/reset/verify-code", authController.verifyTheCode);
+router.post("/reset/verify-code", [ authLimiter ], authController.verifyTheCode);
 
 /**
  * @swagger
@@ -423,7 +418,7 @@ router.post("/reset/verify-code", authController.verifyTheCode);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.post("/reset/new_password", authController.setNewPassword);
+router.post("/reset/new_password", [ authLimiter ], authController.setNewPassword);
 
 /**
  * @swagger
@@ -440,6 +435,6 @@ router.post("/reset/new_password", authController.setNewPassword);
  *             schema:
  *               $ref: '#/components/schemas/MessageResponse'
  */
-router.delete("/logout", authController.logout);
+router.delete("/logout", [ authLimiter ], authController.logout);
 
 module.exports = router;
