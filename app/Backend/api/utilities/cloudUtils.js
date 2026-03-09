@@ -51,11 +51,10 @@ exports.getStorage = () => {
 // ------------------------
 exports.deleteImage = (imagePath) => {
   if (process.env.NODE_ENV === "test") return;
+  
+  const safePath = String(imagePath || "").split("/");
 
-  // fontos: ha "/"-el kezdődik, path.join eldobja az előtte lévő részt
-  const safePath = String(imagePath || "").replace(/^\/+/, "");
-
-  const fullPath = path.join(__dirname, "../../public", safePath);
+  const fullPath = path.join(__dirname, "../../public/cloud", safePath.pop());
 
   if (fs.existsSync(fullPath)) {
     fs.unlinkSync(fullPath);
