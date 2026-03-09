@@ -6,6 +6,21 @@ const helmet = require("helmet");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
+const rateLimit = require("express-rate-limit");
+
+const noopMiddleware = (req, res, next) => next();
+
+const authLimiter = 
+    process.env.NODE_ENV === "test"
+        ? noopMiddleware
+        : rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 20,
+            standardHeaders: true,
+            legacyHeaders: false,
+        }); 
+
+
 
 // =========================
 // Route imports
@@ -113,7 +128,7 @@ if (process.env.NODE_ENV !== "production") {
 // API routes
 // =========================
 api.use("/advertisement", advertisementRoutes);
-api.use("/auth", authRoutes);
+api.use("/auth", authRoutes(authLimiter));
 api.use("/comments", userPostCommentRoutes);
 api.use("/connections", connectionsRoutes);
 api.use("/kicks", kickRoutes);
