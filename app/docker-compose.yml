@@ -43,7 +43,7 @@ services:
       HOST: 0.0.0.0
     volumes:
       - backend_uploads:/app/public/cloud
-    command: npm run start
+    command: npm run start:production
     depends_on:
       db:
         condition: service_healthy
