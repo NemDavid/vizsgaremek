@@ -116,7 +116,7 @@ class User_ProfileService {
                 throw new ValidationError("Érvénytelen avatar");
             }
             if(updateData.avatar_url == null){
-                updateData.avatar_url= "http://localhost:3000/dpfp.png"
+                updateData.avatar_url = `${process.env.FRONTEND_ASSET_URL || "http://localhost:3000"}/dpfp.png`;
             }
         }
         if (!authUtils.isValidBio(updateData.bio)) {

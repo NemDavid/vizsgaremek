@@ -14,10 +14,6 @@ class AdminService {
         return await this.adminRepository.getAdmins({ transaction });
     }
 
-    async getAdmin(userId, transaction) {
-        return await this.adminRepository.getAdmin(userId, { transaction });
-    }
-
     async getDBInfo(transaction) {
         return {
             users: await this.userRepository.countUsers({ transaction }),
@@ -30,18 +26,14 @@ class AdminService {
         if (!userId) {
             throw new BadRequestError("Hiányzó user ID");
         }
-
+        if (encodedToken.userID == userId) {
+            throw new BadRequestError("Magadat nem tudod kezelni");
+        }
         
         const validUser = await this.adminRepository.getAdmin(userId, { transaction });
 
         if (!validUser) {
             throw new NotFoundError("Nincs ilyen admin");
-        }
-        if (validUser.role != "admin") {
-            throw new BadRequestError("Csak admin felhasználó törölhető ezen az endpointon");
-        }
-        if (encodedToken.userID == userId) {
-            throw new BadRequestError("Magadat nem tudod kezelni");
         }
 
 
@@ -61,15 +53,15 @@ class AdminService {
         if (role != "user" && role != "admin" && role != "owner") {
             throw new BadRequestError("Érvénytelen role típus");
         }
+        if (encodedToken.userID == userId) {
+            throw new BadRequestError("Magadat nem tudod kezelni");
+        }
         
         const validUser = await this.userRepository.getUser(userId, { transaction });
         if (!validUser) {
             throw new NotFoundError("Nincs ilyen felhasználó");
         }
 
-        if (encodedToken.userID == userId) {
-            throw new BadRequestError("Magadat nem tudod kezelni");
-        }
 
         const affectedRows = await this.adminRepository.updateUser(userId, { role }, { transaction });
         if (!affectedRows) {

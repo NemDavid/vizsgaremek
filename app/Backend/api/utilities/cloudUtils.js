@@ -25,8 +25,14 @@ const fileFilter = (req, file, cb) => {
 // Multer storage
 // ------------------------
 exports.getStorage = () => {
+  const limits = { fileSize: 5 * 1024 * 1024 };
+
   if (process.env.NODE_ENV === "test") {
-    return multer({ storage: multer.memoryStorage(), fileFilter });
+    return multer({
+      storage: multer.memoryStorage(),
+      fileFilter,
+      limits,
+    });
   }
 
   const uploadDir = path.join(__dirname, "../../public/cloud");
@@ -38,12 +44,16 @@ exports.getStorage = () => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadDir),
     filename: (req, file, cb) => {
-      const uniqueName = crypto.randomUUID() + path.extname(file.originalname);
+      const uniqueName = crypto.randomUUID() + path.extname(file.originalname).toLowerCase();
       cb(null, uniqueName);
     },
   });
 
-  return multer({ storage, fileFilter });
+  return multer({
+    storage,
+    fileFilter,
+    limits,
+  });
 };
 
 // ------------------------
@@ -51,7 +61,7 @@ exports.getStorage = () => {
 // ------------------------
 exports.deleteImage = (imagePath) => {
   if (process.env.NODE_ENV === "test") return;
-  
+
   const safePath = String(imagePath || "").split("/");
 
   const fullPath = path.join(__dirname, "../../public/cloud", safePath.pop());

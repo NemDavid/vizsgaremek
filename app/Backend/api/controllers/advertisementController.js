@@ -1,5 +1,6 @@
 const db = require("../db");
 const { advertisementService } = require("../services")(db);
+const authUtils = require("../utilities/authUtils")
 const path = require("path");
 const crypto = require("crypto");
 
@@ -48,8 +49,8 @@ exports.createAdvertisement = async (req, res, next) => {
 
         const ext = path.extname(req.file.originalname || ".jpg");
         const filename = req.file.filename || (crypto.randomUUID() + ext);
-
-        const imagePath = `http://localhost:6769/cloud/${filename}`;
+        const baseUrl = authUtils.getBackendBaseUrl();
+        const imagePath = `${baseUrl}/cloud/${filename}`;
 
         const newAdvertisement = await advertisementService.createAdvertisement({
             title,

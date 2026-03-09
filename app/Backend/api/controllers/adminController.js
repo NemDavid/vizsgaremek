@@ -10,14 +10,6 @@ exports.getAdmins = async (req, res, next) => {
     }
 };
 
-exports.getAdmin = async (req, res, next) => {
-    try {
-        res.status(200).json(await adminService.getAdmin(req.userId, req.transaction));
-    } catch (error) {
-        next(error);
-    }
-};
-
 exports.getDBInfo = async (req, res, next) => {
     try {
         res.status(200).json(await adminService.getDBInfo(req.transaction));

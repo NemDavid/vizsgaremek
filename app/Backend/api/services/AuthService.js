@@ -36,6 +36,7 @@ class AuthService {
     }
 
     async confirmRegistration(token, profileData, transaction) {
+        const baseUrl = authUtils.getBackendBaseUrl();
         let decoded = undefined;
         try {
             decoded = authUtils.verifyToken(token);
@@ -59,7 +60,7 @@ class AuthService {
         }
 
         if (profileData.file) {
-            newProfile.avatar_url = `http://localhost:6769/cloud/${profileData.file.filename}`;
+            newProfile.avatar_url = `${baseUrl}/cloud/${profileData.file.filename}`;
         }
 
         const createdUser_Profile = await this.user_profileService.createUser_Profile(

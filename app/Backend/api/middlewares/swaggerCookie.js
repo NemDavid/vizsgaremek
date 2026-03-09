@@ -1,14 +1,15 @@
 const authUtils = require("../utilities/authUtils");
 
 module.exports = function swaggerAdminSession(req, res, next) {
+  if (process.env.NODE_ENV === "production") {
+    return next();
+  }
+  
   const isSwagger = req.headers["x-swagger-request"] === "true";
   if (!isSwagger) return next();
   
-  // 0) eredeti token mentése
   const originalToken = req.cookies?.user_token;
   
-  
-  // 1) request alatt admin swagger token, ha nem login a kéres
   if (!req.path.includes("auth/login"))
   {
     req.cookies.user_token = authUtils.generateSwaggerToken({
@@ -19,7 +20,6 @@ module.exports = function swaggerAdminSession(req, res, next) {
     });
   }
   
-  // 2) response végén restore vagy clear (ugyanazokkal az opciókkal!)
   const originalEnd = res.end;
   res.end = function (...args) {
     if (originalToken) {

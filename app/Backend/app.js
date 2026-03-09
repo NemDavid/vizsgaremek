@@ -1,104 +1,147 @@
-const cors = require("cors");  // (le kell tolteni -- npm install cors)
+const path = require("path");
 const express = require("express");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
+// =========================
+// Route imports
+// =========================
+const cloudRouter = require("./api/routes/cloudRoutes");
+const authRoutes = require("./api/routes/authRoutes");
+const userRoutes = require("./api/routes/userRoutes");
+const adminRoutes = require("./api/routes/adminRoutes");
+const userProfileRoutes = require("./api/routes/user_profileRoutes");
+const userPostRoutes = require("./api/routes/user_postRoutes");
+const userPostReactionRoutes = require("./api/routes/user_post_reactionRoutes");
+const userPostCommentRoutes = require("./api/routes/user_post_commentRoutes");
+const connectionsRoutes = require("./api/routes/connectionsRoute");
+const userSettingsRoutes = require("./api/routes/user_settingsRoutes");
+const kickRoutes = require("./api/routes/kickRoutes");
+const advertisementRoutes = require("./api/routes/advertisementRoute");
+
+// =========================
+// Middleware / utils imports
+// =========================
+const db = require("./api/db");
+const attachTransaction = require("./api/middlewares/attachTransaction");
+const errorHandler = require("./api/middlewares/errorHandler");
+const swaggerAdminSession = require("./api/middlewares/swaggerCookie");
+
+// =========================
+// App setup
+// =========================
 const app = express();
 const api = express();
-const db = require("./api/db");
 
+const allowedOrigin = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
+
+// =========================
+// Core security middleware
+// =========================
+app.use(helmet());
+
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true,
+}));
+
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const sweggerUI = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");
+// =========================
+// Static files
+// =========================
+app.use("/assets", express.static(path.join(__dirname, "public")));
+app.use("/cloud", express.static(path.join(__dirname, "public/cloud")));
 
+// =========================
+// Swagger setup
+// =========================
 const swaggerSpec = swaggerJsdoc({
     definition: {
         openapi: "3.0.0",
         info: {
             title: "Mi hírünk dokumentáció",
             version: "1.0.0",
-            description: "# Üdv a Mi hírünk API dokumentációjában."
+            description: "# Üdv a Mi hírünk API dokumentációjában.",
         },
     },
     apis: ["./api/routes/*.js", "./api/routes/**/*.js"],
 });
 
-
-if (process.env.Docker_Active != "false") {
-    console.log(`origin "http://localhost/"`);
-    app.use(cors({
-        credentials: true,
-        origin: "http://localhost/",
-    }));
-}
-else {
-    console.log(`origin "http://localhost:3000"`);
-    app.use(cors({
-        credentials: true,
-        origin: "http://localhost:3000",
-    }));
+// Swagger helper middleware csak nem-production környezetben
+if (process.env.NODE_ENV !== "production") {
+    app.use(swaggerAdminSession);
 }
 
-app.use(cookieParser());
+// =========================
+// Rate limiting
+// =========================
+const noopMiddleware = (req, res, next) => next();
 
-const cloudRouter = require("./api/routes/cloudRoutes")
-const authRoutes = require("./api/routes/authRoutes");
-const userRoutes = require("./api/routes/userRoutes");
-const adminRoutes = require("./api/routes/adminRoutes");
-const user_profileRoutes = require("./api/routes/user_profileRoutes");
-const user_postRouter = require("./api/routes/user_postRoutes");
-const user_post_reactionRoutes = require("./api/routes/user_post_reactionRoutes");
-const user_post_commentRoutes = require("./api/routes/user_post_commentRoutes");
-const connectionsRoute = require("./api/routes/connectionsRoute");
-const user_settingsRoutes = require("./api/routes/user_settingsRoutes");
-const kickRoutes = require("./api/routes/kickRoutes");
-const advertisementRoute = require("./api/routes/advertisementRoute");
-
-const attachTransaction = require("./api/middlewares/attachTransaction");
-const errorHandler = require("./api/middlewares/errorHandler");
-const swaggerAdminSession = require("./api/middlewares/swaggerCookie")
-
-if (process.env.NODE_ENV !== "test") {
-    require("./api/db/");
-}
-
-
-app.use("/assets", express.static("public"));
-app.use(swaggerAdminSession);
+const authLimiter =
+    process.env.NODE_ENV === "test"
+        ? noopMiddleware
+        : rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 20,
+            standardHeaders: true,
+            legacyHeaders: false,
+        });
+// =========================
+// API mount
+// =========================
 app.use("/api", api);
-api.use(attachTransaction(db));
-/* ✅ SWAGGER DOCS */
-api.use(
-    "/docs",
-    sweggerUI.serve,
-    sweggerUI.setup(swaggerSpec, {
-        customCssUrl: "/assets/swagger.css",
-        swaggerOptions: {
-            withCredentials: true,
-            requestInterceptor: (req) => {
-                req.headers["x-swagger-request"] = "true";
-                return req;
-            },
-        }
-    })
-);
 
-api.use("/advertisement", advertisementRoute);
-api.use("/auth", authRoutes);
-api.use("/comments", user_post_commentRoutes);
-api.use("/connections", connectionsRoute);
+// Tranzakció csatolása minden API kéréshez
+api.use(attachTransaction(db));
+
+// Swagger docs csak dev/test környezetben
+if (process.env.NODE_ENV !== "production") {
+    api.use(
+        "/docs",
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerSpec, {
+            customCssUrl: "/assets/swagger.css",
+            swaggerOptions: {
+                withCredentials: true,
+                requestInterceptor: (req) => {
+                    req.headers["x-swagger-request"] = "true";
+                    return req;
+                },
+            },
+        })
+    );
+}
+
+// =========================
+// API routes
+// =========================
+api.use("/advertisement", advertisementRoutes);
+api.use("/auth", authLimiter, authRoutes);
+api.use("/comments", userPostCommentRoutes);
+api.use("/connections", connectionsRoutes);
 api.use("/kicks", kickRoutes);
-api.use("/posts", user_postRouter);
-api.use("/profiles", user_profileRoutes);
-api.use("/reactions", user_post_reactionRoutes);
-api.use("/settings", user_settingsRoutes);
+api.use("/posts", userPostRoutes);
+api.use("/profiles", userProfileRoutes);
+api.use("/reactions", userPostReactionRoutes);
+api.use("/settings", userSettingsRoutes);
 api.use("/users", userRoutes);
 api.use("/admins", adminRoutes);
 
+// =========================
+// Non-API routes
+// =========================
 app.use("/cloud", cloudRouter);
-app.use("/cloud", express.static("public/cloud"));
 
+// =========================
+// Error handling
+// =========================
 api.use(errorHandler.notFound);
 app.use(errorHandler.showError);
 

@@ -21,7 +21,7 @@ const sequelize = new Sequelize(
         console.log("Database connection succesfull");
     }
     catch (error) {
-        console.log("Database connection failed");
+        console.error("Database connection failed:", error);
     }
 })();
 
@@ -43,7 +43,7 @@ const db =
             await seedAdminUser(db);
     }
     catch (error) {
-        console.log("database sync error");
+        console.error("database sync error:", error);
     }
 })();
 

@@ -35,13 +35,15 @@ exports.generateRegistrationToken = (userData) => {
 };
 
 exports.setCookie = (res, cookieName, value) => {
-    res.cookie(cookieName, value,
-        {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 72, // 3nap
-            secure: process.env.NODE_ENV == "production",
-            sameSite: "lax",
-        });
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie(cookieName, value, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 72,
+        path: "/",
+    });
 }
 
 
@@ -50,7 +52,7 @@ exports.hashPassword = (password) => {
 }
 
 exports.hashCode = (verify_code) => {
-    return bcrypt.hashSync(""+verify_code, salt);
+    return bcrypt.hashSync("" + verify_code, salt);
 }
 
 exports.generateVerifyCode = () => {
@@ -128,4 +130,8 @@ exports.isValidPostTittle = (title) => {
 
 exports.isValidPostContent = (content) => {
     return typeof content === "string" && content.trim().length >= 3 && content.trim().length <= 1000;
+};
+
+exports.getBackendBaseUrl = () => {
+    return process.env.BACKEND_PUBLIC_URL || `http://localhost:${process.env.PORT || 6769}`;
 };
