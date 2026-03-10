@@ -100,19 +100,22 @@ class User_ProfileService {
         if (!authUtils.isValidLastName(updateData.last_name)) {
             throw new ValidationError("Érvénytelen last_name");
         }
-
+        
+        // ha default érték jön frontendről akkor nem kell kezelni, így ki lehet venni ezt a mezőt
+        updateData.birth_date = updateData.birth_date == "0000-00-00" ? undefined : updateData.birth_date;
+        
         // opcionalisak
         if (!authUtils.isValidSchools(updateData.schools)) {
             throw new ValidationError("Érvénytelen schools mező");
         }
-        if (updateData.birth_date !== "0000-00-00" && !authUtils.isValidBirthDate(updateData.birth_date)) {
+        if (!authUtils.isValidBirthDate(updateData.birth_date)) {
             throw new ValidationError("Érvénytelen birth_date mező");
         }
         if (!authUtils.isValidBirthPlace(updateData.birth_place)) {
             throw new ValidationError("Érvénytelen birth_place mező");
         }
         if ("avatar_url" in updateData) {
-            if (updateData.avatar_url !== null && !authUtils.isValidAvatar(updateData.avatar)) {
+            if (updateData.avatar_url != null && !authUtils.isValidAvatar(updateData.avatar)) {
                 throw new ValidationError("Érvénytelen avatar");
             }
             if(updateData.avatar_url == null){
