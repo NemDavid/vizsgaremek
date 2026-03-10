@@ -94,10 +94,12 @@ export function PostAccord({ post, className }: { post: Post, className?: string
         queryKey: ["reaction", post.ID],
         queryFn: () => getMyreaction(post.ID),
         retry: 0,
+        enabled: false,
     })
     const { data: comments } = useQuery({
         queryKey: ["Comments", post.ID],
-        queryFn: () => GetComents(`${post.ID}`)
+        queryFn: () => GetComents(`${post.ID}`),
+        enabled: false,
     })
     const userid = post.USER_ID
     const like = {

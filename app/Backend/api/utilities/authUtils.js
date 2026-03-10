@@ -20,10 +20,6 @@ exports.generateSwaggerToken = (user) => {
     });
 }
 
-exports.verifyToken = (token) => {
-    return jwt.verify(token, process.env.JWT_SECRET);
-}
-
 // Regisztráció token, ami 30 percig él és tartalmazza a hash-elt jelszót
 exports.generateRegistrationToken = (userData) => {
     const password_hash = bcrypt.hashSync(userData.password, salt);
@@ -39,8 +35,8 @@ exports.setCookie = (res, cookieName, value) => {
 
     res.cookie(cookieName, value, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "none" : "lax",
+        secure: false,
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 72,
         path: "/",
     });
