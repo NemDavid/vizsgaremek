@@ -82,7 +82,8 @@ export default function Header({ className }: { className?: string }) {
   const { data: auth } = useQuery({
     queryKey: ["auth-status"],
     queryFn: authStatusRequest,
-    enabled: false,
+    enabled: true,
+    gcTime:2000,
   })
 
   return (

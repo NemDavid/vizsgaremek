@@ -88,7 +88,7 @@ export function PostAccord({ post, className }: { post: Post, className?: string
     const { data: auth } = useQuery<any>({
         queryKey: ["auth-status"],
         queryFn: authStatusRequest,
-        enabled: false,
+        enabled: true,
     })
     const { data: react } = useQuery({
         queryKey: ["reaction", post.ID],
@@ -123,45 +123,47 @@ export function PostAccord({ post, className }: { post: Post, className?: string
                             </AccordionTrigger>
 
                             {/* Menü gomb "benne van" kinézetre, de DOM-ban nem a trigger gyereke */}
-                            <div
-                                className="absolute right-2 top-1/2 -translate-y-1/2"
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" size="icon">
-                                            <EllipsisVertical />
-                                        </Button>
-                                    </DropdownMenuTrigger>
+                            {auth?.data.userID == userid && (
+                                <div
+                                    className={"absolute right-2 top-1/2 -translate-y-1/2"}
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" size="icon">
+                                                <EllipsisVertical />
+                                            </Button>
+                                        </DropdownMenuTrigger>
 
-                                    <DropdownMenuContent className="bg-rose-50">
-                                        <DropdownMenuGroup>
-                                            <DropdownMenuLabel>Poszt beállítás</DropdownMenuLabel>
+                                        <DropdownMenuContent className="bg-rose-50">
+                                            <DropdownMenuGroup>
+                                                <DropdownMenuLabel>Poszt beállítás</DropdownMenuLabel>
 
-                                            <DropdownMenuItem
-                                                onSelect={(e) => {
-                                                    e.preventDefault()
-                                                    setOpenDelete(true)
-                                                }}
-                                            >
-                                                <TrashIcon className="mr-2 h-4 w-4" />
-                                                Törlés
-                                            </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onSelect={(e) => {
+                                                        e.preventDefault()
+                                                        setOpenDelete(true)
+                                                    }}
+                                                >
+                                                    <TrashIcon className="mr-2 h-4 w-4" />
+                                                    Törlés
+                                                </DropdownMenuItem>
 
-                                            <DropdownMenuItem
-                                                onSelect={(e) => {
-                                                    e.preventDefault()
-                                                    setOpenModify(true)
-                                                }}
-                                            >
-                                                <PencilLine className="mr-2 h-4 w-4" />
-                                                Módosítás
-                                            </DropdownMenuItem>
-                                        </DropdownMenuGroup>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
+                                                <DropdownMenuItem
+                                                    onSelect={(e) => {
+                                                        e.preventDefault()
+                                                        setOpenModify(true)
+                                                    }}
+                                                >
+                                                    <PencilLine className="mr-2 h-4 w-4" />
+                                                    Módosítás
+                                                </DropdownMenuItem>
+                                            </DropdownMenuGroup>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            )}
                         </div>
 
                         <AccordionContent className="bg-red-100">
