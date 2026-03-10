@@ -117,7 +117,6 @@ module.exports = (sequelize, DataTypes) => {
             {
                 type: DataTypes.DATEONLY,
                 allowNull: true,
-                defaultValue: new Date('2000-01-01')
             },
 
             birth_place:
