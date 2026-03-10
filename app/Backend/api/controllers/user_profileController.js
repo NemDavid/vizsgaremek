@@ -1,5 +1,6 @@
 const db = require("../db");
 const { user_profileService } = require("../services")(db);
+const authUtils = require("../utilities/authUtils")
 
 
 exports.getUser_Profiles = async (req, res, next) => {
@@ -57,6 +58,7 @@ exports.createUser_Profile = async (req, res, next) => {
 
 exports.updateUser_Profile = async (req, res, next) => {
     try {
+        const baseUrl = authUtils.getBackendBaseUrl();
         const { first_name, last_name, birth_date, birth_place, schools, bio, avatar_url } = req.body;
         let updatedprofil = {
             first_name,
@@ -68,7 +70,7 @@ exports.updateUser_Profile = async (req, res, next) => {
             avatar_url,
         }
         if (req.file) {
-            updatedprofil.avatar_url = `http://localhost:6769/cloud/${req.file.filename}`;
+            updatedprofil.avatar_url = `${baseUrl}/cloud/${req.file.filename}`;
             updatedprofil.avatar = req.file;
         }
         const user = req.user;

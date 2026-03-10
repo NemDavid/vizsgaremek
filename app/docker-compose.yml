@@ -1,12 +1,10 @@
-version: "3.9"
-
 services:
   db:
     image: mysql:8.0
     container_name: mihirunk_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: L6Ndk3o
       MYSQL_DATABASE: MiHirunk_DB
     volumes:
       - db_data:/var/lib/mysql
@@ -22,7 +20,7 @@ services:
     restart: unless-stopped
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: L6Ndk3o
       PMA_ABSOLUTE_URI: http://localhost/phpmyadmin/
     depends_on:
       - db
@@ -35,8 +33,8 @@ services:
     restart: unless-stopped
     environment:
       DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: example
+      DB_USERNAME: root
+      DB_PASSWORD: L6Ndk3o
       DB_NAME: MiHirunk_DB
       DB_DIALECT: mysql
       NODE_ENV: production
@@ -44,9 +42,8 @@ services:
       PORT: 6769
       HOST: 0.0.0.0
     volumes:
-      - ./Backend:/app     # <--- bind mount a friss kódhoz
-      - /app/node_modules  # <--- ne írja felül a node_modules-t a host
-    command: npm run start   # <--- nodemon automatikusan újraindítja a szervert
+      - backend_uploads:/app/public/cloud
+    command: npm run start:production
     depends_on:
       db:
         condition: service_healthy
@@ -60,7 +57,7 @@ services:
     depends_on:
       - backend
     environment:
-      - VITE_API_URL=http://localhost/api
+      - VITE_API_URL=/api
 
   #nginx or treafik reverse proxy, open port 80 or 443
   nginx-proxy:
@@ -78,3 +75,4 @@ services:
 
 volumes:
   db_data:
+  backend_uploads:

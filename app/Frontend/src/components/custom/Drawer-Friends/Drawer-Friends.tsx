@@ -25,7 +25,7 @@ export function DrawerFriends() {
     const { data: auth } = useQuery<any>({
         queryKey: ["auth-status"],
         queryFn: authStatusRequest,
-        enabled: false,
+        enabled: true,
     })
     return (
         <Drawer >

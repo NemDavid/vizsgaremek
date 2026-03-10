@@ -1,5 +1,6 @@
 const db = require("../db");
 const { user_postService } = require("../services")(db);
+const authUtils = require("../utilities/authUtils")
 
 exports.getUser_Posts = async (req, res, next) => {
     try {
@@ -50,18 +51,18 @@ exports.deleteUser_Post = async (req, res, next) => {
 exports.createUser_Post = async (req, res, next) => {
     const { title, content } = req.body || {};
     const user = req.user;
-
+    const baseUrl = authUtils.getBackendBaseUrl();
 
     try {
         res.status(201).json(await user_postService.createUser_Post({
             user,
             title,
             content,
-            media_url: req.file ? `http://localhost:6769/cloud/${req.file.filename}` : undefined
+            media_url: req.file ? `${baseUrl}/cloud/${req.file.filename}` : undefined
         },
-        req.transaction,
-        req,
-    ));
+            req.transaction,
+            req,
+        ));
     } catch (error) {
         next(error);
     }
@@ -72,13 +73,14 @@ exports.updateUser_Post = async (req, res, next) => {
         const { title, content } = req.body || {};
         const postId = req.params.postId;
         const user = req.user;
+        const baseUrl = authUtils.getBackendBaseUrl();
 
         const mediaDeleted =
             req.body?.mediaDeleted === "true" || req.body?.mediaDeleted === true;
 
         let media_url =
             req.file && !mediaDeleted
-                ? `http://localhost:6769/cloud/${req.file.filename}`
+                ? `${baseUrl}/cloud/${req.file.filename}`
                 : undefined;
 
         if (mediaDeleted) media_url = "";

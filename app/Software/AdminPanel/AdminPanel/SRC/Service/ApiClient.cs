@@ -20,7 +20,7 @@ namespace AdminPanel.SRC.Service
 
         public static HttpClient Client { get; } = new HttpClient(_handler)
         {
-            BaseAddress = new Uri("http://127.0.0.1:6769/")
+            BaseAddress = new Uri("http://217.76.61.147")
         };
     }
 }

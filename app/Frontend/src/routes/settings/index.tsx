@@ -330,24 +330,24 @@ export function ErtesitesSettings() {
         new_login: false,
         new_friend_request: false,
     })
-    useEffect(() => {
-        if (!data?.data.Notifications) return
-        const notif = JSON.parse(data.data.Notifications)
+useEffect(() => {
+    const notif = data?.data?.Notifications
+    if (!notif) return
 
-        setTerms1(!!notif.new_post)
-        setTerms2(!!notif.new_comment_on_post)
-        setTerms3(!!notif.new_reaction_on_post)
-        setTerms4(!!notif.new_login)
-        setTerms5(!!notif.new_friend_request)
+    setTerms1(!!notif.new_post)
+    setTerms2(!!notif.new_comment_on_post)
+    setTerms3(!!notif.new_reaction_on_post)
+    setTerms4(!!notif.new_login)
+    setTerms5(!!notif.new_friend_request)
 
-        setOriginalNotif({
-            new_post: !!notif.new_post,
-            new_comment_on_post: !!notif.new_comment_on_post,
-            new_reaction_on_post: !!notif.new_reaction_on_post,
-            new_login: !!notif.new_login,
-            new_friend_request: !!notif.new_friend_request,
-        })
-    }, [data])
+    setOriginalNotif({
+        new_post: !!notif.new_post,
+        new_comment_on_post: !!notif.new_comment_on_post,
+        new_reaction_on_post: !!notif.new_reaction_on_post,
+        new_login: !!notif.new_login,
+        new_friend_request: !!notif.new_friend_request,
+    })
+}, [data])
     const hasChanged =
         terms1 !== originalNotif.new_post ||
         terms2 !== originalNotif.new_comment_on_post ||

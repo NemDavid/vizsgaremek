@@ -77,22 +77,6 @@ router.use(authMiddleware.isAdmin);
  *         profile: { $ref: '#/components/schemas/UserProfile' }
  *       required: [ID, email, username, role, is_loggedIn, created_at, updated_at, profile]
  *
- *     AdminNoProfileFull:
- *       type: object
- *       additionalProperties: false
- *       description: Admin scope allUserData without profile include (contains password_hash).
- *       properties:
- *         ID: { type: integer, format: int64 }
- *         email: { type: string, format: email }
- *         password_hash: { type: string }
- *         username: { type: string }
- *         role: { type: string, enum: [admin, owner] }
- *         is_loggedIn: { type: boolean }
- *         created_at: { type: string, format: date }
- *         updated_at: { type: string, format: date }
- *         last_login: { type: string, format: date, nullable: true }
- *       required: [ID, email, username, role, is_loggedIn, created_at, updated_at]
- *
  *     UpdateAdminRoleRequest:
  *       type: object
  *       additionalProperties: false
@@ -156,35 +140,6 @@ router.get("/all", adminController.getAdmins);
 
 /**
  * @swagger
- * /api/admins/id/{userId}:
- *   get:
- *     tags: [Admins]
- *     summary: Get an admin by ID
- *     description: Retrieves an admin user by numeric ID (no profile include). Admin/owner only.
- *     security:
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema: { type: integer }
- *     responses:
- *       200:
- *         description: Admin found (no profile)
- *         content:
- *           application/json:
- *             schema: { $ref: '#/components/schemas/AdminNoProfileFull' }
- *       401:
- *         $ref: '#/components/responses/Unauthorized'
- *       403:
- *         $ref: '#/components/responses/Forbidden'
- *       400:
- *         $ref: '#/components/responses/BadRequest'
- */
-router.get("/id/:userId", adminController.getAdmin);
-
-/**
- * @swagger
  * /api/admins/info:
  *   get:
  *     tags: [Admins]
@@ -232,7 +187,7 @@ router.get("/info", adminController.getDBInfo);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.delete("/:userId", authMiddleware.isOwner, adminController.deleteAdmin);
+router.delete("/:userId", [authMiddleware.isOwner], adminController.deleteAdmin);
 
 /**
  * @swagger
@@ -266,6 +221,6 @@ router.delete("/:userId", authMiddleware.isOwner, adminController.deleteAdmin);
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.patch("/:userId", authMiddleware.isOwner, adminController.updateUser);
+router.patch("/:userId", [authMiddleware.isOwner], adminController.updateUser);
 
 module.exports = router;

@@ -100,7 +100,7 @@ class User_Post_CommentService {
 
 
         // email az erintett user nek
-        if (req.afterCommit && this.notificationService) {
+        if (req.afterCommit && this.notificationService && encodedToken.userID != targetPost.USER_ID) {
             req.afterCommit.push(async () => {
                 await this.notificationService
                     .sendNotificationToUser(validUser, "new_post_comment")

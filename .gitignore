@@ -42,3 +42,15 @@ publish/
 # OS files
 .DS_Store
 Thumbs.db
+
+# env files
+.env
+.env.*
+!.env.example
+
+# uploads
+public/cloud/
+app/Backend/public/cloud/
+
+# local temp
+.tanstack/

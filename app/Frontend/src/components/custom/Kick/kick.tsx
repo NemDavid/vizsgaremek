@@ -61,7 +61,8 @@ export function KickButton({ id, myid, className }: { id: bigint; myid: string, 
     const { mutate: doKick, isPending } = useMutation({
         mutationFn: (userId: bigint) => Kick(userId),
         onSuccess: async () => {
-            await qc.invalidateQueries({ queryKey: ["Rugas"] })
+            await qc.refetchQueries({ queryKey: ["Rugas"] })
+            await qc.refetchQueries({ queryKey: ["Connection", "Friends"], })
         },
     })
 
