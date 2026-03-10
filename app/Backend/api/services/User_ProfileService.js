@@ -79,7 +79,7 @@ class User_ProfileService {
     }
 
     async updateUser_Profile(userId, updateData, transaction, user) {
-        if (user.role === 'user' && user.userID !== userId) {
+        if (user.role == 'user' && user.userID != userId) {
             throw new ValidationError("Nem módosíthatsz más fiókot!");
         }
         if (!userId) throw new BadRequestError("Hiányzó user ID");

@@ -118,7 +118,7 @@ function RouteComponent() {
   return (
     <DefaultUIFrame className="p-6">
       {/* fontos: a gyerek töltse ki a DefaultUIFrame belső magasságát */}
-      <div className="h-full min-h-0 flex flex-col bg-red-900 rounded-xl">
+      <div className="h-full min-h-0 flex flex-col bg-red-50 rounded-xl">
         {/* kereső fixen felül */}
         <div className="flex items-center gap-2 bg-red-50 px-3 py-2 rounded-md shrink-0">
           <Input
@@ -132,19 +132,13 @@ function RouteComponent() {
 
         {/* scrollozható rész: itt nem fog rámenni a footerre */}
         <div className="mt-3 flex-1 min-h-0 overflow-y-auto pb-28">
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap gap-3 p-2">
             {isLoading || isFetching ? (
               <Loader />
             ) : (
               <>
                 {items.map((e: any) => (
-                  <div
-                    key={e.ID}
-                    className="flex items-center gap-3 p-3 m-2 bg-rose-100 rounded-xl"
-                  >
-                    <AvatarFrame userid={e.ID} userData={e} className="rounded-xl" />
-                    <Button onClick={()=>navigate({to:"/profil/$profilId", params:{profilId:e.ID}})}>Open</Button>
-                  </div>
+                  <AvatarFrame userid={e.ID} userData={e} className="rounded-xl" />
                 ))}
 
                 {debounced.length >= 3 && items.length === 0 && (

@@ -82,7 +82,7 @@ export function FriendsList({ id, className, myid, userData, avatarClass }: { id
     return (
         <div className={`bg-rose-100 flex items-center rounded-xl p-2 px-4 gap-3 ${className}`}>
             <AvatarFrame className={`max-w-max max-h-min p-0 bg-slate-200 m-0 ${avatarClass}`} userData={userData} />
-            <KickButton id={id} myid={`${myid}`} className="w-min" />
+            <KickButton id={id||userData.profile.ID} myid={`${myid}`} className="w-min" />
         </div>
     )
 }

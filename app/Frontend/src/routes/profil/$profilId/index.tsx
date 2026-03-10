@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PopOver } from '@/components/custom/OpenMenus/OpenMenus';
-import { EllipsisVertical, TrashIcon, User } from 'lucide-react';
+import { BadgeIcon, EllipsisVertical, Gavel, User } from 'lucide-react';
 import { Loader } from '@/components/Loader/Loader';
 import { UserProfileModify } from '@/components/ProfilForms';
 import { BlockUser, ReqFriend } from '@/components/custom/UserConnectionButton/UserConnectionButton';
@@ -35,6 +35,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/profil/$profilId/')({
   component: () => (
@@ -64,7 +66,7 @@ function RouteComponent() {
   if (isLoading) {
     return <Loader />
   }
-
+  
   if (profil?.data == null) {
     return (
       <DefaultUIFrame className="bg-red-300 min-h-0 flex items-center justify-center">
@@ -109,6 +111,8 @@ function RouteComponent() {
         <div className="-mt-20 flex flex-col items-center text-center px-4 pb-5 bg-red-400 pt-40">
           <h1 className="text-2xl font-semibold">
             {profil?.data.first_name} {profil?.data.last_name}
+            <p className='text-xs text-stone-400'>~ {profil?.data.user.username} ~</p>
+            {profil?.data.user.role != "user" && (<Badge className={profil?.data.user.role == "admin"? "bg-red-500":"bg-purple-500"}><Gavel/> {profil?.data.user.role == "admin"? "Admin":"Owner"}</Badge>)}
           </h1>
 
           <div className="ml-auto">
@@ -153,6 +157,7 @@ function RouteComponent() {
             <div className="min-w-0">
               <h1 className="text-2xl font-semibold text-white truncate">
                 {profil?.data.first_name} {profil?.data.last_name}
+                <p className='text-xs text-stone-400'>~ {profil?.data.user.username} ~</p>
               </h1>
               <div className="mt-1">
                 <ProfileMenu
