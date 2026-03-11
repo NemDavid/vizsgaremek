@@ -6,14 +6,12 @@ const { ValidationError } = require("../errors");
 
 // külön: filter, hogy mindkét storage használhassa
 const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-  const allowedExts = [".jpg", ".jpeg", ".png", ".webp"];
-
   const ext = path.extname(file.originalname).toLowerCase();
 
   if (
-    allowedMimeTypes.includes(file.mimetype) ||
-    (file.mimetype === "application/octet-stream" && allowedExts.includes(ext))
+    file.mimetype.startsWith("image/") ||
+    (file.mimetype === "application/octet-stream" &&
+      [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".svg", ".tiff", ".avif", ".heic"].includes(ext))
   ) {
     return cb(null, true);
   }

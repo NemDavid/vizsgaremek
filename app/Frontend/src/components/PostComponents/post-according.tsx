@@ -50,29 +50,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Loader } from "@/components/Loader"
 
 
-
-export type Post = {
-    ID: bigint,
-    USER_ID: bigint,
-    like: number,
-    dislike: number,
-    content: string,
-    title: string,
-    media_url: string,
-    created_at: Date,
-    updated_at: Date,
-    comments?: comment[],
-
-}
-export type comment = {
-    ID: bigint,
-    USER_ID: bigint,
-    POST_ID: bigint,
-    comment: string,
-}
-
-
-export function PostAccord({ post, className }: { post: Post, className?: string }) {
+export function PostAccord({ post, className }: { post: any, className?: string }) {
     const [openDelete, setOpenDelete] = useState(false);
     const [openModify, setOpenModify] = useState(false);
     const queryclinet = useQueryClient();
@@ -110,7 +88,8 @@ export function PostAccord({ post, className }: { post: Post, className?: string
         POST_ID: post.ID,
         reaction: 'dislike' as 'dislike',
     }
-
+    console.log(post.user);
+    
     return (
         <Card className={`rounded-2xl! border shadow-md gap-0 py-0 bg-red-50 ${className ?? ""}`}>
             <CardContent className="p-0">
