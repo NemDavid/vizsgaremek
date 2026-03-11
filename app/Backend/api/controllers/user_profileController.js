@@ -11,9 +11,9 @@ exports.getUser_Profiles = async (req, res, next) => {
     }
 };
 
-exports.getUser_Profile = async (req, res, next) => {
+exports.getUser_ProfileWithLastPosts = async (req, res, next) => {
     try {
-        const { result } = await user_profileService.getUser_Profile(req.userId, req.transaction)
+        const { result } = await user_profileService.getUser_ProfileWithLastPosts(req.userId, req.user, req.transaction)
         res.status(200).json(result);
     } catch (error) {
         next(error);

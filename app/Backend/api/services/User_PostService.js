@@ -18,14 +18,14 @@ class User_PostService {
         return await this.user_postRepository.getUser_Posts({ transaction });
     }
 
-    async getUser_PostsByLimit(page, perpage, transaction) {
+    async getUser_PostsByLimit(page, perpage, encodedToken, transaction) {
         if (!Number.isInteger(page) || !Number.isInteger(perpage)) {
             throw new BadRequestError("Hiányzó Adatok");
         }
         if (page < 0 || perpage < 0) {
             throw new ValidationError("Rossz adatok");
         }
-        return await this.user_postRepository.getUser_PostsByLimit(page, perpage, { transaction });
+        return await this.user_postRepository.getUser_PostsByLimit(page, perpage, encodedToken.userID, { transaction });
     }
 
     async getUser_Posts_ByuserId(userId, transaction) {

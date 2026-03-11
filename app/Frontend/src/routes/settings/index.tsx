@@ -185,8 +185,6 @@ function PasswordReseter() {
         mode: "onChange",
     })
     function onSubmit(values: RegisterSchema) {
-        console.log(values);
-
         reset({ data: values })
 
     }

@@ -78,7 +78,7 @@ export function PostCreate() {
         }
         upload(formData)
     }
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+    const allowedTypes = ["image/*"];
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

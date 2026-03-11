@@ -261,7 +261,7 @@ router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_p
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
-router.get("/:userId", [authMiddleware.userIsLoggedIn], user_profileController.getUser_Profile);
+router.get("/:userId", [authMiddleware.userIsLoggedIn], user_profileController.getUser_ProfileWithLastPosts);
 
 /**
  * @swagger

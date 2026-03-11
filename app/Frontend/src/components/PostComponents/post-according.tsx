@@ -29,7 +29,6 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useState } from 'react'
@@ -50,16 +49,37 @@ import { Textarea } from "@/components/ui/textarea"
 import { Loader } from "@/components/Loader"
 
 
-export function PostAccord({ post, className }: { post: any, className?: string }) {
+
+export type Post = {
+    ID: bigint,
+    USER_ID: bigint,
+    like: number,
+    dislike: number,
+    content: string,
+    title: string,
+    media_url: string,
+    created_at: Date,
+    updated_at: Date,
+    comments?: comment[],
+
+}
+export type comment = {
+    ID: bigint,
+    USER_ID: bigint,
+    POST_ID: bigint,
+    comment: string,
+}
+
+
+export function PostAccord({ post, className, ProfilID }: { post: any, className?: string, ProfilID?: string }) {
     const [openDelete, setOpenDelete] = useState(false);
     const [openModify, setOpenModify] = useState(false);
-    const queryclinet = useQueryClient();
+    const queryclient = useQueryClient();
     const { mutate: doReaction } = useMutation({
         mutationFn: async (data: { POST_ID: bigint; reaction: 'like' | 'dislike' }) => makeReaction(data),
         onSuccess() {
-            queryclinet.refetchQueries({ queryKey: ["Posts"] });
-            queryclinet.refetchQueries({ queryKey: ["reaction", post.ID] });
-            queryclinet.refetchQueries({ queryKey: ["profil"] });
+            queryclient.refetchQueries({ queryKey: ["Posts"] })
+            if (ProfilID) queryclient.refetchQueries({ queryKey: ["profil", ProfilID] })
         }
     })
 
@@ -67,17 +87,6 @@ export function PostAccord({ post, className }: { post: any, className?: string 
         queryKey: ["auth-status"],
         queryFn: authStatusRequest,
         enabled: true,
-    })
-    const { data: react } = useQuery({
-        queryKey: ["reaction", post.ID],
-        queryFn: () => getMyreaction(post.ID),
-        retry: 0,
-        enabled: false,
-    })
-    const { data: comments } = useQuery({
-        queryKey: ["Comments", post.ID],
-        queryFn: () => GetComents(`${post.ID}`),
-        enabled: false,
     })
     const userid = post.USER_ID
     const like = {
@@ -88,17 +97,15 @@ export function PostAccord({ post, className }: { post: any, className?: string 
         POST_ID: post.ID,
         reaction: 'dislike' as 'dislike',
     }
-    console.log(post.user);
-    
     return (
         <Card className={`rounded-2xl! border shadow-md gap-0 py-0 bg-red-50 ${className ?? ""}`}>
             <CardContent className="p-0">
                 <Accordion type="single" collapsible>
-                    <AccordionItem value={`item-${post.ID}`}>
+                    <AccordionItem value={`itemC-${post.ID}`}>
                         <div className="relative">
                             <AccordionTrigger className="flex items-center gap-2 p-0 rounded-full! pr-12 bg-red-50">
                                 <div className="flex items-center gap-3 bg-red-50 w-full rounded-full!">
-                                    <AvatarFrame userid={userid} className="bg-red-100 rounded-2xl" />
+                                    <AvatarFrame userData={post.user} className="bg-red-100 rounded-2xl" />
                                     <h2 className="text-xl font-semibold tracking-tight">{post.title}</h2>
                                 </div>
                             </AccordionTrigger>
@@ -170,7 +177,7 @@ export function PostAccord({ post, className }: { post: any, className?: string 
                                         spacing={2}
                                         size="sm"
                                         className="flex flex-col items-center mt-4 mb-4 mx-2 w-full max-w-xs"
-                                        value={react ? react.reaction : ""}
+                                        value={post.myReaction}
                                     >
                                         <ToggleGroupItem
                                             onClick={() => doReaction(like)}
@@ -198,7 +205,8 @@ export function PostAccord({ post, className }: { post: any, className?: string 
                     <AccordionItem value={`comments-${post.ID}`} className="border-t bg-red-50 py-3 px-4 w-full rounded-b-3xl">
                         <CommentsAccord
                             postID={post.ID}
-                            commentsList={post.comments == undefined ? comments?.data : post.comments}
+                            commentsList={post.comments}
+                            ProfilID={ProfilID}
                         />
                     </AccordionItem>
                 </Accordion>
@@ -223,7 +231,7 @@ export function PostAccord({ post, className }: { post: any, className?: string 
 }
 
 export function PostDeletion({ mypost, ID, className, open, onOpenChange, isTriggerd }: { mypost: boolean, className?: string, isTriggerd?: boolean, ID: string, open?: boolean, onOpenChange?: (open: boolean) => void }) {
-    const queryclinet = useQueryClient()
+    const queryclient = useQueryClient()
     const { mutate: deletePost } = useMutation({
         mutationFn: ({ id }: { id: any }) => deletpost({ id }),
         onError: (error: any) => {
@@ -233,9 +241,7 @@ export function PostDeletion({ mypost, ID, className, open, onOpenChange, isTrig
             toast.success("Sikeresen tőrőlted a posztod", {
                 duration: 3000,
             })
-            queryclinet.refetchQueries({ queryKey: ["Posts"] });
-            queryclinet.refetchQueries({ queryKey: ["reaction", ID] });
-            queryclinet.refetchQueries({ queryKey: ["profil"] });
+            queryclient.refetchQueries({ queryKey: ["Posts"] })
         }
     })
     if (!mypost) return;

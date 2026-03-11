@@ -36,7 +36,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
 
 export const Route = createFileRoute('/profil/$profilId/')({
   component: () => (
@@ -92,7 +91,6 @@ function RouteComponent() {
     )
   }
   return (
-
     <DefaultUIFrame className='bg-red-300 text-white '>
       {/* DEFAULT (magas képernyő) */}
       <div className="sm:[@media(max-height:820px)]:hidden">
@@ -198,13 +196,13 @@ function RouteComponent() {
       </div>
       <div className="mt-10 px-6 hidden sm:block">
         <h2 className="text-xl font-semibold mb-4">Legutóbbi aktivitások</h2>
-        <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} />
+        <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} profilId={profilId}/>
       </div>
       <Accordion type="single" collapsible className='block sm:hidden bg-transparent'>
         <AccordionItem value="activites" className='bg-transparent'>
           <AccordionTrigger className="text-xl font-semibold mb-4 p-4">Legutóbbi aktivitások</AccordionTrigger>
           <AccordionContent>
-            <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} className="bg-rose-100! p-2 rounded-xl" />
+            <LastActivity posts={profil?.data.user.posts} myid={Number(UserID)} mypost={auth?.data.userID === UserID} profilId={profilId} className="bg-rose-100! p-2 rounded-xl" />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -212,7 +210,7 @@ function RouteComponent() {
   )
 }
 
-function LastActivity({ posts, myid, className }: { posts?: any[], myid: any, mypost: boolean, className?: string }) {
+function LastActivity({ posts, myid, className,profilId }: { posts?: any[], myid: any, mypost: boolean, className?: string,profilId?:string }) {
   if (!posts || posts.length === 0) {
     return (
       <div className="text-sm text-slate-200">
@@ -238,16 +236,13 @@ function LastActivity({ posts, myid, className }: { posts?: any[], myid: any, my
             <DialogHeader>
               <DialogTitle></DialogTitle>
             </DialogHeader>
-            <PostAccord post={p} />
+            <PostAccord post={p} ProfilID={profilId}/>
           </DialogContent>
         </Dialog>
       ))}
     </div>
   )
 }
-
-
-
 
 function ProfileInfo({ label, value }: { label: string; value?: string }) {
   if (!value || value === "" || value === "0000-00-00") return null
@@ -262,7 +257,7 @@ function ProfileInfo({ label, value }: { label: string; value?: string }) {
   )
 }
 
-function ProfileMenu({ isMe, profilId, profil }: any) {
+function ProfileMenu({ isMe, profilId, profil}: any) {
   const nav = useNavigate()
   return (
     <PopOver
@@ -273,7 +268,7 @@ function ProfileMenu({ isMe, profilId, profil }: any) {
       <div className="flex flex-col gap-2">
         {isMe ? (
           <>
-            <UserProfileModify id={Number(profilId)} myuserdata={profil?.data} />
+            <UserProfileModify id={Number(profilId)} myuserdata={profil?.data}/>
             <Button onClick={() => nav({ to: "/connections" })}>
               <User /> Barátaim
             </Button>

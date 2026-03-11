@@ -78,7 +78,7 @@ class User_Post_ReactionService {
 
 
         // email az erintett usernek commit utan
-        if (req.afterCommit && this.notificationService) {
+        if (req.afterCommit && this.notificationService && encodedToken.userID != targetPost.USER_ID) {
             req.afterCommit.push(async () => {
                 await this.notificationService
                     .sendNotificationToUser(validUser, "new_post_reaction")

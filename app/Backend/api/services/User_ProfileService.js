@@ -18,6 +18,13 @@ class User_ProfileService {
         return await this.user_profileRepository.getUser_Profile(userId, options);
     }
 
+    async getUser_ProfileWithLastPosts(userId, encodedToken, options = {}) {
+        if (!userId) {
+            throw new BadRequestError("hiányzó user ID");
+        }
+        return await this.user_profileRepository.getUser_ProfileWithLastPosts(userId, encodedToken.userID, options);
+    }
+
     async getUser_ProfilesByPage(page, transaction) {
         if (!page) {
             throw new BadRequestError("hiányzó page paraméter");
@@ -101,9 +108,10 @@ class User_ProfileService {
             throw new ValidationError("Érvénytelen last_name");
         }
         
-        // ha default érték jön frontendről akkor nem kell kezelni, így ki lehet venni ezt a mezőt
-        updateData.birth_date = updateData.birth_date == "0000-00-00" ? undefined : updateData.birth_date;
         
+        // ha default érték jön frontendről akkor nem kell kezelni, így ki lehet venni ezt a mezőt
+        updateData.birth_date = updateData.birth_date == "0000-00-00" || updateData.birth_date == "" ? null : updateData.birth_date;
+
         // opcionalisak
         if (!authUtils.isValidSchools(updateData.schools)) {
             throw new ValidationError("Érvénytelen schools mező");

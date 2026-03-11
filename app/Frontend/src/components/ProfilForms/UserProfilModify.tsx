@@ -35,6 +35,7 @@ export const confirmSchema = z.object({
     birth_place: z.string().max(100, { message: "Az születési hely mező legfeljebb 100 karakter hosszú lehet." }).optional(),
     avatar: z.any().refine(file => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.").optional(),
     bio: z.string().max(255, { message: "A bio mező legfeljebb 255 karakter hosszú lehet." }).optional(),
+    avatar_url: z.string(),
 })
 
 export type ConfirmSchema = z.infer<typeof confirmSchema>
@@ -43,7 +44,7 @@ const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
 };
 
-export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any} ) {
+export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: any}) {
     const [birthDayMin, setBirthDayMin] = useState("");
     const [birthDayMax, setBirthDayMax] = useState("");
     const queryClient = useQueryClient()
@@ -56,7 +57,7 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
             toast.success("Fiók modositása sikeres 🎉", {
                 duration: 3000,
             })
-            queryClient.refetchQueries({queryKey: ["profil"]});
+            queryClient.refetchQueries({ queryKey: ["profil"] });
         }
     })
     const form = useForm<ConfirmSchema>({
@@ -69,6 +70,7 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
             birth_place: "",
             avatar: "",
             bio: "",
+            avatar_url: "",
         },
         mode: "onChange",
     })
@@ -84,7 +86,6 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
         setBirthDayMin(formatDate(min));
     }, []);
 
-
     function onSubmit(values: ConfirmSchema) {
         const formData = new FormData();
 
@@ -96,25 +97,28 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
 
         if (values.avatar instanceof File) {
             formData.append("avatar", values.avatar);
+            formData.append("avatar_url", values.avatar_url);
+
         }
 
         confirm({ data: formData });
     }
-    function SETDEFAULTDATA(){
+    function SETDEFAULTDATA() {
         const Bio = myuserdata.bio;
         const bDate = myuserdata.birth_date;
         const bPlace = myuserdata.birth_place;
         const fn = myuserdata.first_name;
         const ln = myuserdata.last_name;
         const schools = myuserdata.schools;
-
-        form.setValue("avatar","");
-        form.setValue("bio",`${Bio != null? Bio : ""}`);
-        form.setValue("birth_date",`${bDate != null? bDate : ""}`);
-        form.setValue("birth_place",`${bPlace != null? bPlace : ""}`);
-        form.setValue("first_name",`${fn != null? fn : ""}`);
-        form.setValue("last_name",`${ln != null? ln : ""}`);
-        form.setValue("schools",`${schools != null? schools : ""}`);
+        const avatarurl = myuserdata.avatar_url
+        form.setValue("avatar", null);
+        form.setValue("bio", `${Bio != null ? Bio : ""}`);
+        form.setValue("birth_date", `${bDate != null ? bDate : ""}`);
+        form.setValue("birth_place", `${bPlace != null ? bPlace : ""}`);
+        form.setValue("first_name", `${fn != null ? fn : ""}`);
+        form.setValue("last_name", `${ln != null ? ln : ""}`);
+        form.setValue("schools", `${schools != null ? schools : ""}`);
+        form.setValue("avatar_url", `${avatarurl != null ? avatarurl : ""}`);
     }
     return (
         <Dialog onOpenChange={SETDEFAULTDATA}>
@@ -122,7 +126,7 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
                 <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' ><PenLine className='text-black' />Profil Modositása</Button>
             </DialogTrigger>
             <DialogContent className="bg-red-100 z-999 max-h-[90vh] overflow-y-auto">
-                <DialogTitle className="display-none"/>
+                <DialogTitle className="display-none" />
                 <div className="h-max ">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className={"flex flex-col gap-6"}>
@@ -201,18 +205,31 @@ export function UserProfileModify({ id , myuserdata}: {id:number,myuserdata:any}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel htmlFor="avatar">Avatar feltöltése</FormLabel>
+
+                                        {myuserdata?.avatar_url && (
+                                            <div className="mb-3 flex flex-col gap-2">
+                                                <span className="text-sm text-muted-foreground">Jelenlegi profilkép:</span>
+                                                <img
+                                                    src={myuserdata.avatar_url}
+                                                    alt="Jelenlegi avatar"
+                                                    className="h-24 w-24 rounded-full object-cover border"
+                                                />
+                                            </div>
+                                        )}
+
                                         <FormControl>
                                             <Input
                                                 id="avatar"
                                                 type="file"
                                                 accept="image/*"
                                                 onChange={(e) => {
-                                                    const file = e.target.files?.[0] ?? null
-                                                    field.onChange(file)
+                                                    const file = e.target.files?.[0] ?? null;
+                                                    field.onChange(file);
                                                 }}
                                                 className="bg-rose-200"
                                             />
                                         </FormControl>
+
                                         <FormDescription>
                                             Maximum 5MB méretű kép feltöltése.
                                         </FormDescription>

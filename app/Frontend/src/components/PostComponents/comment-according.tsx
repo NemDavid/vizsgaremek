@@ -28,15 +28,14 @@ const formSchema = z.object({
 
 export type PostFormSchema = z.infer<typeof formSchema>
 
-export function CommentsAccord({ postID, commentsList }: { postID: bigint, commentsList?: any[] }) {
-    const queryclinet = useQueryClient();
+export function CommentsAccord({ postID, commentsList, ProfilID }: { postID: bigint, commentsList?: any[],  ProfilID?:string}) {
+    const queryclient = useQueryClient();
     const { mutate: createComment } = useMutation({
         mutationFn: async (comment: PostFormSchema) => MakeCommentForPost(comment),
         onSuccess() {
-            queryclinet.refetchQueries({ queryKey: ["Posts"] });
-            queryclinet.refetchQueries({ queryKey: ["Comments", postID] });
-            queryclinet.refetchQueries({ queryKey: ["profil"] });
+            queryclient.refetchQueries({ queryKey: ["Posts"] })
             form.resetField("comment")
+            if(ProfilID) queryclient.refetchQueries({ queryKey: ["profil",ProfilID] });
         }
     })
     const form = useForm<PostFormSchema>({
@@ -82,7 +81,7 @@ export function CommentsAccord({ postID, commentsList }: { postID: bigint, comme
                     <ScrollArea className="max-h-[300px] h-fit overflow-auto w-full rounded-md p-0">
                         <div className="flex flex-col gap-2 p-2">
                             {commentsList.map((com) => (
-                                <Commentbox key={com.ID} comment={com} />
+                                <Commentbox key={com.ID} comment={com} ProfilID={ProfilID}/>
                             ))}
                         </div>
                     </ScrollArea>
