@@ -176,6 +176,37 @@ router.get("/pages/:paramPage", [authMiddleware.userIsLoggedIn, authMiddleware.i
 /**
  * @swagger
  * /api/profiles/{userId}:
+ *   get:
+ *     tags: [Profiles]
+ *     summary: Get a user's profile
+ *     description: Returns the profile for the given userId. May return null if the profile does not exist.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema: { type: integer }
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: Profile (or null if not found)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               anyOf:
+ *                 - $ref: '#/components/schemas/UserProfile'
+ *                 - type: "null"
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+router.get("/:userId", [authMiddleware.userIsLoggedIn], user_profileController.getUser_ProfileWithLastPosts);
+
+/**
+ * @swagger
+ * /api/profiles/{userId}:
  *   delete:
  *     tags: [Profiles]
  *     summary: Delete a user profile (admin)
@@ -232,36 +263,6 @@ router.delete("/:userId", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin
  */
 router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_profileController.createUser_Profile);
 
-/**
- * @swagger
- * /api/profiles/{userId}:
- *   get:
- *     tags: [Profiles]
- *     summary: Get a user's profile
- *     description: Returns the profile for the given userId. May return null if the profile does not exist.
- *     security:
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema: { type: integer }
- *         description: User ID
- *     responses:
- *       200:
- *         description: Profile (or null if not found)
- *         content:
- *           application/json:
- *             schema:
- *               anyOf:
- *                 - $ref: '#/components/schemas/UserProfile'
- *                 - type: "null"
- *       400:
- *         $ref: '#/components/responses/BadRequest'
- *       401:
- *         $ref: '#/components/responses/Unauthorized'
- */
-router.get("/:userId", [authMiddleware.userIsLoggedIn], user_profileController.getUser_ProfileWithLastPosts);
 
 /**
  * @swagger
