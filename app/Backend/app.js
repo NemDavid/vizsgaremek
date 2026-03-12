@@ -20,7 +20,15 @@ const authLimiter =
             legacyHeaders: false,
         }); 
 
-
+const limiter = 
+    process.env.NODE_ENV === "test"
+        ? noopMiddleware
+        : rateLimit({
+            windowMs: 10 * 60 * 1000,
+            max: 200,
+            standardHeaders: true,
+            legacyHeaders: false,
+        }); 
 
 // =========================
 // Route imports
@@ -95,10 +103,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // =========================
-// Rate limiting
-// =========================
-
-// =========================
 // API mount
 // =========================
 app.use("/api", api);
@@ -127,16 +131,16 @@ if (process.env.NODE_ENV !== "production") {
 // =========================
 // API routes
 // =========================
-api.use("/advertisement", advertisementRoutes);
+api.use("/advertisement", limiter, advertisementRoutes);
 api.use("/auth", authRoutes(authLimiter));
-api.use("/comments", userPostCommentRoutes);
-api.use("/connections", connectionsRoutes);
-api.use("/kicks", kickRoutes);
-api.use("/posts", userPostRoutes);
-api.use("/profiles", userProfileRoutes);
-api.use("/reactions", userPostReactionRoutes);
-api.use("/settings", userSettingsRoutes);
-api.use("/users", userRoutes);
+api.use("/comments", limiter, userPostCommentRoutes);
+api.use("/connections", limiter, connectionsRoutes);
+api.use("/kicks", limiter, kickRoutes);
+api.use("/posts", limiter, userPostRoutes);
+api.use("/profiles", limiter, userProfileRoutes);
+api.use("/reactions", limiter, userPostReactionRoutes);
+api.use("/settings", limiter, userSettingsRoutes);
+api.use("/users", limiter, userRoutes);
 api.use("/admins", adminRoutes);
 
 // =========================
