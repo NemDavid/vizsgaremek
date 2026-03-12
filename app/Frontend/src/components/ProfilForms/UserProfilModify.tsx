@@ -44,7 +44,7 @@ const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
 };
 
-export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: any}) {
+export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: any }) {
     const [birthDayMin, setBirthDayMin] = useState("");
     const [birthDayMax, setBirthDayMax] = useState("");
     const queryClient = useQueryClient()
@@ -120,10 +120,11 @@ export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: 
         form.setValue("schools", `${schools != null ? schools : ""}`);
         form.setValue("avatar_url", `${avatarurl != null ? avatarurl : ""}`);
     }
+    const allowedTypes = ["image/*"];
     return (
         <Dialog onOpenChange={SETDEFAULTDATA}>
             <DialogTrigger asChild >
-                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' ><PenLine className='text-black' />Profil Modositása</Button>
+                <Button className='bg-red-400 hover:bg-red-100 hover:text-red-800' ><PenLine className='text-black' />Profil Módositása</Button>
             </DialogTrigger>
             <DialogContent className="bg-red-100 z-999 max-h-[90vh] overflow-y-auto">
                 <DialogTitle className="display-none" />
@@ -131,22 +132,9 @@ export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: 
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className={"flex flex-col gap-6"}>
                             <div className="flex flex-col items-center gap-1 text-center">
-                                <h1 className="text-2xl font-bold">Profil modositása</h1>
+                                <h1 className="text-2xl font-bold">Profil módositása</h1>
                             </div>
                             {/* First Name */}
-                            <FormField
-                                control={form.control}
-                                name="first_name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor="firstName">Keresztnév *</FormLabel>
-                                        <FormControl>
-                                            <Input id="firstName" className="bg-rose-200" {...field} required />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                             <FormField
                                 control={form.control}
                                 name="last_name"
@@ -155,6 +143,19 @@ export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: 
                                         <FormLabel htmlFor="last_name">Vezetéknév *</FormLabel>
                                         <FormControl>
                                             <Input id="last_name" className="bg-rose-200" {...field} required />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="first_name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="firstName">Keresztnév *</FormLabel>
+                                        <FormControl>
+                                            <Input id="firstName" className="bg-rose-200" {...field} required />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -223,8 +224,10 @@ export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: 
                                                 type="file"
                                                 accept="image/*"
                                                 onChange={(e) => {
-                                                    const file = e.target.files?.[0] ?? null;
-                                                    field.onChange(file);
+                                                    const file = e.target.files?.[0]
+                                                    if (file && allowedTypes.includes(file.type)) {
+                                                        field.onChange(file)
+                                                    }
                                                 }}
                                                 className="bg-rose-200"
                                             />

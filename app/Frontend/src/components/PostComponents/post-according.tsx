@@ -329,7 +329,7 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
 
         upload(formData)
     }
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+    const allowedTypes = ["image/*"];
     if (!mypost) return;
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -340,41 +340,61 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
                 </div>
             </DialogTrigger>)}
 
-            <DialogContent className="bg-rose-100">
-                <DialogHeader>
-                    <DialogTitle>Biztosan törölni szeretnéd a posztot?</DialogTitle>
-                    <DialogDescription>
-                        Ez a művelet nem vonható vissza. A poszt véglegesen törlésre kerül.
+            <DialogContent
+                className="
+    bg-rose-100
+    w-[95vw]
+    max-w-lg
+    max-h-[90vh]
+    overflow-y-auto
+    p-4 sm:p-6
+  "
+            >
+                <DialogHeader className="pr-6">
+                    <DialogTitle className="break-words text-base sm:text-lg">
+                        Poszt módosítása
+                    </DialogTitle>
+                    <DialogDescription className="break-words text-sm">
+                        Itt szerkesztheted a poszt címét, tartalmát és a csatolt képet.
                     </DialogDescription>
                 </DialogHeader>
-                <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                        <div className="flex items-center gap-3">
-                            <FormField
-                                control={form.control}
-                                name="title"
-                                render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Cím</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Add meg a címet..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
-                                        </FormControl>
-                                        <FormDescription>A bejegyzés címe</FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
 
-                        {/* Content */}
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="flex flex-col gap-4 w-full min-w-0"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem className="w-full min-w-0">
+                                    <FormLabel>Cím</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Add meg a címet..."
+                                            {...field}
+                                            className="w-full bg-red-100 focus:bg-red-300 hover:bg-red-200"
+                                        />
+                                    </FormControl>
+                                    <FormDescription>A bejegyzés címe</FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <FormField
                             control={form.control}
                             name="content"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="w-full min-w-0">
                                     <FormLabel>Tartalom</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Írj valamit..." {...field} className="bg-red-100 focus:bg-red-300 hover:bg-red-200" />
+                                        <Textarea
+                                            placeholder="Írj valamit..."
+                                            {...field}
+                                            className="w-full bg-red-100 focus:bg-red-300 hover:bg-red-200"
+                                        />
                                     </FormControl>
                                     <FormDescription>Legfeljebb 1000 karakter.</FormDescription>
                                     <FormMessage />
@@ -382,55 +402,53 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
                             )}
                         />
 
-                        {/* Kép feltöltés */}
                         <FormField
                             control={form.control}
                             name="media"
                             render={({ field }) => (
-                                <FormItem className="bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
+                                <FormItem className="w-full min-w-0 bg-red-100 focus:bg-red-300 hover:bg-red-200 p-3 rounded-lg">
                                     <FormLabel>Kép feltöltése (opcionális)</FormLabel>
 
                                     <FormControl>
                                         <input
                                             type="file"
                                             accept="image/*"
+                                            className="mt-1 w-full text-sm"
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0]
-                                                if (file && allowedTypes.includes(file.type)) {
+                                                if (file && file.type.startsWith("image/")) {
                                                     field.onChange(file)
-                                                    form.setValue("mediaDeleted", false) // ✅ ha új képet választ, ne töröljön
+                                                    form.setValue("mediaDeleted", false)
                                                 } else {
                                                     field.onChange(undefined)
                                                 }
                                             }}
-                                            className="mt-1"
-                                            disabled={form.watch("mediaDeleted")} // ✅ ha törlésre jelölte, ne töltsön fel
+                                            disabled={form.watch("mediaDeleted")}
                                         />
                                     </FormControl>
 
-                                    {/* ✅ Törlésre jelöl gomb */}
                                     {post.media_url && (
                                         <Button
                                             type="button"
                                             variant={form.watch("mediaDeleted") ? "destructive" : "outline"}
-                                            className="mt-2"
+                                            className="mt-2 w-full sm:w-auto"
                                             onClick={() => {
                                                 const next = !form.getValues("mediaDeleted")
                                                 form.setValue("mediaDeleted", next)
 
                                                 if (next) {
-                                                    // ha törölni akarja, akkor az új file választást is nullázd
                                                     form.setValue("media", undefined)
                                                 }
                                             }}
                                         >
-                                            {form.watch("mediaDeleted") ? "Média törlésre jelölve ✓" : "Média törlése"}
+                                            {form.watch("mediaDeleted")
+                                                ? "Média törlésre jelölve ✓"
+                                                : "Média törlése"}
                                         </Button>
                                     )}
 
-                                    {/* kis vizuális jelzés */}
                                     {form.watch("mediaDeleted") && (
-                                        <p className="text-sm text-red-700 mt-1">
+                                        <p className="text-sm text-red-700 mt-1 break-words">
                                             A jelenlegi kép törlésre kerül mentéskor.
                                         </p>
                                     )}
@@ -440,15 +458,25 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
                                 </FormItem>
                             )}
                         />
+
                         {post.media_url && !form.watch("mediaDeleted") && (
-                            <img src={post.media_url} className="mt-2 max-h-40 rounded-lg object-cover" />
+                            <img
+                                src={post.media_url}
+                                className="mt-2 w-full max-h-40 rounded-lg object-cover"
+                            />
                         )}
-                        {isPending ? <Loader /> : ""}
-                        <DialogFooter className="sm:justify-start">
+
+                        {isPending ? <Loader /> : null}
+
+                        <DialogFooter className="flex-col sm:flex-row gap-2 sm:justify-start">
                             <DialogClose asChild>
-                                <Button type="button" className="bg-red-400">Bezárás</Button>
+                                <Button type="button" className="bg-red-400 w-full sm:w-auto">
+                                    Bezárás
+                                </Button>
                             </DialogClose>
-                            <Button type="submit" className="bg-red-400">Küldés</Button>
+                            <Button type="submit" className="bg-red-400 w-full sm:w-auto">
+                                Küldés
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>
