@@ -23,6 +23,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Loader } from "../Loader"
 import { useEffect, useState } from "react"
+import { IMAGE_ACCEPT_STRING, IMAGE_FORMAT_ERROR, isAllowedImage } from "@/lib/imageUpload"
 type SignupFormProps = React.ComponentProps<"form"> & {
   onSwitch?: () => void;
   token: string; // <-- hozzáadva ide
@@ -35,7 +36,11 @@ export const confirmSchema = z.object({
   schools: z.string().max(100, { message: "Az iskolák mező legfeljebb 100 karakter hosszú lehet." }).optional(),
   birth_date: z.string().max(100, { message: "A születési dátum mező legfeljebb 100 karakter hosszú lehet." }).optional(),
   birth_place: z.string().max(100, { message: "Az születési hely mező legfeljebb 100 karakter hosszú lehet." }).optional(),
-  avatar: z.any().refine(file => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.").optional(),
+  avatar: z
+    .any()
+    .refine((file) => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.")
+    .refine((file) => !file || isAllowedImage(file), IMAGE_FORMAT_ERROR)
+    .optional(),
   bio: z.string().max(255, { message: "A bio mező legfeljebb 255 karakter hosszú lehet." }).optional(),
 })
 
@@ -202,15 +207,50 @@ export function ProfilSetupForm({ className, onSwitch, token, ...props }: Signup
                   <Input
                     id="avatar"
                     type="file"
-                    accept="image/*"
+                    accept={IMAGE_ACCEPT_STRING}
                     onChange={(e) => {
-                      const file = e.target.files?.[0] ?? null
-                      field.onChange(file)
+                      const file = e.target.files?.[0] ?? null;
+
+                      if (!file) {
+                        field.onChange(undefined);
+                        form.clearErrors("avatar");
+                        return;
+                      }
+
+                      if (isAllowedImage(file)) {
+                        field.onChange(file);
+                        form.clearErrors("avatar");
+                      } else {
+                        field.onChange(undefined);
+                        form.setError("avatar", {
+                          type: "manual",
+                          message: IMAGE_FORMAT_ERROR,
+                        });
+                      }
                     }}
                   />
                 </FormControl>
+
+                {field.value instanceof File && (
+                  <div className="mt-2 flex flex-col gap-2">
+                    <p className="text-sm text-green-700 break-words">
+                      Kiválasztva: {field.value.name}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        field.onChange(undefined);
+                        form.clearErrors("avatar");
+                      }}
+                    >
+                      Kiválasztott kép törlése
+                    </Button>
+                  </div>
+                )}
+
                 <FormDescription>
-                  Maximum 5MB méretű kép feltöltése.
+                  Maximum 5MB. Engedett: JPG, JPEG, PNG, WEBP, GIF, BMP, SVG, TIF, TIFF, AVIF, HEIC, HEIF.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

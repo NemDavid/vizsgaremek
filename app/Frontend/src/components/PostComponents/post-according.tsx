@@ -47,7 +47,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Loader } from "@/components/Loader"
-
+import { IMAGE_ACCEPT_STRING, IMAGE_FORMAT_ERROR, isAllowedImage } from "@/lib/imageUpload"
 
 
 export type Post = {
@@ -329,7 +329,6 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
 
         upload(formData)
     }
-    const allowedTypes = ["image/*"];
     if (!mypost) return;
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -342,14 +341,12 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
 
             <DialogContent
                 className="
-    bg-rose-100
-    w-[95vw]
-    max-w-lg
-    max-h-[90vh]
-    overflow-y-auto
-    p-4 sm:p-6
-  "
-            >
+                        bg-rose-100
+                        w-[95vw]
+                        max-w-lg
+                        max-h-[90vh]
+                        overflow-y-auto
+                        p-4 sm:p-6">
                 <DialogHeader className="pr-6">
                     <DialogTitle className="break-words text-base sm:text-lg">
                         Poszt módosítása
@@ -412,20 +409,46 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
                                     <FormControl>
                                         <input
                                             type="file"
-                                            accept="image/*"
+                                            accept={IMAGE_ACCEPT_STRING}
                                             className="mt-1 w-full text-sm"
                                             onChange={(e) => {
-                                                const file = e.target.files?.[0]
-                                                if (file && file.type.startsWith("image/")) {
-                                                    field.onChange(file)
-                                                    form.setValue("mediaDeleted", false)
+                                                const file = e.target.files?.[0] ?? null;
+
+                                                if (!file) {
+                                                    field.onChange(undefined);
+                                                    form.clearErrors("media");
+                                                    return;
+                                                }
+
+                                                if (isAllowedImage(file)) {
+                                                    field.onChange(file);
+                                                    form.setValue("mediaDeleted", false);
+                                                    form.clearErrors("media");
                                                 } else {
-                                                    field.onChange(undefined)
+                                                    field.onChange(undefined);
+                                                    form.setError("media", {
+                                                        type: "manual",
+                                                        message: IMAGE_FORMAT_ERROR,
+                                                    });
                                                 }
                                             }}
                                             disabled={form.watch("mediaDeleted")}
                                         />
                                     </FormControl>
+
+                                    {field.value instanceof File && !form.watch("mediaDeleted") && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="mt-2 w-full sm:w-auto"
+                                            onClick={() => {
+                                                field.onChange(undefined);
+                                                form.clearErrors("media");
+                                            }}
+                                        >
+                                            Kiválasztott új kép törlése
+                                        </Button>
+                                    )}
 
                                     {post.media_url && (
                                         <Button
@@ -433,11 +456,12 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
                                             variant={form.watch("mediaDeleted") ? "destructive" : "outline"}
                                             className="mt-2 w-full sm:w-auto"
                                             onClick={() => {
-                                                const next = !form.getValues("mediaDeleted")
-                                                form.setValue("mediaDeleted", next)
+                                                const next = !form.getValues("mediaDeleted");
+                                                form.setValue("mediaDeleted", next);
 
                                                 if (next) {
-                                                    form.setValue("media", undefined)
+                                                    form.setValue("media", undefined);
+                                                    form.clearErrors("media");
                                                 }
                                             }}
                                         >
@@ -453,7 +477,9 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
                                         </p>
                                     )}
 
-                                    <FormDescription>JPEG, PNG, WEBP képek feltöltése.</FormDescription>
+                                    <FormDescription>
+                                        Engedett formátumok: JPG, JPEG, PNG, WEBP, GIF, BMP, SVG, TIF, TIFF, AVIF, HEIC, HEIF.
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}

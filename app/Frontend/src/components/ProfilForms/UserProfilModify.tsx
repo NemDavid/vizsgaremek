@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { UpdateProfile } from "../axios/axiosClient";
 import { Loader } from "../Loader";
 import { Field, FieldDescription } from "../ui/field";
-
+import { IMAGE_ACCEPT_STRING, IMAGE_FORMAT_ERROR, isAllowedImage } from "@/lib/imageUpload";
 
 export const confirmSchema = z.object({
     first_name: z.string().min(1, { message: "Kérjük add meg a keresztneved!" }).max(60, { message: "A keresztnév legfeljebb 60 karakter hosszú lehet." }),
@@ -33,7 +33,11 @@ export const confirmSchema = z.object({
     schools: z.string().max(100, { message: "Az iskolák mező legfeljebb 100 karakter hosszú lehet." }).optional(),
     birth_date: z.string().max(100, { message: "A születési dátum mező legfeljebb 100 karakter hosszú lehet." }).optional(),
     birth_place: z.string().max(100, { message: "Az születési hely mező legfeljebb 100 karakter hosszú lehet." }).optional(),
-    avatar: z.any().refine(file => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.").optional(),
+    avatar: z
+        .any()
+        .refine((file) => !file || file.size <= 5_000_000, "A kép maximum 5MB lehet.")
+        .refine((file) => !file || isAllowedImage(file), IMAGE_FORMAT_ERROR)
+        .optional(),
     bio: z.string().max(255, { message: "A bio mező legfeljebb 255 karakter hosszú lehet." }).optional(),
     avatar_url: z.string(),
 })
@@ -120,7 +124,6 @@ export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: 
         form.setValue("schools", `${schools != null ? schools : ""}`);
         form.setValue("avatar_url", `${avatarurl != null ? avatarurl : ""}`);
     }
-    const allowedTypes = ["image/*"];
     return (
         <Dialog onOpenChange={SETDEFAULTDATA}>
             <DialogTrigger asChild >
@@ -222,19 +225,51 @@ export function UserProfileModify({ id, myuserdata }: { id: number, myuserdata: 
                                             <Input
                                                 id="avatar"
                                                 type="file"
-                                                accept="image/*"
+                                                accept={IMAGE_ACCEPT_STRING}
                                                 onChange={(e) => {
-                                                    const file = e.target.files?.[0]
-                                                    if (file && allowedTypes.includes(file.type)) {
-                                                        field.onChange(file)
+                                                    const file = e.target.files?.[0] ?? null;
+
+                                                    if (!file) {
+                                                        field.onChange(undefined);
+                                                        form.clearErrors("avatar");
+                                                        return;
+                                                    }
+
+                                                    if (isAllowedImage(file)) {
+                                                        field.onChange(file);
+                                                        form.clearErrors("avatar");
+                                                    } else {
+                                                        field.onChange(undefined);
+                                                        form.setError("avatar", {
+                                                            type: "manual",
+                                                            message: IMAGE_FORMAT_ERROR,
+                                                        });
                                                     }
                                                 }}
                                                 className="bg-rose-200"
                                             />
                                         </FormControl>
 
+                                        {field.value instanceof File && (
+                                            <div className="mt-2 flex flex-col gap-2">
+                                                <p className="text-sm text-green-700 break-words">
+                                                    Kiválasztva: {field.value.name}
+                                                </p>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        field.onChange(undefined);
+                                                        form.clearErrors("avatar");
+                                                    }}
+                                                >
+                                                    Kiválasztott avatar törlése
+                                                </Button>
+                                            </div>
+                                        )}
+
                                         <FormDescription>
-                                            Maximum 5MB méretű kép feltöltése.
+                                            Maximum 5MB. Engedett: JPG, JPEG, PNG, WEBP, GIF, BMP, SVG, TIF, TIFF, AVIF, HEIC, HEIF.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
