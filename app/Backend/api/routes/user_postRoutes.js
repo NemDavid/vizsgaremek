@@ -6,7 +6,6 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 //---------------------------------------------------------------
 const { getStorage } = require("../utilities/cloudUtils");
-const { optimizeUploadedImage } = require("../utilities/imageOptimizer");
 const upload = getStorage();
 const cloudMiddleware = require("../middlewares/uploadMiddleware");
 //---------------------------------------------------------------
