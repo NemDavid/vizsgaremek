@@ -6,18 +6,21 @@ const { ValidationError } = require("../errors");
 
 // külön: filter, hogy mindkét storage használhassa
 const fileFilter = (req, file, cb) => {
-  const allowedExtensions = [
+const allowedExtensions = [
     ".jpg",
     ".jpeg",
     ".png",
     ".webp",
     ".bmp",
+    ".svg",
     ".tif",
     ".tiff",
     ".avif",
     ".heic",
     ".heif",
   ];
+
+  const ext = path.extname(file.originalname || "").toLowerCase();
 
   if (
     file.mimetype.startsWith("image/") ||

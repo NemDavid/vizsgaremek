@@ -28,6 +28,7 @@ import { createPost } from "../axios/axiosClient"
 import { useState } from "react"
 import { Loader } from "@/components/Loader"
 import { IMAGE_ACCEPT_STRING, IMAGE_FORMAT_ERROR, isAllowedImage } from "@/lib/imageUpload"
+import { toast } from "sonner"
 
 const postcreateSchema = z.object({
     title: z.string().min(3, "A címnek legalább 3 karakternek kell lennie").max(255, "A cím maximum 255 karakter lehet"),
@@ -51,7 +52,12 @@ export function PostCreate() {
             form.resetField("media");
             form.resetField("title");
             setOpen(false);
-
+            toast.success("Poszt sikeresen létrehozzva 🎉", {
+                duration: 3000,
+            })
+        },
+        onError(error: any){
+            toast.error(error.response.data.message || "Sikertelen poszt létrehozzása")
         },
         retry: 0
     })

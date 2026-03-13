@@ -298,7 +298,13 @@ export function PostModify({ mypost, post, className, open, onOpenChange, isTrig
         onSuccess() {
             queryclient.refetchQueries({ queryKey: ["Posts"] })
             form.reset()
-            onOpenChange?.(false) // ✅ zárás
+            onOpenChange?.(false)
+            toast.success("Poszt sikeresen módositva 🎉", {
+                duration: 3000,
+            })
+        },
+        onError(error: any) {
+            toast.error(error.response.data.message || "Sikertelen poszt módositás")
         },
         retry: 0,
     })
