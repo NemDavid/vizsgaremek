@@ -106,8 +106,11 @@ const upload = getStorage();
  */
 router.post(
   "/upload",
-  [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin],
-  upload.single("avatar"),
+  [
+    authMiddleware.userIsLoggedIn, 
+    authMiddleware.isAdmin,
+    upload.single("avatar")
+  ],
   controller.UploadPicture
 );
 

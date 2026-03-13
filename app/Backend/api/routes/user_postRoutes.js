@@ -6,6 +6,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 //---------------------------------------------------------------
 const { getStorage } = require("../utilities/cloudUtils");
+const { optimizeUploadedImage } = require("../utilities/imageOptimizer");
 const upload = getStorage();
 const cloudMiddleware = require("../middlewares/uploadMiddleware");
 //---------------------------------------------------------------
@@ -179,7 +180,7 @@ router.get("/", [authMiddleware.userIsLoggedIn], user_postController.getUser_Pos
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.post("/", authMiddleware.userIsLoggedIn, upload.single("media"), cloudMiddleware.Req_HasFile, user_postController.createUser_Post);
+router.post("/", [authMiddleware.userIsLoggedIn, upload.single("media"), cloudMiddleware.Req_HasFile], user_postController.createUser_Post);
 
 /**
  * @swagger
@@ -259,7 +260,7 @@ router.delete("/:postId", [authMiddleware.userIsLoggedIn], user_postController.d
  *       400:
  *         $ref: '#/components/responses/BadRequest'
  */
-router.patch("/:postId", [authMiddleware.userIsLoggedIn], upload.single("media"), cloudMiddleware.Req_HasFile, user_postController.updateUser_Post);
+router.patch("/:postId", [authMiddleware.userIsLoggedIn, upload.single("media"), cloudMiddleware.Req_HasFile], user_postController.updateUser_Post);
 
 //--------------------------------------------------
 //                   ADMIN

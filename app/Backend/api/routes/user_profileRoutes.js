@@ -299,7 +299,11 @@ router.post("/", [authMiddleware.userIsLoggedIn, authMiddleware.isAdmin], user_p
  */
 router.patch(
   "/:userId",
-  [authMiddleware.userIsLoggedIn, upload.single("avatar"), cloudMiddleware.Req_HasFile],
+  [
+    authMiddleware.userIsLoggedIn, 
+    upload.single("avatar"), 
+    cloudMiddleware.Req_HasFile
+  ],
   user_profileController.updateUser_Profile
 );
 
