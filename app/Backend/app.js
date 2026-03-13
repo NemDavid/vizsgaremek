@@ -10,25 +10,40 @@ const rateLimit = require("express-rate-limit");
 
 const noopMiddleware = (req, res, next) => next();
 
-const authLimiter = 
+const authLimiter =
     process.env.NODE_ENV === "test"
         ? noopMiddleware
         : rateLimit({
-            windowMs: 15 * 60 * 1000,
-            max: 20,
+            windowMs: 5 * 60 * 1000,
+            max: 30,
             standardHeaders: true,
             legacyHeaders: false,
-        }); 
+            handler: (req, res, next, options) => {
+                res.status(options.statusCode).json({
+                    message: "Túl sok próbálkozás történt. Kérlek próbáld újra később.",
+                    code: "AUTH_RATE_LIMIT_EXCEEDED",
+                });
+            },
+        });
 
-const limiter = 
+
+
+const limiter =
     process.env.NODE_ENV === "test"
         ? noopMiddleware
         : rateLimit({
-            windowMs: 10 * 60 * 1000,
-            max: 200,
+            windowMs: 1 * 60 * 1000,
+            max: 100,
             standardHeaders: true,
             legacyHeaders: false,
-        }); 
+            handler: (req, res, next, options) => {
+                res.status(options.statusCode).json({
+                    message: "Túl sok kérés érkezett. Kérlek próbáld újra később.",
+                    code: "RATE_LIMIT_EXCEEDED",
+                });
+            },
+
+        });
 
 // =========================
 // Route imports
