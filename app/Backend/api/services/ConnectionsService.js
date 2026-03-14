@@ -110,6 +110,7 @@ class ConnectionsService {
         }
         // valid user-e
         const validUser = await this.userRepository.getUser(To_User_ID, { transaction });
+        
         if (!validUser) {
             throw new BadRequestError("Nincs ilyen felhasználó");
         }
@@ -122,7 +123,7 @@ class ConnectionsService {
             const friendlist = await this.getCurrentUserFilteredConnections(encodedToken, "accepted", transaction);
 
             const p = await this.userRepository.getUserByID(encodedToken.userID, { transaction });
-
+            
             const maxFriend = p.profile.level + 50;
 
             if (friendlist.length > maxFriend) {
@@ -162,7 +163,7 @@ class ConnectionsService {
             );
         }
         else if (existingConnection && (existingConnection.Status == "accepted" || existingConnection.Status == "pending")) {
-            return await this.updateConnection(encodedToken, To_User_ID, action, { transaction });
+            return await this.updateConnection(encodedToken, To_User_ID, action, transaction);
         }
         else if (!existingConnection) {
             // email az erintett user nek
@@ -196,7 +197,11 @@ class ConnectionsService {
         }
 
         // valid user-e
+        console.log("asd");
+        console.log(transaction);
+        
         const validUser = await this.userRepository.getUser(To_User_ID, { transaction });
+        
         if (!validUser) {
             throw new BadRequestError("Nincs ilyen felhasználó");
         }
